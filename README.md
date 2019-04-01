@@ -6,11 +6,11 @@ Repository for references, analysis codes, useful scripts and related discussion
 
 Software: [AliPhysics](https://github.com/alisw/AliPhysics)@ROOT6
 
-AliEn: World-wide Computing Grid
+Main environment: AliEn World-wide Computing Grid
 
 Local: R710.star.ustc.edu.cn (Dual-E5520 + 16* Dual-E5504)
 
-> Development and post-processing are performed on local environment. But for alien, all jobs would running on latest version after debug.
+> Development and post-processing are performed on local environment (vAN-20190328_ROOT6). But for alien, all jobs would run on latest version after debug.
 
 Author: [Yìtāo WÚ](mailto:yitao.wu@cern.ch)
 
@@ -20,10 +20,11 @@ Software:
 [AliSW@GitHub](https://github.com/alisw) |
 [GitLab](http://gitlab.cern.ch/) |
 [AliDoc](http://alidoc.cern.ch/) |
-[HEPforge](https://hepforge.org/) |
 Offline Database ([OADB](https://indico.cern.ch/event/128634/contributions/112886/attachments/86273/123628/11-03-09-OW-OADB.pdf "Offline Analysis Database - /eos/experiment/alice/analysis-data/OADB/"), [OCDB](http://alice-offline.web.cern.ch/Activities/ConditionDB.html "Offline Constant Database - alien:///alice/data/[year]/OCDB/[Detector]/*/Data/Run*.root")) |
+[ROOT](https://root.cern/) |
+[HEPforge](https://hepforge.org/) |
 
-Other documents:
+Documents:
 [Twiki](https://twiki.cern.ch/twiki/bin/viewauth/ALICE) |
 [Public & Analysis Note](https://alice-notes.web.cern.ch) |
 [ALICE Offline](http://alice-offline.web.cern.ch/) |
@@ -32,10 +33,16 @@ Other documents:
 Service:
 [AliEn](http://alien.web.cern.ch/) |
 [AliMonitor](http://alimonitor.cern.ch) |
-[ALICE Member](https://glance.cern.ch/alice/membership/) |
-[JIRA](https://alice.its.cern.ch/) |
+[Glance](https://glance.cern.ch/alice/membership/ "ALICE Member - Insititute, People & Service") |
+[JIRA](https://alice.its.cern.ch/ "Issue Tracking System") |
+[Vidyo](http://information-technology.web.cern.ch/services/fe/vidyo "Client login URL: https://vidyoportal.cern.ch") |
 [CERN Account](https://account.cern.ch/account/) |
-[CERN SWAN](http://swan.cern.ch/ "Provide virtual environment by cloud storage service - CERNBox") |
+[CERN Service](https://resources.web.cern.ch/resources/Manage/ListServices.aspx "Resource Portal - list all available services") |
+[CA](https://ca.cern.ch/ca/ "CERN Certificate Authority - Grid, EduRoam, Code signing") |
+[CERN Mail](https://mmmservices.web.cern.ch/mmmservices/) |
+[e-groups](https://e-groups.cern.ch/ "CERN mail lists") |
+[CERNBox](https://cernbox.cern.ch "The cloud storage solution from CERN") |
+[SWAN](http://swan.cern.ch/ "Provide virtual environment by cloud storage service - CERNBox") |
 
 Tutorial:
 [AliSW tutorial](http://alisw.github.io/) |
@@ -71,6 +78,16 @@ Conference & Meeting:
 * Strangeness Quark Matter:
 [SQM2019](https://sqm2019.ba.infn.it/) |
 [SQM2017](https://indico.cern.ch/event/576735/) |
+* LHC Physics:
+[LHCP2019](http://lhcp2019.buap.mx/) |
+[LHCP2018](http://lhcp2018.bo.infn.it/) |
+[LHCP2017](http://lhcp2017.physics.sjtu.edu.cn/) |
+[LHCP2016](http://lhcp2016.hep.lu.se/) |
+[LHCP2015](http://hepd.pnpi.spb.ru/lhcp2015/index.php/) |
+[LHCP2014](https://indico.cern.ch/event/279518/) |
+[LHCP2013](https://indico.cern.ch/event/210555/) |
+* Others:
+[VCI](https://vci.hephy.at/home/ "Vienna Conference on Instrumentation")
 
 Publication:
 [InspierHEP](http://inspirehep.net) |
