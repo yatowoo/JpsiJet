@@ -29,6 +29,11 @@ Documents:
 [Public & Analysis Note](https://alice-notes.web.cern.ch) |
 [ALICE Offline](http://alice-offline.web.cern.ch/) |
 [ALICE Official](http://alice.cern.ch/) |
+* EMCal & Jet:
+[Intro.](https://indico.cern.ch/event/555035/contributions/2239719/attachments/1310149/1959997/EMCALframework.pdf "July 2016") |
+[Doc.](http://alidoc.cern.ch/AliPhysics/master/READMEemcfw.html "Based on Doxygen") |
+[Correction](https://indico.cern.ch/event/586577/contributions/2363131/attachments/1370126/2177061/EMCalCorrectionFramework_AnalysisTutorial_updated.pdf "Nov. 2016") |
+[Embedding](https://indico.cern.ch/event/586577/contributions/2363130/attachments/1370183/2296645/rehlers.embedding.analysis.tutorial.nov.2016.v3.pdf "Nov. 2016") |
 
 Service:
 [AliEn](http://alien.web.cern.ch/) |
@@ -45,11 +50,48 @@ Service:
 [SWAN](http://swan.cern.ch/ "Provide virtual environment by cloud storage service - CERNBox") |
 
 Tutorial:
+
+* ALICE-analysis-tutorial:
+[Website](https://alice-analysis.web.cern.ch/content/tutorials) |
+[Indico](https://indico.cern.ch/category/5819/ "Some events under category of ALICE Week") |
+[Intro.](https://alice-doc.github.io/alice-analysis-tutorial/) |
+[DataFlow](https://indico.cern.ch/event/752367/contributions/3116617/attachments/1704565/2858687/DPG_AnalysisTutorial_20181129.pdf "Starterkit - Nov.  2018") |
+[LEGO train](https://indico.cern.ch/event/327364/contributions/1713450/attachments/635959/875472/juniorsDay-2.pdf "July 2014") |
+[NanoAOD](https://indico.cern.ch/event/652886/contributions/2658039/attachments/1500603/2336871/nanoAODs.pdf "July 2017") |
+[EventInfo](https://indico.cern.ch/event/327364/contributions/1713452/attachments/635962/875477/2014-07-04-kryshen-tutorial.pdf "July 2014") |
+[Q-vector](https://indico.cern.ch/event/586577/contributions/2363129/attachments/1370104/2077614/flowvectors.pdf "Nov. 2016") |
+[TrackInfo](https://indico.cern.ch/event/327364/contributions/1713452/attachments/635962/875475/TrackSelectionTutorial.pdf "July 2014") |
+[PID](https://indico.cern.ch/event/555035/contributions/2236078/attachments/1307393/1959973/ParticleID_in_ALICE_15072016.pdf "July 2016") |
+[Flow](https://indico.cern.ch/event/327364/contributions/1713456/attachments/635966/875483/flow_package_na.pdf "July 2014") |
+[EventMixing](https://indico.cern.ch/event/652886/contributions/2666025/attachments/1500563/2337020/eventmixing_aohlson.pdf "July 2017") |
+[Unfolding](https://indico.cern.ch/event/463952/contributions/1981524/attachments/1206439/1758559/unfolding.pdf "Dec. 2015") |
+[Errors](https://indico.cern.ch/event/652886/contributions/2666026/attachments/1500620/2336893/20170726_stat_syst_unc.pdf "July 2017") |
+[MC](jklein.web.cern.ch/jklein/mc/ "Dec. 2015"), [Generator](https://indico.cern.ch/event/327364/contributions/1713449/attachments/635957/875470/GeneratorsTutorials.pdf "July 2014") |
+[RIVET](https://indico.cern.ch/event/555035/contributions/2236077/attachments/1307618/1959552/intro_rivet.pdf "MC tool - July 2016") |
+[AnaControl](https://github.com/cbourjau/nittygriddy "ALICE+LHCb - Nov. 2017") |
+[PlotStyle](https://indico.cern.ch/event/327364/contributions/1713455/attachments/635965/875481/main.pdf "July 2014") |
+[Visual](https://indico.cern.ch/event/743750/contributions/3072931/attachments/1690231/2719440/MultiDimensionalVisualization_O2meeting22052018.pdf "July 2018") |
+[QAtools](https://indico.cern.ch/event/743750/contributions/3072931/attachments/1690231/2719650/QAtools_Tutorial.pdf "July 2018") |
+[Git](https://indico.cern.ch/event/616865/ "Git tips & GitHub usage - Mar. 2017") |
+[alice-docs](https://indico.cern.ch/event/713442/contributions/2931242/attachments/1619989/2581360/The_new_ALICE_documentation_pages.pdf "With GitHub page - Mar. 2018") |
+[Doxygen](https://indico.cern.ch/event/586577/contributions/2363128/attachments/1370076/2077505/documentYourCode.pdf "Documents for AliRoot & AliPhysics - Nov. 2016") |
+[ML](https://indico.cern.ch/event/713442/contributions/2931240/attachments/1622111/2581475/2018-03-23_ML_tutorial.pdf "With SWAN - Mar. 2018") |
+* ROOT & C++:
+[Primer](https://root.cern/guides/primer) |
+[Courses](https://root.cern/courses) |
+[Example](https://root.cern.ch/doc/master/group__Tutorials.html "Tutorials inside ROOT") |
+[PEP-ROOT6](https://pep-root6.github.io/docs/ "C++11 features, Parallellism, Vectorization, Declarative analysis, Python & debug") |
+[ROOT5to6](https://alice-doc.github.io/alice-analysis-tutorial/analysis/ROOT5-to-6.html "Inside gitbook of Intro. - Mar. 2018") |
+[Python](https://indico.cern.ch/event/652886/ "July 2017") |
+[ModernC++](https://indico.cern.ch/event/752367/contributions/3116613/attachments/1704567/2861784/ModernCPP.pdf "Starterkit - Nov. 2018") |
+[Pointers](https://indico.cern.ch/event/666222/contributions/2722821/attachments/1552323/2439274/Pointers_SAiola.pdf "ALICE+LHCb - Nov. 2017") |
+[Profiling](https://indico.cern.ch/event/463952/contributions/1981522/attachments/1206438/1758208/alice15-tools-lecture.pdf "Dec. 2016") |
+* Others:
 [AliSW tutorial](http://alisw.github.io/) |
 [AliBuild](http://alisw.github.io/alibuild/) |
-[ALICE-analysis-tutorial](https://alice-doc.github.io/alice-analysis-tutorial/) |
 [PCG](https://friederikebock.gitbooks.io/pcgtutorial/) |
 [Debug@ALICE](https://dberzano.github.io/alice/debug/) |
+[Starterkit2018](https://indico.cern.ch/event/752367 "ALICE + LHCb + SHiP - bash, python, git, alisw, ROOT & debug") |
 
 Conference & Meeting:
 [ALICE Conference](http://alice-conferences.web.cern.ch/) |
