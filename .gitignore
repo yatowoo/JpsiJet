@@ -1,6 +1,9 @@
 # Created by https://www.gitignore.io/api/c,git,vim,c++,linux,python
 # Edit at https://www.gitignore.io/?templates=c,git,vim,c++,linux,python
 
+### User ###
+*.root
+
 ### C ###
 # Prerequisites
 *.d
