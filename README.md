@@ -1,4 +1,4 @@
-# J/$\psi$ Production in Jets
+# $J/\psi$ Production in Jets
 
 > From IDEA to PAPER.
 
@@ -8,9 +8,9 @@ Software: [AliPhysics](https://github.com/alisw/AliPhysics)@ROOT6
 
 Main environment: AliEn World-wide Computing Grid
 
-Local: R710.star.ustc.edu.cn (Dual-E5520 + 16* Dual-E5504)
+Local: R710.star.ustc.edu.cn `(Dual-E5520 + 16* Dual-E5504)`
 
-> Development and post-processing are performed on local environment (vAN-20190328_ROOT6). But for alien, all jobs would run on latest version after debug.
+> Development and post-processing are performed on local environment `(vAN-20190328_ROOT6)`. But for alien, all jobs would run on latest version after debug.
 
 Author: [Yìtāo WÚ](mailto:yitao.wu@cern.ch)
 
@@ -99,25 +99,25 @@ Publication:
 
 ## Background & Motivation
 
-To understood the J/$\psi$ production mechanism, and explain the lack of observed polarization in high $p_{T}$ range. Previous results from LHCb and CMS are disagree with NRQCD predictions implemented by Pythia8.
+To understood the $J/\psi$ production mechanism, and explain the lack of observed polarization in high $p_{T}$ range. Previous results from LHCb and CMS are disagree with NRQCD predictions implemented by Pythia8.
 
 ![Result_LHCb](Media/Result_LHCb.png)
 ![Result_CMS](Media/Result_CMS.png)
 
 ### Reference
 
-1. Baumgart, Matthew, et al. "Probing quarkonium production mechanisms with jet substructure." Journal of High Energy Physics 2014.11 (2014): 3. [[INSPIRE](http://inspirehep.net/record/1299682)]
-2. LHCb Collaboration, "Study of J/$\psi$ Production in Jets", Phys.Rev.Lett. 118 (2017) no.19, 192001 [[INSPIRE](http://inspirehep.net/record/1509507)]
-3. Kang, Zhong-Bo, et al. "J/$\psi$ production and polarization within a jet." Phys.Rev.Lett. 119 (2017) no.3, 032001. [[INSPIRE](http://inspirehep.net/record/1512930/)]
+1. Baumgart, Matthew, et al. "Probing quarkonium production mechanisms with jet substructure." JHEP 1411 (2014) 003 [[INSPIRE](http://inspirehep.net/record/1299682)]
+2. LHCb Collaboration, "Study of $J/\psi$ Production in Jets", Phys.Rev.Lett. 118 (2017) no.19, 192001 [[INSPIRE](http://inspirehep.net/record/1509507)]
+3. Kang, Zhong-Bo, et al. "$J/\psi$ production and polarization within a jet." Phys.Rev.Lett. 119 (2017) no.3, 032001. [[INSPIRE](http://inspirehep.net/record/1512930/)]
 4. Bain, Reggie, et al. "NRQCD Confronts LHCb Data on Quarkonium Production within Jets." Phys.Rev.Lett. 119 (2017) no.3, 032002. [[INSPIRE](http://inspirehep.net/record/1514263/)]
-5. CMS Collaboration, "Production of prompt and nonprompt J/$\psi$ mesons in jets in pp collisions at $\sqrt{s}=5.02~TeV$", CMS-PAS-HIN-18-012, [[CDS](http://cds.cern.ch/record/2318344)]
+5. CMS Collaboration, "Production of prompt and nonprompt $J/\psi$ mesons in jets in pp collisions at $\sqrt{s}=5.02~TeV$", CMS-PAS-HIN-18-012, [[CDS](http://cds.cern.ch/record/2318344)]
 6. Dai, Lin, et al. "Quarkonium Polarization and the Long Distance Matrix Elements Hierarchies using Jet Substructure" Phys.Rev. D96 (2017) no.3, 036020 [[INSPIRE](http://inspirehep.net/record/1613333)]
 7. Dai, Lin, et al. "Heavy quark jet fragmentation." JHEP 1809 (2018) 109 [[INSPIRE](http://inspirehep.net/record/1673397)]
 8. Dai, Lin. "Applications of QCD Effective Theories to the Physics of Jets and Quarkonium Production." PhD Diss. University of Pittsburgh, 2018. [[PDF](http://d-scholarship.pitt.edu/34888/1/dissertation-lin-dai-rev1.pdf)]
 
 ## Physical Object
 
-The jet fragmentation function $z(J/\psi)$, which is the $p_{T}$ fraction carried by J/$\psi$ in jets.
+The jet fragmentation function $z(J/\psi)$, which is the $p_{T}$ fraction carried by $J/\psi$ in jets.
 
 ## Datasets
 
