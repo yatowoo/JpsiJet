@@ -101,6 +101,9 @@ Publication:
 
 To understood the J/$\psi$ production mechanism, and explain the lack of observed polarization in high $p_{T}$ range. Previous results from LHCb and CMS are disagree with NRQCD predictions implemented by Pythia8.
 
+![Result_LHCb](Media/Result_LHCb.png)
+![Result_CMS](Media/Result_CMS.png)
+
 ### Reference
 
 1. Baumgart, Matthew, et al. "Probing quarkonium production mechanisms with jet substructure." Journal of High Energy Physics 2014.11 (2014): 3. [[INSPIRE](http://inspirehep.net/record/1299682)]
