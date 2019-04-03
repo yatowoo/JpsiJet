@@ -36,24 +36,23 @@ AliAnalysisTaskDielectronFilter* AddTaskJPSIFilter(Bool_t storeLS = kTRUE, Bool_
     AliAODHandler *aodHandler = (AliAODHandler*)mgr->GetOutputEventHandler();
     aodHandler->SetCreateNonStandardAOD();
     aodHandler->SetNeedsHeaderReplication();
+    aodHandler->SetNeedsTOFHeaderReplication();
+    aodHandler->SetNeedsVZEROReplication();
     aodHandler->SetNeedsTracksBranchReplication();
     aodHandler->SetNeedsVerticesBranchReplication();
-    aodHandler->SetNeedsV0sBranchReplication();
-    aodHandler->SetNeedsCascadesBranchReplication();
     aodHandler->SetNeedsTrackletsBranchReplication();
     aodHandler->SetNeedsPMDClustersBranchReplication();
-    aodHandler->SetNeedsJetsBranchReplication();
     aodHandler->SetNeedsFMDClustersBranchReplication();
     aodHandler->SetNeedsCaloClustersBranchReplication();
-    //aodHandler->SetNeedsMCParticlesBranchReplication();
-    aodHandler->SetNeedsDimuonsBranchReplication();
+    aodHandler->SetNeedsCaloTriggerBranchReplication();
+    aodHandler->SetNeedsHMPIDBranchReplication();
     if(hasMC) aodHandler->SetNeedsMCParticlesBranchReplication();
     jpsi->SetHasMC(hasMC);
   }
   
   //Create task and add it to the analysis manager
   AliAnalysisTaskDielectronFilter *task=new AliAnalysisTaskDielectronFilter("jpsi_DielectronFilter");
-  
+  task->SetTriggerMask(AliVEvent::kEMCEGA); 
   if (!hasMC) task->UsePhysicsSelection();
   task->SetDielectron(jpsi);
   if(storeLS) task->SetStoreLikeSignCandidates(storeLS);
