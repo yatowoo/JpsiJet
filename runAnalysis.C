@@ -10,11 +10,17 @@ void runAnalysis(){
   gInterpreter->ProcessLine(".include $ROOTSYS/include");
   gInterpreter->ProcessLine(".include $ALICE_ROOT/include");
   gInterpreter->ProcessLine(".include $ALICE_PHYSICS/include");
-
+  gROOT->SetMacroPath("./QA/");
+  
   // Analysis Manager
   AliAnalysisManager *mgr = new AliAnalysisManager("JpsiJetTask");
+    // Input handler
   AliAODInputHandler *aodH = new AliAODInputHandler();
   mgr->SetInputEventHandler(aodH);
+    // Output handler
+  AliAODHandler* aodOutputH = new AliAODHandler();
+  aodOutputH->SetOutputFileName("AliAOD.root");
+  mgr->SetOutputEventHandler(aodOutputH);
 
   // Task - Jet finder 
     // Charged Jet
@@ -32,6 +38,9 @@ void runAnalysis(){
   // Task - PID QA
   gInterpreter->ExecuteMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C");
   gInterpreter->ExecuteMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDqa.C");
+
+  // Task - J/psi QA & Filter
+  gInterpreter->ExecuteMacro("AddTaskJPSIFilter.C");
 
   // Input data file
   TChain *chain = new TChain("aodTree");
