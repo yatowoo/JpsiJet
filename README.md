@@ -29,6 +29,7 @@ Documents:
 [Public & Analysis Note](https://alice-notes.web.cern.ch) |
 [ALICE Offline](http://alice-offline.web.cern.ch/) |
 [ALICE Official](http://alice.cern.ch/) |
+
 * EMCal & Jet:
 [Intro.](https://indico.cern.ch/event/555035/contributions/2239719/attachments/1310149/1959997/EMCALframework.pdf "July 2016") |
 [Doc.](http://alidoc.cern.ch/AliPhysics/master/READMEemcfw.html "Based on Doxygen") |
@@ -188,6 +189,16 @@ Jets are clustered using the anti-$k_{T}$ algorithm from charged tracks, with R=
 ### Jet finder
 
 ## Correction
+
+### EMCal correction and embedding framework
+
+> Reference:
+> [alidoc](http://alidoc.cern.ch/AliPhysics/master/READMEemcCorrections.html) |
+> [PCG-tutorial](https://friederikebock.gitbooks.io/pcgtutorial/content/AliPhysicsAndGrid/corrframework.html) |
+> ALICE-analysis-tutorial ([Correction](https://indico.cern.ch/event/586577/contributions/2363131/attachments/1370126/2177061/EMCalCorrectionFramework_AnalysisTutorial_updated.pdf "Nov. 2016"), [Embedding](https://indico.cern.ch/event/586577/contributions/2363130/attachments/1370183/2296645/rehlers.embedding.analysis.tutorial.nov.2016.v3.pdf "Nov. 2016")) |
+
+* Bad channel map, energy calibration, time calibration, cell-level crosstalk.
+* Cluster exotics, enery non-linearity, track matching, hadronic correction and PHOS tender.
 
 ### $J/\psi$ acceptance and efficiency
 
