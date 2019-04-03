@@ -11,7 +11,8 @@ Production of prompt and nonprompt $J/\psi$ mesons in jets in pp collisions at $
 
 ## Results
 
-The
+$z(J/\psi)$ for prompt disagree with MC.
+Both of the fraction of $J/\psi$ inside jets larger than MC.
 
 ## Datasets
 
@@ -19,7 +20,10 @@ Low pile-up pp data in 2015.
 
 ## Event selection
 
-Dimuon channel for $\mu^{+}\mu^{-}$ pair in $0 < |y| < 1.6$ and $6.5 < p_{T} < 35.0~GeV/c$.
+Dimuon channel - $\mu^{+}\mu^{-}$ pair:
+
+* $0 < |y| < 1.6$ and $6.5 < p_{T} < 35.0~GeV/c$.
+* $1.6 < |y| < 2.4$ and $3 < p_{T} < 35.0~GeV/c$.
 
 Muon selection:
 
