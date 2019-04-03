@@ -161,15 +161,44 @@ To understood the $J/\psi$ production mechanism, and explain the lack of observe
 
 The jet fragmentation function $z(J/\psi)$, which is the $p_{T}$ fraction carried by $J/\psi$ in jets.
 
+In proton-proton collision at $\sqrt{s}=13~TeV$, $J/\psi$ mesons are reconstructed using their dielectron channel in **_central barrel_**. The dielectron events were selected offline with the L0 trigger system, requiring **_one_** leg in EMCal/DCal and exceed the L1 energy threshold. Other analysis cuts deployed for electron identification will be presented in following sections. Prompt and non-prompt $J/\psi$ mesons are seperated by pesudo-proper decay length.
+
+Jets are clustered using the anti-$k_{T}$ algorithm from charged tracks, with R=0.2, which provides by [fastjet](http://fastjet.fr "v3.2.1") package.
+
 ## Datasets
 
 ## QA
 
 ## Signal Extraction
 
+### PID for electron
+
+* Basic strategy: Using dE/dx (from TPC) and E/p (from EMCal) to indentify electrons, and only TPC signal to exclude kaons and protons.
+* Hybrid method: To add TOF or/and TRD as complements.
+
+### $J/\psi$ reconstruction
+
+1. Invariant mass spectrum. Fit with Crystal-Ball (signal) + pol2 (background) function.
+2. Combination of EMCal L1 trigger classes (EG1/EG2/DG1/DG2).
+3. Cross section vs $p_{T}$, after normalized with EMCal rejection factor.
+4. Pseudo-proper decay length $\ell_{J/\psi}=L_{xyz}m_{J/\psi}c/|p_{ee}|$, for the seperation of prompt and non-prompt $J/\psi$. $L_{xyz}$ is the distance between the primary and dielectron vertices. The prompt, non-prompt and background components are parameterized using data and MC events after unfolded with [$_{s}\mathcal{P}lot$](http://inspirehep.net/record/644725) technique.
+
+### Nano AODs
+
+### Jet finder
+
 ## Correction
 
-## Systematics
+### $J/\psi$ acceptance and efficiency
+
+* Detector geometrical coverage and acceptance.
+* Trigger, tracking reconstruction, electron identification and selection efficiency of $e^{+}e^{-}$ pairs.
+
+### Unfolding of jet $p_{T}$ resolution
+
+The procedure is carried out in two dimensions, z and jet $p_{T}$ with D'Agostini's iterative algorithm, which is avalaible in [RooUnfold](http://inspirehep.net/record/898599) package. In this step, we should produce a four-dimensional detector-response (MC & data) matrix for prompt and non-prompt $J/\psi$.
+
+## Systematic uncertainties
 
 ## Preliminary Result
 
