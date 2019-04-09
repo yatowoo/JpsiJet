@@ -10,7 +10,6 @@ void runAnalysis(){
   gInterpreter->ProcessLine(".include $ROOTSYS/include");
   gInterpreter->ProcessLine(".include $ALICE_ROOT/include");
   gInterpreter->ProcessLine(".include $ALICE_PHYSICS/include");
-  gROOT->SetMacroPath("./QA/");
   
   // Analysis Manager
   AliAnalysisManager *mgr = new AliAnalysisManager("JpsiJetTask");
@@ -40,7 +39,9 @@ void runAnalysis(){
   gInterpreter->ExecuteMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDqa.C");
 
   // Task - J/psi QA & Filter
+  gROOT->SetMacroPath("./QA/");
   gInterpreter->ExecuteMacro("AddTaskJPSIFilter.C");
+  gInterpreter->ExecuteMacro("AddTaskJpsiQA.C");
 
   // Input data file
   TChain *chain = new TChain("aodTree");
