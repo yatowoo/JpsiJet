@@ -10,11 +10,19 @@ void runAnalysis(){
   gInterpreter->ProcessLine(".include $ROOTSYS/include");
   gInterpreter->ProcessLine(".include $ALICE_ROOT/include");
   gInterpreter->ProcessLine(".include $ALICE_PHYSICS/include");
-
+  
   // Analysis Manager
   AliAnalysisManager *mgr = new AliAnalysisManager("JpsiJetTask");
+    // Input handler
   AliAODInputHandler *aodH = new AliAODInputHandler();
   mgr->SetInputEventHandler(aodH);
+    // Output handler
+  AliAODHandler* aodOutputH = new AliAODHandler();
+  aodOutputH->SetOutputFileName("AliAOD.root");
+  mgr->SetOutputEventHandler(aodOutputH);
+
+  // Task - Physics Selection
+  gInterpreter->ExecuteMacro("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C");
 
   // Task - Jet finder 
     // Charged Jet
@@ -28,10 +36,15 @@ void runAnalysis(){
   AliAnalysisTaskPWGJEQA* jetQA = reinterpret_cast<AliAnalysisTaskPWGJEQA*>(gInterpreter->ExecuteMacro("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskPWGJEQA.C(\"usedefault\",\"usedefault\",\"usedefault\",\"\")"));
   AliJetContainer* jetChCont02 = jetQA->AddJetContainer(AliJetContainer::kChargedJet, AliJetContainer::antikt_algorithm, AliJetContainer::pt_scheme, 0.2, AliEmcalJet::kTPCfid, "Jet");
   AliJetContainer* jetFuCont02 = jetQA->AddJetContainer(AliJetContainer::kFullJet, AliJetContainer::antikt_algorithm, AliJetContainer::pt_scheme, 0.2, AliEmcalJet::kEMCALfid, "Jet");
-
+  
   // Task - PID QA
   gInterpreter->ExecuteMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C");
   gInterpreter->ExecuteMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDqa.C");
+
+  // Task - J/psi QA & Filter
+  gROOT->SetMacroPath("./QA/");
+  //gInterpreter->ExecuteMacro("AddTaskJPSIFilter.C");
+  gInterpreter->ExecuteMacro("AddTaskJpsiQA.C");
 
   // Input data file
   TChain *chain = new TChain("aodTree");
