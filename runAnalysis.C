@@ -21,6 +21,9 @@ void runAnalysis(){
   aodOutputH->SetOutputFileName("AliAOD.root");
   mgr->SetOutputEventHandler(aodOutputH);
 
+  // Task - Physics Selection
+  gInterpreter->ExecuteMacro("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C");
+
   // Task - Jet finder 
     // Charged Jet
   AliEmcalJetTask *pChJet02Task = AliEmcalJetTask::AddTaskEmcalJet("usedefault", "", AliJetContainer::antikt_algorithm, 0.2, AliJetContainer::kChargedJet, 0.15, 0, 0.01, AliJetContainer::pt_scheme, "Jet", 1., kFALSE, kFALSE);
@@ -40,7 +43,7 @@ void runAnalysis(){
 
   // Task - J/psi QA & Filter
   gROOT->SetMacroPath("./QA/");
-  gInterpreter->ExecuteMacro("AddTaskJPSIFilter.C");
+  //gInterpreter->ExecuteMacro("AddTaskJPSIFilter.C");
   gInterpreter->ExecuteMacro("AddTaskJpsiQA.C");
 
   // Input data file
