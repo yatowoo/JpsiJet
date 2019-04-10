@@ -93,6 +93,16 @@ Tutorial:
 [PCG](https://friederikebock.gitbooks.io/pcgtutorial/) |
 [Debug@ALICE](https://dberzano.github.io/alice/debug/) |
 [Starterkit2018](https://indico.cern.ch/event/752367 "ALICE + LHCb + SHiP - bash, python, git, alisw, ROOT & debug") |
+* School & Course:
+[INFN-ESC](https://agenda.infn.it/event/16941/ "https://agenda.infn.it/conferenceOtherViews.py?view=standard&confId=16941") |
+[Huada-QCD](https://indico.ihep.ac.cn/event/7841/ "The 7th Huada School on QCD - Jet") |
+[Geant4-events](http://geant4.web.cern.ch/past-events "Geant4 workshop, course and meeting") |
+[GSI-Summer](https://theory.gsi.de/stud-pro/ "HGS-HIRe International Summer Student Program at GSI, for Europe or GSI/FAIR partner countries") |
+[France-China](https://cn.ambafrance.org/-Les-Ecoles-d-ete-France-Excellence- "The France Excellence Summer Schools Program - Physics of the two infinities") |
+[CERN-Summer](https://careers.cern/summer "Summer Student Programme & Openlab summer Student Programme") |
+[CERN-Fermi](https://indico.cern.ch/event/795313/overview "Joint CERN-Fermilab Hadron Collider Physics Summer School - at young postdocs and senior PhD students") |
+[Euro-Inst.](http://www.esi-archamps.eu/Thematic-Schools/Discover-ESIPAP "European School of Instrumentation in Particle & Astroparticle Physics") |
+[Trigger-DAQ](https://indico.cern.ch/event/739424/ "ISOTDAQ 2019 - International School of Trigger and Data AcQuisition") |
 
 Conference & Meeting:
 [ALICE Conference](http://alice-conferences.web.cern.ch/) |
