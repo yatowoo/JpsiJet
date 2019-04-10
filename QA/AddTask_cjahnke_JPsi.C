@@ -1,3 +1,5 @@
+#ifndef __MultiDie__
+#define __MultiDie__
 #include "AliDielectron.h"
 class AliDielectron;
 #include "AliESDtrackCuts.h"
@@ -14,6 +16,7 @@ class AliDielectronTrackCuts;
 class AliDielectronCF;
 #include "AliAnalysisTaskMultiDielectron.h"
 class AliAnalysisTaskMultiDielectron;
+#endif // __MultiDie__
 
 AliAnalysisTask *AddTask_cjahnke_JPsi(Int_t trigger_index = 0, Bool_t isMC = kFALSE)
 {
@@ -31,14 +34,19 @@ AliAnalysisTask *AddTask_cjahnke_JPsi(Int_t trigger_index = 0, Bool_t isMC = kFA
 	}
 
 	//Do we have an MC handler?
-	Bool_t hasMC = isMC && (mgr->GetMCtruthEventHandler() != NULL);
+	Bool_t hasMC = (isMC && (mgr->GetMCtruthEventHandler() != NULL));
 
-	Bool_t isAOD = mgr->GetInputEventHandler()->IsA() == AliAODInputHandler::Class();
+	Bool_t isAOD = (mgr->GetInputEventHandler()->IsA() == AliAODInputHandler::Class());
 
 	//create task and add it to the manager
-	AliAnalysisTaskMultiDielectron *task = new AliAnalysisTaskMultiDielectron(
-		Form("MultiDie_%d", trigger_index));
-	mgr->AddTask(task);
+	AliAnalysisTaskMultiDielectron *task = new AliAnalysisTaskMultiDielectron(Form("MultiDie_%d", trigger_index));
+  if(task){
+  	mgr->AddTask(task);
+  }
+  else{
+    cout << "[X] Fail to add task : MultiDie_" << trigger_index << endl;
+    exit(1); 
+  }
 
 	///======
 	// Load configuration file
