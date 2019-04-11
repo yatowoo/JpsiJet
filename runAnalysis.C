@@ -43,6 +43,7 @@ void runAnalysis(){
 
   // Task - J/psi QA & Filter
   gROOT->SetMacroPath(".:./QA/:./NanoAOD/");
+  gInterpreter->LoadMacro("NanoAOD/YatoJpsiFilterTask.cxx++g");
   gInterpreter->ExecuteMacro("AddTaskJPSIFilter.C");
   gInterpreter->ExecuteMacro("AddTaskJpsiQA.C");
 
