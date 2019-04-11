@@ -2,6 +2,7 @@
 # Edit at https://www.gitignore.io/?templates=c,git,vim,c++,linux,python
 
 ### User ###
+*.pcm
 *.root
 
 ### C ###
