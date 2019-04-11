@@ -40,7 +40,7 @@ class YatoJpsiFilterTask : public AliAnalysisTaskSE {
 public:
   YatoJpsiFilterTask();
   YatoJpsiFilterTask(const char* name);
-  virtual ~YatoJpsiFilterTask(){}
+  virtual ~YatoJpsiFilterTask();
 
   virtual void Init();
   virtual void UserExec(Option_t* option);
