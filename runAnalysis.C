@@ -42,8 +42,8 @@ void runAnalysis(){
   gInterpreter->ExecuteMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDqa.C");
 
   // Task - J/psi QA & Filter
-  gROOT->SetMacroPath("./QA/");
-  //gInterpreter->ExecuteMacro("AddTaskJPSIFilter.C");
+  gROOT->SetMacroPath(".:./QA/:./NanoAOD/");
+  gInterpreter->ExecuteMacro("AddTaskJPSIFilter.C");
   gInterpreter->ExecuteMacro("AddTaskJpsiQA.C");
 
   // Input data file
