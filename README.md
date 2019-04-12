@@ -30,6 +30,11 @@ Documents:
 [ALICE Offline](http://alice-offline.web.cern.ch/) |
 [ALICE Official](http://alice.cern.ch/) |
 
+* DPG:
+[Twiki](https://twiki.cern.ch/twiki/bin/view/ALICE/AliceDPG "Data Preparation Group") |
+[Indico](https://indico.cern.ch/category/7871/ "General, AOT, MC, QA, Calibration & Tracking") |
+[RunLists](https://twiki.cern.ch/twiki/bin/view/ALICE/AliDPGRunLists "Lists of good runs for Run2 periods") |
+
 * EMCal & Jet:
 [Intro.](https://indico.cern.ch/event/555035/contributions/2239719/attachments/1310149/1959997/EMCALframework.pdf "July 2016") |
 [Doc.](http://alidoc.cern.ch/AliPhysics/master/READMEemcfw.html "Based on Doxygen") |
@@ -93,6 +98,16 @@ Tutorial:
 [PCG](https://friederikebock.gitbooks.io/pcgtutorial/) |
 [Debug@ALICE](https://dberzano.github.io/alice/debug/) |
 [Starterkit2018](https://indico.cern.ch/event/752367 "ALICE + LHCb + SHiP - bash, python, git, alisw, ROOT & debug") |
+* School & Course:
+[INFN-ESC](https://agenda.infn.it/event/16941/ "https://agenda.infn.it/conferenceOtherViews.py?view=standard&confId=16941") |
+[Huada-QCD](https://indico.ihep.ac.cn/event/7841/ "The 7th Huada School on QCD - Jet") |
+[Geant4-events](http://geant4.web.cern.ch/past-events "Geant4 workshop, course and meeting") |
+[GSI-Summer](https://theory.gsi.de/stud-pro/ "HGS-HIRe International Summer Student Program at GSI, for Europe or GSI/FAIR partner countries") |
+[France-China](https://cn.ambafrance.org/-Les-Ecoles-d-ete-France-Excellence- "The France Excellence Summer Schools Program - Physics of the two infinities") |
+[CERN-Summer](https://careers.cern/summer "Summer Student Programme & Openlab summer Student Programme") |
+[CERN-Fermi](https://indico.cern.ch/event/795313/overview "Joint CERN-Fermilab Hadron Collider Physics Summer School - at young postdocs and senior PhD students") |
+[Euro-Inst.](http://www.esi-archamps.eu/Thematic-Schools/Discover-ESIPAP "European School of Instrumentation in Particle & Astroparticle Physics") |
+[Trigger-DAQ](https://indico.cern.ch/event/739424/ "ISOTDAQ 2019 - International School of Trigger and Data AcQuisition") |
 
 Conference & Meeting:
 [ALICE Conference](http://alice-conferences.web.cern.ch/) |
@@ -157,6 +172,7 @@ To understood the $J/\psi$ production mechanism, and explain the lack of observe
 6. Dai, Lin, et al. "Quarkonium Polarization and the Long Distance Matrix Elements Hierarchies using Jet Substructure" Phys.Rev. D96 (2017) no.3, 036020 [[INSPIRE](http://inspirehep.net/record/1613333)]
 7. Dai, Lin, et al. "Heavy quark jet fragmentation." JHEP 1809 (2018) 109 [[INSPIRE](http://inspirehep.net/record/1673397)]
 8. Dai, Lin. "Applications of QCD Effective Theories to the Physics of Jets and Quarkonium Production." PhD Diss. University of Pittsburgh, 2018. [[PDF](http://d-scholarship.pitt.edu/34888/1/dissertation-lin-dai-rev1.pdf)]
+9. Konrad Tywoniuk, "Theory Overview - J/psi production in jets" ALICE Jpsi2ee PAG workshop, April 2019 [[SLIDES](https://indico.cern.ch/event/801169/contributions/3368701/attachments/1824252/2984859/Jpsi2ee_Konrad.pdf)]
 
 ## Physical Object
 
@@ -166,7 +182,66 @@ In proton-proton collision at $\sqrt{s}=13~TeV$, $J/\psi$ mesons are reconstruct
 
 Jets are clustered using the anti-$k_{T}$ algorithm from charged tracks, with R=0.2, which provides by [fastjet](http://fastjet.fr "v3.2.1") package.
 
+### Related analysis @ ALICE
+
+1. [[AN-646](https://alice-notes.web.cern.ch/node/646 "Jpsi with EMCal")] "J/ψ measurements in pp collisions at s√ = 13 TeV using EMCal-triggered events with ALICE at LHC", Cristiane Jahnke (Munich EC, DE), 29 June, 2017
+2. [[AN-876](https://alice-notes.web.cern.ch/node/876 "Inclusive Jpsi")] "Inclusive Jpsi production cross-section in pp collisions at 13TeV", Ingrid Mckibben Lofnes (UBergen, NO), 19 March, 2019
+3. [[AN-850](https://alice-notes.web.cern.ch/node/850 "Charged jet")] "Multiplicity dependence of charged jet production in pp collisions at 13 TeV", Yongzhen Hou (CCNU, CN), 21 September, 2018
+4. [[AN-746](https://alice-notes.web.cern.ch/node/746 "Jpsi-Hadron")] "Inclusive J/psi - hadron correlations at mid-rapidty in MB and high multiplicity pp collisions at sqrt(s) = 13 TeV", Lucas Altenkamper (UBergen, NO), 26 April, 2018
+
 ## Datasets
+
+ALICE Run2 pp 13TeV (with EMC), 2016-2018
+
+* From DPG twiki :
+[DataTaking](https://twiki.cern.ch/twiki/bin/view/ALICE/AliDPGReconstructedDataTakingPeriodspp13TeV "Reconstructed Run-2 data taking periods with pp collisions, √s= 13 TeV") |
+[Production](https://twiki.cern.ch/twiki/bin/view/ALICE/AODsets "AOD version and run number range") |
+[RunLists-calo](https://twiki.cern.ch/twiki/bin/view/ALICE/AliDPGRunLists "Lists of good runs for Run2 periods") |
+* From MonALISA:
+[RCT](https://alimonitor.cern.ch/configuration/index.jsp?partition=LHC16l&pass=1&raw_run=&filling_scheme=&filling_config=&fillno=&energy=&intensity_per_bunch=&mu=&interacting_bunches=&noninteracting_bunches_beam_1=&noninteracting_bunches_beam_2=&interaction_trigger=&rate=&beam_empty_trigger=&empty_empty_trigger=&muon_trigger=&high_multiplicity_trigger=&emcal_trigger=&calibration_trigger=&quality=&muon_quality=&physics_selection_status=&comment=&field=&det_aco=&det_ad0=&det_emc=1&det_fmd=&det_hlt=&det_hmp=&det_mch=&det_mtr=&det_phs=&det_pmd=&det_spd=1&det_sdd=1&det_ssd=1&det_tof=&det_tpc=1&det_trd=&det_t00=&det_v00=1&det_zdc=&hlt_mode=&changedon= "Run condition table on alimonitor") (DET Status Flags - SPD + SDD + SSD + TPC + V0 + EMCal)|
+* From LEGO train :
+[DQ_pp_AOD](https://alimonitor.cern.ch/trains/train.jsp?train_id=29) |
+[Jet_EMC_pp](https://alimonitor.cern.ch/trains/train.jsp?train_id=47) |
+
+All datasets used is collected in **Datasets/DQ_pp_AOD.C**, which can be executed and accessed like *DATASETS["16l_pass1"]*. If not in LEGO train, the number of jobs will be **_limited under 1500, about 33 runs._** Original run lists from DPG is stored under **Datasets/DATA/**.
+
+Run Period|MB|Muon|EMCAL|N runs|INT7|EMCEGA|EG1|EG2|DG1|DG2|Nano|
+-|-|-|-|-|-|-|-|-|-|-|-|
+18p|64,723,976|38,946,331|8,206,052|66
+18o|27,495,955|14,997,718|3,506,262|26
+18n*|3,835,344|21,207||2
+18m|134,624,309|60,378,259|15,669,592|142
+18l|40,366,370|16,800,730|4,118,681|39
+18k|8,764,716|36,793,499|906,769|10
+18j|96,797|43,361|9,597|1
+18i*|55,845,385|553,722||7
+18h|4,251,665|1,834,724|434,065|2
+18g*|1,508,180|||1
+18f|44,009,568|18,923,929|4,653,741|46
+18e|52,440,125|21,328,980|6,170,463|38
+18d|28,079,632|11,969,409|3,317,779|28
+18c*|267,232,152|14,312,085||46
+18b*|167,363,075|2,107,216||22
+17r|25,356,149|16,306,258|4,554,303|27
+17o|101,301,254|61,352,135|17,350,119|128
+17m*|97,253,493|15,004,475|4,932,360|93
+17l|66,971,443|41,517,736|11,726,035|105
+17k|89,488,618|38,583,640|11,652,619|93
+17j*|41,314,510|163,093||10
+17i*|54,162,665|14,422,733|4,209,950|56
+17h*|90,126,837|16,633,082|5,610,223|63
+17g*|110,598,542|1,620,926||26
+17f*|12,112,114|106,809|3,583|5
+17c*|1,962,343|601||4
+16p|23,175,087|13,077,528|2,570,124|39
+16o*|9,397,646|3,195,337|740,813|17
+16l|30,687,176|17,153,082|18,057,636|51
+16k|105,446,176|47,974,758|17,241,173|123
+16j|53,638,211|14,260,378|3,581,261|33
+16i|36,566,073|12,227,075|2,272,121|14
+16h*|50,404,063|11,696,888||35
+16g*|19,103,014|2,450,982||8
+Total|1,619,516,002|438,267,301|124,113,415|1,127
 
 ## QA
 
