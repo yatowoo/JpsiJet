@@ -301,6 +301,31 @@ Example can be found in [$ALICE_ROOT/ANALYSIS/ANALYSISalice/AliAnalysisTaskPIDqa
   double pionSignal = fPIDResponse->NumberOfSigmasTPC(track, AliPID::kPion);
   double protonSignal = fPIDResponse->NumberOfSigmasTPC(track, AliPID::kProton);
 ```
+Bayesian approach: **AliPIDCombined**
+```C++
+// SETTING methods - UserCreateOutputObjects
+// specify the detectors you want (OR syntax)
+void SetDetectorMask(Int_t mask);
+// specify lists of species (default: AliPID::kSPECIES=5)
+void SetSelectedSpecies(Int_t selectedSpecies);
+// load default TPC priors
+void SetDefaultTPCPriors();
+// load your own priors as a function of pt
+void SetPriorDistribution(AliPID::EParticleType type,TH1F *prior);
+
+// EXEC method - UserExec
+// compute probabilities, return mask of detectors used and prob. array in bayesProbabilities
+UInt_t ComputeProbabilities(const AliVTrack *track, const AliPIDResponse *response, Double_t* bayesProbabilities,Double_t* priorsOwn=NULL) const;
+// Retrieve the probability to have a TPC-TOF mismatch
+static Float_t GetTOFmismatchProb();
+
+// OTHER
+// Retrieve the priors used for a given track and a given detector mask
+void GetPriors(const AliVTrack *track,Double_t* priors,Float_t centrality=-1,Bool_t isPPB=kFALSE) const;
+// Return TPC priors histo for a given species
+TH1* GetPriorDistribution(AliPID::EParticleType type)  const;
+
+```
 
 PID tender **_only for ESD_**: [$ALICE_PHYSICS/TENDER/TenderSupplies/AddTaskTender.C](https://github.com/alisw/AliPhysics/blob/master/TENDER/TenderSupplies/AddTaskTender.C)
 
