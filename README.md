@@ -95,7 +95,7 @@ Tutorial:
 * Others:
 [AliSW tutorial](http://alisw.github.io/) |
 [AliBuild](http://alisw.github.io/alibuild/) |
-[PCG](https://friederikebock.gitbooks.io/pcgtutorial/) |
+[PCG](https://friederikebock.gitbooks.io/pcgtutorial/ "Photon Conversion Group - Basic, LEGO, QA, Calibration, Cocktail, Neutral meson and direct photon.") |
 [Debug@ALICE](https://dberzano.github.io/alice/debug/) |
 [Starterkit2018](https://indico.cern.ch/event/752367 "ALICE + LHCb + SHiP - bash, python, git, alisw, ROOT & debug") |
 * School & Course:
@@ -244,6 +244,23 @@ Run Period|MB|Muon|EMCAL|N runs|INT7|EMCEGA|EG1|EG2|DG1|DG2|Nano|
 Total|1,619,516,002|438,267,301|124,113,415|1,127
 
 ## QA
+
+Level: Run, Event, Track, Detector, PID, Phys. Objects
+
+* From DPG and PWG/PAG tutorial.
+* From related analysis note.
+
+### Run-wise
+
+### Event
+
+### Track & TPC-ITS
+
+### EMCal
+
+### Dielectron
+
+### Jets
 
 ## Signal Extraction
 
