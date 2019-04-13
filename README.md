@@ -35,6 +35,14 @@ Documents:
 [Indico](https://indico.cern.ch/category/7871/ "General, AOT, MC, QA, Calibration & Tracking") |
 [RunLists](https://twiki.cern.ch/twiki/bin/view/ALICE/AliDPGRunLists "Lists of good runs for Run2 periods") |
 
+* PID:
+[Twiki](https://twiki.cern.ch/twiki/bin/view/ALICE/PWGPPParticleIdentification "PWGPP-PID") |
+[PIDinAnalysis](https://twiki.cern.ch/twiki/bin/viewauth/ALICE/PIDInAnalysis "Analysis with PID response") |
+[Performance](http://arxiv.org/abs/1402.4476 "Section 7-9") |
+Bayesian([Indico](https://indico.cern.ch/event/476033/ "A Bayesian approach to particle identification in ALICE"),
+[arXiv](http://arxiv.org/abs/1602.01392)) |
+[Tender](https://twiki.cern.ch/twiki/bin/viewauth/ALICE/TenderAndAnalysis "Correct imperfections on analysis level") |
+
 * EMCal & Jet:
 [Intro.](https://indico.cern.ch/event/555035/contributions/2239719/attachments/1310149/1959997/EMCALframework.pdf "July 2016") |
 [Doc.](http://alidoc.cern.ch/AliPhysics/master/READMEemcfw.html "Based on Doxygen") |
@@ -256,7 +264,56 @@ Level: Run, Event, Track, Detector, PID, Phys. Objects
 
 ### Track & TPC-ITS
 
-### EMCal
+### EMCal / Calo-Cluster
+
+### PID
+
+Particle identification is performed on track level with detector response for final particles, like electron, muon, pion, kaon and proton (deuton, triton, helium-3, helium-4 for special topics). Traditionally, we deploy rectangular cuts on detector response ($n\sigma_{e/\pi/K/p/\mu}$) to seperate particles. Bayesian approch, TMVA and other machine learning methods have also been studied and developed.
+
+Definition of detector response:
+
+$$\xi=n\sigma=\frac{x_{PID}(signal)-\hat{x}_{PID}(m/z)}{\sigma(Detector Resolution)}$$
+
+Detector response/signal:
+
+* ITS & TPC - dE/dx : Energy loss based on Bethe-Bloch curve.
+* EMCal - E/p : Ratio of total energy and momentum.
+* TOF - $1/\beta$ : Time of flight.
+* TRD - Q : Energy loss and production of transition radiation.
+* HMPID - $\beta$ : Cenrenkov angle.
+
+PID framework:
+
+* AliPIDResponse: Common way with $n\sigma$ cuts.
+* AliPIDCombined: To manage combination of detector response using a Bayesian approach.
+
+Basic usage: Load macro [**AliRoot/ANALYSIS/macros/AddTaskPIDResponse.C**](https://github.com/alisw/AliRoot/blob/master/ANALYSIS/macros/AddTaskPIDResponse.C).
+Example can be found in [$ALICE_ROOT/ANALYSIS/ANALYSISalice/AliAnalysisTaskPIDqa.cxx](https://github.com/alisw/AliRoot/blob/master/ANALYSIS/ANALYSISalice/AliAnalysisTaskPIDqa.cxx).
+
+```C++
+  //input hander
+  AliAnalysisManager *man=AliAnalysisManager::GetAnalysisManager();
+  AliInputEventHandler *inputHandler=dynamic_cast<AliInputEventHandler*>(man->GetInputEventHandler());
+  //pid response object
+  fPIDResponse=inputHandler->GetPIDResponse();
+  // detector response
+  double kaonSignal = fPIDResponse->NumberOfSigmasTPC(track, AliPID::kKaon);
+  double pionSignal = fPIDResponse->NumberOfSigmasTPC(track, AliPID::kPion);
+  double protonSignal = fPIDResponse->NumberOfSigmasTPC(track, AliPID::kProton);
+```
+
+PID tender **_only for ESD_**: [$ALICE_PHYSICS/TENDER/TenderSupplies/AddTaskTender.C](https://github.com/alisw/AliPhysics/blob/master/TENDER/TenderSupplies/AddTaskTender.C)
+
+```C++
+// all paramerters are boolean variables
+AddTaskTender(kV0, kTPC, kTOF, kTRD, kPID, kVTX, kT0, kEMCal, kPtFix);
+```
+
+QA Task for general purpose: [**AliRoot/ANALYSIS/macros/AddTaskPIDqa.C**](https://github.com/alisw/AliRoot/blob/master/ANALYSIS/macros/AddTaskPIDqa.C)
+
+Signal or $n\sigma$ vs $p/p_{T}/\eta/\phi$
+
+Hybrid signal: TPC-TOF, TPC-EMCal, TRD-?
 
 ### Dielectron
 
