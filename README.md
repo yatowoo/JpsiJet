@@ -260,7 +260,36 @@ Level: Run, Event, Track, Detector, PID, Phys. Objects
 
 ### Run-wise
 
+Run-wise QA is generated from histograms of event, track, cluster and other levels run-by-run.
+
+Parameter|Description|Method|
+-|-|-|
+$N_{events}$|Number and fraction of events in triggers and event cuts.||
+$\bar{N}_{Good~tracks}$|Average number of good tracks||
+$\bar{Z}_{Vtx}, \sigma(Z)_{Vtx}$|Mean and sigma value of vertex Z||
+$\bar{N}_{clusters}$|Average number of calo clusters|
+$<Multiplicity>$|Average value of multiplicity||
+$<Q_{n}>$|Average value of event plane Q value||
+
 ### Event
+
+Trigger and event cut overview histograms, like  $MB, Pileup, good, Z_{Vtx}<10cm, \eta<0.9$
+
+* Vertex: Z distribution and XY.
+* Multiplicity, centrality and event plane.
+* N candidates, $J\psi, jets, \eta, gamma, \pi_0$
+* Clusters: Numbers, Energy distribution, etc.
+
+Parameter|Description|Method|
+-|-|-|
+$Z_{Vtx}$|Z (X, Y, XY) postion of primary vertex|aod->GetPrimaryVertex()->GetZ()|
+$N_{tracklets}$|Number of SPD tracklets|aod->GetMultiplicity()->GetNumberOfTracklets()|
+$N_{SPDclusters}$||
+V0A, V0C|Amplitute of VZERO multiplicity||
+Centrality|Estimtor by multiplicity or impact factor||
+Q-vector|Event plane framework||
+$N_{cluster}$|Number of calo clusters||
+$E_{cluster}$|Energy distribution of calo clusters||
 
 ### Track & TPC-ITS
 
