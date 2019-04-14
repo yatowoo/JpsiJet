@@ -46,6 +46,7 @@ Bayesian([Indico](https://indico.cern.ch/event/476033/ "A Bayesian approach to p
 * EMCal & Jet:
 [Intro.](https://indico.cern.ch/event/555035/contributions/2239719/attachments/1310149/1959997/EMCALframework.pdf "July 2016") |
 [Doc.](http://alidoc.cern.ch/AliPhysics/master/READMEemcfw.html "Based on Doxygen") |
+[Trigger](https://twiki.cern.ch/twiki/bin/view/ALICE/EMCalTriggerOffline) |
 [Correction](https://indico.cern.ch/event/586577/contributions/2363131/attachments/1370126/2177061/EMCalCorrectionFramework_AnalysisTutorial_updated.pdf "Nov. 2016") |
 [Embedding](https://indico.cern.ch/event/586577/contributions/2363130/attachments/1370183/2296645/rehlers.embedding.analysis.tutorial.nov.2016.v3.pdf "Nov. 2016") |
 
@@ -267,9 +268,11 @@ Parameter|Description|Method|
 $N_{events}$|Number and fraction of events in triggers and event cuts.||
 $\bar{N}_{Good~tracks}$|Average number of good tracks||
 $\bar{Z}_{Vtx}, \sigma(Z)_{Vtx}$|Mean and sigma value of vertex Z||
-$\bar{N}_{clusters}$|Average number of calo clusters|
 $<Multiplicity>$|Average value of multiplicity||
 $<Q_{n}>$|Average value of event plane Q value||
+$\bar{N}_{clusters}$|Average number of calo clusters||
+$Cluster~\eta$-$\phi~map$|Identify bad cells/RCU||
+$BadCell_ID$|Dead or Hot/Warm cells||
 
 ### Event
 
@@ -293,7 +296,52 @@ $E_{cluster}$|Energy distribution of calo clusters||
 
 ### Track & TPC-ITS
 
-### EMCal / Calo-Cluster
+### Calo Cluster / EMCAL+DCAL+PHOS
+
+The cluster QA covers general cluster and cell properties. [Official QA Repository](http://aliqaemc.web.cern.ch/aliqaemc/data/), reference task - AliAnalysisTaskClusterQA / AddTask_ClusterQA from Gamma Conversion Group. Be careful with the binning of cluster energy histograms. All histogram can be updated after triggger selection and QA or analysis cuts (pt range, track charge, etc.).
+
+Parameter|Description|Method|
+-|-|-|
+$N_{fired}$|Number of cells fired||
+$E_{cell}$|Energy vs Cell ID||
+$Time_{cell}$|Timing vs Cell ID||
+$N_{cluster}$|Number and averge of clusters||
+$\eta$-$\phi$|Geomtry map of cluster||
+$D_{cluster}$|Distance of cluster to others withing the same time window - cluster overlap||
+$E_{cluster}$|Cluster energy||
+M02, M20, dispersion|Shower shape parameters||
+NLM|Number of local maxia, vs Ncells/E||
+$\Delta\eta$-$\Delta\phi$|Cluster track matching||
+$D_{trk-cls}$|Distance of track to cluster, vs $\Delta\eta$-$\Delta\phi$||
+$p_{T}$|Pt dependent matching variable, vs $\Delta\eta$-$\Delta\phi$||
+
+To identify bad, dead and warm/hot cells, calibrate energy and timing, caculate EFrac and compare with mean value of neighboring cells.
+
+> EFrac (Unit: %) = cells energy fraction of full cluster energy, summed over all events --> turned out to be a much better discriminator than just looking how often cells fired
+
+Definition|EFrac|Range of EFrac or mean|
+-|-|-|
+Dead cell|EFrac < mean/3|mean>80|
+-|EFrac < mean/5|40 < mean < 80|
+-|EFrac < mean/8|10 < mean < 40|
+-|EFrac < mean/10|mean < 10|
+Warm/Hot cell|EFrac > 80|EFrac > 2 *mean|
+-|EFrac > 20|EFrac > 3 *mean|
+-|EFrac > 8|EFrac > 4 *mean|
+-|EFrac > 5|EFrac > 5 *mean|
+
+ADC/Energy Trigger Threshold:
+[Twiki](https://twiki.cern.ch/twiki/bin/view/ALICE/EMCalTriggerOffline "EMCalTriggerOffline"),
+this value can also be estimated with peaks in cluster energy distribution due to the pre-scale. Considering the energy resolution, energy cuts using for analysis MUST be, about 1 GeV, higher than the configured thresholds.
+
+Period | L0 ADC | $E_{th}$/GeV | L1-EG1/DG1 |$E_{th}$/GeV| L1-EG2/DG2|$E_{th}$/GeV|
+-|-|-|-|-|-|-|
+16i-k|132|2.5|115|9|51|4|
+16l?|132|2.5|78|6|51|4|
+16o-p|132|2.5|115|9|51|4|
+*17g-r|-|-|-|~11|-|~5|
+
+*From peak value in cluster energy distribution.
 
 ### PID
 
