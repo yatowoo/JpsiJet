@@ -43,9 +43,15 @@ void runAnalysis(){
 
   // Task - J/psi QA & Filter
   gROOT->SetMacroPath(".:./QA/:./NanoAOD/");
-  gInterpreter->LoadMacro("NanoAOD/YatoJpsiFilterTask.cxx++g");
-  gInterpreter->ExecuteMacro("AddTaskJPSIFilter.C");
-  gInterpreter->ExecuteMacro("AddTaskJpsiQA.C");
+  //gInterpreter->LoadMacro("NanoAOD/YatoJpsiFilterTask.cxx++g");
+  //gInterpreter->ExecuteMacro("AddTaskJPSIFilter.C");
+  //gInterpreter->ExecuteMacro("AddTaskJpsiQA.C");
+  AliAnalysisTask* filterTask = reinterpret_cast<AliAnalysisTask*>(gInterpreter->ExecuteMacro("AddTask_iarsene_FilterTrees.C(1,1,\"LHC16l\")"));
+  if(!filterTask){
+    cout << "[X] RunAnalysis - Fail to add jpsi filter task." << endl;
+    exit(1);
+  }
+  
 
   // Input data file
   TChain *chain = new TChain("aodTree");
