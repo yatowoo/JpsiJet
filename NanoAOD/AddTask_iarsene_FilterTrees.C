@@ -102,7 +102,7 @@ void Setup(AliReducedAnalysisFilterTrees* processor, TString prod /*="LHC10h"*/)
   TF1* cutCorrTPCoutVZEROmult = new TF1("cutCorrTPCoutVZEROmult", "[0]+[1]*x+[2]*x*x", 0., 1.e+5);
   cutCorrTPCoutVZEROmult->SetParameters(-2200., 2.5, 1.2e-5);
   if(prod.Contains("LHC15o") && !processor->GetRunOverMC()) 
-      evCut1->AddCut(AliReducedVarManager::kVZEROTotalMult, cutCorrTPCoutVZEROmult, 99999., kFALSE, AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCout, 0., 99998.);
+      evCut1->AddCut(AliReducedVarManager::kVZEROTotalMult, cutCorrTPCoutVZEROmult, 99999., kFALSE,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCout), 0., 99998.);
   
   processor->AddEventCut(evCut1);
   
@@ -113,9 +113,9 @@ void Setup(AliReducedAnalysisFilterTrees* processor, TString prod /*="LHC10h"*/)
   standardCut->AddCut(AliReducedVarManager::kDcaXY, -1.0,1.0);
   standardCut->AddCut(AliReducedVarManager::kDcaZ, -3.0,3.0);
   standardCut->AddCut(AliReducedVarManager::kTPCncls, 70.,160.0);
-  standardCut->AddCut(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kElectron, -3.0, 3.0);
-  standardCut->AddCut(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kProton, 3.0, 30000.0);
-  standardCut->AddCut(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kPion, 3.0, 30000.0);
+  standardCut->AddCut(static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kElectron), -3.0, 3.0);
+  standardCut->AddCut(static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kProton), 3.0, 30000.0);
+  standardCut->AddCut(static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kPion), 3.0, 30000.0);
   standardCut->SetRejectKinks();
   standardCut->SetRequestITSrefit();
   standardCut->SetRequestTPCrefit();
@@ -138,9 +138,9 @@ void Setup(AliReducedAnalysisFilterTrees* processor, TString prod /*="LHC10h"*/)
   cut1->AddCut(AliReducedVarManager::kDcaXY, -1.0,1.0);
   cut1->AddCut(AliReducedVarManager::kDcaZ, -3.0,3.0);
   cut1->AddCut(AliReducedVarManager::kTPCncls, 70.,160.0);
-  cut1->AddCut(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kElectron, -3.0, 3.0);
-  //cut1->AddCut(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kProton, 1.0, 30000.0);
-  //cut1->AddCut(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kPion, 1.0, 30000.0);
+  cut1->AddCut(static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kElectron), -3.0, 3.0);
+  //cut1->AddCut(static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kProton), 1.0, 30000.0);
+  //cut1->AddCut(static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kPion), 1.0, 30000.0);
   //cut1->SetRejectKinks();
   cut1->SetRequestITSrefit();
   cut1->SetRequestTPCrefit();
@@ -205,9 +205,9 @@ void Setup(AliReducedAnalysisFilterTrees* processor, TString prod /*="LHC10h"*/)
   kplus->AddCut(AliReducedVarManager::kDcaXY, -1.0,1.0);
   kplus->AddCut(AliReducedVarManager::kDcaZ, -3.0,3.0);
   kplus->AddCut(AliReducedVarManager::kTPCncls, 70.,160.0);
-  kplus->AddCut(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kKaon, -3.0, 3.0);
-  //kplus->AddCut(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kProton, -3.0, 3.0, kTRUE);
-  //kplus->AddCut(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kPion, -3.0, 3.0, kTRUE);
+  kplus->AddCut(static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kKaon), -3.0, 3.0);
+  //kplus->AddCut(static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kProton), -3.0, 3.0, kTRUE);
+  //kplus->AddCut(static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kPion), -3.0, 3.0, kTRUE);
   kplus->SetRequestITSrefit();
   kplus->SetRequestTPCrefit();
   kplus->AddCut(AliReducedVarManager::kTPCchi2, 0., 4.0);
@@ -220,9 +220,9 @@ void Setup(AliReducedAnalysisFilterTrees* processor, TString prod /*="LHC10h"*/)
   piminus->AddCut(AliReducedVarManager::kDcaXY, -1.0,1.0);
   piminus->AddCut(AliReducedVarManager::kDcaZ, -3.0,3.0);
   piminus->AddCut(AliReducedVarManager::kTPCncls, 70.,160.0);
-  piminus->AddCut(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kPion, -3.0, 3.0);
-  //piminus->AddCut(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kProton, -3.0, 3.0, kTRUE);
-  //piminus->AddCut(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kKaon, -3.0, 3.0, kTRUE);
+  piminus->AddCut(static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kPion), -3.0, 3.0);
+  //piminus->AddCut(static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kProton), -3.0, 3.0, kTRUE);
+  //piminus->AddCut(static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kKaon), -3.0, 3.0, kTRUE);
   piminus->SetRequestITSrefit();
   piminus->SetRequestTPCrefit();
   piminus->AddCut(AliReducedVarManager::kTPCchi2, 0., 4.0);
@@ -518,19 +518,19 @@ void DefineHistograms(AliReducedAnalysisFilterTrees* task, TString prod /*="LHC1
       man->AddHistogram(classStr.Data(),"NTracksTPCout","",kFALSE,1800,0.,30000.,AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCout);
       man->AddHistogram(classStr.Data(),"NTracksTRDout","",kFALSE,300,0.,15000.,AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTRDout);
       man->AddHistogram(classStr.Data(),"NTracksTRDin","",kFALSE,300,0.,15000.,AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTRDin);
-      man->AddHistogram(classStr.Data(),"NTracksTPCout_VZEROmult","",kFALSE,900,0.,30000.,AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCout, 300, 0., 40000., AliReducedVarManager::kVZEROTotalMult);
-      man->AddHistogram(classStr.Data(),"NTracksTPCrefit_VZEROmult","",kFALSE,900,0.,30000.,AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCrefit, 300, 0., 40000., AliReducedVarManager::kVZEROTotalMult);
+      man->AddHistogram(classStr.Data(),"NTracksTPCout_VZEROmult","",kFALSE,900,0.,30000.,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCout), 300, 0., 40000., AliReducedVarManager::kVZEROTotalMult);
+      man->AddHistogram(classStr.Data(),"NTracksTPCrefit_VZEROmult","",kFALSE,900,0.,30000.,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCrefit), 300, 0., 40000., AliReducedVarManager::kVZEROTotalMult);
       man->AddHistogram(classStr.Data(),"NTracksTPCoutFromPileup_VZEROmult","",kFALSE,1200,-10000.,30000.,AliReducedVarManager::kNTracksTPCoutFromPileup, 400, 0., 40000., AliReducedVarManager::kVZEROTotalMult);
       man->AddHistogram(classStr.Data(),"NTracksTPCoutFromPileup_VZEROmult_nAnalyzedPairs_prof","",kTRUE,40,-10000.,30000.,AliReducedVarManager::kNTracksTPCoutFromPileup, 40, 0., 40000., AliReducedVarManager::kVZEROTotalMult, 10, 0., 100., AliReducedVarManager::kNpairsSelected);
       man->AddHistogram(classStr.Data(),"NTracksTPCoutFromPileup_TimeFromSOR_nAnalyzedPairs_prof","",kTRUE, 45, 0., 450., AliReducedVarManager::kTimeRelativeSOR, 40,-10000.,30000.,AliReducedVarManager::kNTracksTPCoutFromPileup, 10, 0., 100., AliReducedVarManager::kNpairsSelected);
-      man->AddHistogram(classStr.Data(),"NTracksTPCout_VZEROmult_nAnalyzedPairs_prof","",kTRUE,60,0.,30000.,AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCout, 40, 0., 40000., AliReducedVarManager::kVZEROTotalMult, 10, 0., 100., AliReducedVarManager::kNpairsSelected);
+      man->AddHistogram(classStr.Data(),"NTracksTPCout_VZEROmult_nAnalyzedPairs_prof","",kTRUE,60,0.,30000.,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCout), 40, 0., 40000., AliReducedVarManager::kVZEROTotalMult, 10, 0., 100., AliReducedVarManager::kNpairsSelected);
       man->AddHistogram(classStr.Data(),"NTracksTPCoutFromPileup","",kFALSE,2000,-10000.,30000.,AliReducedVarManager::kNTracksTPCoutFromPileup);
-      man->AddHistogram(classStr.Data(),"NTracksTRDout_VZEROmult","",kFALSE,300,0.,15000.,AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTRDout, 300, 0., 40000., AliReducedVarManager::kVZEROTotalMult);
-      man->AddHistogram(classStr.Data(),"NTracksTRDrefit_VZEROmult","",kFALSE,300,0.,15000.,AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTRDrefit, 300, 0., 40000., AliReducedVarManager::kVZEROTotalMult);
-      man->AddHistogram(classStr.Data(),"NTracksITSout_VZEROmult","",kFALSE,300,0.,30000.,AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kITSout, 300, 0., 40000., AliReducedVarManager::kVZEROTotalMult);
-      man->AddHistogram(classStr.Data(),"NTracksITSrefit_VZEROmult","",kFALSE,300,0.,30000.,AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kITSrefit, 300, 0., 40000., AliReducedVarManager::kVZEROTotalMult);
-      man->AddHistogram(classStr.Data(),"NTracksTOFout_VZEROmult","",kFALSE,300,0.,3000.,AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTOFout, 300, 0., 40000., AliReducedVarManager::kVZEROTotalMult);
-      man->AddHistogram(classStr.Data(),"NTracksTOFrefit_VZEROmult","",kFALSE,300,0.,3000.,AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTOFrefit, 300, 0., 40000., AliReducedVarManager::kVZEROTotalMult);
+      man->AddHistogram(classStr.Data(),"NTracksTRDout_VZEROmult","",kFALSE,300,0.,15000.,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTRDout), 300, 0., 40000., AliReducedVarManager::kVZEROTotalMult);
+      man->AddHistogram(classStr.Data(),"NTracksTRDrefit_VZEROmult","",kFALSE,300,0.,15000.,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTRDrefit), 300, 0., 40000., AliReducedVarManager::kVZEROTotalMult);
+      man->AddHistogram(classStr.Data(),"NTracksITSout_VZEROmult","",kFALSE,300,0.,30000.,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kITSout), 300, 0., 40000., AliReducedVarManager::kVZEROTotalMult);
+      man->AddHistogram(classStr.Data(),"NTracksITSrefit_VZEROmult","",kFALSE,300,0.,30000.,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kITSrefit), 300, 0., 40000., AliReducedVarManager::kVZEROTotalMult);
+      man->AddHistogram(classStr.Data(),"NTracksTOFout_VZEROmult","",kFALSE,300,0.,3000.,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTOFout), 300, 0., 40000., AliReducedVarManager::kVZEROTotalMult);
+      man->AddHistogram(classStr.Data(),"NTracksTOFrefit_VZEROmult","",kFALSE,300,0.,3000.,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTOFrefit), 300, 0., 40000., AliReducedVarManager::kVZEROTotalMult);
       man->AddHistogram(classStr.Data(),"NTracksTotal_VZEROmult","",kFALSE,300,0.,30000.,AliReducedVarManager::kNtracksTotal, 300, 0., 40000., AliReducedVarManager::kVZEROTotalMult);
       man->AddHistogram(classStr.Data(),"NTracksSelected_VZEROmult","",kFALSE,300,0.,300.,AliReducedVarManager::kNtracksSelected, 300, 0., 40000., AliReducedVarManager::kVZEROTotalMult);
       man->AddHistogram(classStr.Data(),"NTracksAnalyzed_VZEROmult","",kFALSE,100,0.,100.,AliReducedVarManager::kNtracksAnalyzed, 300, 0., 40000., AliReducedVarManager::kVZEROTotalMult);
@@ -541,7 +541,7 @@ void DefineHistograms(AliReducedAnalysisFilterTrees* task, TString prod /*="LHC1
       man->AddHistogram(classStr.Data(),"EventAverageTPCchi2","Average TPC chi2 per track",kFALSE,100,0.,5.,AliReducedVarManager::kEvAverageTPCchi2);
       man->AddHistogram(classStr.Data(),"EventAverageTPCchi2_run_prof","Average TPC chi2 per track vs run",kTRUE,runNBins, runHistRange[0], runHistRange[1], AliReducedVarManager::kRunNo, 100,0.,5.,AliReducedVarManager::kEvAverageTPCchi2);
       man->AddHistogram(classStr.Data(),"EventAverageTPCchi2_NTPCout","Average TPC chi2 per track vs n TPCout",kFALSE,100,0.,5.,AliReducedVarManager::kEvAverageTPCchi2, 50, 0.0, 15000., AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCout);
-      man->AddHistogram(classStr.Data(),"EventAverageTPCchi2_NTPCout_prof","Average TPC chi2 per track vs n TPCout",kTRUE,50, 0.0, 15000., AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCout, 100,0.,5.,AliReducedVarManager::kEvAverageTPCchi2);
+      man->AddHistogram(classStr.Data(),"EventAverageTPCchi2_NTPCout_prof","Average TPC chi2 per track vs n TPCout",kTRUE,50, 0.0, 15000.,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCout), 100,0.,5.,AliReducedVarManager::kEvAverageTPCchi2);
       
       Bool_t isCalibrated = kTRUE;
       man->AddHistogram(classStr.Data(), "VZEROA_NEmptyChannels_VtxCent_prof", "No. VZERO-A empty channels per event vs. centrality SPD and vertex Z", kTRUE,
@@ -594,7 +594,7 @@ void DefineHistograms(AliReducedAnalysisFilterTrees* task, TString prod /*="LHC1
                          AliReducedVarManager::kNTrackingStatus, -0.5, AliReducedVarManager::kNTrackingStatus-0.5, AliReducedVarManager::kTrackingFlag, 
                          0, 0.0, 0.0, AliReducedVarManager::kNothing, 0, 0.0, 0.0, AliReducedVarManager::kNothing, trkStatusNames.Data());
        /*man->AddHistogram(classStr.Data(),"TPCnsigElectronCorrected_Pin_TrackingFlags","Corrected TPC N_{#sigma} electron vs. inner param P vs tracking flags;;",kFALSE,
-                         50,0.0,5.0,AliReducedVarManager::kPin,50,-5.0,5.0,AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron, AliReducedVarManager::kNTrackingStatus, -0.5, AliReducedVarManager::kNTrackingStatus-0.5, AliReducedVarManager::kTrackingFlag, "", "", trkStatusNames.Data());
+                         50,0.0,5.0,AliReducedVarManager::kPin,50,-5.0,5.0,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron), AliReducedVarManager::kNTrackingStatus, -0.5, AliReducedVarManager::kNTrackingStatus-0.5, AliReducedVarManager::kTrackingFlag, "", "", trkStatusNames.Data());
        man->AddHistogram(classStr.Data(),"TPCncls_Eta_NTracksTPCoutFromPileup_TrackingFlags_prof","",kTRUE, 20,-1.0,1.0,AliReducedVarManager::kEta,
                          43,-1500., 20000., AliReducedVarManager::kNTracksTPCoutFromPileup, AliReducedVarManager::kNTrackingStatus, -0.5, AliReducedVarManager::kNTrackingStatus-0.5, AliReducedVarManager::kTrackingFlag, "", "", trkStatusNames.Data(),  AliReducedVarManager::kTPCncls);*/
        continue;
@@ -647,7 +647,7 @@ void DefineHistograms(AliReducedAnalysisFilterTrees* task, TString prod /*="LHC1
         man->AddHistogram(classStr.Data(),"Chi2TPCConstrainedVsGlobal","",kFALSE,200,0.,200.,AliReducedVarManager::kChi2TPCConstrainedVsGlobal);
         man->AddHistogram(classStr.Data(),"Chi2TPCConstrainedVsGlobal_TimeFromSOR_prof","<Chi2 TPC constrained vs global> vs time from SOR",kTRUE,90, 0., 450., AliReducedVarManager::kTimeRelativeSOR, 100,0.,100.,AliReducedVarManager::kChi2TPCConstrainedVsGlobal);
         man->AddHistogram(classStr.Data(),"Chi2TPCConstrainedVsGlobal_Eta_MultVZERO_NTracksTPCoutFromPileup_prof","",kTRUE, 10, 0., 40000., AliReducedVarManager::kVZEROTotalMult, 22,-2000., 20000., AliReducedVarManager::kNTracksTPCoutFromPileup, 20,-1.0,1.0, AliReducedVarManager::kEta, "","","", AliReducedVarManager::kChi2TPCConstrainedVsGlobal);
-        man->AddHistogram(classStr.Data(),"Chi2TPCConstrainedVsGlobal_Eta_MultVZERO_NTracksTPCout_prof","",kTRUE, 10, 0., 40000., AliReducedVarManager::kVZEROTotalMult, 20,0., 30000., AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCout, 20,-1.0,1.0, AliReducedVarManager::kEta, "","","", AliReducedVarManager::kChi2TPCConstrainedVsGlobal);
+        man->AddHistogram(classStr.Data(),"Chi2TPCConstrainedVsGlobal_Eta_MultVZERO_NTracksTPCout_prof","",kTRUE, 10, 0., 40000., AliReducedVarManager::kVZEROTotalMult, 20,0., 30000.,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCout), 20,-1.0,1.0, AliReducedVarManager::kEta, "","","", AliReducedVarManager::kChi2TPCConstrainedVsGlobal);
         
         man->AddHistogram(classStr.Data(),"TPCncls","",kFALSE,160,-0.5,159.5,AliReducedVarManager::kTPCncls);
         man->AddHistogram(classStr.Data(),"TPCncls_RunNo_prof","",kTRUE, runNBins, runHistRange[0], runHistRange[1], AliReducedVarManager::kRunNo, 10, 0., 10., AliReducedVarManager::kTPCncls);
@@ -664,15 +664,15 @@ void DefineHistograms(AliReducedAnalysisFilterTrees* task, TString prod /*="LHC1
         man->AddHistogram(classStr.Data(),"TPCnclsShared_TimeFromSOR","",kTRUE, 90, 0., 450., AliReducedVarManager::kTimeRelativeSOR, 160,-0.5,159.5,AliReducedVarManager::kTPCnclsShared);
         man->AddHistogram(classStr.Data(),"TPCnclsSharedRatio_TimeFromSOR","",kTRUE, 90, 0., 450., AliReducedVarManager::kTimeRelativeSOR, 100,0.,1.,AliReducedVarManager::kTPCnclsSharedRatio);
         man->AddHistogram(classStr.Data(),"TPCnclsShared_Eta_MultVZERO_NTracksTPCoutFromPileup_prof","",kTRUE, 10, 0., 40000., AliReducedVarManager::kVZEROTotalMult, 22,-2000., 20000., AliReducedVarManager::kNTracksTPCoutFromPileup, 20,-1.0,1.0, AliReducedVarManager::kEta, "","","", AliReducedVarManager::kTPCnclsShared);
-        man->AddHistogram(classStr.Data(),"TPCnclsShared_Eta_MultVZERO_NTracksTPCout_prof","",kTRUE, 10, 0., 40000., AliReducedVarManager::kVZEROTotalMult, 20,0., 30000., AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCout, 20,-1.0,1.0, AliReducedVarManager::kEta, "","","", AliReducedVarManager::kTPCnclsShared);
+        man->AddHistogram(classStr.Data(),"TPCnclsShared_Eta_MultVZERO_NTracksTPCout_prof","",kTRUE, 10, 0., 40000., AliReducedVarManager::kVZEROTotalMult, 20,0., 30000.,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCout), 20,-1.0,1.0, AliReducedVarManager::kEta, "","","", AliReducedVarManager::kTPCnclsShared);
         man->AddHistogram(classStr.Data(),"TPCncls_Eta_NTracksTPCoutFromPileup_prof","",kTRUE, 20,-1.0,1.0,AliReducedVarManager::kEta,
           43,-1500., 20000., AliReducedVarManager::kNTracksTPCoutFromPileup, 10, 0., 160., AliReducedVarManager::kTPCncls);
         man->AddHistogram(classStr.Data(),"TPCncls_Eta_MultVZERO_NTracksTPCoutFromPileup_prof","",kTRUE, 10, 0., 40000., AliReducedVarManager::kVZEROTotalMult, 22,-2000., 20000., AliReducedVarManager::kNTracksTPCoutFromPileup, 20,-1.0,1.0, AliReducedVarManager::kEta, "","","", AliReducedVarManager::kTPCncls);
-        man->AddHistogram(classStr.Data(),"TPCncls_Eta_MultVZERO_NTracksTPCout_prof","",kTRUE, 10, 0., 40000., AliReducedVarManager::kVZEROTotalMult, 20,0., 30000., AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCout, 20,-1.0,1.0, AliReducedVarManager::kEta, "","","", AliReducedVarManager::kTPCncls);
+        man->AddHistogram(classStr.Data(),"TPCncls_Eta_MultVZERO_NTracksTPCout_prof","",kTRUE, 10, 0., 40000., AliReducedVarManager::kVZEROTotalMult, 20,0., 30000.,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCout), 20,-1.0,1.0, AliReducedVarManager::kEta, "","","", AliReducedVarManager::kTPCncls);
         
         
         man->AddHistogram(classStr.Data(),"TPCchi2","",kFALSE, 200,0.0,10.0,AliReducedVarManager::kTPCchi2);
-        man->AddHistogram(classStr.Data(),"TPCchi2_nTPCout","",kFALSE, 100, 0.0, 15000., AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCout, 200,0.0,10.0,AliReducedVarManager::kTPCchi2);
+        man->AddHistogram(classStr.Data(),"TPCchi2_nTPCout","",kFALSE, 100, 0.0, 15000.,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCout), 200,0.0,10.0,AliReducedVarManager::kTPCchi2);
         man->AddHistogram(classStr.Data(),"TPCchi2_Pt","",kFALSE, 200,0.0,10.0,AliReducedVarManager::kTPCchi2, 100, 0., 10.0, AliReducedVarManager::kPt);
         man->AddHistogram(classStr.Data(),"TPCchi2_RunNo_prof","",kTRUE, runNBins, runHistRange[0], runHistRange[1], AliReducedVarManager::kRunNo, 10, 0., 10., AliReducedVarManager::kTPCchi2);
         man->AddHistogram(classStr.Data(),"TPCchi2_TPCncls", "TPC #chi^{2} vs TPC clusters", kFALSE, 100,0.0,10.0, AliReducedVarManager::kTPCchi2,160,0.,160., AliReducedVarManager::kTPCncls);
@@ -681,7 +681,7 @@ void DefineHistograms(AliReducedAnalysisFilterTrees* task, TString prod /*="LHC1
         man->AddHistogram(classStr.Data(),"TPCsegments_Eta_MultVZERO_NTracksTPCoutFromPileup_prof","",kTRUE, 10, 0., 40000., AliReducedVarManager::kVZEROTotalMult, 22,-2000., 20000., AliReducedVarManager::kNTracksTPCoutFromPileup, 20,-1.0,1.0, AliReducedVarManager::kEta, "","","", AliReducedVarManager::kTPCNclusBitsFired);
         man->AddHistogram(classStr.Data(),"TPCchi2_TimeFromSOR","TPC <#chi^{2}> vs time from SOR",kTRUE, 90, 0., 450., AliReducedVarManager::kTimeRelativeSOR, 200,0.0,10.0,AliReducedVarManager::kTPCchi2);
         man->AddHistogram(classStr.Data(),"TPCchi2_Eta_MultVZERO_NTracksTPCoutFromPileup_prof","",kTRUE, 10, 0., 40000., AliReducedVarManager::kVZEROTotalMult, 22,-2000., 20000., AliReducedVarManager::kNTracksTPCoutFromPileup, 20,-1.0,1.0, AliReducedVarManager::kEta, "","","", AliReducedVarManager::kTPCchi2);
-        man->AddHistogram(classStr.Data(),"TPCchi2_Eta_MultVZERO_NTracksTPCout_prof","",kTRUE, 10, 0., 40000., AliReducedVarManager::kVZEROTotalMult, 30,0., 30000., AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCout, 20,-1.0,1.0, AliReducedVarManager::kEta, "","","", AliReducedVarManager::kTPCchi2);
+        man->AddHistogram(classStr.Data(),"TPCchi2_Eta_MultVZERO_NTracksTPCout_prof","",kTRUE, 10, 0., 40000., AliReducedVarManager::kVZEROTotalMult, 30,0., 30000.,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCout), 20,-1.0,1.0, AliReducedVarManager::kEta, "","","", AliReducedVarManager::kTPCchi2);
         man->AddHistogram(classStr.Data(),"Eta_Phi_TPCncls_prof","TPC <nclusters> vs (#eta,#phi)",kTRUE,
                      36, -0.9, 0.9, AliReducedVarManager::kEta, 90, 0.0, 2.0*TMath::Pi(), AliReducedVarManager::kPhi, 160, -0.5, 159.5, AliReducedVarManager::kTPCncls);    
 	man->AddHistogram(classStr.Data(),"Eta_Phi_TPCcrossedRows_prof","TPC <n crossed rows> vs (#eta,#phi)",kTRUE,
@@ -705,37 +705,37 @@ void DefineHistograms(AliReducedAnalysisFilterTrees* task, TString prod /*="LHC1
         man->AddHistogram(classStr.Data(),"TPCnsigElectron_Pin","TPC N_{#sigma} electron vs. inner param P",kFALSE,
                      100,0.0,10.0,AliReducedVarManager::kPin,100,-5.0,5.0,AliReducedVarManager::kTPCnSig+AliReducedVarManager::kElectron);
         /*man->AddHistogram(classStr.Data(),"TPCnsigElectron_Pin_TimeFromSOR","TPC N_{#sigma} electron vs. inner param P vs time from SOR",kFALSE,
-                          100,0.0,10.0,AliReducedVarManager::kPin,100,-5.0,5.0,AliReducedVarManager::kTPCnSig+AliReducedVarManager::kElectron, 15, 0., 450., AliReducedVarManager::kTimeRelativeSOR);*/
+                          100,0.0,10.0,AliReducedVarManager::kPin,100,-5.0,5.0,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kElectron), 15, 0., 450., AliReducedVarManager::kTimeRelativeSOR);*/
         man->AddHistogram(classStr.Data(),"TPCnsigElectron_Eta","TPC N_{#sigma} electron vs. #eta",kFALSE,
                           36,-0.9,0.9,AliReducedVarManager::kEta,100,-5.0,5.0,AliReducedVarManager::kTPCnSig+AliReducedVarManager::kElectron);
         /*man->AddHistogram(classStr.Data(),"TPCnsigElectron_Eta_TimeFromSOR","TPC N_{#sigma} electron vs. #eta vs time from SOR",kFALSE,
-                          36,-0.9,0.9,AliReducedVarManager::kEta,100,-5.0,5.0,AliReducedVarManager::kTPCnSig+AliReducedVarManager::kElectron, 15, 0., 450., AliReducedVarManager::kTimeRelativeSOR);*/
+                          36,-0.9,0.9,AliReducedVarManager::kEta,100,-5.0,5.0,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSig+AliReducedVarManager::kElectron), 15, 0., 450., AliReducedVarManager::kTimeRelativeSOR);*/
         man->AddHistogram(classStr.Data(),"TPCnSigEle_Eta_MultVZERO_NTracksTPCoutFromPileup_prof","",kTRUE, 10, 0., 40000., AliReducedVarManager::kVZEROTotalMult, 22,-2000., 20000., AliReducedVarManager::kNTracksTPCoutFromPileup, 20,-1.0,1.0, AliReducedVarManager::kEta, "","","", AliReducedVarManager::kTPCnSig+AliReducedVarManager::kElectron);
-        man->AddHistogram(classStr.Data(),"TPCnSigEle_Eta_MultVZERO_NTracksTPCout_prof","",kTRUE, 10, 0., 40000., AliReducedVarManager::kVZEROTotalMult, 20,0., 30000., AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCout, 20,-1.0,1.0, AliReducedVarManager::kEta, "","","", AliReducedVarManager::kTPCnSig+AliReducedVarManager::kElectron);
+        man->AddHistogram(classStr.Data(),"TPCnSigEle_Eta_MultVZERO_NTracksTPCout_prof","",kTRUE, 10, 0., 40000., AliReducedVarManager::kVZEROTotalMult, 20,0., 30000.,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kNTracksPerTrackingStatus+AliReducedVarManager::kTPCout), 20,-1.0,1.0, AliReducedVarManager::kEta, "","","", AliReducedVarManager::kTPCnSig+AliReducedVarManager::kElectron);
         man->AddHistogram(classStr.Data(),"TPCnsigElectronCorrected_Pin","Corrected TPC N_{#sigma} electron vs. inner param P",kFALSE,
                           100,0.0,10.0,AliReducedVarManager::kPin,100,-5.0,5.0,AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron);
         
         /*
         man->AddHistogram(classStr.Data(),"TPCnsigElectronCorrected_Pin_DCAxy","DCAxy vs corrected TPC N_{#sigma} electron vs. inner param P",kFALSE,
-                          50,0.0,5.0,AliReducedVarManager::kPin,50,-5.0,5.0,AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron, 80, -2., 2., AliReducedVarManager::kDcaXY);
+                          50,0.0,5.0,AliReducedVarManager::kPin,50,-5.0,5.0,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron), 80, -2., 2., AliReducedVarManager::kDcaXY);
         man->AddHistogram(classStr.Data(),"TPCnsigElectronCorrected_Pin_DCAz","DCAz vs corrected TPC N_{#sigma} electron vs. inner param P",kFALSE,
-                          50,0.0,5.0,AliReducedVarManager::kPin,50,-5.0,5.0,AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron, 120, -3., 3., AliReducedVarManager::kDcaZ);
+                          50,0.0,5.0,AliReducedVarManager::kPin,50,-5.0,5.0,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron), 120, -3., 3., AliReducedVarManager::kDcaZ);
         man->AddHistogram(classStr.Data(),"TPCnsigElectronCorrected_Pin_ITSchi2","ITS chi2 vs corrected TPC N_{#sigma} electron vs. inner param P",kFALSE,
-                          50,0.0,5.0,AliReducedVarManager::kPin,50,-5.0,5.0,AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron, 50, 0., 50., AliReducedVarManager::kITSchi2);
+                          50,0.0,5.0,AliReducedVarManager::kPin,50,-5.0,5.0,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron), 50, 0., 50., AliReducedVarManager::kITSchi2);
         man->AddHistogram(classStr.Data(),"TPCnsigElectronCorrected_Pin_ITSchi2_prof","ITS <chi2> vs corrected TPC N_{#sigma} electron vs. inner param P",kTRUE,
-                          50,0.0,5.0,AliReducedVarManager::kPin,50,-5.0,5.0,AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron, 50, 0., 50., AliReducedVarManager::kITSchi2);
+                          50,0.0,5.0,AliReducedVarManager::kPin,50,-5.0,5.0,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron), 50, 0., 50., AliReducedVarManager::kITSchi2);
         man->AddHistogram(classStr.Data(),"TPCnsigElectronCorrected_Pin_TPCchi2","TPC chi2 vs corrected TPC N_{#sigma} electron vs. inner param P",kFALSE,
-                          50,0.0,5.0,AliReducedVarManager::kPin,50,-5.0,5.0,AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron, 50, 0., 5., AliReducedVarManager::kTPCchi2);
+                          50,0.0,5.0,AliReducedVarManager::kPin,50,-5.0,5.0,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron), 50, 0., 5., AliReducedVarManager::kTPCchi2);
         man->AddHistogram(classStr.Data(),"TPCnsigElectronCorrected_Pin_TPCchi2_prof","TPC <chi2> vs corrected TPC N_{#sigma} electron vs. inner param P",kTRUE,
-                          50,0.0,5.0,AliReducedVarManager::kPin,50,-5.0,5.0,AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron, 50, 0., 5., AliReducedVarManager::kTPCchi2);
+                          50,0.0,5.0,AliReducedVarManager::kPin,50,-5.0,5.0,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron), 50, 0., 5., AliReducedVarManager::kTPCchi2);
         man->AddHistogram(classStr.Data(),"TPCnsigElectronCorrected_Pin_Chi2TPCConstrainedVsGlobal","TPC constrained vs global chi2 vs corrected TPC N_{#sigma} electron vs. inner param P",kFALSE,
-                          50,0.0,5.0,AliReducedVarManager::kPin,50,-5.0,5.0,AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron, 50, 0., 200., AliReducedVarManager::kChi2TPCConstrainedVsGlobal);
+                          50,0.0,5.0,AliReducedVarManager::kPin,50,-5.0,5.0,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron), 50, 0., 200., AliReducedVarManager::kChi2TPCConstrainedVsGlobal);
         man->AddHistogram(classStr.Data(),"TPCnsigElectronCorrected_Pin_Chi2TPCConstrainedVsGlobal_prof","TPC constrained vs global <chi2> vs corrected TPC N_{#sigma} electron vs. inner param P",kTRUE,
-                          50,0.0,5.0,AliReducedVarManager::kPin,50,-5.0,5.0,AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron, 50, 0., 200., AliReducedVarManager::kChi2TPCConstrainedVsGlobal);
+                          50,0.0,5.0,AliReducedVarManager::kPin,50,-5.0,5.0,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron), 50, 0., 200., AliReducedVarManager::kChi2TPCConstrainedVsGlobal);
         man->AddHistogram(classStr.Data(),"TPCnsigElectronCorrected_Pin_NclsITS_prof","<#ITScls> vs corrected TPC N_{#sigma} electron vs. inner param P",kTRUE,
-                          50,0.0,5.0,AliReducedVarManager::kPin,50,-5.0,5.0,AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron, 7, 0., 7., AliReducedVarManager::kITSncls);
+                          50,0.0,5.0,AliReducedVarManager::kPin,50,-5.0,5.0,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron), 7, 0., 7., AliReducedVarManager::kITSncls);
         man->AddHistogram(classStr.Data(),"TPCnsigElectronCorrected_Pin_NclsTPC_prof","<#TPCcls> vs corrected TPC N_{#sigma} electron vs. inner param P",kTRUE,
-                          50,0.0,5.0,AliReducedVarManager::kPin,50,-5.0,5.0,AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron, 80, 0., 160., AliReducedVarManager::kTPCncls);
+                          50,0.0,5.0,AliReducedVarManager::kPin,50,-5.0,5.0,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron), 80, 0., 160., AliReducedVarManager::kTPCncls);
         */
         
         man->AddHistogram(classStr.Data(),"TPCnsigElectronCorrected_Eta","TPC N_{#sigma} electron vs. #eta",kFALSE,
@@ -744,9 +744,9 @@ void DefineHistograms(AliReducedAnalysisFilterTrees* task, TString prod /*="LHC1
                           90, 0., 450.,AliReducedVarManager::kTimeRelativeSOR,80,-4.0,4.0,AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron);
         
         /*man->AddHistogram(classStr.Data(),"TPCnsigElectronCorrected_Pin_MassUsedForTracking_prof","<mass used for tracking> vs corrected TPC N_{#sigma} electron vs. inner param P",kTRUE,
-                          100,0.0,10.0,AliReducedVarManager::kPin,100,-5.0,5.0,AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron, 40, 0., 4., AliReducedVarManager::kMassUsedForTracking);
+                          100,0.0,10.0,AliReducedVarManager::kPin,100,-5.0,5.0,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron), 40, 0., 4., AliReducedVarManager::kMassUsedForTracking);
         man->AddHistogram(classStr.Data(),"TPCnsigElectronCorrected_Eta_MassUsedForTracking_prof","<mass used for tracking> vs corrected TPC N_{#sigma} electron vs. eta",kTRUE,
-                          36,-0.9,0.9,AliReducedVarManager::kEta,100,-5.0,5.0,AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron, 40, 0., 4., AliReducedVarManager::kMassUsedForTracking);*/
+                          36,-0.9,0.9,AliReducedVarManager::kEta,100,-5.0,5.0,static_cast<AliReducedVarManager::Variables>(AliReducedVarManager::kTPCnSigCorrected+AliReducedVarManager::kElectron), 40, 0., 4., AliReducedVarManager::kMassUsedForTracking);*/
 	man->AddHistogram(classStr.Data(),"TPCnsigElectron_Run","TPC N_{#sigma} electron vs. run",kTRUE,
                      runNBins, runHistRange[0], runHistRange[1], AliReducedVarManager::kRunNo,100,-5.0,5.0,AliReducedVarManager::kTPCnSig+AliReducedVarManager::kElectron);
       
