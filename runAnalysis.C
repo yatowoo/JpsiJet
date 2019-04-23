@@ -24,6 +24,9 @@ void runAnalysis(){
   // Task - Physics Selection
   gInterpreter->ExecuteMacro("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C");
 
+  // Task - Centrality / Multiplicity
+  gInterpreter->ExecuteMacro("$ALICE_PHYSICS/OADB/COMMON/MULTIPLICITY/macros/AddTaskMultSelection.C");
+
   // Task - Jet finder 
     // Charged Jet
   AliEmcalJetTask *pChJet02Task = AliEmcalJetTask::AddTaskEmcalJet("usedefault", "", AliJetContainer::antikt_algorithm, 0.2, AliJetContainer::kChargedJet, 0.15, 0, 0.01, AliJetContainer::pt_scheme, "Jet", 1., kFALSE, kFALSE);
@@ -46,6 +49,12 @@ void runAnalysis(){
   //gInterpreter->LoadMacro("NanoAOD/YatoJpsiFilterTask.cxx++g");
   //gInterpreter->ExecuteMacro("AddTaskJPSIFilter.C");
   //gInterpreter->ExecuteMacro("AddTaskJpsiQA.C");
+  // Task - J/psi finder with reducedTree
+  AliAnalysisTask* jpsiTask = reinterpret_cast<AliAnalysisTask*>(gInterpreter->ExecuteMacro("AddTask_iarsene_dst.C(3,1,\"LHC16l\")"));
+  if(!jpsiTask){
+    cout << "[X] RunAnalysis - Fail to add jpsi filter task." << endl;
+    exit(1);
+  }
   AliAnalysisTask* filterTask = reinterpret_cast<AliAnalysisTask*>(gInterpreter->ExecuteMacro("AddTask_iarsene_FilterTrees.C(1,1,\"LHC16l\")"));
   if(!filterTask){
     cout << "[X] RunAnalysis - Fail to add jpsi filter task." << endl;
