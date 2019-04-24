@@ -34,6 +34,7 @@ Documents:
 [Twiki](https://twiki.cern.ch/twiki/bin/view/ALICE/AliceDPG "Data Preparation Group") |
 [Indico](https://indico.cern.ch/category/7871/ "General, AOT, MC, QA, Calibration & Tracking") |
 [RunLists](https://twiki.cern.ch/twiki/bin/view/ALICE/AliDPGRunLists "Lists of good runs for Run2 periods") |
+[EventNorm](https://twiki.cern.ch/twiki/bin/viewauth/ALICE/EventNormalization "V0AND value for luminosity") |
 
 * PID:
 [Twiki](https://twiki.cern.ch/twiki/bin/view/ALICE/PWGPPParticleIdentification "PWGPP-PID") |
@@ -251,6 +252,18 @@ Run Period|MB|Muon|EMCAL|N runs|INT7|EMCEGA|EG1|EG2|DG1|DG2|Nano|
 16h*|50,404,063|11,696,888||35
 16g*|19,103,014|2,450,982||8
 Total|1,619,516,002|438,267,301|124,113,415|1,127
+
+### Luminosity and event normalization
+
+Luminosity is used to normalize the measured spectra for cross section estimation.
+
+$$\frac{d^{2}\sigma}{dp_{T}d\eta}=\frac{1}{\mathscr{L}_{int}}\frac{N_{phys.obj.}}{\Delta p_{T}\Delta \eta}$$
+
+The determinination of the integrated luminosity is based on the measurement of a reference cross section, $\sigma_{V0AND}$, obtained from a van-der-Meer scan. From [result](https://cds.cern.ch/record/2160174 "ALICE-PUBLIC-2016-002, Jun. 10th 2016") in 2015: $\sigma_{V0AND}=57.8~mb\pm5\%~(sys.)$, while $\mathscr{L}=N_{V0AND}^{corr.}/\sigma_{V0AND}$.
+
+The number of events $N_{V0AND}^{corr.}$ includes events with and without a reconstructed vertex within the vertex requirement $|z|<10~cm$. We assume the events without a reconstructed vertex follow the same vertex distribution as reconstructed events, so the event number can be estimated from the fraction $f_{z}$ (with Gaussian function).
+
+$$N_{corr.}=f_{z}\cdot N_{sel.}=\frac{N_{|VtxZ|<10cm}}{N_{Vtx}}\cdot N_{sel.}$$
 
 ## QA
 
