@@ -276,7 +276,7 @@ $<Q_{n}>$|Average value of event plane Q value||
 $\bar{N}_{clusters}$|Average number of calo clusters||
 $Cluster~\eta$-$\phi~map$|Identify bad cells/RCU||
 $BadCell_{ID}$|Dead or Hot/Warm cells||
-$<VAR_{tracks}>$|Average value or distribution of selected tracks after PID, basic and PID variables||
+$<VAR_{tracks}>$|Average value or distribution of selected tracks after selection, basic and PID variables||
 
 ### Event
 
@@ -290,7 +290,8 @@ Trigger and event cut overview histograms, like  $MB, Pileup, good, Z_{Vtx}<10cm
 Parameter|Description|Method|
 -|-|-|
 $Z_{Vtx}$|Z (X, Y, XY) postion of primary vertex|aod->GetPrimaryVertex()->GetZ()|
-$N_{tracklets}$|Number of SPD tracklets|aod->GetMultiplicity()->GetNumberOfTracklets()|
+$N_{contributors}^{Vtx}$|Number of primary vertex contributors||
+$N_{tracklets}$|Number of SPD tracklets, by layers|aod->GetMultiplicity()->GetNumberOfTracklets()|
 $Z_{Vtx}$-$N_{tracklets}$|Correction needed for multiplicity analysis||
 $N_{SPDclusters}$||
 $N_{tracks}$|Number of tracks with track cuts|aod->GetNumberOfTracks()|
@@ -459,6 +460,27 @@ Hybrid signal: TPC-TOF, TPC-EMCal, TRD-?
 ### Jet finder
 
 ## Correction
+
+### TPC post-calibration
+
+For periods which do not have dedicated TPC splines and show a greater mismatch between data and MC. The post calibration is performed using a clear electron sample from tagged electrons from photon conversions. QA plots shows $n\sigma_{e}^{TPC}$ as a function of p, $\eta$. The conversion electron selection is made using cuts similar with $J/\psi$ electrons but as a lot of conversions happen in the ITS material, the requirement for SPD refit is removed. [AN876:4.4]
+
+|Variable|Cut value|
+|-|-|
+|$\chi^2$|< 10|
+|$\cos{\theta_{pointing}}$|[0.0, 0.05]|
+|DCA|[0.0, 0.10] cm|
+|$r_{decay}$|[-3.0, 90.0] cm|
+|$\Psi$|[0.0, 0.2]|
+|$m_{ee}$|$<0.1~GeV/c^{2}$|
+|ITS refit|yes|
+|TPC refit|no|
+
+The calibration centers the electron band at 0, with a width of 1. The calibration maps (2D bin-by-bin) are used to re-calculate the TPC $n\sigma_{e}$:
+
+$$n_{\sigma}^{calib}(p_{in},\eta)=\frac{n_{\sigma}(p_{in},\eta)-n_{0}(p_{in},\eta)}{w(p_{in},\eta)}$$
+
+where $n_{0}$ and $w$ are the mean and witdth of the uncalibrated electron band.
 
 ### EMCal correction and embedding framework
 
