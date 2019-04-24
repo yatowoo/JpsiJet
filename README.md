@@ -411,7 +411,9 @@ Example can be found in [$ALICE_ROOT/ANALYSIS/ANALYSISalice/AliAnalysisTaskPIDqa
   double pionSignal = fPIDResponse->NumberOfSigmasTPC(track, AliPID::kPion);
   double protonSignal = fPIDResponse->NumberOfSigmasTPC(track, AliPID::kProton);
 ```
+
 Bayesian approach: **AliPIDCombined**
+
 ```C++
 // SETTING methods - UserCreateOutputObjects
 // specify the detectors you want (OR syntax)
@@ -452,7 +454,28 @@ Hybrid signal: TPC-TOF, TPC-EMCal, TRD-?
 
 ### Dielectron
 
+Parameter|Description|Method|
+-|-|-|
+$N_{candidates}$|Event level, number of dielectron after cuts||
+$N_{J/\psi}/<N_{J/psi}>$ vs $N_{trackles}/<N_{tracklets}>$|Event level||
+
 ### Jets
+
+In ALICE offline software, jets are reconstructed with external package - fastjet. The input parameters contain clustering algorithm (anti-kT), jet cone raidus (R=0.2 for pp), recombination scheme ($p_{T}$-scheme) and ghost area units (0.01) with selected tracks ($p_{T}>0.15~GeV/c$) for $|\eta_{jet}|<0.9-R$. The density of jet is defined as $\rho=median\{p_{T,i}/A_{i}\}$, and $p_{T}$ corrected after subtraction of UE (underlying-event) is: [AN-850:2.6]
+
+$$p_{T,jet}^{corr.}=p_{T,jet}-\rho\cdot Area_{jet}$$
+
+Parameter|Description|Method|
+-|-|-|
+$p_{T}$-$\eta$-$\phi$|Jet basic kinetic variables||
+Area|Jet area||
+$p_T$ vs A|Use cut of 0.6*R to reduce fake jet contamination||
+$\rho$|Jet UE density, Event level||
+$\rho$ or <$\rho$> vs $p_{T,jet}^{leading}$|Jet UE density vs $p_{T}$ of leading hadron, Event level||
+$\rho$ or <$\rho$> vs $N_{tracks}$|Jet UE density vs multiplicity, Event level||
+$\delta p_{T}$ vs prob. density|Density fluctuation, $\delta p_{T}=\sum_{RC}^{i}p_{T,i}^{track}-\rho\cdot A_{RC}$||
+
+RC is random cone method for the fluctuation of jet UE density.
 
 ## Signal Extraction
 
