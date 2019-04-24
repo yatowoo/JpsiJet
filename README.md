@@ -254,6 +254,7 @@ Total|1,619,516,002|438,267,301|124,113,415|1,127
 
 ## QA
 
+To check the status and performance of detectors and the agreement between data and MC.
 Level: Run, Event, Track, Detector, PID, Phys. Objects
 
 * From DPG and PWG/PAG tutorial.
@@ -261,33 +262,38 @@ Level: Run, Event, Track, Detector, PID, Phys. Objects
 
 ### Run-wise
 
-Run-wise QA is generated from histograms of event, track, cluster and other levels run-by-run.
+Run-wise QA is generated from histograms of event, track, cluster and other levels run-by-run. Average value of variables and event counts are frequently used indexes.
 
 Parameter|Description|Method|
 -|-|-|
 $N_{events}$|Number and fraction of events in triggers and event cuts.||
 $\bar{N}_{Good~tracks}$|Average number of good tracks||
-$\bar{Z}_{Vtx}, \sigma(Z)_{Vtx}$|Mean and sigma value of vertex Z||
-$<Multiplicity>$|Average value of multiplicity||
+$\bar{N}_{SPDtracklets}$|Average number of SPD tracklets||
+$\bar{Z}_{Vtx}, \sigma(Z)_{Vtx}$|Mean and sigma value of vertex Z or (X/Y/XY)||
+$\bar{N}_{contributors}^{Vtx}$|Average number of vertex contributors||
+$<Multiplicity>$|Average value of multiplicity, includes VZERO amp.||
 $<Q_{n}>$|Average value of event plane Q value||
 $\bar{N}_{clusters}$|Average number of calo clusters||
 $Cluster~\eta$-$\phi~map$|Identify bad cells/RCU||
-$BadCell_ID$|Dead or Hot/Warm cells||
+$BadCell_{ID}$|Dead or Hot/Warm cells||
+$<VAR_{tracks}>$|Average value or distribution of selected tracks after PID, basic and PID variables||
 
 ### Event
 
-Trigger and event cut overview histograms, like  $MB, Pileup, good, Z_{Vtx}<10cm, \eta<0.9$
+Trigger and event cut overview histograms, like  $MB, Pileup, good, Z_{Vtx}<10cm, \eta<0.9$, ratio of different trigger or cut definition.
 
 * Vertex: Z distribution and XY.
 * Multiplicity, centrality and event plane.
-* N candidates, $J\psi, jets, \eta, gamma, \pi_0$
+* N candidates, $J/\psi, jets, \eta, gamma, \pi_0$
 * Clusters: Numbers, Energy distribution, etc.
 
 Parameter|Description|Method|
 -|-|-|
 $Z_{Vtx}$|Z (X, Y, XY) postion of primary vertex|aod->GetPrimaryVertex()->GetZ()|
 $N_{tracklets}$|Number of SPD tracklets|aod->GetMultiplicity()->GetNumberOfTracklets()|
+$Z_{Vtx}$-$N_{tracklets}$|Correction needed for multiplicity analysis||
 $N_{SPDclusters}$||
+$N_{tracks}$|Number of tracks with track cuts|aod->GetNumberOfTracks()|
 V0A, V0C|Amplitute of VZERO multiplicity||
 Centrality|Estimtor by multiplicity or impact factor||
 Q-vector|Event plane framework||
@@ -295,6 +301,19 @@ $N_{cluster}$|Number of calo clusters||
 $E_{cluster}$|Energy distribution of calo clusters||
 
 ### Track & TPC-ITS
+
+Track selection and tracking parameters.
+
+Parameter|Description|Method|
+-|-|-|
+$p/p_{T}$-$\eta$-$\phi$|Basic kinetic variables||
+$DCA_{XY, Z}$|Distance of the closest approach||
+$N_{clusters}^{TPC}$|TPC cluster number, [0,160]||
+$N_{clusters}^{ITS}$|ITS cluster number, [0,6]||
+$\chi^{2}/N_{clusters}^{TPC}$|TPC cluster tracking/fitting||
+$\chi^{2}/N_{clusters}^{ITS}$|ITS cluster tracking/fitting||
+Kink|Invisible production||
+Refit|Fitting method, include ITS and TPC||
 
 ### Calo Cluster / EMCAL+DCAL+PHOS
 
