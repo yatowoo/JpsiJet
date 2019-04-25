@@ -275,7 +275,7 @@ Level: Run, Event, Track, Detector, PID, Phys. Objects
 
 ### Run-wise
 
-Run-wise QA is generated from histograms of event, track, cluster and other levels run-by-run. Average value of variables and event counts are frequently used indexes.
+Run-wise QA is generated from histograms of event, track, cluster and other levels run-by-run. Average value of variables and event counts are frequently used indexes. If possible, use `THnSparse` to store variables for the convenience of post plotting.
 
 Parameter|Description|Method|
 -|-|-|
@@ -454,10 +454,16 @@ Hybrid signal: TPC-TOF, TPC-EMCal, TRD-?
 
 ### Dielectron
 
+Standard setup for invariant mass spectrum: $[1.5, 5.0]~/~0.04~(GeV/c^{2})$, pre-defined $J/\psi$ range: $[2.92, 3.16]~(GeV/c^2)$
+
 Parameter|Description|Method|
 -|-|-|
+$m_{e^{+}e^{-}}$|Invariant mass of selected dielectron||
+$p_{T}$-$\eta$-$\phi$|Basic kinetic variables||
+$m_{e^{+}e^{-}}$ vs $p_{T}$|Dielectron momentum spectrum||
+$\ell_{J/\psi}$|Pseudoproper-decay-length (cm)||
 $N_{candidates}$|Event level, number of dielectron after cuts||
-$N_{J/\psi}/<N_{J/psi}>$ vs $N_{trackles}/<N_{tracklets}>$|Event level||
+$N_{J/\psi}/<N_{J/psi}>$ vs $N_{trackles}/<N_{tracklets}>$|Event level, ratio of candidates and multiplicity||
 
 ### Jets
 
