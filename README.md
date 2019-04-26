@@ -12,7 +12,7 @@ Local: R710.star.ustc.edu.cn `(Dual-E5520 + 16* Dual-E5504)`
 
 Development and post-processing are performed on local environment `(vAN-20190328_ROOT6)`. But for alien, all jobs would run on latest version after debug.
 
-For better display of this document, please install browser extension `MathJax Plugin for Github`  ([Chrome](https://chrome.google.com/webstore/detail/mathjax-plugin-for-github/ioemnmodlmafdkllaclgeombjnmnbima)) or open preview in `VS Code` with `Markdown+Math`.
+For better display of this document, please install browser extension `MathJax Plugin for Github`  ([Chrome](https://chrome.google.com/webstore/detail/mathjax-plugin-for-github/ioemnmodlmafdkllaclgeombjnmnbima)) or try this [external page](https://ustc.fun/doc/README.html) (temp and not latest). The best solution is to open preview in `VS Code` with [Markdown Preview Enhanced](https://shd101wyy.github.io/markdown-preview-enhanced/).
 
 Author: [Yìtāo WÚ](mailto:yitao.wu@cern.ch)
 
@@ -50,155 +50,39 @@ Author: [Yìtāo WÚ](mailto:yitao.wu@cern.ch)
 
 ## Resource
 
-Software:
-[AliSW@GitHub](https://github.com/alisw) |
-[GitLab](http://gitlab.cern.ch/) |
-[AliDoc](http://alidoc.cern.ch/) |
-Offline Database ([OADB](https://indico.cern.ch/event/128634/contributions/112886/attachments/86273/123628/11-03-09-OW-OADB.pdf "Offline Analysis Database - /eos/experiment/alice/analysis-data/OADB/"), [OCDB](http://alice-offline.web.cern.ch/Activities/ConditionDB.html "Offline Constant Database - alien:///alice/data/[year]/OCDB/[Detector]/*/Data/Run*.root")) |
-[ROOT](https://root.cern/) |
-[HEPforge](https://hepforge.org/) |
+Software: [AliSW@GitHub](https://github.com/alisw) | [GitLab](http://gitlab.cern.ch/) | [AliDoc](http://alidoc.cern.ch/) | Offline Database ([OADB](https://indico.cern.ch/event/128634/contributions/112886/attachments/86273/123628/11-03-09-OW-OADB.pdf "Offline Analysis Database - /eos/experiment/alice/analysis-data/OADB/"), [OCDB](http://alice-offline.web.cern.ch/Activities/ConditionDB.html "Offline Constant Database - alien:///alice/data/[year]/OCDB/[Detector]/*/Data/Run*.root")) | [ROOT](https://root.cern/) | [HEPforge](https://hepforge.org/) |
 
-Documents:
-[Twiki](https://twiki.cern.ch/twiki/bin/viewauth/ALICE) |
-[Public & Analysis Note](https://alice-notes.web.cern.ch) |
-[ALICE Offline](http://alice-offline.web.cern.ch/) |
-[ALICE Official](http://alice.cern.ch/) |
+Documents: [Twiki](https://twiki.cern.ch/twiki/bin/viewauth/ALICE) | [Public & Analysis Note](https://alice-notes.web.cern.ch) | [ALICE Offline](http://alice-offline.web.cern.ch/) | [ALICE Official](http://alice.cern.ch/) |
 
-* DPG:
-[Twiki](https://twiki.cern.ch/twiki/bin/view/ALICE/AliceDPG "Data Preparation Group") |
-[Indico](https://indico.cern.ch/category/7871/ "General, AOT, MC, QA, Calibration & Tracking") |
-[RunLists](https://twiki.cern.ch/twiki/bin/view/ALICE/AliDPGRunLists "Lists of good runs for Run2 periods") |
-[EventNorm](https://twiki.cern.ch/twiki/bin/viewauth/ALICE/EventNormalization "V0AND value for luminosity") |
-[Pileup]( https://twiki.cern.ch/twiki/bin/view/ALICE/AliDPGtoolsPileup "Pileup tools and methods") |
+* DPG: [Twiki](https://twiki.cern.ch/twiki/bin/view/ALICE/AliceDPG "Data Preparation Group") | [Indico](https://indico.cern.ch/category/7871/ "General, AOT, MC, QA, Calibration & Tracking") | [RunLists](https://twiki.cern.ch/twiki/bin/view/ALICE/AliDPGRunLists "Lists of good runs for Run2 periods") | [EventNorm](https://twiki.cern.ch/twiki/bin/viewauth/ALICE/EventNormalization "V0AND value for luminosity") | [Pileup]( https://twiki.cern.ch/twiki/bin/view/ALICE/AliDPGtoolsPileup "Pileup tools and methods") |
 
-* PID:
-[Twiki](https://twiki.cern.ch/twiki/bin/view/ALICE/PWGPPParticleIdentification "PWGPP-PID") |
-[PIDinAnalysis](https://twiki.cern.ch/twiki/bin/viewauth/ALICE/PIDInAnalysis "Analysis with PID response") |
-[Performance](http://arxiv.org/abs/1402.4476 "Section 7-9") |
-Bayesian([Indico](https://indico.cern.ch/event/476033/ "A Bayesian approach to particle identification in ALICE"),
-[arXiv](http://arxiv.org/abs/1602.01392)) |
-[Tender](https://twiki.cern.ch/twiki/bin/viewauth/ALICE/TenderAndAnalysis "Correct imperfections on analysis level") |
+* PID: [Twiki](https://twiki.cern.ch/twiki/bin/view/ALICE/PWGPPParticleIdentification "PWGPP-PID") | [PIDinAnalysis](https://twiki.cern.ch/twiki/bin/viewauth/ALICE/PIDInAnalysis "Analysis with PID response") | [Performance](http://arxiv.org/abs/1402.4476 "Section 7-9") | Bayesian([Indico](https://indico.cern.ch/event/476033/ "A Bayesian approach to particle identification in ALICE"), [arXiv](http://arxiv.org/abs/1602.01392)) | [Tender](https://twiki.cern.ch/twiki/bin/viewauth/ALICE/TenderAndAnalysis "Correct imperfections on analysis level") |
 
-* EMCal & Jet:
-[Intro.](https://indico.cern.ch/event/555035/contributions/2239719/attachments/1310149/1959997/EMCALframework.pdf "July 2016") |
-[Doc.](http://alidoc.cern.ch/AliPhysics/master/READMEemcfw.html "Based on Doxygen") |
-[Trigger](https://twiki.cern.ch/twiki/bin/view/ALICE/EMCalTriggerOffline) |
-[Correction](https://indico.cern.ch/event/586577/contributions/2363131/attachments/1370126/2177061/EMCalCorrectionFramework_AnalysisTutorial_updated.pdf "Nov. 2016") |
-[Embedding](https://indico.cern.ch/event/586577/contributions/2363130/attachments/1370183/2296645/rehlers.embedding.analysis.tutorial.nov.2016.v3.pdf "Nov. 2016") |
+* EMCal & Jet: [Intro.](https://indico.cern.ch/event/555035/contributions/2239719/attachments/1310149/1959997/EMCALframework.pdf "July 2016") | [Doc.](http://alidoc.cern.ch/AliPhysics/master/READMEemcfw.html "Based on Doxygen") | [Trigger](https://twiki.cern.ch/twiki/bin/view/ALICE/EMCalTriggerOffline) | [Correction](https://indico.cern.ch/event/586577/contributions/2363131/attachments/1370126/2177061/EMCalCorrectionFramework_AnalysisTutorial_updated.pdf "Nov. 2016") | [Embedding](https://indico.cern.ch/event/586577/contributions/2363130/attachments/1370183/2296645/rehlers.embedding.analysis.tutorial.nov.2016.v3.pdf "Nov. 2016") |
 
-Service:
-[AliEn](http://alien.web.cern.ch/) |
-[AliMonitor](http://alimonitor.cern.ch) |
-[Glance](https://glance.cern.ch/alice/membership/ "ALICE Member - Insititute, People & Service") |
-[JIRA](https://alice.its.cern.ch/ "Issue Tracking System") |
-[Vidyo](http://information-technology.web.cern.ch/services/fe/vidyo "Client login URL: https://vidyoportal.cern.ch") |
-[CERN Account](https://account.cern.ch/account/) |
-[CERN Service](https://resources.web.cern.ch/resources/Manage/ListServices.aspx "Resource Portal - list all available services") |
-[CA](https://ca.cern.ch/ca/ "CERN Certificate Authority - Grid, EduRoam, Code signing") |
-[CERN Mail](https://mmmservices.web.cern.ch/mmmservices/) |
-[e-groups](https://e-groups.cern.ch/ "CERN mail lists") |
-[CERNBox](https://cernbox.cern.ch "The cloud storage solution from CERN") |
-[SWAN](http://swan.cern.ch/ "Provide virtual environment by cloud storage service - CERNBox") |
+Service: [AliEn](http://alien.web.cern.ch/) | [AliMonitor](http://alimonitor.cern.ch) | [Glance](https://glance.cern.ch/alice/membership/ "ALICE Member - Insititute, People & Service") | [JIRA](https://alice.its.cern.ch/ "Issue Tracking System") | [Vidyo](http://information-technology.web.cern.ch/services/fe/vidyo "Client login URL: https://vidyoportal.cern.ch") | [CERN Account](https://account.cern.ch/account/) | [CERN Service](https://resources.web.cern.ch/resources/Manage/ListServices.aspx "Resource Portal - list all available services") | [CA](https://ca.cern.ch/ca/ "CERN Certificate Authority - Grid, EduRoam, Code signing") | [CERN Mail](https://mmmservices.web.cern.ch/mmmservices/) | [e-groups](https://e-groups.cern.ch/ "CERN mail lists") | [CERNBox](https://cernbox.cern.ch "The cloud storage solution from CERN") | [SWAN](http://swan.cern.ch/ "Provide virtual environment by cloud storage service - CERNBox") |
 
 Tutorial:
 
-* ALICE-analysis-tutorial:
-[Website](https://alice-analysis.web.cern.ch/content/tutorials) |
-[Indico](https://indico.cern.ch/category/5819/ "Some events under category of ALICE Week") |
-[Intro.](https://alice-doc.github.io/alice-analysis-tutorial/) |
-[DataFlow](https://indico.cern.ch/event/752367/contributions/3116617/attachments/1704565/2858687/DPG_AnalysisTutorial_20181129.pdf "Starterkit - Nov.  2018") |
-[LEGO train](https://indico.cern.ch/event/327364/contributions/1713450/attachments/635959/875472/juniorsDay-2.pdf "July 2014") |
-[NanoAOD](https://indico.cern.ch/event/652886/contributions/2658039/attachments/1500603/2336871/nanoAODs.pdf "July 2017") |
-[EventInfo](https://indico.cern.ch/event/327364/contributions/1713452/attachments/635962/875477/2014-07-04-kryshen-tutorial.pdf "July 2014") |
-[Q-vector](https://indico.cern.ch/event/586577/contributions/2363129/attachments/1370104/2077614/flowvectors.pdf "Nov. 2016") |
-[TrackInfo](https://indico.cern.ch/event/327364/contributions/1713452/attachments/635962/875475/TrackSelectionTutorial.pdf "July 2014") |
-[PID](https://indico.cern.ch/event/555035/contributions/2236078/attachments/1307393/1959973/ParticleID_in_ALICE_15072016.pdf "July 2016") |
-[Flow](https://indico.cern.ch/event/327364/contributions/1713456/attachments/635966/875483/flow_package_na.pdf "July 2014") |
-[EventMixing](https://indico.cern.ch/event/652886/contributions/2666025/attachments/1500563/2337020/eventmixing_aohlson.pdf "July 2017") |
-[Unfolding](https://indico.cern.ch/event/463952/contributions/1981524/attachments/1206439/1758559/unfolding.pdf "Dec. 2015") |
-[Errors](https://indico.cern.ch/event/652886/contributions/2666026/attachments/1500620/2336893/20170726_stat_syst_unc.pdf "July 2017") |
-[MC](jklein.web.cern.ch/jklein/mc/ "Dec. 2015"), [Generator](https://indico.cern.ch/event/327364/contributions/1713449/attachments/635957/875470/GeneratorsTutorials.pdf "July 2014") |
-[RIVET](https://indico.cern.ch/event/555035/contributions/2236077/attachments/1307618/1959552/intro_rivet.pdf "MC tool - July 2016") |
-[AnaControl](https://github.com/cbourjau/nittygriddy "ALICE+LHCb - Nov. 2017") |
-[PlotStyle](https://indico.cern.ch/event/327364/contributions/1713455/attachments/635965/875481/main.pdf "July 2014") |
-[Visual](https://indico.cern.ch/event/743750/contributions/3072931/attachments/1690231/2719440/MultiDimensionalVisualization_O2meeting22052018.pdf "July 2018") |
-[QAtools](https://indico.cern.ch/event/743750/contributions/3072931/attachments/1690231/2719650/QAtools_Tutorial.pdf "July 2018") |
-[Git](https://indico.cern.ch/event/616865/ "Git tips & GitHub usage - Mar. 2017") |
-[alice-docs](https://indico.cern.ch/event/713442/contributions/2931242/attachments/1619989/2581360/The_new_ALICE_documentation_pages.pdf "With GitHub page - Mar. 2018") |
-[Doxygen](https://indico.cern.ch/event/586577/contributions/2363128/attachments/1370076/2077505/documentYourCode.pdf "Documents for AliRoot & AliPhysics - Nov. 2016") |
-[ML](https://indico.cern.ch/event/713442/contributions/2931240/attachments/1622111/2581475/2018-03-23_ML_tutorial.pdf "With SWAN - Mar. 2018") |
+* ALICE-analysis-tutorial: [Website](https://alice-analysis.web.cern.ch/content/tutorials) | [Indico](https://indico.cern.ch/category/5819/ "Some events under category of ALICE Week") | [Intro.](https://alice-doc.github.io/alice-analysis-tutorial/) | [DataFlow](https://indico.cern.ch/event/752367/contributions/3116617/attachments/1704565/2858687/DPG_AnalysisTutorial_20181129.pdf "Starterkit - Nov.  2018") | [LEGO train](https://indico.cern.ch/event/327364/contributions/1713450/attachments/635959/875472/juniorsDay-2.pdf "July 2014") | [NanoAOD](https://indico.cern.ch/event/652886/contributions/2658039/attachments/1500603/2336871/nanoAODs.pdf "July 2017") | [EventInfo](https://indico.cern.ch/event/327364/contributions/1713452/attachments/635962/875477/2014-07-04-kryshen-tutorial.pdf "July 2014") | [Q-vector](https://indico.cern.ch/event/586577/contributions/2363129/attachments/1370104/2077614/flowvectors.pdf "Nov. 2016") | [TrackInfo](https://indico.cern.ch/event/327364/contributions/1713452/attachments/635962/875475/TrackSelectionTutorial.pdf "July 2014") | [PID](https://indico.cern.ch/event/555035/contributions/2236078/attachments/1307393/1959973/ParticleID_in_ALICE_15072016.pdf "July 2016") | [Flow](https://indico.cern.ch/event/327364/contributions/1713456/attachments/635966/875483/flow_package_na.pdf "July 2014") | [EventMixing](https://indico.cern.ch/event/652886/contributions/2666025/attachments/1500563/2337020/eventmixing_aohlson.pdf "July 2017") | [Unfolding](https://indico.cern.ch/event/463952/contributions/1981524/attachments/1206439/1758559/unfolding.pdf "Dec. 2015") | [Errors](https://indico.cern.ch/event/652886/contributions/2666026/attachments/1500620/2336893/20170726_stat_syst_unc.pdf "July 2017") | [MC](jklein.web.cern.ch/jklein/mc/ "Dec. 2015"), [Generator](https://indico.cern.ch/event/327364/contributions/1713449/attachments/635957/875470/GeneratorsTutorials.pdf "July 2014") | [RIVET](https://indico.cern.ch/event/555035/contributions/2236077/attachments/1307618/1959552/intro_rivet.pdf "MC tool - July 2016") | [AnaControl](https://github.com/cbourjau/nittygriddy "ALICE+LHCb - Nov. 2017") | [PlotStyle](https://indico.cern.ch/event/327364/contributions/1713455/attachments/635965/875481/main.pdf "July 2014") | [Visual](https://indico.cern.ch/event/743750/contributions/3072931/attachments/1690231/2719440/MultiDimensionalVisualization_O2meeting22052018.pdf "July 2018") | [QAtools](https://indico.cern.ch/event/743750/contributions/3072931/attachments/1690231/2719650/QAtools_Tutorial.pdf "July 2018") | [Git](https://indico.cern.ch/event/616865/ "Git tips & GitHub usage - Mar. 2017") | [alice-docs](https://indico.cern.ch/event/713442/contributions/2931242/attachments/1619989/2581360/The_new_ALICE_documentation_pages.pdf "With GitHub page - Mar. 2018") | [Doxygen](https://indico.cern.ch/event/586577/contributions/2363128/attachments/1370076/2077505/documentYourCode.pdf "Documents for AliRoot & AliPhysics - Nov. 2016") | [ML](https://indico.cern.ch/event/713442/contributions/2931240/attachments/1622111/2581475/2018-03-23_ML_tutorial.pdf "With SWAN - Mar. 2018") |
 * ROOT & C++:
-[Primer](https://root.cern/guides/primer) |
-[Courses](https://root.cern/courses) |
-[Example](https://root.cern.ch/doc/master/group__Tutorials.html "Tutorials inside ROOT") |
-[PEP-ROOT6](https://pep-root6.github.io/docs/ "C++11 features, Parallellism, Vectorization, Declarative analysis, Python & debug") |
-[ROOT5to6](https://alice-doc.github.io/alice-analysis-tutorial/analysis/ROOT5-to-6.html "Inside gitbook of Intro. - Mar. 2018") |
-[Python](https://indico.cern.ch/event/652886/ "July 2017") |
-[ModernC++](https://indico.cern.ch/event/752367/contributions/3116613/attachments/1704567/2861784/ModernCPP.pdf "Starterkit - Nov. 2018") |
-[Pointers](https://indico.cern.ch/event/666222/contributions/2722821/attachments/1552323/2439274/Pointers_SAiola.pdf "ALICE+LHCb - Nov. 2017") |
-[Profiling](https://indico.cern.ch/event/463952/contributions/1981522/attachments/1206438/1758208/alice15-tools-lecture.pdf "Dec. 2016") |
+[Primer](https://root.cern/guides/primer) | [Courses](https://root.cern/courses) | [Example](https://root.cern.ch/doc/master/group__Tutorials.html "Tutorials inside ROOT") | [PEP-ROOT6](https://pep-root6.github.io/docs/ "C++11 features, Parallellism, Vectorization, Declarative analysis, Python & debug") | [ROOT5to6](https://alice-doc.github.io/alice-analysis-tutorial/analysis/ROOT5-to-6.html "Inside gitbook of Intro. - Mar. 2018") | [Python](https://indico.cern.ch/event/652886/ "July 2017") | [ModernC++](https://indico.cern.ch/event/752367/contributions/3116613/attachments/1704567/2861784/ModernCPP.pdf "Starterkit - Nov. 2018") | [Pointers](https://indico.cern.ch/event/666222/contributions/2722821/attachments/1552323/2439274/Pointers_SAiola.pdf "ALICE+LHCb - Nov. 2017") | [Profiling](https://indico.cern.ch/event/463952/contributions/1981522/attachments/1206438/1758208/alice15-tools-lecture.pdf "Dec. 2016") |
 * Others:
-[AliSW tutorial](http://alisw.github.io/) |
-[AliBuild](http://alisw.github.io/alibuild/) |
-[PCG](https://friederikebock.gitbooks.io/pcgtutorial/ "Photon Conversion Group - Basic, LEGO, QA, Calibration, Cocktail, Neutral meson and direct photon.") |
-[Debug@ALICE](https://dberzano.github.io/alice/debug/) |
-[Starterkit2018](https://indico.cern.ch/event/752367 "ALICE + LHCb + SHiP - bash, python, git, alisw, ROOT & debug") |
+[AliSW tutorial](http://alisw.github.io/) | [AliBuild](http://alisw.github.io/alibuild/) | [PCG](https://friederikebock.gitbooks.io/pcgtutorial/ "Photon Conversion Group - Basic, LEGO, QA, Calibration, Cocktail, Neutral meson and direct photon.") | [Debug@ALICE](https://dberzano.github.io/alice/debug/) | [Starterkit2018](https://indico.cern.ch/event/752367 "ALICE + LHCb + SHiP - bash, python, git, alisw, ROOT & debug") |
 * School & Course:
-[INFN-ESC](https://agenda.infn.it/event/16941/ "https://agenda.infn.it/conferenceOtherViews.py?view=standard&confId=16941") |
-[Huada-QCD](https://indico.ihep.ac.cn/event/7841/ "The 7th Huada School on QCD - Jet") |
-[Geant4-events](http://geant4.web.cern.ch/past-events "Geant4 workshop, course and meeting") |
-[GSI-Summer](https://theory.gsi.de/stud-pro/ "HGS-HIRe International Summer Student Program at GSI, for Europe or GSI/FAIR partner countries") |
-[France-China](https://cn.ambafrance.org/-Les-Ecoles-d-ete-France-Excellence- "The France Excellence Summer Schools Program - Physics of the two infinities") |
-[CERN-Summer](https://careers.cern/summer "Summer Student Programme & Openlab summer Student Programme") |
-[CERN-Fermi](https://indico.cern.ch/event/795313/overview "Joint CERN-Fermilab Hadron Collider Physics Summer School - at young postdocs and senior PhD students") |
-[Euro-Inst.](http://www.esi-archamps.eu/Thematic-Schools/Discover-ESIPAP "European School of Instrumentation in Particle & Astroparticle Physics") |
-[Trigger-DAQ](https://indico.cern.ch/event/739424/ "ISOTDAQ 2019 - International School of Trigger and Data AcQuisition") |
+[INFN-ESC](https://agenda.infn.it/event/16941/ "https://agenda.infn.it/conferenceOtherViews.py?view=standard&confId=16941") | [Huada-QCD](https://indico.ihep.ac.cn/event/7841/ "The 7th Huada School on QCD - Jet") | [Geant4-events](http://geant4.web.cern.ch/past-events "Geant4 workshop, course and meeting") | [GSI-Summer](https://theory.gsi.de/stud-pro/ "HGS-HIRe International Summer Student Program at GSI, for Europe or GSI/FAIR partner countries") | [France-China](https://cn.ambafrance.org/-Les-Ecoles-d-ete-France-Excellence- "The France Excellence Summer Schools Program - Physics of the two infinities") | [CERN-Summer](https://careers.cern/summer "Summer Student Programme & Openlab summer Student Programme") | [CERN-Fermi](https://indico.cern.ch/event/795313/overview "Joint CERN-Fermilab Hadron Collider Physics Summer School - at young postdocs and senior PhD students") | [Euro-Inst.](http://www.esi-archamps.eu/Thematic-Schools/Discover-ESIPAP "European School of Instrumentation in Particle & Astroparticle Physics") | [Trigger-DAQ](https://indico.cern.ch/event/739424/ "ISOTDAQ 2019 - International School of Trigger and Data AcQuisition") |
 
-Conference & Meeting:
-[ALICE Conference](http://alice-conferences.web.cern.ch/) |
+Conference & Meeting: [ALICE Conference](http://alice-conferences.web.cern.ch/) |
 
-* Indico@CERN:
-[ALICE Week](https://indico.cern.ch/category/6871/) |
-[PWG](https://indico.cern.ch/category/302/) |
-[EMCal](https://indico.cern.ch/category/874/) |
-[ITS](https://indico.cern.ch/category/6759/) |
-[TPC](https://indico.cern.ch/category/14/) |
-* Other Indico:
-[Indico@IHEP](https://indico.ihep.ac.cn/category/208/) |
-[Indico@USTC-PNP](http://pnp.ustc.edu.cn/indico) |
-[Indico@IN2P3](https://indico.in2p3.fr/category/100/) |
-* Quark Matter:
-[QM2019](http://qm2019.ccnu.edu.cn/) |
-[QM2018](http://qm2018.infn.it/) |
-[QM2017](http://qm2017.phy.uic.edu/) |
-[QM2015](http://qm2015.riken.jp/) |
-[QM2014](https://indico.cern.ch/event/219436/) |
-[QM2012](https://indico.cern.ch/event/181055/) |
-* Hard Probe:
-[HP2018](https://indico.cern.ch/event/634426/) |
-[HP2016](http://hp2016.ccnu.edu.cn/) |
-[HP2015](http://www.physics.mcgill.ca/hp2015/) |
-* Strangeness Quark Matter:
-[SQM2019](https://sqm2019.ba.infn.it/) |
-[SQM2017](https://indico.cern.ch/event/576735/) |
-* LHC Physics:
-[LHCP2019](http://lhcp2019.buap.mx/) |
-[LHCP2018](http://lhcp2018.bo.infn.it/) |
-[LHCP2017](http://lhcp2017.physics.sjtu.edu.cn/) |
-[LHCP2016](http://lhcp2016.hep.lu.se/) |
-[LHCP2015](http://hepd.pnpi.spb.ru/lhcp2015/index.php/) |
-[LHCP2014](https://indico.cern.ch/event/279518/) |
-[LHCP2013](https://indico.cern.ch/event/210555/) |
-* Others:
-[VCI](https://vci.hephy.at/home/ "Vienna Conference on Instrumentation")
+* Indico@CERN: [ALICE Week](https://indico.cern.ch/category/6871/) | [PWG](https://indico.cern.ch/category/302/) | [EMCal](https://indico.cern.ch/category/874/) | [ITS](https://indico.cern.ch/category/6759/) | [TPC](https://indico.cern.ch/category/14/) |
+* Other Indico: [Indico@IHEP](https://indico.ihep.ac.cn/category/208/) | [Indico@USTC-PNP](http://pnp.ustc.edu.cn/indico) | [Indico@IN2P3](https://indico.in2p3.fr/category/100/) |
+* Quark Matter: [QM2019](http://qm2019.ccnu.edu.cn/) | [QM2018](http://qm2018.infn.it/) | [QM2017](http://qm2017.phy.uic.edu/) | [QM2015](http://qm2015.riken.jp/) | [QM2014](https://indico.cern.ch/event/219436/) | [QM2012](https://indico.cern.ch/event/181055/) |
+* Hard Probe: [HP2018](https://indico.cern.ch/event/634426/) | [HP2016](http://hp2016.ccnu.edu.cn/) | [HP2015](http://www.physics.mcgill.ca/hp2015/) |
+* Strangeness Quark Matter: [SQM2019](https://sqm2019.ba.infn.it/) | [SQM2017](https://indico.cern.ch/event/576735/) |
+* LHC Physics: [LHCP2019](http://lhcp2019.buap.mx/) | [LHCP2018](http://lhcp2018.bo.infn.it/) | [LHCP2017](http://lhcp2017.physics.sjtu.edu.cn/) | [LHCP2016](http://lhcp2016.hep.lu.se/) | [LHCP2015](http://hepd.pnpi.spb.ru/lhcp2015/index.php/) | [LHCP2014](https://indico.cern.ch/event/279518/) | [LHCP2013](https://indico.cern.ch/event/210555/) |
+* Others: [VCI](https://vci.hephy.at/home/ "Vienna Conference on Instrumentation")
 
-Publication:
-[InspierHEP](http://inspirehep.net) |
-[CERN Document Server](http://cds.cern.ch/) |
-[HEPData](https://www.hepdata.net/) |
-[Google Scholar](http://scholar.google.com) |
-[Microsoft Academic](https://academic.microsoft.com/) |
-[SCImago Journal Rank](https://www.scimagojr.com/journalrank.php?category=3106) |
+Publication: [InspierHEP](http://inspirehep.net) | [CERN Document Server](http://cds.cern.ch/) | [HEPData](https://www.hepdata.net/) | [Google Scholar](http://scholar.google.com) | [Microsoft Academic](https://academic.microsoft.com/) | [SCImago Journal Rank](https://www.scimagojr.com/journalrank.php?category=3106) |
 
 ## Background & Motivation
 
@@ -239,14 +123,11 @@ Jets are clustered using the anti-$k_{T}$ algorithm from charged tracks, with R=
 ALICE Run2 pp 13TeV (with EMC), 2016-2018
 
 * From DPG twiki :
-[DataTaking](https://twiki.cern.ch/twiki/bin/view/ALICE/AliDPGReconstructedDataTakingPeriodspp13TeV "Reconstructed Run-2 data taking periods with pp collisions, √s= 13 TeV") |
-[Production](https://twiki.cern.ch/twiki/bin/view/ALICE/AODsets "AOD version and run number range") |
-[RunLists-calo](https://twiki.cern.ch/twiki/bin/view/ALICE/AliDPGRunLists "Lists of good runs for Run2 periods") |
+[DataTaking](https://twiki.cern.ch/twiki/bin/view/ALICE/AliDPGReconstructedDataTakingPeriodspp13TeV "Reconstructed Run-2 data taking periods with pp collisions, √s= 13 TeV") | [Production](https://twiki.cern.ch/twiki/bin/view/ALICE/AODsets "AOD version and run number range") | [RunLists-calo](https://twiki.cern.ch/twiki/bin/view/ALICE/AliDPGRunLists "Lists of good runs for Run2 periods") |
 * From MonALISA:
 [RCT](https://alimonitor.cern.ch/configuration/index.jsp?partition=LHC16l&pass=1&raw_run=&filling_scheme=&filling_config=&fillno=&energy=&intensity_per_bunch=&mu=&interacting_bunches=&noninteracting_bunches_beam_1=&noninteracting_bunches_beam_2=&interaction_trigger=&rate=&beam_empty_trigger=&empty_empty_trigger=&muon_trigger=&high_multiplicity_trigger=&emcal_trigger=&calibration_trigger=&quality=&muon_quality=&physics_selection_status=&comment=&field=&det_aco=&det_ad0=&det_emc=1&det_fmd=&det_hlt=&det_hmp=&det_mch=&det_mtr=&det_phs=&det_pmd=&det_spd=1&det_sdd=1&det_ssd=1&det_tof=&det_tpc=1&det_trd=&det_t00=&det_v00=1&det_zdc=&hlt_mode=&changedon= "Run condition table on alimonitor") (DET Status Flags - SPD + SDD + SSD + TPC + V0 + EMCal)|
 * From LEGO train :
-[DQ_pp_AOD](https://alimonitor.cern.ch/trains/train.jsp?train_id=29) |
-[Jet_EMC_pp](https://alimonitor.cern.ch/trains/train.jsp?train_id=47) |
+[DQ_pp_AOD](https://alimonitor.cern.ch/trains/train.jsp?train_id=29) | [Jet_EMC_pp](https://alimonitor.cern.ch/trains/train.jsp?train_id=47) |
 
 All datasets used is collected in **Datasets/DQ_pp_AOD.C**, which can be executed and accessed like *DATASETS["16l_pass1"]*. If not in LEGO train, the number of jobs will be **_limited under 1500, about 33 runs._** Original run lists from DPG is stored under **Datasets/DATA/**.
 
@@ -302,8 +183,7 @@ $$N_{corr.}=f_{z}\cdot N_{sel.}=\frac{N_{|VtxZ|<10cm}}{N_{Vtx}}\cdot N_{sel.}$$
 
 ## QA
 
-To check the status and performance of detectors and the agreement between data and MC.
-Level: Run, Event, Track, Detector, PID, Phys. Objects
+To check the status and performance of detectors and the agreement between data and MC. Level: Run, Event, Track, Detector, PID, Phys. Objects
 
 * From DPG and PWG/PAG tutorial.
 * From related analysis note.
@@ -328,11 +208,11 @@ $<VAR_{tracks}>$|Average value or distribution of selected tracks after selectio
 
 ### Event
 
-Trigger and event cut overview histograms, like  $MB, Pileup, good, Z_{Vtx}<10cm, \eta<0.9$, ratio of different trigger or cut definition.
+Trigger and event cut overview histograms, like  MB, Pileup, good, $Z_{Vtx}<~10cm, \eta<0.9$, ratio of different trigger or cut definition.
 
 * Vertex: Z distribution and XY.
 * Multiplicity, centrality and event plane.
-* N candidates, $J/\psi, jets, \eta, gamma, \pi_0$
+* N candidates, $J/\psi, jets, \eta, gamma, \pi_0$, ...
 * Clusters: Numbers, Energy distribution, etc.
 
 Parameter|Description|Method|
@@ -398,9 +278,7 @@ Warm/Hot cell|EFrac > 80|EFrac > 2 *mean|
 -|EFrac > 8|EFrac > 4 *mean|
 -|EFrac > 5|EFrac > 5 *mean|
 
-ADC/Energy Trigger Threshold:
-[Twiki](https://twiki.cern.ch/twiki/bin/view/ALICE/EMCalTriggerOffline "EMCalTriggerOffline"),
-this value can also be estimated with peaks in cluster energy distribution due to the pre-scale. Considering the energy resolution, energy cuts using for analysis MUST be, about 1 GeV, higher than the configured thresholds.
+ADC/Energy Trigger Threshold: [Twiki](https://twiki.cern.ch/twiki/bin/view/ALICE/EMCalTriggerOffline "EMCalTriggerOffline"), this value can also be estimated with peaks in cluster energy distribution due to the pre-scale. Considering the energy resolution, energy cuts using for analysis MUST be, about 1 GeV, higher than the configured thresholds.
 
 Period | L0 ADC | $E_{th}$/GeV | L1-EG1/DG1 |$E_{th}$/GeV| L1-EG2/DG2|$E_{th}$/GeV|
 -|-|-|-|-|-|-|
@@ -432,8 +310,7 @@ PID framework:
 * AliPIDResponse: Common way with $n\sigma$ cuts.
 * AliPIDCombined: To manage combination of detector response using a Bayesian approach.
 
-Basic usage: Load macro [**AliRoot/ANALYSIS/macros/AddTaskPIDResponse.C**](https://github.com/alisw/AliRoot/blob/master/ANALYSIS/macros/AddTaskPIDResponse.C).
-Example can be found in [$ALICE_ROOT/ANALYSIS/ANALYSISalice/AliAnalysisTaskPIDqa.cxx](https://github.com/alisw/AliRoot/blob/master/ANALYSIS/ANALYSISalice/AliAnalysisTaskPIDqa.cxx).
+Basic usage: Load macro [**AddTaskPIDResponse.C**](https://github.com/alisw/AliRoot/blob/master/ANALYSIS/macros/AddTaskPIDResponse.C). Example can be found in [AliAnalysisTaskPIDqa.cxx](https://github.com/alisw/AliRoot/blob/master/ANALYSIS/ANALYSISalice/AliAnalysisTaskPIDqa.cxx).
 
 ```C++
   //input hander
@@ -474,14 +351,14 @@ TH1* GetPriorDistribution(AliPID::EParticleType type)  const;
 
 ```
 
-PID tender **_only for ESD_**: [$ALICE_PHYSICS/TENDER/TenderSupplies/AddTaskTender.C](https://github.com/alisw/AliPhysics/blob/master/TENDER/TenderSupplies/AddTaskTender.C)
+PID tender **_only for ESD_**: [AddTaskTender.C](https://github.com/alisw/AliPhysics/blob/master/TENDER/TenderSupplies/AddTaskTender.C)
 
 ```C++
 // all paramerters are boolean variables
 AddTaskTender(kV0, kTPC, kTOF, kTRD, kPID, kVTX, kT0, kEMCal, kPtFix);
 ```
 
-QA Task for general purpose: [**AliRoot/ANALYSIS/macros/AddTaskPIDqa.C**](https://github.com/alisw/AliRoot/blob/master/ANALYSIS/macros/AddTaskPIDqa.C)
+QA Task for general purpose: [AddTaskPIDqa.C](https://github.com/alisw/AliRoot/blob/master/ANALYSIS/macros/AddTaskPIDqa.C)
 
 Signal or $n\sigma$ vs $p/p_{T}/\eta/\phi$
 
@@ -585,10 +462,7 @@ where $n_{0}$ and $w$ are the mean and witdth of the uncalibrated electron band.
 
 ### EMCal correction and embedding framework
 
-> Reference:
-> [alidoc](http://alidoc.cern.ch/AliPhysics/master/READMEemcCorrections.html) |
-> [PCG-tutorial](https://friederikebock.gitbooks.io/pcgtutorial/content/AliPhysicsAndGrid/corrframework.html) |
-> ALICE-analysis-tutorial ([Correction](https://indico.cern.ch/event/586577/contributions/2363131/attachments/1370126/2177061/EMCalCorrectionFramework_AnalysisTutorial_updated.pdf "Nov. 2016"), [Embedding](https://indico.cern.ch/event/586577/contributions/2363130/attachments/1370183/2296645/rehlers.embedding.analysis.tutorial.nov.2016.v3.pdf "Nov. 2016")) |
+> Reference: [alidoc](http://alidoc.cern.ch/AliPhysics/master/READMEemcCorrections.html) | [PCG-tutorial](https://friederikebock.gitbooks.io/pcgtutorial/content/AliPhysicsAndGrid/corrframework.html) | ALICE-analysis-tutorial ([Correction](https://indico.cern.ch/event/586577/contributions/2363131/attachments/1370126/2177061/EMCalCorrectionFramework_AnalysisTutorial_updated.pdf "Nov. 2016"), [Embedding](https://indico.cern.ch/event/586577/contributions/2363130/attachments/1370183/2296645/rehlers.embedding.analysis.tutorial.nov.2016.v3.pdf "Nov. 2016")) |
 
 * Bad channel map, energy calibration, time calibration, cell-level crosstalk.
 * Cluster exotics, enery non-linearity, track matching, hadronic correction and PHOS tender.
