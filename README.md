@@ -35,6 +35,7 @@ Documents:
 [Indico](https://indico.cern.ch/category/7871/ "General, AOT, MC, QA, Calibration & Tracking") |
 [RunLists](https://twiki.cern.ch/twiki/bin/view/ALICE/AliDPGRunLists "Lists of good runs for Run2 periods") |
 [EventNorm](https://twiki.cern.ch/twiki/bin/viewauth/ALICE/EventNormalization "V0AND value for luminosity") |
+[Pileup]( https://twiki.cern.ch/twiki/bin/view/ALICE/AliDPGtoolsPileup "Pileup tools and methods") |
 
 * PID:
 [Twiki](https://twiki.cern.ch/twiki/bin/view/ALICE/PWGPPParticleIdentification "PWGPP-PID") |
@@ -484,6 +485,30 @@ $\delta p_{T}$ vs prob. density|Density fluctuation, $\delta p_{T}=\sum_{RC}^{i}
 RC is random cone method for the fluctuation of jet UE density.
 
 ## Signal Extraction
+
+### Event selection
+
+The events are required to pass the physics selection ([Task](https://github.com/alisw/AliPhysics/blob/master/OADB/macros/AddTaskPhysicsSelection.C)) and have a reconstructed vertex. For $J/\psi$ analysis in high $p_{T}$ range, we select EMCal triggered electron (single) for dielectron reconstruction and use MB events to determine the rejection factor (RF) of EMCal.
+
+Variable | Cut / Value|
+|-|-|
+Offline Trigger|MB/kINT7
+-|EMCal L1/kEMCEGA (EG1/EG2/DG1/DG2)|
+Vertex type|GetPrimaryVertex()|
+$N_{contrib.}^{Vtx}$|>1|
+\|$Z_{Vtx}$\||< 10 cm|
+Physics Selection|True|
+Pileup|False|
+
+Primary vertex can be reconstructed from tracks, TPC, SPD, and GetPrimaryVertex() returns the best available.
+
+There are two types of pileup that have to be considered:
+
+* *in-bunch*: the overlap of several events from the same bunch-crossing at the interaction point (IP).
+* *out-of-bunch*: readout time of detectors (TPC:100us, SPD:300ns) are slow than the bunch spacing (25ns).
+
+Tools and methods for pileup rejection: Physics Selection / Past-future protection, Multi-vertexer, AliVEvent::IsPileupFromSPD.
+
 
 ### PID for electron
 
