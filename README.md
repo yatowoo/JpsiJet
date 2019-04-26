@@ -10,9 +10,43 @@ Main environment: AliEn World-wide Computing Grid
 
 Local: R710.star.ustc.edu.cn `(Dual-E5520 + 16* Dual-E5504)`
 
-> Development and post-processing are performed on local environment `(vAN-20190328_ROOT6)`. But for alien, all jobs would run on latest version after debug.
+Development and post-processing are performed on local environment `(vAN-20190328_ROOT6)`. But for alien, all jobs would run on latest version after debug.
+
+For better display of this document, please install browser extension `MathJax Plugin for Github`  ([Chrome](https://chrome.google.com/webstore/detail/mathjax-plugin-for-github/ioemnmodlmafdkllaclgeombjnmnbima)) or open preview in `VS Code` with `Markdown+Math`.
 
 Author: [Yìtāo WÚ](mailto:yitao.wu@cern.ch)
+
+## Contents
+
+- [Resource](#resource)
+- [Background & Motivation](#background--motivation)
+  - [Reference](#reference)
+- [Physical Object](#physical-object)
+  - [Related analysis @ ALICE](#related-analysis--alice)
+- [Datasets](#datasets)
+  - [Luminosity and event normalization](#luminosity-and-event-normalization)
+- [QA](#qa)
+  - [Run-wise](#run-wise)
+  - [Event](#event)
+  - [Track & TPC-ITS](#track--tpc-its)
+  - [Calo Cluster / EMCAL+DCAL+PHOS](#calo-cluster--emcaldcalphos)
+  - [PID](#pid)
+  - [Dielectron](#dielectron)
+  - [Jets](#jets)
+- [Signal Extraction](#signal-extraction)
+  - [Event selection](#event-selection)
+  - [PID for electron](#pid-for-electron)
+  - [$J/\psi$ reconstruction](#j\psi-reconstruction)
+  - [Nano AODs](#nano-aods)
+  - [Jet finder](#jet-finder)
+- [Correction](#correction)
+  - [TPC post-calibration](#tpc-post-calibration)
+  - [EMCal correction and embedding framework](#emcal-correction-and-embedding-framework)
+  - [$J/\psi$ acceptance and efficiency](#j\psi-acceptance-and-efficiency)
+  - [Unfolding of jet $p_{T}$ resolution](#unfolding-of-jet-p_t-resolution)
+- [Systematic uncertainties](#systematic-uncertainties)
+- [Preliminary Result](#preliminary-result)
+- [Publication](#publication)
 
 ## Resource
 
