@@ -235,14 +235,16 @@ Track selection and tracking parameters.
 
 Parameter|Description|Method|
 -|-|-|
-$p/p_{T}$-$\eta$-$\phi$|Basic kinetic variables||
-$DCA_{XY, Z}$|Distance of the closest approach||
+$p/p_{T}$-$\eta$-$\phi$|Basic kinematic variables||
+$DCA_{XY, Z}$|Distance of the closest approach. $DCA_z$ can be used for rejection of out-of-bunch pileup tracks, while large $DCA_{xy}$ is related to the subsequent decays or photon conversions.||
 $N_{clusters}^{TPC}$|TPC cluster number, [0,160]||
 $N_{clusters}^{ITS}$|ITS cluster number, [0,6]||
 $\chi^{2}/N_{clusters}^{TPC}$|TPC cluster tracking/fitting||
 $\chi^{2}/N_{clusters}^{ITS}$|ITS cluster tracking/fitting||
-Kink|Invisible production||
+Kink|Tracks which does not have a continous particle trajectories, but show deviations due to __decays or the emission of Bremsstrahlung__.||
 Refit|Fitting method, include ITS and TPC||
+
+For electron, the particle can hit the first or the second layer of the ITS detector (kAny). This cut helps to remove electrons from __gamma conversion__.
 
 ### Calo Cluster / EMCAL+DCAL+PHOS
 
@@ -371,7 +373,7 @@ Standard setup for invariant mass spectrum: $[1.5, 5.0]~/~0.04~(GeV/c^{2})$, pre
 Parameter|Description|Method|
 -|-|-|
 $m_{e^{+}e^{-}}$|Invariant mass of selected dielectron||
-$p_{T}$-$\eta$-$\phi$|Basic kinetic variables||
+$p_{T}$-$\eta$-$\phi$|Basic kinematic variables||
 $m_{e^{+}e^{-}}$ vs $p_{T}$|Dielectron momentum spectrum||
 $\ell_{J/\psi}$|Pseudoproper-decay-length (cm)||
 $N_{candidates}$|Event level, number of dielectron after cuts||
@@ -385,7 +387,7 @@ $$p_{T,jet}^{corr.}=p_{T,jet}-\rho\cdot Area_{jet}$$
 
 Parameter|Description|Method|
 -|-|-|
-$p_{T}$-$\eta$-$\phi$|Jet basic kinetic variables||
+$p_{T}$-$\eta$-$\phi$|Jet basic kinematic variables||
 Area|Jet area||
 $p_T$ vs A|Use cut of 0.6*R to reduce fake jet contamination||
 $\rho$|Jet UE density, Event level||
@@ -423,7 +425,7 @@ Tools and methods for pileup rejection: Physics Selection / Past-future protecti
 
 ### Track selection
 
-Use track cuts to select good tracks as electron candidates, including kinetic variables, tracking result, TPC parameters and PID limitations.
+Use track cuts to select good tracks as electron candidates, including kinematic variables, tracking result, TPC parameters and PID limitations.
 
 * Basic strategy: Using dE/dx (from TPC) and E/p (from EMCal) to indentify electrons, and only TPC signal to exclude kaons and protons.
 * Hybrid method: To add TOF or/and TRD as complements.
@@ -450,6 +452,8 @@ $n\sigma_p^{TPC}$|-|> 3.5|> 3.0|
 $n\sigma_{\pi}^{TPC}$|-|> 3.5|> 3.0|
 
 EMCal cuts for ANY leg: $E/p\in[0.8,1.3]$
+
+Out-of-bunch pileup tracks are removed according to the $DCA_z$, hits requirement in any of the  two SPD layers and a track refit using the ITS.
 
 ### $J/\psi$ reconstruction
 
