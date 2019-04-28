@@ -423,22 +423,33 @@ Tools and methods for pileup rejection: Physics Selection / Past-future protecti
 
 ### Track selection
 
-Select electron with track cuts and PID limitation.
+Use track cuts to select good tracks as electron candidates, including kinetic variables, tracking result, TPC parameters and PID limitations.
 
 * Basic strategy: Using dE/dx (from TPC) and E/p (from EMCal) to indentify electrons, and only TPC signal to exclude kaons and protons.
 * Hybrid method: To add TOF or/and TRD as complements.
 
-Variable | Cut / Value|
-|-|-|-|
-$N_{clusters}^{TPC}$|85|
-$\chi^2/N_{clusters}^{TPC}$|<4.0|
-$\eta$|[-0.9,0.9]|
-$DCA_z$ (cm)|[-3,3]|
-$DCA_{xy}$ (cm)|[-1,1]|
-Kink|False|
-SPD cluster|kAny|
-ITS/TPC refit|True|
+Variable | Cut / Value - AN646|AN746|AN876|
+|-|-|-|-|
+$p_{T}$ (GeV/c)|>1.0|>1.0|>1.0|
+$\eta$|[-0.9,0.9]|[-0.9,0.9]|[-0.9,0.9]|
+$DCA_z$ (cm)|[-3,3]|[-3,3]|[-2,2]|
+$DCA_{xy}$ (cm)|[-1,1]|[-1,1]|[-0.5,0.5]|
+$N_{cls.}^{TPC}$|85|70|70|
+$\chi^2/N_{cls.}^{TPC}$|[0.0,4.0]|[0.0,4.0]|[0.0,4.0]|
+$\chi^2/N_{cls.}^{ITS}$|-|[0.0,30.0]|[0.0,30.0]|
+TPC $N_{cls.}$ track segments|-||$\geq6$|
+TPC $N_{cls.}$ bits fired|-|[6,9]|-|
+TPC $N_{cls.}$ shared|-||$\leq1$|
+TPC $N_{cls.}$ shared ratio|-|$\notin[0.3,2.0]$|-|
+TPC $N_{crossed-rows}/N_{find-cls.}$|-|[0.8,2.0]|-|
+Reject kink|True|True|True|
+SPD cluster|Any|Any|Any
+ITS+TPC refit|True|True|True|
+$n\sigma_e^{TPC}$|[-2.25,3.0]|[-3.0,3.0]|[-3.0,3.0]|
+$n\sigma_p^{TPC}$|-|> 3.5|> 3.0|
+$n\sigma_{\pi}^{TPC}$|-|> 3.5|> 3.0|
 
+EMCal cuts for ANY leg: $E/p\in[0.8,1.3]$
 
 ### $J/\psi$ reconstruction
 
