@@ -421,10 +421,24 @@ There are two types of pileup that have to be considered:
 Tools and methods for pileup rejection: Physics Selection / Past-future protection, Multi-vertexer, AliVEvent::IsPileupFromSPD.
 
 
-### PID for electron
+### Track selection
+
+Select electron with track cuts and PID limitation.
 
 * Basic strategy: Using dE/dx (from TPC) and E/p (from EMCal) to indentify electrons, and only TPC signal to exclude kaons and protons.
 * Hybrid method: To add TOF or/and TRD as complements.
+
+Variable | Cut / Value|
+|-|-|-|
+$N_{clusters}^{TPC}$|85|
+$\chi^2/N_{clusters}^{TPC}$|<4.0|
+$\eta$|[-0.9,0.9]|
+$DCA_z$ (cm)|[-3,3]|
+$DCA_{xy}$ (cm)|[-1,1]|
+Kink|False|
+SPD cluster|kAny|
+ITS/TPC refit|True|
+
 
 ### $J/\psi$ reconstruction
 
