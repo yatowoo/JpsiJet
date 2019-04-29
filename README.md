@@ -209,7 +209,10 @@ Trigger and event cut overview histograms, like  MB, Pileup, good, $Z_{Vtx}<~10c
 
 __Statistics of event selection (vs triggers, and in run-wise)__: Physics Selection (PS), trigger, event cuts, track cuts (no tracks), filtered in nano AOD (with candidates of physics objects) and corresponding reject reasons.
 
-ALICE Offline Triggers (from [AliVEvent.h](https://github.com/alisw/AliRoot/blob/master/STEER/STEERBase/AliVEvent.h)):
+<details>
+<summary>ALICE Offline Triggers</summary>
+
+> from [AliVEvent.h](https://github.com/alisw/AliRoot/blob/master/STEER/STEERBase/AliVEvent.h))
 
 EOfflineTriggerTypes |BIT(N)|Description|
 -|-|-|
@@ -266,6 +269,8 @@ kCaloOnly|29|MB, EMCAL and PHOS triggers in CALO or CALOFAST cluster
 kFastOnly|30|The fast cluster fired. This bit is set in to addition another trigger bit, e.g. kMB
 kAny|0xffffffff|to accept any defined trigger
 kAnyINT||kMB \| kINT7 \| kINT5 \| kINT8 \| kSPI7. to accept any interaction (aka minimum bias) trigger
+</details>
+
 
 Variables on event level:
 
@@ -292,7 +297,9 @@ $E_{cluster}$|Energy distribution of calo clusters||
 
 Track selection and tracking parameters. The getter methods depend on the variable manager in PWG analysis framework, while methods listed blow are standard function from basic class in AliRoot/STEER.
 
-Track types / status flag in [AliVTrack.h](https://github.com/alisw/AliRoot/blob/master/STEER/STEERBase/AliVTrack.h "8feaf83 on 28 Jun 2018"):
+<details>
+<summary>Track types / status flag</summary>
+> from [AliVTrack.h](https://github.com/alisw/AliRoot/blob/master/STEER/STEERBase/AliVTrack.h "8feaf83 on 28 Jun 2018")
 
 Enum|BIT(N)|Description|
 -|-|-|
@@ -332,8 +339,11 @@ __Others__|-|
 kTRDnPlanes|6|Not in BIT|
 kEMCALNoMatch|-4096|
 kTOFBCNA|-100|
+</details>
 
-Track bits / pre-defined filter in [AliAODTrack.h](https://github.com/alisw/AliRoot/blob/master/STEER/AOD/AliAODTrack.h "27fc1a9 on 11 Apr 2019"), and the details is located in [AliAnalysisTaskESDfilter](https://github.com/alisw/AliRoot/blob/master/ANALYSIS/ESDfilter/AliAnalysisTaskESDfilter.cxx "Convert ESD to AOD") and [AliESDtrackCuts](https://github.com/alisw/AliRoot/blob/master/ANALYSIS/ANALYSISalice/AliESDtrackCuts.cxx "Pre-defined ESD track cuts"). As usual, the track cuts contains __TPC cluster number, $\chi^{2}$, DCA, refit requirements and kink rejection__:
+<details>
+<summary>Track bits / pre-defined filter</summary>
+> from [AliAODTrack.h](https://github.com/alisw/AliRoot/blob/master/STEER/AOD/AliAODTrack.h "27fc1a9 on 11 Apr 2019"), and the details is located in [AliAnalysisTaskESDfilter](https://github.com/alisw/AliRoot/blob/master/ANALYSIS/ESDfilter/AliAnalysisTaskESDfilter.cxx "Convert ESD to AOD") and [AliESDtrackCuts](https://github.com/alisw/AliRoot/blob/master/ANALYSIS/ANALYSISalice/AliESDtrackCuts.cxx "Pre-defined ESD track cuts"). As usual, the track cuts contains __TPC cluster number, $\chi^{2}$, DCA, refit requirements and kink rejection__:
 
 AODTrkFilterBits_t|BIT(N)|Description|Detail|
 -|-|-|-|
@@ -353,6 +363,7 @@ __AODTrkBits_t__||
 |kIsHybridTPCCG|18|set if this track can be used as a hybrid track i.e. Gbobal tracks with certain slecetion plus the TPC constrained tracks that did not pass the selection
 |kIsGlobalConstrained|19|set if this track is a global track constrained to the vertex, needs to be skipped in any track loop to avoid double counting
 |kIsHybridGCG|20|set if this track can be used as a hybrid track i.e. tracks with certain selection plus the global constraint tracks that did not pass the selection
+</details>
 
 Parameter|Description|Method|
 -|-|-|
