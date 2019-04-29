@@ -122,12 +122,9 @@ Jets are clustered using the anti-$k_{T}$ algorithm from charged tracks, with R=
 
 ALICE Run2 pp 13TeV (with EMC), 2016-2018
 
-* From DPG twiki :
-[DataTaking](https://twiki.cern.ch/twiki/bin/view/ALICE/AliDPGReconstructedDataTakingPeriodspp13TeV "Reconstructed Run-2 data taking periods with pp collisions, √s= 13 TeV") | [Production](https://twiki.cern.ch/twiki/bin/view/ALICE/AODsets "AOD version and run number range") | [RunLists-calo](https://twiki.cern.ch/twiki/bin/view/ALICE/AliDPGRunLists "Lists of good runs for Run2 periods") |
-* From MonALISA:
-[RCT](https://alimonitor.cern.ch/configuration/index.jsp?partition=LHC16l&pass=1&raw_run=&filling_scheme=&filling_config=&fillno=&energy=&intensity_per_bunch=&mu=&interacting_bunches=&noninteracting_bunches_beam_1=&noninteracting_bunches_beam_2=&interaction_trigger=&rate=&beam_empty_trigger=&empty_empty_trigger=&muon_trigger=&high_multiplicity_trigger=&emcal_trigger=&calibration_trigger=&quality=&muon_quality=&physics_selection_status=&comment=&field=&det_aco=&det_ad0=&det_emc=1&det_fmd=&det_hlt=&det_hmp=&det_mch=&det_mtr=&det_phs=&det_pmd=&det_spd=1&det_sdd=1&det_ssd=1&det_tof=&det_tpc=1&det_trd=&det_t00=&det_v00=1&det_zdc=&hlt_mode=&changedon= "Run condition table on alimonitor") (DET Status Flags - SPD + SDD + SSD + TPC + V0 + EMCal)|
-* From LEGO train :
-[DQ_pp_AOD](https://alimonitor.cern.ch/trains/train.jsp?train_id=29) | [Jet_EMC_pp](https://alimonitor.cern.ch/trains/train.jsp?train_id=47) |
+* From DPG twiki : [DataTaking](https://twiki.cern.ch/twiki/bin/view/ALICE/AliDPGReconstructedDataTakingPeriodspp13TeV "Reconstructed Run-2 data taking periods with pp collisions, √s= 13 TeV") | [Production](https://twiki.cern.ch/twiki/bin/view/ALICE/AODsets "AOD version and run number range") | [RunLists-calo](https://twiki.cern.ch/twiki/bin/view/ALICE/AliDPGRunLists "Lists of good runs for Run2 periods") |
+* From MonALISA: [RCT](https://alimonitor.cern.ch/configuration/index.jsp?partition=LHC16l&pass=1&raw_run=&filling_scheme=&filling_config=&fillno=&energy=&intensity_per_bunch=&mu=&interacting_bunches=&noninteracting_bunches_beam_1=&noninteracting_bunches_beam_2=&interaction_trigger=&rate=&beam_empty_trigger=&empty_empty_trigger=&muon_trigger=&high_multiplicity_trigger=&emcal_trigger=&calibration_trigger=&quality=&muon_quality=&physics_selection_status=&comment=&field=&det_aco=&det_ad0=&det_emc=1&det_fmd=&det_hlt=&det_hmp=&det_mch=&det_mtr=&det_phs=&det_pmd=&det_spd=1&det_sdd=1&det_ssd=1&det_tof=&det_tpc=1&det_trd=&det_t00=&det_v00=1&det_zdc=&hlt_mode=&changedon= "Run condition table on alimonitor") (DET Status Flags - SPD + SDD + SSD + TPC + V0 + EMCal)|
+* From LEGO train : [DQ_pp_AOD](https://alimonitor.cern.ch/trains/train.jsp?train_id=29) | [Jet_EMC_pp](https://alimonitor.cern.ch/trains/train.jsp?train_id=47) |
 
 All datasets used is collected in **Datasets/DQ_pp_AOD.C**, which can be executed and accessed like *DATASETS["16l_pass1"]*. If not in LEGO train, the number of jobs will be **_limited under 1500, about 33 runs._** Original run lists from DPG is stored under **Datasets/DATA/**.
 
@@ -210,6 +207,8 @@ $<VAR_{tracks}>$|Average value or distribution of selected tracks after selectio
 
 Trigger and event cut overview histograms, like  MB, Pileup, good, $Z_{Vtx}<~10cm, \eta<0.9$, ratio of different trigger or cut definition.
 
+__Statistics of event selection (vs triggers, and in run-wise)__: Physics Selection (PS), trigger, event cuts, track cuts (no tracks), filtered in nano AOD (with candidates of physics objects) and corresponding reject reasons.
+
 * Vertex: Z distribution and XY.
 * Multiplicity, centrality and event plane.
 * N candidates, $J/\psi, jets, \eta, gamma, \pi_0$, ...
@@ -231,7 +230,69 @@ $E_{cluster}$|Energy distribution of calo clusters||
 
 ### Track & TPC-ITS
 
-Track selection and tracking parameters.
+Track selection and tracking parameters. The getter methods depend on the variable manager in PWG analysis framework, while methods listed blow are standard function from basic class in AliRoot/STEER.
+
+Track types / status flag in [AliVTrack.h](https://github.com/alisw/AliRoot/blob/master/STEER/STEERBase/AliVTrack.h "8feaf83 on 28 Jun 2018"):
+
+Enum|BIT(N)|Description|
+-|-|-|
+|kITSin|0|
+|kITSout|1|
+|kITSrefit|2|
+|kITSpid|3|
+|kTPCin|4|
+|kTPCout|5|
+|kTPCrefit|6|
+|kTPCpid|7|
+|kTRDin|8|
+|kTRDout|9|
+|kTRDrefit|10|
+|kTRDpid|11|
+|kTOFin|12|
+|kTOFout|13|
+|kTOFrefit|14|
+|kTOFpid|15|
+|kHMPIDout|16|
+|kHMPIDpid|17|
+|kEMCALmatch|18|
+|kTRDbackup|19|
+|kTOFmismatch|20|
+|kPHOSmatch|21|
+|kITSupg|22|flag that in the ITSupgrade reco
+|kSkipFriend|23|flag to skip friend storage
+|kGlobalMerge|24|
+|kMultInV0|25|assumed to be belong to V0 in multiplicity estimates
+|kMultSec|26|assumed to be secondary (due to the DCA) in multiplicity estimates|
+|kEmbedded|27|Is a track that has been embedded into the event
+|kITSpureSA|28|
+|kTRDStop|29|
+|kESDpid|30|
+|kTIME|31|
+__Others__|-|
+kTRDnPlanes|6|Not in BIT|
+kEMCALNoMatch|-4096|
+kTOFBCNA|-100|
+
+Track bits / pre-defined filter in [AliAODTrack.h](https://github.com/alisw/AliRoot/blob/master/STEER/AOD/AliAODTrack.h "27fc1a9 on 11 Apr 2019"), and the details is located in [AliAnalysisTaskESDfilter](https://github.com/alisw/AliRoot/blob/master/ANALYSIS/ESDfilter/AliAnalysisTaskESDfilter.cxx "Convert ESD to AOD") and [AliESDtrackCuts](https://github.com/alisw/AliRoot/blob/master/ANALYSIS/ANALYSISalice/AliESDtrackCuts.cxx "Pre-defined ESD track cuts"). As usual, the track cuts contains __TPC cluster number, $\chi^{2}$, DCA, refit requirements and kink rejection__:
+
+AODTrkFilterBits_t|BIT(N)|Description|Detail|
+-|-|-|-|
+kTrkTPCOnly|0|Standard TPC only tracks|GetStandardTPCOnlyTrackCuts|
+|kTrkITSsa|1|ITS standalone, require ITS standalone tracks (remove pure SA)|?SetRequireITSStandAlone(kTRUE)?|
+|kTrkITSConstrained|2|Pixel OR necessary for the electrons AND standard track cuts|SetClusterRequirementITS(kSPD, kAny)|
+|kTrkElectronsPID|3|PID for the electrons|SetTPCnSigmaCut(AliPID::kElectron, 3.5)|
+|kTrkGlobalNoDCA|4|standard cuts with very loose DCA (\|xy\|>2.4, \|z\|<3.2, 2D=kTRUE)|GetStandardITSTPCTrackCuts2011(kFALSE)|
+|kTrkGlobal|5|standard cuts with tight DCA cut, (\|xy\|<"0.0105+0.0350/pt^1.1", \|z\|<2)|GetStandardITSTPCTrackCuts2011(kTRUE)|
+|kTrkGlobalSDD|6|standard cuts with tight DCA but with requiring __the first SDD cluster__ instead of an SPD cluster tracks selected by this cut are exclusive to those selected by the previous cut|GetStandardITSTPCTrackCuts2011(kTRUE), GetClusterRequirementITS(kSPD,kNone), GetClusterRequirementITS(kSDD,kFirst)|
+|kTrkTPCOnlyConstrained|7|__Refitted__ TPC only tracks: TPConly information constrained to SPD vertex in the filter below|GetStandardTPCOnlyTrackCuts, esdFilter->SetTPCOnlyFilterMask(128)|
+__AODTrkBits_t__||
+|kIsDCA|14|set if fPosition is the DCA and not the position of the first point
+|kUsedForVtxFit|15|set if this track was used to fit the vertex it is attached to
+|kUsedForPrimVtxFit|16|set if this track was used to fit the primary vertex
+|kIsTPCConstrained|17|set if this track is a SA TPC track constrained to the SPD vertex, needs to be skipped in any track loop to avoid double counting
+|kIsHybridTPCCG|18|set if this track can be used as a hybrid track i.e. Gbobal tracks with certain slecetion plus the TPC constrained tracks that did not pass the selection
+|kIsGlobalConstrained|19|set if this track is a global track constrained to the vertex, needs to be skipped in any track loop to avoid double counting
+|kIsHybridGCG|20|set if this track can be used as a hybrid track i.e. tracks with certain selection plus the global constraint tracks that did not pass the selection
 
 Parameter|Description|Method|
 -|-|-|
