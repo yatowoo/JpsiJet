@@ -209,6 +209,66 @@ Trigger and event cut overview histograms, like  MB, Pileup, good, $Z_{Vtx}<~10c
 
 __Statistics of event selection (vs triggers, and in run-wise)__: Physics Selection (PS), trigger, event cuts, track cuts (no tracks), filtered in nano AOD (with candidates of physics objects) and corresponding reject reasons.
 
+ALICE Offline Triggers (from [AliVEvent.h](https://github.com/alisw/AliRoot/blob/master/STEER/STEERBase/AliVEvent.h)):
+
+EOfflineTriggerTypes |BIT(N)|Description|
+-|-|-|
+kMB| 0|Minimum bias trigger in PbPb 2010-11
+kINT1| 0|V0A \| V0C \| SPD minimum bias trigger
+__kINT7__| 1|V0AND minimum bias trigger __(MB for pp)__
+kMUON| 2|Single muon trigger in pp2010-11, INT1 suite
+kHighMult| 3|High-multiplicity SPD trigger
+kHighMultSPD| 3|High-multiplicity SPD trigger
+kEMC1| 4|EMCAL trigger in pp2011, INT1 suite
+kCINT5| 5|V0OR minimum bias trigger
+kINT5| 5|V0OR minimum bias trigger
+kCMUS5| 6|Single muon trigger, INT5 suite
+kMUSPB| 6|Single muon trigger in PbPb 2011
+kINT7inMUON| 6|INT7 in MUON or MUFAST cluster
+kMuonSingleHighPt7| 7|Single muon high-pt, INT7 suite
+kMUSH7| 7|Single muon high-pt, INT7 suite
+kMUSHPB| 7|Single muon high-pt in PbPb 2011
+kMuonLikeLowPt7| 8|Like-sign dimuon low-pt, INT7 suite
+kMUL7| 8|Like-sign dimuon low-pt, INT7 suite
+kMuonLikePB| 8|Like-sign dimuon low-pt in PbPb 2011
+kMuonUnlikeLowPt7| 9|Unlike-sign dimuon low-pt, INT7 suite
+kMUU7| 9|Unlike-sign dimuon low-pt, INT7 suite
+kMuonUnlikePB| 9|Unlike-sign dimuon low-pt in PbPb 2011
+__kEMC7__|10|__EMCAL/DCAL L0 trigger__, INT7 suite
+kEMC8|10|EMCAL/DCAL L0 trigger, INT8 suite
+kMUS7|11|Single muon low-pt, INT7 suite
+kMuonSingleLowPt7|11|Single muon low-pt, INT7 suite
+kPHI1|12|PHOS L0 trigger in pp2011, INT1 suite
+kPHI7|13|PHOS trigger, INT7 suite
+kPHI8|13|PHOS trigger, INT8 suite
+kPHOSPb|13|PHOS trigger in PbPb 2011
+__kEMCEJE__|14|EMCAL/DCAL L1 jet trigger
+__kEMCEGA__|15|EMCAL/DCAL L1 gamma trigger, including high and low trigger classes
+kHighMultV0|16|High-multiplicity V0 trigger
+kCentral|16|Central trigger in PbPb 2011
+kSemiCentral|17|Semicentral trigger in PbPb 2011
+kDG|18|Double gap diffractive
+kDG5|18|Double gap diffractive
+kZED|19|ZDC electromagnetic dissociation
+kSPI7|20|Power interaction trigger
+kSPI|20|Power interaction trigger
+kINT8|21|0TVX trigger
+kMuonSingleLowPt8|22|Single muon low-pt, INT8 suite
+kMuonSingleHighPt8|23|Single muon high-pt, INT8 suite
+kMuonLikeLowPt8|24|Like-sign dimuon low-pt, INT8 suite
+kMuonUnlikeLowPt8|25|Unlike-sign dimuon low-pt, INT8 suite
+kMuonUnlikeLowPt0|26|Unlike-sign dimuon low-pt, no additional L0 requirement
+kUserDefined|27|Set when custom trigger classes are set in AliPhysicsSelection
+kTRD|28|TRD trigger
+kMuonCalo|29|Muon-calo triggers
+kCaloOnly|29|MB, EMCAL and PHOS triggers in CALO or CALOFAST cluster
+|||__Bits 30 and above are reserved for FLAGS__
+kFastOnly|30|The fast cluster fired. This bit is set in to addition another trigger bit, e.g. kMB
+kAny|0xffffffff|to accept any defined trigger
+kAnyINT||kMB \| kINT7 \| kINT5 \| kINT8 \| kSPI7. to accept any interaction (aka minimum bias) trigger
+
+Variables on event level:
+
 * Vertex: Z distribution and XY.
 * Multiplicity, centrality and event plane.
 * N candidates, $J/\psi, jets, \eta, gamma, \pi_0$, ...
