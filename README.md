@@ -209,6 +209,8 @@ Trigger and event cut overview histograms, like  MB, Pileup, good, $Z_{Vtx}<~10c
 
 __Statistics of event selection (vs triggers, and in run-wise)__: Physics Selection (PS), trigger, event cuts, track cuts (no tracks), filtered in nano AOD (with candidates of physics objects) and corresponding reject reasons.
 
+Event ID = $N_{bunch-crossing}+N_{orbit}\times3564+N_{period}\times\rm{0xFFFFFF}\times3564$
+
 For offline trigger,use `AliAnalysisTaskMultiDielectron::SetTriggerMask` instead of `AliAnalysisTaskSE::SelectCollisionCandidates`, if event cuts/filter existed. And trigger class is selected by `AliAnalysisTaskMultiDielectron::SetFiredTriggerName`. (__PWGDQ/dielectron__ ONLY)
 
 <details>
@@ -288,6 +290,45 @@ Typical trigger class name:
 * Past-Future protection: rejects events with multiple collisions from __different bunch crossings__
 * Cluster: group of detectors to be readout if the trigger conditions is satisfied (ALLNOTRD, CENTNOTRD, ALL, CENT, FAST, MUON)
 
+</details>
+
+<details>
+<summary>AOD tree structure</summary>
+
+> from [AliAODEvent.h](https://github.com/alisw/AliRoot/blob/master/STEER/AOD/AliAODEvent.h)
+
+__AOD__ (Analysis Object Data) is skimmed data for higher-level analysis, conveted from ESD by [AliAnalysisTaskESDfilter](https://github.com/alisw/AliRoot/blob/master/ANALYSIS/ESDfilter/AliAnalysisTaskESDfilter.h).
+
+
+AODListIndex_t|Name|Description
+-|-|-|
+kAODHeader|__header__|Event meta information, such as run number, magnetic field, diamond, trigger, etc.
+kAODTracks|__tracks__|Charged tracks array
+kAODVertices|__vertices__|Vertex array
+kAODv0|v0s|
+kAODcascade|cascades|
+kAODTracklets|tracklets|SPD tracklets
+kAODJets|jets
+kAODEmcalCells|emcalCells
+kAODPhosCells|phosCells
+kAODCaloClusters|__caloClusters__|EMCal, DCal, PHOS clusters array|
+kAODEMCALTrigger|emcalTrigger
+kAODPHOSTrigger|phosTrigger
+kAODFmdClusters|fmdClusters
+kAODPmdClusters|pmdClusters
+kAODHMPIDrings|hmpidRings
+kAODDimuons|dimuons
+kAODTZERO|AliAODTZERO
+kAODVZERO|AliAODVZERO
+kAODZDC|AliAODZDC
+kAODAD|AliAODAD
+kTOFHeader|AliTOFHeader|Event time estimated by TOF
+kAODTrdTracks|trdTracks
+-|Forward|
+-|ForwardEP|
+-|CentralClusters|
+-|MultSelection|
+-|UserInfo|
 </details>
 
 Variables on event level:
