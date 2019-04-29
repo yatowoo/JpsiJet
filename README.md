@@ -209,6 +209,8 @@ Trigger and event cut overview histograms, like  MB, Pileup, good, $Z_{Vtx}<~10c
 
 __Statistics of event selection (vs triggers, and in run-wise)__: Physics Selection (PS), trigger, event cuts, track cuts (no tracks), filtered in nano AOD (with candidates of physics objects) and corresponding reject reasons.
 
+For offline trigger,use `AliAnalysisTaskMultiDielectron::SetTriggerMask` instead of `AliAnalysisTaskSE::SelectCollisionCandidates`, if event cuts/filter existed. And trigger class is selected by `AliAnalysisTaskMultiDielectron::SetFiredTriggerName`. (__PWGDQ/dielectron__ ONLY)
+
 <details>
 <summary>ALICE Offline Triggers</summary>
 
@@ -271,6 +273,22 @@ kAny|0xffffffff|to accept any defined trigger
 kAnyINT||kMB \| kINT7 \| kINT5 \| kINT8 \| kSPI7. to accept any interaction (aka minimum bias) trigger
 </details>
 
+<details>
+<summary>ALICE Trigger Classes</summary>
+
+> from [ALICE Trigger Coordination](https://twiki.cern.ch/twiki/bin/viewauth/ALICE/TriggerCoordination) and [CTP](alicetrigger.web.cern.ch/alicetrigger/)
+
+__Trigger Class = Trigger Condition + Trigger Cluster + Trigger Vetoes__
+Typical trigger class name:
+  CEMC7EGA-B-NOPF-CENTNOTRD
+  [Decriptor]-[BC_mask]-[PF_protection]-[Cluster].
+
+* Descriptor: combination of trigger inputs, L0+L1 (AND, OR, VETO logic is possible).
+* BC mask: information about interactions (__beam-beam__, beam-gas, satellite, etc.).
+* Past-Future protection: rejects events with multiple collisions from __different bunch crossings__
+* Cluster: group of detectors to be readout if the trigger conditions is satisfied (ALLNOTRD, CENTNOTRD, ALL, CENT, FAST, MUON)
+
+</details>
 
 Variables on event level:
 
@@ -299,6 +317,7 @@ Track selection and tracking parameters. The getter methods depend on the variab
 
 <details>
 <summary>Track types / status flag</summary>
+
 > from [AliVTrack.h](https://github.com/alisw/AliRoot/blob/master/STEER/STEERBase/AliVTrack.h "8feaf83 on 28 Jun 2018")
 
 Enum|BIT(N)|Description|
@@ -343,6 +362,7 @@ kTOFBCNA|-100|
 
 <details>
 <summary>Track bits / pre-defined filter</summary>
+
 > from [AliAODTrack.h](https://github.com/alisw/AliRoot/blob/master/STEER/AOD/AliAODTrack.h "27fc1a9 on 11 Apr 2019"), and the details is located in [AliAnalysisTaskESDfilter](https://github.com/alisw/AliRoot/blob/master/ANALYSIS/ESDfilter/AliAnalysisTaskESDfilter.cxx "Convert ESD to AOD") and [AliESDtrackCuts](https://github.com/alisw/AliRoot/blob/master/ANALYSIS/ANALYSISalice/AliESDtrackCuts.cxx "Pre-defined ESD track cuts"). As usual, the track cuts contains __TPC cluster number, $\chi^{2}$, DCA, refit requirements and kink rejection__:
 
 AODTrkFilterBits_t|BIT(N)|Description|Detail|
