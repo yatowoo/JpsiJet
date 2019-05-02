@@ -615,6 +615,8 @@ class AliDielectronTrackCuts;
 class AliDielectronCF;
 ```
 
+The __reducedTree__ was created as restructuring of dielectron package in [Oct 2015](https://github.com/alisw/AliPhysics/commit/8ccb5a33630bc3218175dd2eb19b7c1f62f6050e). With `AliAnalysisTaskReducedTreeMaker`, original AOD tree woud be filtered and converted to dst tree.
+
 ### Event selection
 
 The events are required to pass the physics selection ([Task](https://github.com/alisw/AliPhysics/blob/master/OADB/macros/AddTaskPhysicsSelection.C)) and have a reconstructed vertex. For $J/\psi$ analysis in high $p_{T}$ range, we select EMCal triggered electron (single) for dielectron reconstruction and use MB events to determine the rejection factor (RF) of EMCal.
