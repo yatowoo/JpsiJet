@@ -592,6 +592,29 @@ RC is random cone method for the fluctuation of jet UE density.
 
 ## Signal Extraction
 
+In PWGDQ, there are two analysis frameworks, __dielectron__ and __reducedTree__, for general purpose of dielectron and quarkonium physics.
+
+The core class of __dielectron__ is `AliDielectron`, which consists of event processing methods, analysis cuts/filters (event, track, leg and pair), arrays of tracks and pair candidates, histogram manager, correction framework manager, event mixing handler, track rotator and MC signal. Physics variables are processed and stored in `AliDielectronVarManager`.
+
+```C++
+// To load dielectron framework
+#include "AliDielectron.h"
+#include "AliDielectronVarManager.h"
+#include "AliDielectronVarCuts.h"
+#include "AliDielectronEventCuts.h"
+#include "AliDielectronPairLegCuts.h"
+#include "AliDielectronTrackCuts.h"
+#include "AliDielectronCF.h"
+
+class AliDielectron;
+class AliDielectronVarManager;
+class AliDielectronVarCuts;
+class AliDielectronEventCuts;
+class AliDielectronPairLegCuts;
+class AliDielectronTrackCuts;
+class AliDielectronCF;
+```
+
 ### Event selection
 
 The events are required to pass the physics selection ([Task](https://github.com/alisw/AliPhysics/blob/master/OADB/macros/AddTaskPhysicsSelection.C)) and have a reconstructed vertex. For $J/\psi$ analysis in high $p_{T}$ range, we select EMCal triggered electron (single) for dielectron reconstruction and use MB events to determine the rejection factor (RF) of EMCal.
