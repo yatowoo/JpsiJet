@@ -339,20 +339,24 @@ Variables on event level:
 * Clusters: Numbers, Energy distribution, etc.
 
 Parameter|Description|Std. Method|Typical value|Setup|
--|-|-|
-$Z_{Vtx}$|Z postion (cm) of primary vertex|aod->GetPrimaryVertex()->GetZ()|$0.6\pm4.1$|[-50,50]/0.1|
-|X position (cm)|aod->GetPrimaryVertex()->GetX()|$0.074\pm0.006$|[-0.5,0.5]/0.001|
-|Y position (cm)|aod->GetPrimaryVertex()->GetY()|$0.367\pm0.004$|[-0.5,0.5]/0.001|
-$N_{contributors}^{Vtx}$|Number of primary vertex contributors||
-$N_{tracklets}$|Number of SPD tracklets, by layers|aod->GetMultiplicity()->GetNumberOfTracklets()|$\bar{N}\sim28$|[0,200]/1|
+-|-|-|-|-|
+$Z_{Vtx}$|Z postion (cm) of primary vertex|aod->GetPrimaryVertex()->GetZ()|$0.6\pm4.1$|[-50,50] / 0.1|
+||X position (cm)|aod->GetPrimaryVertex()->GetX()|$0.074\pm0.006$|[-0.5,0.5] / 0.001|
+||Y position (cm)|aod->GetPrimaryVertex()->GetY()|$0.367\pm0.004$|[-0.5,0.5] / 0.001|
+$N_{contributors}^{Vtx}$|Number of primary vertex contributors||$25\pm20$|[0,500] / 1|
+$N_{tracklets}$|Number of SPD tracklets (__aod->GetMultiplicity()__), by layers|spd->GetNumberOfTracklets()|$\bar{N}\sim28$|[0,200] / 1|
 $Z_{Vtx}$-$N_{tracklets}$|Correction needed for multiplicity analysis||
-$N_{SPDclusters}$||
-$N_{tracks}$|Number of tracks with track cuts|aod->GetNumberOfTracks()||$640\pm270$|[0,4000]/1|
-V0A, V0C|Amplitute of VZERO multiplicity||
+$N_{SPDclusters}$|Number of ITS clusters, by layers.|spd->GetNumberOfITSClusters(lr)|$40\pm30$|[0,500] / 1|
+$N_{tracks}$|Number of tracks with track cuts|aod->GetNumberOfTracks()||$640\pm270$|[0,4000] / 1|
+V0A, V0C|Amplitute of VZERO multiplicity as sum of 64 ch. (__aod->GetVZEROData()__)|vzero->GetMultiplicity(ch)|$95\pm81$|[0,2000] / 1|
+||V0A, channel 32 - 63|vzero->GetMultiplicityV0A(ch)|$37\pm34$|[0,2000] / 1|
+||V0C, channel 0 - 31|vzero->GetMultiplicityV0A(ch)|$58\pm56$|[0,2000] / 1|
 Centrality|Estimtor by multiplicity or impact factor||
 Q-vector|Event plane framework||
-$N_{cluster}$|Number of calo clusters||
-$E_{cluster}$|Energy distribution of calo clusters||
+$N_{cluster}$|Number of calo clusters|aod->GetNumberOfCaloClusters()|$37\pm15$|[0,500] / 1|
+$E_{cluster}$|Energy distribution of calo clusters (GeV)|calo->E()|$0.6\pm1.0$|[0,200] / 0.1|
+
+*Typical values and histogram setup are referred to [AN746] and fully AOD tree.
 
 ### Track & TPC-ITS
 
