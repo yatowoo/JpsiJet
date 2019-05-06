@@ -409,12 +409,9 @@ s-65,47,-65,47z M834 80H400000v40H845z"/></svg></span></span></span><span class=
 
 <p>ALICE Run2 pp 13TeV (with EMC), 2016-2018</p>
 <ul>
-<li>From DPG twiki :<br>
-<a href="https://twiki.cern.ch/twiki/bin/view/ALICE/AliDPGReconstructedDataTakingPeriodspp13TeV" title="Reconstructed Run-2 data taking periods with pp collisions, &#x221A;s= 13 TeV">DataTaking</a> | <a href="https://twiki.cern.ch/twiki/bin/view/ALICE/AODsets" title="AOD version and run number range">Production</a> | <a href="https://twiki.cern.ch/twiki/bin/view/ALICE/AliDPGRunLists" title="Lists of good runs for Run2 periods">RunLists-calo</a> |</li>
-<li>From MonALISA:<br>
-<a href="https://alimonitor.cern.ch/configuration/index.jsp?partition=LHC16l&amp;pass=1&amp;raw_run=&amp;filling_scheme=&amp;filling_config=&amp;fillno=&amp;energy=&amp;intensity_per_bunch=&amp;mu=&amp;interacting_bunches=&amp;noninteracting_bunches_beam_1=&amp;noninteracting_bunches_beam_2=&amp;interaction_trigger=&amp;rate=&amp;beam_empty_trigger=&amp;empty_empty_trigger=&amp;muon_trigger=&amp;high_multiplicity_trigger=&amp;emcal_trigger=&amp;calibration_trigger=&amp;quality=&amp;muon_quality=&amp;physics_selection_status=&amp;comment=&amp;field=&amp;det_aco=&amp;det_ad0=&amp;det_emc=1&amp;det_fmd=&amp;det_hlt=&amp;det_hmp=&amp;det_mch=&amp;det_mtr=&amp;det_phs=&amp;det_pmd=&amp;det_spd=1&amp;det_sdd=1&amp;det_ssd=1&amp;det_tof=&amp;det_tpc=1&amp;det_trd=&amp;det_t00=&amp;det_v00=1&amp;det_zdc=&amp;hlt_mode=&amp;changedon=" title="Run condition table on alimonitor">RCT</a> (DET Status Flags - SPD + SDD + SSD + TPC + V0 + EMCal)|</li>
-<li>From LEGO train :<br>
-<a href="https://alimonitor.cern.ch/trains/train.jsp?train_id=29">DQ_pp_AOD</a> | <a href="https://alimonitor.cern.ch/trains/train.jsp?train_id=47">Jet_EMC_pp</a> |</li>
+<li>From DPG twiki : <a href="https://twiki.cern.ch/twiki/bin/view/ALICE/AliDPGReconstructedDataTakingPeriodspp13TeV" title="Reconstructed Run-2 data taking periods with pp collisions, &#x221A;s= 13 TeV">DataTaking</a> | <a href="https://twiki.cern.ch/twiki/bin/view/ALICE/AODsets" title="AOD version and run number range">Production</a> | <a href="https://twiki.cern.ch/twiki/bin/view/ALICE/AliDPGRunLists" title="Lists of good runs for Run2 periods">RunLists-calo</a> |</li>
+<li>From MonALISA: <a href="https://alimonitor.cern.ch/configuration/index.jsp?partition=LHC16l&amp;pass=1&amp;raw_run=&amp;filling_scheme=&amp;filling_config=&amp;fillno=&amp;energy=&amp;intensity_per_bunch=&amp;mu=&amp;interacting_bunches=&amp;noninteracting_bunches_beam_1=&amp;noninteracting_bunches_beam_2=&amp;interaction_trigger=&amp;rate=&amp;beam_empty_trigger=&amp;empty_empty_trigger=&amp;muon_trigger=&amp;high_multiplicity_trigger=&amp;emcal_trigger=&amp;calibration_trigger=&amp;quality=&amp;muon_quality=&amp;physics_selection_status=&amp;comment=&amp;field=&amp;det_aco=&amp;det_ad0=&amp;det_emc=1&amp;det_fmd=&amp;det_hlt=&amp;det_hmp=&amp;det_mch=&amp;det_mtr=&amp;det_phs=&amp;det_pmd=&amp;det_spd=1&amp;det_sdd=1&amp;det_ssd=1&amp;det_tof=&amp;det_tpc=1&amp;det_trd=&amp;det_t00=&amp;det_v00=1&amp;det_zdc=&amp;hlt_mode=&amp;changedon=" title="Run condition table on alimonitor">RCT</a> (DET Status Flags - SPD + SDD + SSD + TPC + V0 + EMCal)|</li>
+<li>From LEGO train : <a href="https://alimonitor.cern.ch/trains/train.jsp?train_id=29">DQ_pp_AOD</a> | <a href="https://alimonitor.cern.ch/trains/train.jsp?train_id=47">Jet_EMC_pp</a> |</li>
 </ul>
 <p>All datasets used is collected in <strong>Datasets/DQ_pp_AOD.C</strong>, which can be executed and accessed like <em>DATASETS[&quot;16l_pass1&quot;]</em>. If not in LEGO train, the number of jobs will be <strong><em>limited under 1500, about 33 runs.</em></strong> Original run lists from DPG is stored under <strong>Datasets/DATA/</strong>.</p>
 <table>
@@ -1013,6 +1010,461 @@ s-65,47,-65,47z M834 80H400000v40H845z"/></svg></span></span></span><span class=
 <h3 class="mume-header" id="event">Event</h3>
 
 <p>Trigger and event cut overview histograms, like  MB, Pileup, good, <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>Z</mi><mrow><mi>V</mi><mi>t</mi><mi>x</mi></mrow></msub><mo>&lt;</mo><mtext>&#xA0;</mtext><mn>10</mn><mi>c</mi><mi>m</mi><mo separator="true">,</mo><mi>&#x3B7;</mi><mo>&lt;</mo><mn>0.9</mn></mrow><annotation encoding="application/x-tex">Z_{Vtx}&lt;~10cm, \eta&lt;0.9</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">Z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.22222em;">V</span><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">x</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mspace nobreak">&#xA0;</span><span class="mord">1</span><span class="mord">0</span><span class="mord mathdefault">c</span><span class="mord mathdefault">m</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">&#x3B7;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">9</span></span></span></span>, ratio of different trigger or cut definition.</p>
+<p><strong>Statistics of event selection (vs triggers, and in run-wise)</strong>: Physics Selection (PS), trigger, event cuts, track cuts (no tracks), filtered in nano AOD (with candidates of physics objects) and corresponding reject reasons.</p>
+<p>Event ID = <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>N</mi><mrow><mi>b</mi><mi>u</mi><mi>n</mi><mi>c</mi><mi>h</mi><mo>&#x2212;</mo><mi>c</mi><mi>r</mi><mi>o</mi><mi>s</mi><mi>s</mi><mi>i</mi><mi>n</mi><mi>g</mi></mrow></msub><mo>+</mo><msub><mi>N</mi><mrow><mi>o</mi><mi>r</mi><mi>b</mi><mi>i</mi><mi>t</mi></mrow></msub><mo>&#xD7;</mo><mn>3564</mn><mo>+</mo><msub><mi>N</mi><mrow><mi>p</mi><mi>e</mi><mi>r</mi><mi>i</mi><mi>o</mi><mi>d</mi></mrow></msub><mo>&#xD7;</mo><mrow><mrow><mn>0</mn><mi mathvariant="normal">x</mi><mi mathvariant="normal">F</mi><mi mathvariant="normal">F</mi><mi mathvariant="normal">F</mi><mi mathvariant="normal">F</mi><mi mathvariant="normal">F</mi><mi mathvariant="normal">F</mi></mrow><mo>&#xD7;</mo><mn>3564</mn></mrow></mrow><annotation encoding="application/x-tex">N_{bunch-crossing}+N_{orbit}\times3564+N_{period}\times\rm{0xFFFFFF}\times3564</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">b</span><span class="mord mathdefault mtight">u</span><span class="mord mathdefault mtight">n</span><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight">h</span><span class="mbin mtight">&#x2212;</span><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight">s</span><span class="mord mathdefault mtight">s</span><span class="mord mathdefault mtight">i</span><span class="mord mathdefault mtight">n</span><span class="mord mathdefault mtight" style="margin-right:0.03588em;">g</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">b</span><span class="mord mathdefault mtight">i</span><span class="mord mathdefault mtight">t</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">&#xD7;</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">3</span><span class="mord">5</span><span class="mord">6</span><span class="mord">4</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">p</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">i</span><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight">d</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">&#xD7;</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.76666em;vertical-align:-0.08333em;"></span><span class="mord"><span class="mord"><span class="mord mathrm">0</span><span class="mord mathrm">x</span><span class="mord mathrm">F</span><span class="mord mathrm">F</span><span class="mord mathrm">F</span><span class="mord mathrm">F</span><span class="mord mathrm">F</span><span class="mord mathrm">F</span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">&#xD7;</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord mathrm">3</span><span class="mord mathrm">5</span><span class="mord mathrm">6</span><span class="mord mathrm">4</span></span></span></span></span></p>
+<p>For offline trigger,use <code>AliAnalysisTaskMultiDielectron::SetTriggerMask</code> instead of <code>AliAnalysisTaskSE::SelectCollisionCandidates</code>, if event cuts/filter existed. And trigger class is selected by <code>AliAnalysisTaskMultiDielectron::SetFiredTriggerName</code>. (<strong>PWGDQ/dielectron</strong> ONLY)</p>
+<details>
+<summary>ALICE Offline Triggers</summary>
+<blockquote>
+<p>from <a href="https://github.com/alisw/AliRoot/blob/master/STEER/STEERBase/AliVEvent.h">AliVEvent.h</a>)</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>EOfflineTriggerTypes</th>
+<th>BIT(N)</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>kMB</td>
+<td>0</td>
+<td>Minimum bias trigger in PbPb 2010-11</td>
+</tr>
+<tr>
+<td>kINT1</td>
+<td>0</td>
+<td>V0A | V0C | SPD minimum bias trigger</td>
+</tr>
+<tr>
+<td><strong>kINT7</strong></td>
+<td>1</td>
+<td>V0AND minimum bias trigger <strong>(MB for pp)</strong></td>
+</tr>
+<tr>
+<td>kMUON</td>
+<td>2</td>
+<td>Single muon trigger in pp2010-11, INT1 suite</td>
+</tr>
+<tr>
+<td>kHighMult</td>
+<td>3</td>
+<td>High-multiplicity SPD trigger</td>
+</tr>
+<tr>
+<td>kHighMultSPD</td>
+<td>3</td>
+<td>High-multiplicity SPD trigger</td>
+</tr>
+<tr>
+<td>kEMC1</td>
+<td>4</td>
+<td>EMCAL trigger in pp2011, INT1 suite</td>
+</tr>
+<tr>
+<td>kCINT5</td>
+<td>5</td>
+<td>V0OR minimum bias trigger</td>
+</tr>
+<tr>
+<td>kINT5</td>
+<td>5</td>
+<td>V0OR minimum bias trigger</td>
+</tr>
+<tr>
+<td>kCMUS5</td>
+<td>6</td>
+<td>Single muon trigger, INT5 suite</td>
+</tr>
+<tr>
+<td>kMUSPB</td>
+<td>6</td>
+<td>Single muon trigger in PbPb 2011</td>
+</tr>
+<tr>
+<td>kINT7inMUON</td>
+<td>6</td>
+<td>INT7 in MUON or MUFAST cluster</td>
+</tr>
+<tr>
+<td>kMuonSingleHighPt7</td>
+<td>7</td>
+<td>Single muon high-pt, INT7 suite</td>
+</tr>
+<tr>
+<td>kMUSH7</td>
+<td>7</td>
+<td>Single muon high-pt, INT7 suite</td>
+</tr>
+<tr>
+<td>kMUSHPB</td>
+<td>7</td>
+<td>Single muon high-pt in PbPb 2011</td>
+</tr>
+<tr>
+<td>kMuonLikeLowPt7</td>
+<td>8</td>
+<td>Like-sign dimuon low-pt, INT7 suite</td>
+</tr>
+<tr>
+<td>kMUL7</td>
+<td>8</td>
+<td>Like-sign dimuon low-pt, INT7 suite</td>
+</tr>
+<tr>
+<td>kMuonLikePB</td>
+<td>8</td>
+<td>Like-sign dimuon low-pt in PbPb 2011</td>
+</tr>
+<tr>
+<td>kMuonUnlikeLowPt7</td>
+<td>9</td>
+<td>Unlike-sign dimuon low-pt, INT7 suite</td>
+</tr>
+<tr>
+<td>kMUU7</td>
+<td>9</td>
+<td>Unlike-sign dimuon low-pt, INT7 suite</td>
+</tr>
+<tr>
+<td>kMuonUnlikePB</td>
+<td>9</td>
+<td>Unlike-sign dimuon low-pt in PbPb 2011</td>
+</tr>
+<tr>
+<td><strong>kEMC7</strong></td>
+<td>10</td>
+<td><strong>EMCAL/DCAL L0 trigger</strong>, INT7 suite</td>
+</tr>
+<tr>
+<td>kEMC8</td>
+<td>10</td>
+<td>EMCAL/DCAL L0 trigger, INT8 suite</td>
+</tr>
+<tr>
+<td>kMUS7</td>
+<td>11</td>
+<td>Single muon low-pt, INT7 suite</td>
+</tr>
+<tr>
+<td>kMuonSingleLowPt7</td>
+<td>11</td>
+<td>Single muon low-pt, INT7 suite</td>
+</tr>
+<tr>
+<td>kPHI1</td>
+<td>12</td>
+<td>PHOS L0 trigger in pp2011, INT1 suite</td>
+</tr>
+<tr>
+<td>kPHI7</td>
+<td>13</td>
+<td>PHOS trigger, INT7 suite</td>
+</tr>
+<tr>
+<td>kPHI8</td>
+<td>13</td>
+<td>PHOS trigger, INT8 suite</td>
+</tr>
+<tr>
+<td>kPHOSPb</td>
+<td>13</td>
+<td>PHOS trigger in PbPb 2011</td>
+</tr>
+<tr>
+<td><strong>kEMCEJE</strong></td>
+<td>14</td>
+<td>EMCAL/DCAL L1 jet trigger</td>
+</tr>
+<tr>
+<td><strong>kEMCEGA</strong></td>
+<td>15</td>
+<td>EMCAL/DCAL L1 gamma trigger, including high and low trigger classes</td>
+</tr>
+<tr>
+<td>kHighMultV0</td>
+<td>16</td>
+<td>High-multiplicity V0 trigger</td>
+</tr>
+<tr>
+<td>kCentral</td>
+<td>16</td>
+<td>Central trigger in PbPb 2011</td>
+</tr>
+<tr>
+<td>kSemiCentral</td>
+<td>17</td>
+<td>Semicentral trigger in PbPb 2011</td>
+</tr>
+<tr>
+<td>kDG</td>
+<td>18</td>
+<td>Double gap diffractive</td>
+</tr>
+<tr>
+<td>kDG5</td>
+<td>18</td>
+<td>Double gap diffractive</td>
+</tr>
+<tr>
+<td>kZED</td>
+<td>19</td>
+<td>ZDC electromagnetic dissociation</td>
+</tr>
+<tr>
+<td>kSPI7</td>
+<td>20</td>
+<td>Power interaction trigger</td>
+</tr>
+<tr>
+<td>kSPI</td>
+<td>20</td>
+<td>Power interaction trigger</td>
+</tr>
+<tr>
+<td>kINT8</td>
+<td>21</td>
+<td>0TVX trigger</td>
+</tr>
+<tr>
+<td>kMuonSingleLowPt8</td>
+<td>22</td>
+<td>Single muon low-pt, INT8 suite</td>
+</tr>
+<tr>
+<td>kMuonSingleHighPt8</td>
+<td>23</td>
+<td>Single muon high-pt, INT8 suite</td>
+</tr>
+<tr>
+<td>kMuonLikeLowPt8</td>
+<td>24</td>
+<td>Like-sign dimuon low-pt, INT8 suite</td>
+</tr>
+<tr>
+<td>kMuonUnlikeLowPt8</td>
+<td>25</td>
+<td>Unlike-sign dimuon low-pt, INT8 suite</td>
+</tr>
+<tr>
+<td>kMuonUnlikeLowPt0</td>
+<td>26</td>
+<td>Unlike-sign dimuon low-pt, no additional L0 requirement</td>
+</tr>
+<tr>
+<td>kUserDefined</td>
+<td>27</td>
+<td>Set when custom trigger classes are set in AliPhysicsSelection</td>
+</tr>
+<tr>
+<td>kTRD</td>
+<td>28</td>
+<td>TRD trigger</td>
+</tr>
+<tr>
+<td>kMuonCalo</td>
+<td>29</td>
+<td>Muon-calo triggers</td>
+</tr>
+<tr>
+<td>kCaloOnly</td>
+<td>29</td>
+<td>MB, EMCAL and PHOS triggers in CALO or CALOFAST cluster</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td><strong>Bits 30 and above are reserved for FLAGS</strong></td>
+</tr>
+<tr>
+<td>kFastOnly</td>
+<td>30</td>
+<td>The fast cluster fired. This bit is set in to addition another trigger bit, e.g. kMB</td>
+</tr>
+<tr>
+<td>kAny</td>
+<td>0xffffffff</td>
+<td>to accept any defined trigger</td>
+</tr>
+<tr>
+<td>kAnyINT</td>
+<td></td>
+<td>kMB | kINT7 | kINT5 | kINT8 | kSPI7. to accept any interaction (aka minimum bias) trigger</td>
+</tr>
+</tbody>
+</table>
+</details>
+<details>
+<summary>ALICE Trigger Classes</summary>
+<blockquote>
+<p>from <a href="https://twiki.cern.ch/twiki/bin/viewauth/ALICE/TriggerCoordination">ALICE Trigger Coordination</a> and <a href="alicetrigger.web.cern.ch/alicetrigger/">CTP</a></p>
+</blockquote>
+<p><strong>Trigger Class = Trigger Condition + Trigger Cluster + Trigger Vetoes</strong><br>
+Typical trigger class name:<br>
+CEMC7EGA-B-NOPF-CENTNOTRD<br>
+[Decriptor]-[BC_mask]-[PF_protection]-[Cluster].</p>
+<ul>
+<li>Descriptor: combination of trigger inputs, L0+L1 (AND, OR, VETO logic is possible).</li>
+<li>BC mask: information about interactions (<strong>beam-beam</strong>, beam-gas, satellite, etc.).</li>
+<li>Past-Future protection: rejects events with multiple collisions from <strong>different bunch crossings</strong></li>
+<li>Cluster: group of detectors to be readout if the trigger conditions is satisfied (ALLNOTRD, CENTNOTRD, ALL, CENT, FAST, MUON)</li>
+</ul>
+</details>
+<details>
+<summary>AOD tree structure</summary>
+<blockquote>
+<p>from <a href="https://github.com/alisw/AliRoot/blob/master/STEER/AOD/AliAODEvent.h">AliAODEvent.h</a></p>
+</blockquote>
+<p><strong>AOD</strong> (Analysis Object Data) is skimmed data for higher-level analysis, conveted from ESD by <a href="https://github.com/alisw/AliRoot/blob/master/ANALYSIS/ESDfilter/AliAnalysisTaskESDfilter.h">AliAnalysisTaskESDfilter</a>.</p>
+<table>
+<thead>
+<tr>
+<th>AODListIndex_t</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>kAODHeader</td>
+<td><strong>header</strong></td>
+<td>Event meta information, such as run number, magnetic field, diamond, trigger, etc.</td>
+</tr>
+<tr>
+<td>kAODTracks</td>
+<td><strong>tracks</strong></td>
+<td>Charged tracks array</td>
+</tr>
+<tr>
+<td>kAODVertices</td>
+<td><strong>vertices</strong></td>
+<td>Vertex array</td>
+</tr>
+<tr>
+<td>kAODv0</td>
+<td>v0s</td>
+<td></td>
+</tr>
+<tr>
+<td>kAODcascade</td>
+<td>cascades</td>
+<td></td>
+</tr>
+<tr>
+<td>kAODTracklets</td>
+<td>tracklets</td>
+<td>SPD tracklets</td>
+</tr>
+<tr>
+<td>kAODJets</td>
+<td>jets</td>
+<td></td>
+</tr>
+<tr>
+<td>kAODEmcalCells</td>
+<td>emcalCells</td>
+<td></td>
+</tr>
+<tr>
+<td>kAODPhosCells</td>
+<td>phosCells</td>
+<td></td>
+</tr>
+<tr>
+<td>kAODCaloClusters</td>
+<td><strong>caloClusters</strong></td>
+<td>EMCal, DCal, PHOS clusters array</td>
+</tr>
+<tr>
+<td>kAODEMCALTrigger</td>
+<td>emcalTrigger</td>
+<td></td>
+</tr>
+<tr>
+<td>kAODPHOSTrigger</td>
+<td>phosTrigger</td>
+<td></td>
+</tr>
+<tr>
+<td>kAODFmdClusters</td>
+<td>fmdClusters</td>
+<td></td>
+</tr>
+<tr>
+<td>kAODPmdClusters</td>
+<td>pmdClusters</td>
+<td></td>
+</tr>
+<tr>
+<td>kAODHMPIDrings</td>
+<td>hmpidRings</td>
+<td></td>
+</tr>
+<tr>
+<td>kAODDimuons</td>
+<td>dimuons</td>
+<td></td>
+</tr>
+<tr>
+<td>kAODTZERO</td>
+<td>AliAODTZERO</td>
+<td></td>
+</tr>
+<tr>
+<td>kAODVZERO</td>
+<td>AliAODVZERO</td>
+<td></td>
+</tr>
+<tr>
+<td>kAODZDC</td>
+<td>AliAODZDC</td>
+<td></td>
+</tr>
+<tr>
+<td>kAODAD</td>
+<td>AliAODAD</td>
+<td></td>
+</tr>
+<tr>
+<td>kTOFHeader</td>
+<td>AliTOFHeader</td>
+<td>Event time estimated by TOF</td>
+</tr>
+<tr>
+<td>kAODTrdTracks</td>
+<td>trdTracks</td>
+<td></td>
+</tr>
+<tr>
+<td>-</td>
+<td>Forward</td>
+<td></td>
+</tr>
+<tr>
+<td>-</td>
+<td>ForwardEP</td>
+<td></td>
+</tr>
+<tr>
+<td>-</td>
+<td>CentralClusters</td>
+<td></td>
+</tr>
+<tr>
+<td>-</td>
+<td>MultSelection</td>
+<td></td>
+</tr>
+<tr>
+<td>-</td>
+<td>UserInfo</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</details>
+<p>Variables on event level:</p>
 <ul>
 <li>Vertex: Z distribution and XY.</li>
 <li>Multiplicity, centrality and event plane.</li>
@@ -1024,121 +1476,572 @@ s-65,47,-65,47z M834 80H400000v40H845z"/></svg></span></span></span><span class=
 <tr>
 <th>Parameter</th>
 <th>Description</th>
-<th>Method</th>
+<th>Std. Method</th>
+<th>Typical value</th>
+<th>Setup</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>Z</mi><mrow><mi>V</mi><mi>t</mi><mi>x</mi></mrow></msub></mrow><annotation encoding="application/x-tex">Z_{Vtx}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">Z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.22222em;">V</span><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">x</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></td>
-<td>Z (X, Y, XY) postion of primary vertex</td>
+<td>Z postion (cm) of primary vertex</td>
 <td>aod-&gt;GetPrimaryVertex()-&gt;GetZ()</td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0.6</mn><mo>&#xB1;</mo><mn>4.1</mn></mrow><annotation encoding="application/x-tex">0.6\pm4.1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">6</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">&#xB1;</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">4</span><span class="mord">.</span><span class="mord">1</span></span></span></span></td>
+<td>[-50,50] / 0.1</td>
+</tr>
+<tr>
+<td></td>
+<td>X position (cm)</td>
+<td>aod-&gt;GetPrimaryVertex()-&gt;GetX()</td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0.074</mn><mo>&#xB1;</mo><mn>0.006</mn></mrow><annotation encoding="application/x-tex">0.074\pm0.006</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">0</span><span class="mord">7</span><span class="mord">4</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">&#xB1;</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">0</span><span class="mord">0</span><span class="mord">6</span></span></span></span></td>
+<td>[-0.5,0.5] / 0.001</td>
+</tr>
+<tr>
+<td></td>
+<td>Y position (cm)</td>
+<td>aod-&gt;GetPrimaryVertex()-&gt;GetY()</td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0.367</mn><mo>&#xB1;</mo><mn>0.004</mn></mrow><annotation encoding="application/x-tex">0.367\pm0.004</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">3</span><span class="mord">6</span><span class="mord">7</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">&#xB1;</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">0</span><span class="mord">0</span><span class="mord">4</span></span></span></span></td>
+<td>[-0.5,0.5] / 0.001</td>
+</tr>
+<tr>
+<td>Diamond</td>
+<td>Z position and width of the <strong>interaction point (IP)</strong> (cm)</td>
+<td>header-&gt;GetDiamondX()/GetSigma2DiamondX()</td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0.809</mn><mo>&#xB1;</mo><msqrt><mn>24.6</mn></msqrt></mrow><annotation encoding="application/x-tex">0.809\pm\sqrt{24.6}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">8</span><span class="mord">0</span><span class="mord">9</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">&#xB1;</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.04em;vertical-align:-0.13278em;"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.90722em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord">2</span><span class="mord">4</span><span class="mord">.</span><span class="mord">6</span></span></span><span style="top:-2.86722em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,
+-10,-9.5,-14c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54c44.2,-33.3,65.8,
+-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10s173,378,173,378c0.7,0,
+35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429c69,-144,104.5,-217.7,106.5,
+-221c5.3,-9.3,12,-14,20,-14H400000v40H845.2724s-225.272,467,-225.272,467
+s-235,486,-235,486c-2.7,4.7,-9,7,-19,7c-6,0,-10,-1,-12,-3s-194,-422,-194,-422
+s-65,47,-65,47z M834 80H400000v40H845z"/></svg></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.13278em;"><span></span></span></span></span></span></span></span></span></td>
+<td>-</td>
+</tr>
+<tr>
+<td></td>
+<td>X position and width of the <strong>interaction point (IP)</strong> (cm)</td>
+<td>header-&gt;GetDiamondX()/GetSigma2DiamondX()</td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0.080</mn><mo>&#xB1;</mo><msqrt><mrow><mn>6.0</mn><mi>e</mi><mo>&#x2212;</mo><mn>5</mn></mrow></msqrt></mrow><annotation encoding="application/x-tex">0.080\pm\sqrt{6.0e-5}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">0</span><span class="mord">8</span><span class="mord">0</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">&#xB1;</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.04em;vertical-align:-0.17444499999999996em;"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8655550000000001em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord">6</span><span class="mord">.</span><span class="mord">0</span><span class="mord mathdefault">e</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">&#x2212;</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord">5</span></span></span><span style="top:-2.825555em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,
+-10,-9.5,-14c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54c44.2,-33.3,65.8,
+-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10s173,378,173,378c0.7,0,
+35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429c69,-144,104.5,-217.7,106.5,
+-221c5.3,-9.3,12,-14,20,-14H400000v40H845.2724s-225.272,467,-225.272,467
+s-235,486,-235,486c-2.7,4.7,-9,7,-19,7c-6,0,-10,-1,-12,-3s-194,-422,-194,-422
+s-65,47,-65,47z M834 80H400000v40H845z"/></svg></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.17444499999999996em;"><span></span></span></span></span></span></span></span></span></td>
+<td>-</td>
+</tr>
+<tr>
+<td></td>
+<td>Y position and width of the <strong>interaction point (IP)</strong> (cm)</td>
+<td>header-&gt;GetDiamondX()/GetSigma2DiamondX()</td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0.368</mn><mo>&#xB1;</mo><msqrt><mrow><mn>2.84</mn><mi>e</mi><mo>&#x2212;</mo><mn>5</mn></mrow></msqrt></mrow><annotation encoding="application/x-tex">0.368\pm\sqrt{2.84e-5}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">3</span><span class="mord">6</span><span class="mord">8</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">&#xB1;</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.04em;vertical-align:-0.17444499999999996em;"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8655550000000001em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord">2</span><span class="mord">.</span><span class="mord">8</span><span class="mord">4</span><span class="mord mathdefault">e</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">&#x2212;</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord">5</span></span></span><span style="top:-2.825555em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,
+-10,-9.5,-14c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54c44.2,-33.3,65.8,
+-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10s173,378,173,378c0.7,0,
+35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429c69,-144,104.5,-217.7,106.5,
+-221c5.3,-9.3,12,-14,20,-14H400000v40H845.2724s-225.272,467,-225.272,467
+s-235,486,-235,486c-2.7,4.7,-9,7,-19,7c-6,0,-10,-1,-12,-3s-194,-422,-194,-422
+s-65,47,-65,47z M834 80H400000v40H845z"/></svg></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.17444499999999996em;"><span></span></span></span></span></span></span></span></span></td>
+<td>-</td>
 </tr>
 <tr>
 <td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msubsup><mi>N</mi><mrow><mi>c</mi><mi>o</mi><mi>n</mi><mi>t</mi><mi>r</mi><mi>i</mi><mi>b</mi><mi>u</mi><mi>t</mi><mi>o</mi><mi>r</mi><mi>s</mi></mrow><mrow><mi>V</mi><mi>t</mi><mi>x</mi></mrow></msubsup></mrow><annotation encoding="application/x-tex">N_{contributors}^{Vtx}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1244389999999997em;vertical-align:-0.2831079999999999em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-2.4168920000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight">n</span><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">i</span><span class="mord mathdefault mtight">b</span><span class="mord mathdefault mtight">u</span><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">s</span></span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.22222em;">V</span><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">x</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.2831079999999999em;"><span></span></span></span></span></span></span></span></span></span></td>
 <td>Number of primary vertex contributors</td>
 <td></td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mover accent="true"><mi>N</mi><mo>&#x2C9;</mo></mover><mo>&#x223C;</mo><mn>25</mn></mrow><annotation encoding="application/x-tex">\bar{N}\sim25</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8201099999999999em;vertical-align:0em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8201099999999999em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span></span></span><span style="top:-3.25233em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.16666em;">&#x2C9;</span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&#x223C;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord">5</span></span></span></span></td>
+<td>[0,500] / 1</td>
 </tr>
 <tr>
 <td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>N</mi><mrow><mi>t</mi><mi>r</mi><mi>a</mi><mi>c</mi><mi>k</mi><mi>l</mi><mi>e</mi><mi>t</mi><mi>s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">N_{tracklets}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight" style="margin-right:0.03148em;">k</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">s</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></td>
-<td>Number of SPD tracklets, by layers</td>
-<td>aod-&gt;GetMultiplicity()-&gt;GetNumberOfTracklets()</td>
+<td>Number of SPD tracklets (<strong>aod-&gt;GetMultiplicity()</strong>), by layers</td>
+<td>spd-&gt;GetNumberOfTracklets()</td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mover accent="true"><mi>N</mi><mo>&#x2C9;</mo></mover><mo>&#x223C;</mo><mn>28</mn></mrow><annotation encoding="application/x-tex">\bar{N}\sim28</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8201099999999999em;vertical-align:0em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8201099999999999em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span></span></span><span style="top:-3.25233em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.16666em;">&#x2C9;</span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&#x223C;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord">8</span></span></span></span></td>
+<td>[0,200] / 1</td>
 </tr>
 <tr>
 <td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>Z</mi><mrow><mi>V</mi><mi>t</mi><mi>x</mi></mrow></msub></mrow><annotation encoding="application/x-tex">Z_{Vtx}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.07153em;">Z</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:-0.07153em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.22222em;">V</span><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">x</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>-<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>N</mi><mrow><mi>t</mi><mi>r</mi><mi>a</mi><mi>c</mi><mi>k</mi><mi>l</mi><mi>e</mi><mi>t</mi><mi>s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">N_{tracklets}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight" style="margin-right:0.03148em;">k</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">s</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></td>
 <td>Correction needed for multiplicity analysis</td>
 <td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>N</mi><mrow><mi>S</mi><mi>P</mi><mi>D</mi><mi>c</mi><mi>l</mi><mi>u</mi><mi>s</mi><mi>t</mi><mi>e</mi><mi>r</mi><mi>s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">N_{SPDclusters}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">u</span><span class="mord mathdefault mtight">s</span><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">s</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>N</mi><mrow><mi>I</mi><mi>T</mi><mi>S</mi><mi>c</mi><mi>l</mi><mi>u</mi><mi>s</mi><mi>t</mi><mi>e</mi><mi>r</mi><mi>s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">N_{ITSclusters}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.07847em;">I</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">u</span><span class="mord mathdefault mtight">s</span><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">s</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></td>
+<td>Number of ITS clusters, by layers.</td>
+<td>spd-&gt;GetNumberOfITSClusters(lr)</td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mover accent="true"><mi>N</mi><mo>&#x2C9;</mo></mover><mo>&#x223C;</mo><mn>540</mn></mrow><annotation encoding="application/x-tex">\bar{N}\sim540</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8201099999999999em;vertical-align:0em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8201099999999999em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span></span></span><span style="top:-3.25233em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.16666em;">&#x2C9;</span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&#x223C;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">5</span><span class="mord">4</span><span class="mord">0</span></span></span></span></td>
+<td>[0,20000] / 1</td>
+</tr>
+<tr>
 <td></td>
+<td>SPD (pixel), layer 0 and 1</td>
 <td></td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mover accent="true"><mi>N</mi><mo>&#x2C9;</mo></mover><mo>&#x223C;</mo><mn>110</mn></mrow><annotation encoding="application/x-tex">\bar{N}\sim110</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8201099999999999em;vertical-align:0em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8201099999999999em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span></span></span><span style="top:-3.25233em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.16666em;">&#x2C9;</span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&#x223C;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">1</span><span class="mord">0</span></span></span></span></td>
+<td>[0,10000] / 1</td>
+</tr>
+<tr>
+<td></td>
+<td>SDD (drift), layer 2 and 3</td>
+<td></td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mover accent="true"><mi>N</mi><mo>&#x2C9;</mo></mover><mo>&#x223C;</mo><mn>70</mn></mrow><annotation encoding="application/x-tex">\bar{N}\sim70</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8201099999999999em;vertical-align:0em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8201099999999999em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span></span></span><span style="top:-3.25233em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.16666em;">&#x2C9;</span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&#x223C;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">7</span><span class="mord">0</span></span></span></span></td>
+<td>[0,3000] / 1</td>
+</tr>
+<tr>
+<td></td>
+<td>SSD (strip), layer 4 and 5</td>
+<td></td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mover accent="true"><mi>N</mi><mo>&#x2C9;</mo></mover><mo>&#x223C;</mo><mn>80</mn></mrow><annotation encoding="application/x-tex">\bar{N}\sim80</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8201099999999999em;vertical-align:0em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8201099999999999em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span></span></span><span style="top:-3.25233em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.16666em;">&#x2C9;</span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&#x223C;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">8</span><span class="mord">0</span></span></span></span></td>
+<td>[0,2000] / 1</td>
+</tr>
+<tr>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>N</mi><mrow><mi>S</mi><mi>P</mi><mi>D</mi><mi>f</mi><mi>i</mi><mi>r</mi><mi>e</mi><mi>d</mi><mi>C</mi><mi>h</mi><mi>i</mi><mi>p</mi><mi>s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">N_{SPDfiredChips}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">D</span><span class="mord mathdefault mtight" style="margin-right:0.10764em;">f</span><span class="mord mathdefault mtight">i</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight">d</span><span class="mord mathdefault mtight" style="margin-right:0.07153em;">C</span><span class="mord mathdefault mtight">h</span><span class="mord mathdefault mtight">i</span><span class="mord mathdefault mtight">p</span><span class="mord mathdefault mtight">s</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span></td>
+<td>Number of SPD fired chips <strong>(1200 in total)</strong>, by layers.</td>
+<td>spd-&gt;GetNumberOfFiredChips(lr)</td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mover accent="true"><mi>N</mi><mo>&#x2C9;</mo></mover><mo>&#x223C;</mo><mn>115</mn></mrow><annotation encoding="application/x-tex">\bar{N}\sim115</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8201099999999999em;vertical-align:0em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8201099999999999em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span></span></span><span style="top:-3.25233em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.16666em;">&#x2C9;</span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&#x223C;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord">1</span><span class="mord">5</span></span></span></span></td>
+<td>[0,1200] / 1</td>
 </tr>
 <tr>
 <td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>N</mi><mrow><mi>t</mi><mi>r</mi><mi>a</mi><mi>c</mi><mi>k</mi><mi>s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">N_{tracks}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight" style="margin-right:0.03148em;">k</span><span class="mord mathdefault mtight">s</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></td>
-<td>Number of tracks with track cuts</td>
+<td>Number of tracks w/ or w/o track cuts</td>
 <td>aod-&gt;GetNumberOfTracks()</td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mover accent="true"><mi>N</mi><mo>&#x2C9;</mo></mover><mrow><mi>t</mi><mi>o</mi><mi>t</mi><mi>a</mi><mi>l</mi></mrow></msub><mo>&#x223C;</mo><mn>640</mn></mrow><annotation encoding="application/x-tex">\bar{N}_{total}\sim640</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9701099999999999em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8201099999999999em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span></span></span><span style="top:-3.25233em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.16666em;">&#x2C9;</span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&#x223C;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">6</span><span class="mord">4</span><span class="mord">0</span></span></span></span></td>
+<td>[0,4000] / 1</td>
 </tr>
 <tr>
-<td>V0A, V0C</td>
-<td>Amplitute of VZERO multiplicity</td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>A</mi><mrow><mi>V</mi><mi>Z</mi><mi>E</mi><mi>R</mi><mi>O</mi></mrow></msub></mrow><annotation encoding="application/x-tex">A_{VZERO}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.22222em;">V</span><span class="mord mathdefault mtight" style="margin-right:0.07153em;">Z</span><span class="mord mathdefault mtight" style="margin-right:0.05764em;">E</span><span class="mord mathdefault mtight" style="margin-right:0.00773em;">R</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">O</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></td>
+<td>Amplitute of VZERO multiplicity decision as sum of 64 ch. (<strong>aod-&gt;GetVZEROData()</strong>)</td>
+<td>vzero-&gt;GetMultiplicity(ch)</td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mover accent="true"><mi>A</mi><mo>&#x2C9;</mo></mover><mo>&#x223C;</mo><mn>95</mn></mrow><annotation encoding="application/x-tex">\bar{A}\sim95</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8201099999999999em;vertical-align:0em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8201099999999999em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault">A</span></span></span><span style="top:-3.25233em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.11110999999999999em;">&#x2C9;</span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&#x223C;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">9</span><span class="mord">5</span></span></span></span></td>
+<td>[0,2000] / 1</td>
+</tr>
+<tr>
 <td></td>
+<td>V0A, channel 32 - 63</td>
+<td>vzero-&gt;GetMultiplicityV0A(ch)</td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mover accent="true"><mi>A</mi><mo>&#x2C9;</mo></mover><mo>&#x223C;</mo><mn>37</mn></mrow><annotation encoding="application/x-tex">\bar{A}\sim37</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8201099999999999em;vertical-align:0em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8201099999999999em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault">A</span></span></span><span style="top:-3.25233em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.11110999999999999em;">&#x2C9;</span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&#x223C;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">3</span><span class="mord">7</span></span></span></span></td>
+<td>[0,2000] / 1</td>
+</tr>
+<tr>
+<td></td>
+<td>V0C, channel 0 - 31</td>
+<td>vzero-&gt;GetMultiplicityV0A(ch)</td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mover accent="true"><mi>A</mi><mo>&#x2C9;</mo></mover><mo>&#x223C;</mo><mn>58</mn></mrow><annotation encoding="application/x-tex">\bar{A}\sim58</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8201099999999999em;vertical-align:0em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8201099999999999em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault">A</span></span></span><span style="top:-3.25233em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.11110999999999999em;">&#x2C9;</span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&#x223C;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">5</span><span class="mord">8</span></span></span></span></td>
+<td>[0,2000] / 1</td>
 </tr>
 <tr>
 <td>Centrality</td>
-<td>Estimtor by multiplicity or impact factor</td>
+<td>Estimtor by multiplicity percentiles or impact factor</td>
+<td><a href="https://github.com/alisw/AliPhysics/blob/master/OADB/COMMON/MULTIPLICITY/macros/AddTaskMultSelection.C">AddTaskMultSelection.C</a></td>
+<td></td>
 <td></td>
 </tr>
 <tr>
 <td>Q-vector</td>
 <td>Event plane framework</td>
+<td><a href="https://github.com/alisw/AliPhysics/blob/master/PWGPP/EVCHAR/FlowVectorCorrections/QnCorrectionsInterface/macros/AddTaskFlowQnVectorCorrections.C">AddTaskFlowQnVectorCorrections.C</a></td>
+<td></td>
 <td></td>
 </tr>
 <tr>
 <td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>N</mi><mrow><mi>c</mi><mi>l</mi><mi>u</mi><mi>s</mi><mi>t</mi><mi>e</mi><mi>r</mi></mrow></msub></mrow><annotation encoding="application/x-tex">N_{cluster}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">u</span><span class="mord mathdefault mtight">s</span><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></td>
 <td>Number of calo clusters</td>
-<td></td>
+<td>aod-&gt;GetNumberOfCaloClusters()</td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mover accent="true"><mi>N</mi><mo>&#x2C9;</mo></mover><mo>&#x223C;</mo><mn>37</mn></mrow><annotation encoding="application/x-tex">\bar{N}\sim37</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8201099999999999em;vertical-align:0em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8201099999999999em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span></span></span><span style="top:-3.25233em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.16666em;">&#x2C9;</span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&#x223C;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">3</span><span class="mord">7</span></span></span></span></td>
+<td>[0,500] / 1</td>
 </tr>
 <tr>
 <td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>E</mi><mrow><mi>c</mi><mi>l</mi><mi>u</mi><mi>s</mi><mi>t</mi><mi>e</mi><mi>r</mi></mrow></msub></mrow><annotation encoding="application/x-tex">E_{cluster}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.05764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">u</span><span class="mord mathdefault mtight">s</span><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></td>
-<td>Energy distribution of calo clusters</td>
+<td>Energy distribution of calo clusters (GeV)</td>
+<td>calo-&gt;E()</td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mover accent="true"><mi>E</mi><mo>&#x2C9;</mo></mover><mo>&#x223C;</mo><mn>0.5</mn></mrow><annotation encoding="application/x-tex">\bar{E}\sim0.5</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8201099999999999em;vertical-align:0em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8201099999999999em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05764em;">E</span></span></span><span style="top:-3.25233em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.16666em;">&#x2C9;</span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&#x223C;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">5</span></span></span></span></td>
+<td>[0,300] / 0.1</td>
+</tr>
+</tbody>
+</table>
+<p>*<strong>spd</strong> is the instance of SPD tracklets <code>AliAODTracklets</code> from <code>AliAODEvent::GetMultiplicity()</code>.<br>
+*Typical values and histogram setup are referred to [AN746] and fully AOD tree.</p>
+<h3 class="mume-header" id="track-tpc-its">Track &amp; TPC-ITS</h3>
+
+<p>Track selection and tracking parameters. The getter methods depend on the variable manager in PWG analysis framework, while methods listed blow are standard function from basic class in AliRoot/STEER.</p>
+<details>
+<summary>Track types / status flag</summary>
+<blockquote>
+<p>from <a href="https://github.com/alisw/AliRoot/blob/master/STEER/STEERBase/AliVTrack.h" title="8feaf83 on 28 Jun 2018">AliVTrack.h</a></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Enum</th>
+<th>BIT(N)</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>kITSin</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td>kITSout</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td>kITSrefit</td>
+<td>2</td>
+<td></td>
+</tr>
+<tr>
+<td>kITSpid</td>
+<td>3</td>
+<td></td>
+</tr>
+<tr>
+<td>kTPCin</td>
+<td>4</td>
+<td></td>
+</tr>
+<tr>
+<td>kTPCout</td>
+<td>5</td>
+<td></td>
+</tr>
+<tr>
+<td>kTPCrefit</td>
+<td>6</td>
+<td></td>
+</tr>
+<tr>
+<td>kTPCpid</td>
+<td>7</td>
+<td></td>
+</tr>
+<tr>
+<td>kTRDin</td>
+<td>8</td>
+<td></td>
+</tr>
+<tr>
+<td>kTRDout</td>
+<td>9</td>
+<td></td>
+</tr>
+<tr>
+<td>kTRDrefit</td>
+<td>10</td>
+<td></td>
+</tr>
+<tr>
+<td>kTRDpid</td>
+<td>11</td>
+<td></td>
+</tr>
+<tr>
+<td>kTOFin</td>
+<td>12</td>
+<td></td>
+</tr>
+<tr>
+<td>kTOFout</td>
+<td>13</td>
+<td></td>
+</tr>
+<tr>
+<td>kTOFrefit</td>
+<td>14</td>
+<td></td>
+</tr>
+<tr>
+<td>kTOFpid</td>
+<td>15</td>
+<td></td>
+</tr>
+<tr>
+<td>kHMPIDout</td>
+<td>16</td>
+<td></td>
+</tr>
+<tr>
+<td>kHMPIDpid</td>
+<td>17</td>
+<td></td>
+</tr>
+<tr>
+<td>kEMCALmatch</td>
+<td>18</td>
+<td></td>
+</tr>
+<tr>
+<td>kTRDbackup</td>
+<td>19</td>
+<td></td>
+</tr>
+<tr>
+<td>kTOFmismatch</td>
+<td>20</td>
+<td></td>
+</tr>
+<tr>
+<td>kPHOSmatch</td>
+<td>21</td>
+<td></td>
+</tr>
+<tr>
+<td>kITSupg</td>
+<td>22</td>
+<td>flag that in the ITSupgrade reco</td>
+</tr>
+<tr>
+<td>kSkipFriend</td>
+<td>23</td>
+<td>flag to skip friend storage</td>
+</tr>
+<tr>
+<td>kGlobalMerge</td>
+<td>24</td>
+<td></td>
+</tr>
+<tr>
+<td>kMultInV0</td>
+<td>25</td>
+<td>assumed to be belong to V0 in multiplicity estimates</td>
+</tr>
+<tr>
+<td>kMultSec</td>
+<td>26</td>
+<td>assumed to be secondary (due to the DCA) in multiplicity estimates</td>
+</tr>
+<tr>
+<td>kEmbedded</td>
+<td>27</td>
+<td>Is a track that has been embedded into the event</td>
+</tr>
+<tr>
+<td>kITSpureSA</td>
+<td>28</td>
+<td></td>
+</tr>
+<tr>
+<td>kTRDStop</td>
+<td>29</td>
+<td></td>
+</tr>
+<tr>
+<td>kESDpid</td>
+<td>30</td>
+<td></td>
+</tr>
+<tr>
+<td>kTIME</td>
+<td>31</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Others</strong></td>
+<td>-</td>
+<td></td>
+</tr>
+<tr>
+<td>kTRDnPlanes</td>
+<td>6</td>
+<td>Not in BIT</td>
+</tr>
+<tr>
+<td>kEMCALNoMatch</td>
+<td>-4096</td>
+<td></td>
+</tr>
+<tr>
+<td>kTOFBCNA</td>
+<td>-100</td>
 <td></td>
 </tr>
 </tbody>
 </table>
-<h3 class="mume-header" id="track-tpc-its">Track &amp; TPC-ITS</h3>
-
-<p>Track selection and tracking parameters.</p>
+</details>
+<details>
+<summary>Track bits / pre-defined filter</summary>
+<blockquote>
+<p>from <a href="https://github.com/alisw/AliRoot/blob/master/STEER/AOD/AliAODTrack.h" title="27fc1a9 on 11 Apr 2019">AliAODTrack.h</a>, and the details is located in <a href="https://github.com/alisw/AliRoot/blob/master/ANALYSIS/ESDfilter/AliAnalysisTaskESDfilter.cxx" title="Convert ESD to AOD">AliAnalysisTaskESDfilter</a> and <a href="https://github.com/alisw/AliRoot/blob/master/ANALYSIS/ANALYSISalice/AliESDtrackCuts.cxx" title="Pre-defined ESD track cuts">AliESDtrackCuts</a>. As usual, the track cuts contains <strong>TPC cluster number, <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>&#x3C7;</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">\chi^{2}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.008548em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault">&#x3C7;</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span>, DCA, refit requirements and kink rejection</strong>:</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>AODTrkFilterBits_t</th>
+<th>BIT(N)</th>
+<th>Description</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>kTrkTPCOnly</td>
+<td>0</td>
+<td>Standard TPC only tracks</td>
+<td>GetStandardTPCOnlyTrackCuts</td>
+</tr>
+<tr>
+<td>kTrkITSsa</td>
+<td>1</td>
+<td>ITS standalone, require ITS standalone tracks (remove pure SA)</td>
+<td>?SetRequireITSStandAlone(kTRUE)?</td>
+</tr>
+<tr>
+<td>kTrkITSConstrained</td>
+<td>2</td>
+<td>Pixel OR necessary for the electrons AND standard track cuts</td>
+<td>SetClusterRequirementITS(kSPD, kAny)</td>
+</tr>
+<tr>
+<td>kTrkElectronsPID</td>
+<td>3</td>
+<td>PID for the electrons</td>
+<td>SetTPCnSigmaCut(AliPID::kElectron, 3.5)</td>
+</tr>
+<tr>
+<td>kTrkGlobalNoDCA</td>
+<td>4</td>
+<td>standard cuts with very loose DCA (|xy|&gt;2.4, |z|&lt;3.2, 2D=kTRUE)</td>
+<td>GetStandardITSTPCTrackCuts2011(kFALSE)</td>
+</tr>
+<tr>
+<td>kTrkGlobal</td>
+<td>5</td>
+<td>standard cuts with tight DCA cut, (|xy|&lt;&quot;0.0105+0.0350/pt^1.1&quot;, |z|&lt;2)</td>
+<td>GetStandardITSTPCTrackCuts2011(kTRUE)</td>
+</tr>
+<tr>
+<td>kTrkGlobalSDD</td>
+<td>6</td>
+<td>standard cuts with tight DCA but with requiring <strong>the first SDD cluster</strong> instead of an SPD cluster tracks selected by this cut are exclusive to those selected by the previous cut</td>
+<td>GetStandardITSTPCTrackCuts2011(kTRUE), GetClusterRequirementITS(kSPD,kNone), GetClusterRequirementITS(kSDD,kFirst)</td>
+</tr>
+<tr>
+<td>kTrkTPCOnlyConstrained</td>
+<td>7</td>
+<td><strong>Refitted</strong> TPC only tracks: TPConly information constrained to SPD vertex in the filter below</td>
+<td>GetStandardTPCOnlyTrackCuts, esdFilter-&gt;SetTPCOnlyFilterMask(128)</td>
+</tr>
+<tr>
+<td><strong>AODTrkBits_t</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>kIsDCA</td>
+<td>14</td>
+<td>set if fPosition is the DCA and not the position of the first point</td>
+<td></td>
+</tr>
+<tr>
+<td>kUsedForVtxFit</td>
+<td>15</td>
+<td>set if this track was used to fit the vertex it is attached to</td>
+<td></td>
+</tr>
+<tr>
+<td>kUsedForPrimVtxFit</td>
+<td>16</td>
+<td>set if this track was used to fit the primary vertex</td>
+<td></td>
+</tr>
+<tr>
+<td>kIsTPCConstrained</td>
+<td>17</td>
+<td>set if this track is a SA TPC track constrained to the SPD vertex, needs to be skipped in any track loop to avoid double counting</td>
+<td></td>
+</tr>
+<tr>
+<td>kIsHybridTPCCG</td>
+<td>18</td>
+<td>set if this track can be used as a hybrid track i.e. Gbobal tracks with certain slecetion plus the TPC constrained tracks that did not pass the selection</td>
+<td></td>
+</tr>
+<tr>
+<td>kIsGlobalConstrained</td>
+<td>19</td>
+<td>set if this track is a global track constrained to the vertex, needs to be skipped in any track loop to avoid double counting</td>
+<td></td>
+</tr>
+<tr>
+<td>kIsHybridGCG</td>
+<td>20</td>
+<td>set if this track can be used as a hybrid track i.e. tracks with certain selection plus the global constraint tracks that did not pass the selection</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</details>
 <table>
 <thead>
 <tr>
 <th>Parameter</th>
 <th>Description</th>
-<th>Method</th>
+<th>Std. Method</th>
+<th>Typical Value</th>
+<th>Setup</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi><mi mathvariant="normal">/</mi><msub><mi>p</mi><mi>T</mi></msub></mrow><annotation encoding="application/x-tex">p/p_{T}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">p</span><span class="mord">/</span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>-<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>&#x3B7;</mi></mrow><annotation encoding="application/x-tex">\eta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">&#x3B7;</span></span></span></span>-<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>&#x3D5;</mi></mrow><annotation encoding="application/x-tex">\phi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">&#x3D5;</span></span></span></span></td>
-<td>Basic kinetic variables</td>
+<td>Basic kinematic variables</td>
+<td></td>
+<td></td>
 <td></td>
 </tr>
 <tr>
 <td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><mi>C</mi><msub><mi>A</mi><mrow><mi>X</mi><mi>Y</mi><mo separator="true">,</mo><mi>Z</mi></mrow></msub></mrow><annotation encoding="application/x-tex">DCA_{XY, Z}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mord"><span class="mord mathdefault">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.328331em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.07847em;">X</span><span class="mord mathdefault mtight" style="margin-right:0.22222em;">Y</span><span class="mpunct mtight">,</span><span class="mord mathdefault mtight" style="margin-right:0.07153em;">Z</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span></td>
-<td>Distance of the closest approach</td>
+<td>Distance of the closest approach. <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><mi>C</mi><msub><mi>A</mi><mi>z</mi></msub></mrow><annotation encoding="application/x-tex">DCA_z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mord"><span class="mord mathdefault">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.04398em;">z</span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> can be used for rejection of out-of-bunch pileup tracks, while large <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><mi>C</mi><msub><mi>A</mi><mrow><mi>x</mi><mi>y</mi></mrow></msub></mrow><annotation encoding="application/x-tex">DCA_{xy}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mord"><span class="mord mathdefault">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="mord mathdefault mtight" style="margin-right:0.03588em;">y</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span> is related to the subsequent decays or photon conversions.</td>
+<td></td>
+<td></td>
 <td></td>
 </tr>
 <tr>
 <td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msubsup><mi>N</mi><mrow><mi>c</mi><mi>l</mi><mi>u</mi><mi>s</mi><mi>t</mi><mi>e</mi><mi>r</mi><mi>s</mi></mrow><mrow><mi>T</mi><mi>P</mi><mi>C</mi></mrow></msubsup></mrow><annotation encoding="application/x-tex">N_{clusters}^{TPC}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1244389999999997em;vertical-align:-0.2831079999999999em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-2.4168920000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">u</span><span class="mord mathdefault mtight">s</span><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">s</span></span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span><span class="mord mathdefault mtight" style="margin-right:0.07153em;">C</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.2831079999999999em;"><span></span></span></span></span></span></span></span></span></span></td>
 <td>TPC cluster number, [0,160]</td>
 <td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msubsup><mi>N</mi><mrow><mi>c</mi><mi>l</mi><mi>u</mi><mi>s</mi><mi>t</mi><mi>e</mi><mi>r</mi><mi>s</mi></mrow><mrow><mi>I</mi><mi>T</mi><mi>S</mi></mrow></msubsup></mrow><annotation encoding="application/x-tex">N_{clusters}^{ITS}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1244389999999997em;vertical-align:-0.2831079999999999em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-2.4168920000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">u</span><span class="mord mathdefault mtight">s</span><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">s</span></span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.07847em;">I</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.2831079999999999em;"><span></span></span></span></span></span></span></span></span></span></td>
 <td>ITS cluster number, [0,6]</td>
+<td></td>
+<td></td>
 <td></td>
 </tr>
 <tr>
 <td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>&#x3C7;</mi><mn>2</mn></msup><mi mathvariant="normal">/</mi><msubsup><mi>N</mi><mrow><mi>c</mi><mi>l</mi><mi>u</mi><mi>s</mi><mi>t</mi><mi>e</mi><mi>r</mi><mi>s</mi></mrow><mrow><mi>T</mi><mi>P</mi><mi>C</mi></mrow></msubsup></mrow><annotation encoding="application/x-tex">\chi^{2}/N_{clusters}^{TPC}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1244389999999997em;vertical-align:-0.2831079999999999em;"></span><span class="mord"><span class="mord mathdefault">&#x3C7;</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span><span class="mord">/</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-2.4168920000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">u</span><span class="mord mathdefault mtight">s</span><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">s</span></span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span><span class="mord mathdefault mtight" style="margin-right:0.07153em;">C</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.2831079999999999em;"><span></span></span></span></span></span></span></span></span></span></td>
 <td>TPC cluster tracking/fitting</td>
 <td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>&#x3C7;</mi><mn>2</mn></msup><mi mathvariant="normal">/</mi><msubsup><mi>N</mi><mrow><mi>c</mi><mi>l</mi><mi>u</mi><mi>s</mi><mi>t</mi><mi>e</mi><mi>r</mi><mi>s</mi></mrow><mrow><mi>I</mi><mi>T</mi><mi>S</mi></mrow></msubsup></mrow><annotation encoding="application/x-tex">\chi^{2}/N_{clusters}^{ITS}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1244389999999997em;vertical-align:-0.2831079999999999em;"></span><span class="mord"><span class="mord mathdefault">&#x3C7;</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span><span class="mord">/</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-2.4168920000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">u</span><span class="mord mathdefault mtight">s</span><span class="mord mathdefault mtight">t</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">s</span></span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.07847em;">I</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.2831079999999999em;"><span></span></span></span></span></span></span></span></span></span></td>
 <td>ITS cluster tracking/fitting</td>
 <td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>Kink</td>
-<td>Invisible production</td>
+<td>Tracks which does not have a continous particle trajectories, but show deviations due to <strong>decays or the emission of Bremsstrahlung</strong>.</td>
+<td></td>
+<td></td>
 <td></td>
 </tr>
 <tr>
 <td>Refit</td>
 <td>Fitting method, include ITS and TPC</td>
 <td></td>
+<td></td>
+<td></td>
 </tr>
 </tbody>
 </table>
+<p>For electron, the particle can hit the first or the second layer of the ITS detector (kAny). This cut helps to remove electrons from <strong>gamma conversion</strong>.</p>
 <h3 class="mume-header" id="calo-cluster-emcaldcalphos">Calo Cluster / EMCAL+DCAL+PHOS</h3>
 
 <p>The cluster QA covers general cluster and cell properties. <a href="http://aliqaemc.web.cern.ch/aliqaemc/data/">Official QA Repository</a>, reference task - AliAnalysisTaskClusterQA / AddTask_ClusterQA from Gamma Conversion Group. Be careful with the binning of cluster energy histograms. All histogram can be updated after triggger selection and QA or analysis cuts (pt range, track charge, etc.).</p>
@@ -1397,7 +2300,7 @@ TH1<span class="token operator">*</span> <span class="token function">GetPriorDi
 </tr>
 <tr>
 <td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>p</mi><mi>T</mi></msub></mrow><annotation encoding="application/x-tex">p_{T}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>-<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>&#x3B7;</mi></mrow><annotation encoding="application/x-tex">\eta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">&#x3B7;</span></span></span></span>-<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>&#x3D5;</mi></mrow><annotation encoding="application/x-tex">\phi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">&#x3D5;</span></span></span></span></td>
-<td>Basic kinetic variables</td>
+<td>Basic kinematic variables</td>
 <td></td>
 </tr>
 <tr>
@@ -1437,7 +2340,7 @@ TH1<span class="token operator">*</span> <span class="token function">GetPriorDi
 <tbody>
 <tr>
 <td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>p</mi><mi>T</mi></msub></mrow><annotation encoding="application/x-tex">p_{T}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>-<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>&#x3B7;</mi></mrow><annotation encoding="application/x-tex">\eta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">&#x3B7;</span></span></span></span>-<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>&#x3D5;</mi></mrow><annotation encoding="application/x-tex">\phi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">&#x3D5;</span></span></span></span></td>
-<td>Jet basic kinetic variables</td>
+<td>Jet basic kinematic variables</td>
 <td></td>
 </tr>
 <tr>
@@ -1475,6 +2378,25 @@ TH1<span class="token operator">*</span> <span class="token function">GetPriorDi
 <p>RC is random cone method for the fluctuation of jet UE density.</p>
 <h2 class="mume-header" id="signal-extraction">Signal Extraction</h2>
 
+<p>In PWGDQ, there are two analysis frameworks, <strong>dielectron</strong> and <strong>reducedTree</strong>, for general purpose of dielectron and quarkonium physics.</p>
+<p>The core class of <strong>dielectron</strong> is <code>AliDielectron</code>, which consists of event processing methods, analysis cuts/filters (event, track, leg and pair), arrays of tracks and pair candidates, histogram manager, correction framework manager, event mixing handler, track rotator and MC signal. Physics variables are processed and stored in <code>AliDielectronVarManager</code>.</p>
+<pre data-role="codeBlock" data-info="C++" class="language-cpp"><span class="token comment">// To load dielectron framework</span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&quot;AliDielectron.h&quot;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&quot;AliDielectronVarManager.h&quot;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&quot;AliDielectronVarCuts.h&quot;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&quot;AliDielectronEventCuts.h&quot;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&quot;AliDielectronPairLegCuts.h&quot;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&quot;AliDielectronTrackCuts.h&quot;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&quot;AliDielectronCF.h&quot;</span></span>
+
+<span class="token keyword">class</span> <span class="token class-name">AliDielectron</span><span class="token punctuation">;</span>
+<span class="token keyword">class</span> <span class="token class-name">AliDielectronVarManager</span><span class="token punctuation">;</span>
+<span class="token keyword">class</span> <span class="token class-name">AliDielectronVarCuts</span><span class="token punctuation">;</span>
+<span class="token keyword">class</span> <span class="token class-name">AliDielectronEventCuts</span><span class="token punctuation">;</span>
+<span class="token keyword">class</span> <span class="token class-name">AliDielectronPairLegCuts</span><span class="token punctuation">;</span>
+<span class="token keyword">class</span> <span class="token class-name">AliDielectronTrackCuts</span><span class="token punctuation">;</span>
+<span class="token keyword">class</span> <span class="token class-name">AliDielectronCF</span><span class="token punctuation">;</span>
+</pre><p>The <strong>reducedTree</strong> was created as restructuring of dielectron package in <a href="https://github.com/alisw/AliPhysics/commit/8ccb5a33630bc3218175dd2eb19b7c1f62f6050e">Oct 2015</a>. With <code>AliAnalysisTaskReducedTreeMaker</code>, original AOD tree woud be filtered and converted to dst tree.</p>
 <h3 class="mume-header" id="event-selection">Event selection</h3>
 
 <p>The events are required to pass the physics selection (<a href="https://github.com/alisw/AliPhysics/blob/master/OADB/macros/AddTaskPhysicsSelection.C">Task</a>) and have a reconstructed vertex. For <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>J</mi><mi mathvariant="normal">/</mi><mi>&#x3C8;</mi></mrow><annotation encoding="application/x-tex">J/\psi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.09618em;">J</span><span class="mord">/</span><span class="mord mathdefault" style="margin-right:0.03588em;">&#x3C8;</span></span></span></span> analysis in high <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>p</mi><mi>T</mi></msub></mrow><annotation encoding="application/x-tex">p_{T}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> range, we select EMCal triggered electron (single) for dielectron reconstruction and use MB events to determine the rejection factor (RF) of EMCal.</p>
@@ -1523,12 +2445,135 @@ TH1<span class="token operator">*</span> <span class="token function">GetPriorDi
 <li><em>out-of-bunch</em>: readout time of detectors (TPC:100us, SPD:300ns) are slow than the bunch spacing (25ns).</li>
 </ul>
 <p>Tools and methods for pileup rejection: Physics Selection / Past-future protection, Multi-vertexer, AliVEvent::IsPileupFromSPD.</p>
-<h3 class="mume-header" id="pid-for-electron">PID for electron</h3>
+<h3 class="mume-header" id="track-selection">Track selection</h3>
 
+<p>Use track cuts to select good tracks as electron candidates, including kinematic variables, tracking result, TPC parameters and PID limitations.</p>
 <ul>
 <li>Basic strategy: Using dE/dx (from TPC) and E/p (from EMCal) to indentify electrons, and only TPC signal to exclude kaons and protons.</li>
 <li>Hybrid method: To add TOF or/and TRD as complements.</li>
 </ul>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Cut / Value - AN646</th>
+<th>AN746</th>
+<th>AN876</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>p</mi><mi>T</mi></msub></mrow><annotation encoding="application/x-tex">p_{T}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833099999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> (GeV/c)</td>
+<td>&gt;1.0</td>
+<td>&gt;1.0</td>
+<td>&gt;1.0</td>
+</tr>
+<tr>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>&#x3B7;</mi></mrow><annotation encoding="application/x-tex">\eta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.03588em;">&#x3B7;</span></span></span></span></td>
+<td>[-0.9,0.9]</td>
+<td>[-0.9,0.9]</td>
+<td>[-0.9,0.9]</td>
+</tr>
+<tr>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><mi>C</mi><msub><mi>A</mi><mi>z</mi></msub></mrow><annotation encoding="application/x-tex">DCA_z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mord"><span class="mord mathdefault">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.04398em;">z</span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> (cm)</td>
+<td>[-3,3]</td>
+<td>[-3,3]</td>
+<td>[-2,2]</td>
+</tr>
+<tr>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><mi>C</mi><msub><mi>A</mi><mrow><mi>x</mi><mi>y</mi></mrow></msub></mrow><annotation encoding="application/x-tex">DCA_{xy}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.969438em;vertical-align:-0.286108em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mord"><span class="mord mathdefault">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="mord mathdefault mtight" style="margin-right:0.03588em;">y</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span> (cm)</td>
+<td>[-1,1]</td>
+<td>[-1,1]</td>
+<td>[-0.5,0.5]</td>
+</tr>
+<tr>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msubsup><mi>N</mi><mrow><mi>c</mi><mi>l</mi><mi>s</mi><mi mathvariant="normal">.</mi></mrow><mrow><mi>T</mi><mi>P</mi><mi>C</mi></mrow></msubsup></mrow><annotation encoding="application/x-tex">N_{cls.}^{TPC}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1244389999999997em;vertical-align:-0.2831079999999999em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-2.4168920000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">s</span><span class="mord mtight">.</span></span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span><span class="mord mathdefault mtight" style="margin-right:0.07153em;">C</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.2831079999999999em;"><span></span></span></span></span></span></span></span></span></span></td>
+<td>85</td>
+<td>70</td>
+<td>70</td>
+</tr>
+<tr>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>&#x3C7;</mi><mn>2</mn></msup><mi mathvariant="normal">/</mi><msubsup><mi>N</mi><mrow><mi>c</mi><mi>l</mi><mi>s</mi><mi mathvariant="normal">.</mi></mrow><mrow><mi>T</mi><mi>P</mi><mi>C</mi></mrow></msubsup></mrow><annotation encoding="application/x-tex">\chi^2/N_{cls.}^{TPC}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1244389999999997em;vertical-align:-0.2831079999999999em;"></span><span class="mord"><span class="mord mathdefault">&#x3C7;</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mord">/</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-2.4168920000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">s</span><span class="mord mtight">.</span></span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span><span class="mord mathdefault mtight" style="margin-right:0.07153em;">C</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.2831079999999999em;"><span></span></span></span></span></span></span></span></span></span></td>
+<td>[0.0,4.0]</td>
+<td>[0.0,4.0]</td>
+<td>[0.0,4.0]</td>
+</tr>
+<tr>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>&#x3C7;</mi><mn>2</mn></msup><mi mathvariant="normal">/</mi><msubsup><mi>N</mi><mrow><mi>c</mi><mi>l</mi><mi>s</mi><mi mathvariant="normal">.</mi></mrow><mrow><mi>I</mi><mi>T</mi><mi>S</mi></mrow></msubsup></mrow><annotation encoding="application/x-tex">\chi^2/N_{cls.}^{ITS}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1244389999999997em;vertical-align:-0.2831079999999999em;"></span><span class="mord"><span class="mord mathdefault">&#x3C7;</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mord">/</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-2.4168920000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">s</span><span class="mord mtight">.</span></span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.07847em;">I</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.2831079999999999em;"><span></span></span></span></span></span></span></span></span></span></td>
+<td>-</td>
+<td>[0.0,30.0]</td>
+<td>[0.0,30.0]</td>
+</tr>
+<tr>
+<td>TPC <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>N</mi><mrow><mi>c</mi><mi>l</mi><mi>s</mi><mi mathvariant="normal">.</mi></mrow></msub></mrow><annotation encoding="application/x-tex">N_{cls.}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">s</span><span class="mord mtight">.</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> track segments</td>
+<td>-</td>
+<td></td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>&#x2265;</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">\geq6</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7719400000000001em;vertical-align:-0.13597em;"></span><span class="mrel">&#x2265;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">6</span></span></span></span></td>
+</tr>
+<tr>
+<td>TPC <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>N</mi><mrow><mi>c</mi><mi>l</mi><mi>s</mi><mi mathvariant="normal">.</mi></mrow></msub></mrow><annotation encoding="application/x-tex">N_{cls.}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">s</span><span class="mord mtight">.</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> bits fired</td>
+<td>-</td>
+<td>[6,9]</td>
+<td>-</td>
+</tr>
+<tr>
+<td>TPC <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>N</mi><mrow><mi>c</mi><mi>l</mi><mi>s</mi><mi mathvariant="normal">.</mi></mrow></msub></mrow><annotation encoding="application/x-tex">N_{cls.}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">s</span><span class="mord mtight">.</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> shared</td>
+<td>-</td>
+<td></td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>&#x2264;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\leq1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7719400000000001em;vertical-align:-0.13597em;"></span><span class="mrel">&#x2264;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span></td>
+</tr>
+<tr>
+<td>TPC <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>N</mi><mrow><mi>c</mi><mi>l</mi><mi>s</mi><mi mathvariant="normal">.</mi></mrow></msub></mrow><annotation encoding="application/x-tex">N_{cls.}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.33610799999999996em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">s</span><span class="mord mtight">.</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> shared ratio</td>
+<td>-</td>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">&#x2209;</mi><mo>[</mo><mn>0.3</mn><mo separator="true">,</mo><mn>2.0</mn><mo>]</mo></mrow><annotation encoding="application/x-tex">\notin[0.3,2.0]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mrel"><span class="mord"><span class="mrel">&#x2208;</span></span><span class="mord"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.75em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="llap"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="inner"><span class="mord"><span class="mord">/</span><span class="mspace" style="margin-right:0.05555555555555555em;"></span></span></span><span class="fix"></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.25em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mord">.</span><span class="mord">3</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">2</span><span class="mord">.</span><span class="mord">0</span><span class="mclose">]</span></span></span></span></td>
+<td>-</td>
+</tr>
+<tr>
+<td>TPC <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>N</mi><mrow><mi>c</mi><mi>r</mi><mi>o</mi><mi>s</mi><mi>s</mi><mi>e</mi><mi>d</mi><mo>&#x2212;</mo><mi>r</mi><mi>o</mi><mi>w</mi><mi>s</mi></mrow></msub><mi mathvariant="normal">/</mi><msub><mi>N</mi><mrow><mi>f</mi><mi>i</mi><mi>n</mi><mi>d</mi><mo>&#x2212;</mo><mi>c</mi><mi>l</mi><mi>s</mi><mi mathvariant="normal">.</mi></mrow></msub></mrow><annotation encoding="application/x-tex">N_{crossed-rows}/N_{find-cls.}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.036108em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight">s</span><span class="mord mathdefault mtight">s</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight">d</span><span class="mbin mtight">&#x2212;</span><span class="mord mathdefault mtight" style="margin-right:0.02778em;">r</span><span class="mord mathdefault mtight">o</span><span class="mord mathdefault mtight" style="margin-right:0.02691em;">w</span><span class="mord mathdefault mtight">s</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.208331em;"><span></span></span></span></span></span></span><span class="mord">/</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.10903em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.10764em;">f</span><span class="mord mathdefault mtight">i</span><span class="mord mathdefault mtight">n</span><span class="mord mathdefault mtight">d</span><span class="mbin mtight">&#x2212;</span><span class="mord mathdefault mtight">c</span><span class="mord mathdefault mtight" style="margin-right:0.01968em;">l</span><span class="mord mathdefault mtight">s</span><span class="mord mtight">.</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span></td>
+<td>-</td>
+<td>[0.8,2.0]</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Reject kink</td>
+<td>True</td>
+<td>True</td>
+<td>True</td>
+</tr>
+<tr>
+<td>SPD cluster</td>
+<td>Any</td>
+<td>Any</td>
+<td>Any</td>
+</tr>
+<tr>
+<td>ITS+TPC refit</td>
+<td>True</td>
+<td>True</td>
+<td>True</td>
+</tr>
+<tr>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><msubsup><mi>&#x3C3;</mi><mi>e</mi><mrow><mi>T</mi><mi>P</mi><mi>C</mi></mrow></msubsup></mrow><annotation encoding="application/x-tex">n\sigma_e^{TPC}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.088331em;vertical-align:-0.247em;"></span><span class="mord mathdefault">n</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">&#x3C3;</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-2.4530000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">e</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span><span class="mord mathdefault mtight" style="margin-right:0.07153em;">C</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span></span></span></span></td>
+<td>[-2.25,3.0]</td>
+<td>[-3.0,3.0]</td>
+<td>[-3.0,3.0]</td>
+</tr>
+<tr>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><msubsup><mi>&#x3C3;</mi><mi>p</mi><mrow><mi>T</mi><mi>P</mi><mi>C</mi></mrow></msubsup></mrow><annotation encoding="application/x-tex">n\sigma_p^{TPC}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2244389999999998em;vertical-align:-0.383108em;"></span><span class="mord mathdefault">n</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">&#x3C3;</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-2.4530000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">p</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span><span class="mord mathdefault mtight" style="margin-right:0.07153em;">C</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.383108em;"><span></span></span></span></span></span></span></span></span></span></td>
+<td>-</td>
+<td>&gt; 3.5</td>
+<td>&gt; 3.0</td>
+</tr>
+<tr>
+<td><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><msubsup><mi>&#x3C3;</mi><mi>&#x3C0;</mi><mrow><mi>T</mi><mi>P</mi><mi>C</mi></mrow></msubsup></mrow><annotation encoding="application/x-tex">n\sigma_{\pi}^{TPC}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.088331em;vertical-align:-0.247em;"></span><span class="mord mathdefault">n</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">&#x3C3;</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413309999999999em;"><span style="top:-2.4530000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">&#x3C0;</span></span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span><span class="mord mathdefault mtight" style="margin-right:0.07153em;">C</span></span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.247em;"><span></span></span></span></span></span></span></span></span></span></td>
+<td>-</td>
+<td>&gt; 3.5</td>
+<td>&gt; 3.0</td>
+</tr>
+</tbody>
+</table>
+<p>EMCal cuts for ANY leg: <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>E</mi><mi mathvariant="normal">/</mi><mi>p</mi><mo>&#x2208;</mo><mo>[</mo><mn>0.8</mn><mo separator="true">,</mo><mn>1.3</mn><mo>]</mo></mrow><annotation encoding="application/x-tex">E/p\in[0.8,1.3]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mord">/</span><span class="mord mathdefault">p</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&#x2208;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">0</span><span class="mord">.</span><span class="mord">8</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">1</span><span class="mord">.</span><span class="mord">3</span><span class="mclose">]</span></span></span></span></p>
+<p>Out-of-bunch pileup tracks are removed according to the <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><mi>C</mi><msub><mi>A</mi><mi>z</mi></msub></mrow><annotation encoding="application/x-tex">DCA_z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord mathdefault" style="margin-right:0.07153em;">C</span><span class="mord"><span class="mord mathdefault">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.04398em;">z</span></span></span></span><span class="vlist-s">&#x200B;</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>, hits requirement in any of the  two SPD layers and a track refit using the ITS.</p>
 <h3 class="mume-header" id="jpsi-reconstruction"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>J</mi><mi mathvariant="normal">/</mi><mi>&#x3C8;</mi></mrow><annotation encoding="application/x-tex">J/\psi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.09618em;">J</span><span class="mord">/</span><span class="mord mathdefault" style="margin-right:0.03588em;">&#x3C8;</span></span></span></span> reconstruction</h3>
 
 <ol>

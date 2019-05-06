@@ -343,19 +343,27 @@ Parameter|Description|Std. Method|Typical value|Setup|
 $Z_{Vtx}$|Z postion (cm) of primary vertex|aod->GetPrimaryVertex()->GetZ()|$0.6\pm4.1$|[-50,50] / 0.1|
 ||X position (cm)|aod->GetPrimaryVertex()->GetX()|$0.074\pm0.006$|[-0.5,0.5] / 0.001|
 ||Y position (cm)|aod->GetPrimaryVertex()->GetY()|$0.367\pm0.004$|[-0.5,0.5] / 0.001|
-$N_{contributors}^{Vtx}$|Number of primary vertex contributors||$25\pm20$|[0,500] / 1|
+Diamond|Z position and width of the __interaction point (IP)__ (cm)|header->GetDiamondX()/GetSigma2DiamondX()|$0.809\pm\sqrt{24.6}$|-|
+||X position and width of the __interaction point (IP)__ (cm)|header->GetDiamondX()/GetSigma2DiamondX()|$0.080\pm\sqrt{6.0e-5}$|-|
+||Y position and width of the __interaction point (IP)__ (cm)|header->GetDiamondX()/GetSigma2DiamondX()|$0.368\pm\sqrt{2.84e-5}$|-|
+$N_{contributors}^{Vtx}$|Number of primary vertex contributors||$\bar{N}\sim25$|[0,500] / 1|
 $N_{tracklets}$|Number of SPD tracklets (__aod->GetMultiplicity()__), by layers|spd->GetNumberOfTracklets()|$\bar{N}\sim28$|[0,200] / 1|
 $Z_{Vtx}$-$N_{tracklets}$|Correction needed for multiplicity analysis||
-$N_{SPDclusters}$|Number of ITS clusters, by layers.|spd->GetNumberOfITSClusters(lr)|$40\pm30$|[0,500] / 1|
-$N_{tracks}$|Number of tracks with track cuts|aod->GetNumberOfTracks()||$640\pm270$|[0,4000] / 1|
-V0A, V0C|Amplitute of VZERO multiplicity as sum of 64 ch. (__aod->GetVZEROData()__)|vzero->GetMultiplicity(ch)|$95\pm81$|[0,2000] / 1|
-||V0A, channel 32 - 63|vzero->GetMultiplicityV0A(ch)|$37\pm34$|[0,2000] / 1|
-||V0C, channel 0 - 31|vzero->GetMultiplicityV0A(ch)|$58\pm56$|[0,2000] / 1|
-Centrality|Estimtor by multiplicity or impact factor||
-Q-vector|Event plane framework||
-$N_{cluster}$|Number of calo clusters|aod->GetNumberOfCaloClusters()|$37\pm15$|[0,500] / 1|
-$E_{cluster}$|Energy distribution of calo clusters (GeV)|calo->E()|$0.6\pm1.0$|[0,200] / 0.1|
+$N_{ITSclusters}$|Number of ITS clusters, by layers.|spd->GetNumberOfITSClusters(lr)|$\bar{N}\sim540$|[0,20000] / 1|
+||SPD (pixel), layer 0 and 1||$\bar{N}\sim110$|[0,10000] / 1|
+||SDD (drift), layer 2 and 3||$\bar{N}\sim70$|[0,3000] / 1|
+||SSD (strip), layer 4 and 5||$\bar{N}\sim80$|[0,2000] / 1|
+$N_{SPDfiredChips}$|Number of SPD fired chips __(1200 in total)__, by layers.|spd->GetNumberOfFiredChips(lr)|$\bar{N}\sim115$|[0,1200] / 1|
+$N_{tracks}$|Number of tracks w/ or w/o track cuts|aod->GetNumberOfTracks()|$\bar{N}_{total}\sim640$|[0,4000] / 1|
+$A_{VZERO}$|Amplitute of VZERO multiplicity decision as sum of 64 ch. (__aod->GetVZEROData()__)|vzero->GetMultiplicity(ch)|$\bar{A}\sim95$|[0,2000] / 1|
+||V0A, channel 32 - 63|vzero->GetMultiplicityV0A(ch)|$\bar{A}\sim37$|[0,2000] / 1|
+||V0C, channel 0 - 31|vzero->GetMultiplicityV0A(ch)|$\bar{A}\sim58$|[0,2000] / 1|
+Centrality|Estimtor by multiplicity percentiles or impact factor|[AddTaskMultSelection.C](https://github.com/alisw/AliPhysics/blob/master/OADB/COMMON/MULTIPLICITY/macros/AddTaskMultSelection.C)|
+Q-vector|Event plane framework|[AddTaskFlowQnVectorCorrections.C](https://github.com/alisw/AliPhysics/blob/master/PWGPP/EVCHAR/FlowVectorCorrections/QnCorrectionsInterface/macros/AddTaskFlowQnVectorCorrections.C)|
+$N_{cluster}$|Number of calo clusters|aod->GetNumberOfCaloClusters()|$\bar{N}\sim37$|[0,500] / 1|
+$E_{cluster}$|Energy distribution of calo clusters (GeV)|calo->E()|$\bar{E}\sim0.5$|[0,300] / 0.1|
 
+*__spd__ is the instance of SPD tracklets `AliAODTracklets` from `AliAODEvent::GetMultiplicity()`.
 *Typical values and histogram setup are referred to [AN746] and fully AOD tree.
 
 ### Track & TPC-ITS
@@ -432,8 +440,8 @@ __AODTrkBits_t__||
 |kIsHybridGCG|20|set if this track can be used as a hybrid track i.e. tracks with certain selection plus the global constraint tracks that did not pass the selection
 </details>
 
-Parameter|Description|Method|
--|-|-|
+Parameter|Description|Std. Method|Typical Value|Setup|
+-|-|-|-|-|
 $p/p_{T}$-$\eta$-$\phi$|Basic kinematic variables||
 $DCA_{XY, Z}$|Distance of the closest approach. $DCA_z$ can be used for rejection of out-of-bunch pileup tracks, while large $DCA_{xy}$ is related to the subsequent decays or photon conversions.||
 $N_{clusters}^{TPC}$|TPC cluster number, [0,160]||
