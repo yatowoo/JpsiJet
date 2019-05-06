@@ -701,6 +701,22 @@ EMCal cuts for ANY leg: $E/p\in[0.8,1.3]$
 
 Out-of-bunch pileup tracks are removed according to the $DCA_z$, hits requirement in any of the  two SPD layers and a track refit using the ITS.
 
+### Rejection Factor
+
+For brief, RF is the ratio of event number in MB and selected triggers. 
+
+* Using ADC spectrum of the maximum energy in EMCal EG patches (4x4 towers) obtained in __kINT7 (MB) events__. To calculate event fraction above __ADC threshold__ which would trigger the EMCal.
+* Using EMCal cluster energy distribution. __(without track cuts?)__
+
+Results from C. Jahnke's [report]():
+
+||16i|16k|16l|16o|
+-|-|-|-|-|
+EG2|$500\pm2$|$494\pm1$|$505\pm2$|$496\pm4$|
+EG1|$6317\pm96$|$5736\pm42$|$1818\pm13$|$6739\pm193$|
+DG2|$1352\pm10$|$1223\pm4$|$1132\pm6$|$820\pm8$|
+DG1|$15916\pm386$|$8392\pm95$|$10287\pm175$|$8608\pm279$|
+
 ### $J/\psi$ reconstruction
 
 1. Invariant mass spectrum. Fit with Crystal-Ball (signal) + pol2 (background) function.
