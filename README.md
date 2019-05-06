@@ -443,11 +443,18 @@ __AODTrkBits_t__||
 Parameter|Description|Std. Method|Typical Value|Setup|
 -|-|-|-|-|
 $p/p_{T}$-$\eta$-$\phi$|Basic kinematic variables||
-$DCA_{XY, Z}$|Distance of the closest approach. $DCA_z$ can be used for rejection of out-of-bunch pileup tracks, while large $DCA_{xy}$ is related to the subsequent decays or photon conversions.||
-$N_{clusters}^{TPC}$|TPC cluster number, [0,160]||
-$N_{clusters}^{ITS}$|ITS cluster number, [0,6]||
-$\chi^{2}/N_{clusters}^{TPC}$|TPC cluster tracking/fitting||
-$\chi^{2}/N_{clusters}^{ITS}$|ITS cluster tracking/fitting||
+||$p_{T}$, transverse momentum (GeV/c)|trk->Pt()|$\bar{p_{T}}\sim0.66$|[0,50] / 0.05|
+|$\eta$-$\phi$ map|$\eta$, pesudo-rapidity; $\phi$, plane angle|trk->Eta()/Phi()|$\bar{\eta}\sim0.5$, $\bar{\phi}\sim0.0$|[-1.0,1.0] / 0.002, [0,$2\pi$] / 0.006|
+DCA|Distance of the closest approach, also known as impact parameter.||
+||Large $DCA_{xy}$ is related to the subsequent decays or photon conversions. (cm)|trk->DCA()|$0.00\pm0.19$|[-50,50] / 1000|
+||$DCA_z$ can be used for rejection of out-of-bunch pileup tracks.|trk->ZAtDCA()|$0.00\pm0.15$|[-50,50] / 1000|
+$N_{cls.}^{TPC}$|TPC cluster number, __160 (max.)__|trk->GetTPCncls()|$\bar{N}\sim100$|[0,161] / 1|
+$N_{clsF}^{TPC}$|TPC __findable__ cluster number|trk->GetTPCnclsF()|$\bar{N}\sim105$|[0,161] / 1|
+$N_{clsS}^{TPC}$|TPC __shared__ cluster number|trk->GetTPCnclsS()|$\bar{N}\sim24$|[0,161] / 1|
+$N_{x.rows}^{TPC}$|Crossed rows in TPC.|trk->GetTPCNCrossedRows()|$\bar{N}\sim109$|[0,161] / 1|
+$N_{cls.}^{ITS}$|ITS cluster number, sum by layers [0,6]|trk->GetITSNcls()|$\bar{N}\sim5$|[0,7] / 1|
+$\chi^{2}/N_{clusters}^{TPC}$|TPC cluster tracking/fitting, $\chi^{TPC}_{TPC}=fChi2perNDF\times(N_{cls.}^{TPC}-5)$|trk->GetTPCchi2()/trk->GetTPCncls()|$\bar{\chi^{2}}\sim1.2$|[0,100] / 0.1|
+$\chi^{2}_{ITS}$|ITS cluster tracking/fitting|trk->GetITSchi2()|$\bar{\chi^{2}}\sim1.7$|[0,100] / 0.1|
 Kink|Tracks which does not have a continous particle trajectories, but show deviations due to __decays or the emission of Bremsstrahlung__.||
 Refit|Fitting method, include ITS and TPC||
 
