@@ -608,14 +608,14 @@ In ALICE offline software, jets are reconstructed with external package - fastje
 
 $$p_{T,jet}^{corr.}=p_{T,jet}-\rho\cdot Area_{jet}$$
 
-Parameter|Description|Method|
--|-|-|
-$p_{T}$-$\eta$-$\phi$|Jet basic kinematic variables||
-Area|Jet area||
+Parameter|Description|Std. Method|Typical Value|Setup|
+-|-|-|-|-|
+$p_{T}$-$\eta$-$\phi$|Jet basic kinematic variables|JetFinder||[0,200] / 0.2|
+Area|Jet area|JetFinder|$\bar{A}\sim R\pm0.1$|[0,5R] / 0.01
 $p_T$ vs A|Use cut of 0.6*R to reduce fake jet contamination||
-$\rho$|Jet UE density, Event level||
-$\rho$ or <$\rho$> vs $p_{T,jet}^{leading}$|Jet UE density vs $p_{T}$ of leading hadron, Event level||
-$\rho$ or <$\rho$> vs $N_{tracks}$|Jet UE density vs multiplicity, Event level||
+$\rho$|Jet UE density, __Event level__|RhoTask|$\bar{\rho}\sim R$|[0,10] / 0.01|
+$\rho$ vs $p_{T,jet}^{leading}$|Jet UE density vs $p_{T}$ of leading hadron, __Event level__||
+$\rho$ vs $N_{tracks}$|Jet UE density vs multiplicity, __Event level__||$\bar{\rho}/N_{trk.}\sim0.05$||
 $\delta p_{T}$ vs prob. density|Density fluctuation, $\delta p_{T}=\sum_{RC}^{i}p_{T,i}^{track}-\rho\cdot A_{RC}$||
 
 RC is random cone method for the fluctuation of jet UE density.
