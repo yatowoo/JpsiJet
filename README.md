@@ -591,14 +591,16 @@ Hybrid signal: TPC-TOF, TPC-EMCal, TRD-?
 
 Standard setup for invariant mass spectrum: $[1.5, 5.0]~/~0.04~(GeV/c^{2})$, pre-defined $J/\psi$ range: $[2.92, 3.16]~(GeV/c^2)$
 
-Parameter|Description|Method|
--|-|-|
-$m_{e^{+}e^{-}}$|Invariant mass of selected dielectron||
-$p_{T}$-$\eta$-$\phi$|Basic kinematic variables||
+Parameter|Description|Std. Method| Typical Value|Setup|
+-|-|-|-|-|
+$m_{e^{+}e^{-}}$|Invariant mass of selected dielectron pair. $(GeV/c^{2})$|VAR::kM|-|[1.5,5.0] / 0.04|
+$p_{T}$-$\eta$-$\phi$|Basic kinematic variables|VAR::kPt|$\bar{p}_{T}\sim2E_{th}$|
 $m_{e^{+}e^{-}}$ vs $p_{T}$|Dielectron momentum spectrum||
-$\ell_{J/\psi}$|Pseudoproper-decay-length (cm)||
-$N_{candidates}$|Event level, number of dielectron after cuts||
-$N_{J/\psi}/<N_{J/psi}>$ vs $N_{trackles}/<N_{tracklets}>$|Event level, ratio of candidates and multiplicity||
+$\ell_{J/\psi}$|Pseudoproper-decay-length (cm)|VAR::kPseudoProperTime|$0.016\pm0.03$|[-0.5,0.5] / 0.0001|
+$N_{candidates}$|__Event level__, number of dielectron after cuts|VAR::kPairs|$\bar{N}\sim0.5$|[0,20] / 1
+$N_{J/\psi}/<N_{J/psi}>$ vs $N_{trackles}/<N_{tracklets}>$|__Event level__, ratio of candidates and multiplicity||
+
+*`VAR` is the instance of `AliDielectronVarManager` supported by `PWG/dielectron`
 
 ### Jets
 
