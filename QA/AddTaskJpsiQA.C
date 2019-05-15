@@ -1,4 +1,5 @@
 void AddTaskJpsiQA(){
+  /*
   cout << "[-] Add task : MultiDie_0 for kINT7/MB" << endl;
   gInterpreter->ExecuteMacro("AddTask_cjahnke_JPsi.C(0)");
   cout << "[-] Add task : MultiDie_3 for kEMCEGA EG1" << endl;
@@ -9,4 +10,7 @@ void AddTaskJpsiQA(){
   gInterpreter->Execute("AddTask_cjahnke_JPsi","30");
   cout << "[-] Add task : MultiDie_40 for kEMCEGA DG2" << endl;
   gInterpreter->Execute("AddTask_cjahnke_JPsi","40");
+  */
+  cout << "[-] Add task : Lucas's dst correlation" << endl;
+  gInterpreter->ExecuteMacro("AddTask_laltenka_dst_correlations.C");
 }
