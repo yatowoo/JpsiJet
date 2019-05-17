@@ -1,0 +1,31 @@
+####################
+#
+# HTCondor Submit Script @ R710.star.ustc.edu.cn
+#
+# Pre-defined Macro : $(Cluster) $(Process)
+###########
+
+EXE = run-alice.sh
+ALICE_DATA_DIR = /data2/ytwu/DATA/exp/ALICE/LHC16l_259888_pass1_AOD
+ALICE_OUTPUT_DIR = /data2/ytwu/LOG/ALICE_NanoAOD_debug
+OUTPUT_DIR = $(ALICE_OUTPUT_DIR)
+
+N_JOBS = 73
+
+Initialdir = /data2/ytwu/CODE/ALICE_preAna
+
+Universe = vanilla
+
+# ENV on R710
+Getenv = True
+
+Executable = $(EXE)
+
+Arguments =  $(ALICE_OUTPUT_DIR) $(ALICE_DATA_DIR) $(Process)
+
+Log = $(OUTPUT_DIR)/condor_$(Cluster).log
+#Input = inputfile
+Error = $(OUTPUT_DIR)/$(Process).err
+Output = $(OUTPUT_DIR)/$(Process).out
+
+Queue $(N_JOBS)
