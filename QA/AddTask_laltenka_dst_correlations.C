@@ -7,6 +7,8 @@
 #include "AliDielectronVarManager.h"
 #include "AliDielectronCutGroup.h"
 #include "AliDielectronPID.h"
+#include "AliReducedBaseEvent.h"
+#include "AliAnalysisTaskReducedTreeMaker.h"
 
 class AliDielectronVarCuts;
 class AliDielectronTrackCuts;
@@ -132,7 +134,7 @@ AliAnalysisTask *AddTask_laltenka_dst_correlations(Int_t reducedEventType=-1, Bo
     AliAnalysisDataContainer *cMCStatsInfo    = 0x0;
     if(task->WriteTree()) {
       cReducedTree    = mgr->CreateContainer("dstTree",       TTree::Class(),AliAnalysisManager::kOutputContainer, "dstTree.root");
-      cEventStatsInfo = mgr->CreateContainer("EventStats",    TH2I::Class(), AliAnalysisManager::kOutputContainer, "dstTree.root");
+      cEventStatsInfo = mgr->CreateContainer("EventStats",    TList::Class(), AliAnalysisManager::kOutputContainer, "dstTree.root");
       cTrackStatsInfo = mgr->CreateContainer("TrackStats",    TH2I::Class(), AliAnalysisManager::kOutputContainer, "dstTree.root");
       cMCStatsInfo    = mgr->CreateContainer("MCSignalStats", TH2I::Class(), AliAnalysisManager::kOutputContainer, "dstTree.root");
     }
@@ -142,8 +144,8 @@ AliAnalysisTask *AddTask_laltenka_dst_correlations(Int_t reducedEventType=-1, Bo
     if(task->WriteTree()) {
       mgr->ConnectOutput(task, 2, cReducedTree);
       mgr->ConnectOutput(task, 3, cEventStatsInfo);
-      mgr->ConnectOutput(task, 4, cTrackStatsInfo);
-      mgr->ConnectOutput(task, 5, cMCStatsInfo);
+      //mgr->ConnectOutput(task, 4, cTrackStatsInfo);
+      //mgr->ConnectOutput(task, 5, cMCStatsInfo);
     }
     
     // done

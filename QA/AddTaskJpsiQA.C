@@ -13,4 +13,6 @@ void AddTaskJpsiQA(){
   */
   cout << "[-] Add task : Lucas's dst correlation" << endl;
   gInterpreter->ExecuteMacro("AddTask_laltenka_dst_correlations.C");
+  cout << "[-] Add task : Lucas's Jpsi2ee" << endl;
+  gInterpreter->ExecuteMacro("AddTask_laltenka_jpsi2ee_correlations.C");
 }
