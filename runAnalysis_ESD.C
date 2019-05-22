@@ -5,7 +5,7 @@
  * Template from https://alice-doc.github.io/alice-analysis-tutorial/analysis/local.html
 */
 
-void runAnalysis(){
+void runAnalysis_ESD(){
   // Include
   gInterpreter->ProcessLine(".include $ROOTSYS/include");
   gInterpreter->ProcessLine(".include $ALICE_ROOT/include");
@@ -14,13 +14,14 @@ void runAnalysis(){
   // Analysis Manager
   AliAnalysisManager *mgr = new AliAnalysisManager("JpsiJetTask");
     // Input handler
-  AliAODInputHandler *aodH = new AliAODInputHandler();
-  mgr->SetInputEventHandler(aodH);
+  AliESDInputHandler *esdH = new AliESDInputHandler();
+  mgr->SetInputEventHandler(esdH);
     // Output handler
+/*
   AliAODHandler* aodOutputH = new AliAODHandler();
   aodOutputH->SetOutputFileName("AliAOD.root");
   mgr->SetOutputEventHandler(aodOutputH);
-
+*/
   // Task - Physics Selection
   gInterpreter->ExecuteMacro("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C");
 
@@ -49,8 +50,8 @@ void runAnalysis(){
   gInterpreter->ExecuteMacro("AddTaskJpsiQA.C");
 
   // Input data file
-  TChain *chain = new TChain("aodTree");
-  chain->Add("AliAOD_input.root");
+  TChain *chain = new TChain("esdTree");
+  chain->Add("AliESD_input.root");
 
   // Start Analysis
   if(!mgr->InitAnalysis()) return;

@@ -6,10 +6,12 @@ class AliDielectronVarManager;
 class AliDielectronVarCuts;
 #include "AliDielectronTrackCuts.h"
 class AliDielectronTrackCuts;
-#include "AliAnalysisTaskDielectronFilter.h"
-class AliAnalysisTaskDielectronFilter;
+#include "AliDielectronEventCuts.h"
+class AliDielectronEventCuts;
+#include "YatoJpsiFilterTask.h"
+class YatoJpsiFilterTask;
 
-AliAnalysisTaskDielectronFilter* AddTaskJPSIFilter(Bool_t storeLS = kTRUE, Bool_t hasMC_aod = kFALSE, Bool_t storeTR = kTRUE){
+YatoJpsiFilterTask* AddTaskJPSIFilter(Bool_t storeLS = kTRUE, Bool_t hasMC_aod = kFALSE, Bool_t storeTR = kTRUE){
   //get the current analysis manager
   AliAnalysisManager *mgr = AliAnalysisManager::GetAnalysisManager();
   if (!mgr) {
@@ -29,7 +31,6 @@ AliAnalysisTaskDielectronFilter* AddTaskJPSIFilter(Bool_t storeLS = kTRUE, Bool_
   //Do we run on AOD?
   Bool_t isAOD=mgr->GetInputEventHandler()->IsA()==AliAODInputHandler::Class();
 
-  AliDielectron *jpsi = reinterpret_cast<AliDielectron *>(gInterpreter->ExecuteMacro(Form("ConfigJpsi2eeFilter.C(%d)", isAOD)));
   
   if(isAOD) {
     //add options to AliAODHandler to duplicate input event
@@ -47,16 +48,28 @@ AliAnalysisTaskDielectronFilter* AddTaskJPSIFilter(Bool_t storeLS = kTRUE, Bool_
     aodHandler->SetNeedsCaloTriggerBranchReplication();
     aodHandler->SetNeedsHMPIDBranchReplication();
     if(hasMC) aodHandler->SetNeedsMCParticlesBranchReplication();
-    jpsi->SetHasMC(hasMC);
   }
   
   //Create task and add it to the analysis manager
-  AliAnalysisTaskDielectronFilter *task=new AliAnalysisTaskDielectronFilter("jpsi_DielectronFilter");
+  YatoJpsiFilterTask *task=new YatoJpsiFilterTask("jpsi2ee_EMCalFilter");
   task->SetTriggerMask(AliVEvent::kEMCEGA); 
   if (!hasMC) task->UsePhysicsSelection();
-  task->SetDielectron(jpsi);
   if(storeLS) task->SetStoreLikeSignCandidates(storeLS);
   task->SetStoreRotatedPairs(storeTR);  
+  task->SetToMerge(kTRUE);
+	//Add event filter
+	AliDielectronEventCuts *eventCuts = new AliDielectronEventCuts("eventCuts", "Vertex Track && |vtxZ|<10 && ncontrib>0");
+	if (isAOD)
+		eventCuts->SetVertexType(AliDielectronEventCuts::kVtxAny);
+	eventCuts->SetRequireVertex();
+	eventCuts->SetMinVtxContributors(1);
+	eventCuts->SetVertexZ(-10., 10.);
+	task->SetEventFilter(eventCuts);
+  // Add AliDielectron
+  AliDielectron *jpsi = reinterpret_cast<AliDielectron *>(gInterpreter->ExecuteMacro(Form("ConfigJpsi2eeFilter.C(%d)", isAOD)));
+  jpsi->SetHasMC(hasMC);
+  task->SetDielectron(jpsi);
+
   mgr->AddTask(task);
 
   //----------------------
