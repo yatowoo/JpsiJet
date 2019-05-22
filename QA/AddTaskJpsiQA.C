@@ -13,6 +13,6 @@ void AddTaskJpsiQA(){
   */
   cout << "[-] Add task : Aresene's dst" << endl;
   gInterpreter->ExecuteMacro("AddTask_iarsene_dst.C");
-  cout << "[-] Add task : Aresene's jpsi2ee" << endl;
-  gInterpreter->ExecuteMacro("AddTask_iarsene_jpsi2ee.C");
+  cout << "[-] Add task : Lucas's jpsi2ee" << endl;
+  gInterpreter->ExecuteMacro("AddTask_laltenka_jpsi2ee_correlations.C");
 }

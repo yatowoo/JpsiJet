@@ -695,7 +695,7 @@ AliAnalysisTask *AddTask_iarsene_dst(Int_t reducedEventType=-1, Bool_t writeTree
   if(task->WriteTree()) {
     cReducedTree = mgr->CreateContainer("dstTree", TTree::Class(),
                                           AliAnalysisManager::kOutputContainer, "dstTree.root");
-    cEventStatsInfo = mgr->CreateContainer("EventStats", TH2I::Class(),
+    cEventStatsInfo = mgr->CreateContainer("EventStats", TList::Class(),
        AliAnalysisManager::kOutputContainer, "dstTree.root");
     cTrackStatsInfo = mgr->CreateContainer("TrackStats", TH2I::Class(),
                                            AliAnalysisManager::kOutputContainer, "dstTree.root");
@@ -714,8 +714,8 @@ AliAnalysisTask *AddTask_iarsene_dst(Int_t reducedEventType=-1, Bool_t writeTree
   if(task->WriteTree()) {
      mgr->ConnectOutput(task, 2, cReducedTree);
      mgr->ConnectOutput(task, 3, cEventStatsInfo);
-     mgr->ConnectOutput(task, 4, cTrackStatsInfo);
-     if(hasMC) mgr->ConnectOutput(task, 5, cMCStatsInfo);
+     //mgr->ConnectOutput(task, 4, cTrackStatsInfo);
+     //if(hasMC) mgr->ConnectOutput(task, 5, cMCStatsInfo);
   }
   
   return task;
