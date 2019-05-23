@@ -47,6 +47,11 @@ void runAnalysis(){
   // Task - J/psi QA & Filter
   gROOT->SetMacroPath(".:./QA/:./NanoAOD/");
   gInterpreter->ExecuteMacro("AddTaskJpsiQA.C");
+  
+  gInterpreter->LoadMacro("NanoAOD/YatoJpsiFilterTask.cxx++g");
+  gInterpreter->ExecuteMacro("AddTaskJPSIFilter.C");
+  aodOutputH->SetOutputFileName("AliAOD.Dielectron.root");
+  mgr->RegisterExtraFile("AliAOD.Dielectron.root");
 
   // Input data file
   TChain *chain = new TChain("aodTree");

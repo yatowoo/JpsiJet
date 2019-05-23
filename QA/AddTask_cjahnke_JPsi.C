@@ -1,4 +1,4 @@
-#ifndef __MultiDie__
+#ifndef __CINT__ && __MultiDie__ 
 #define __MultiDie__
 #include "AliDielectron.h"
 class AliDielectron;
