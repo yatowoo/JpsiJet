@@ -1,3 +1,4 @@
+#ifndef __CINT__
 #include "AliDielectron.h"
 class AliDielectron;
 #include "AliDielectronVarManager.h"
@@ -10,6 +11,7 @@ class AliDielectronTrackCuts;
 class AliDielectronEventCuts;
 #include "YatoJpsiFilterTask.h"
 class YatoJpsiFilterTask;
+#endif
 
 YatoJpsiFilterTask* AddTaskJPSIFilter(Bool_t storeLS = kTRUE, Bool_t hasMC_aod = kFALSE, Bool_t storeTR = kTRUE){
   //get the current analysis manager
