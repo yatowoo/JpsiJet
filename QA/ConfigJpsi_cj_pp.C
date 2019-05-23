@@ -244,6 +244,50 @@ AliESDtrackCuts *SetupESDtrackCutsDieleData(Int_t cutDefinition)
 	return esdTrackCuts;
 }
 
+
+void InitHistogramsForEvent(AliDielectronHistos* histos, const char* histClass){
+	histos->AddClass(histClass);
+	// Event Primary vertex and diamond (IP) stats.
+	histos->UserHistogram(histClass, "VtxZ", "Vertex Z;Z[cm];#events", 1000, -50., 50., AliDielectronVarManager::kZvPrim);
+	histos->UserHistogram(histClass, "VtxX", "Vertex X;X[cm];#events", 1000, -50., 50., AliDielectronVarManager::kXvPrim);
+	histos->UserHistogram(histClass, "VtxY", "Vertex Y;Y[cm];#events", 1000, -50., 50., AliDielectronVarManager::kXvPrim);
+	histos->UserHistogram(histClass, "kImpactParXY", "Impact parameter in XY plane;kImpactParXY(cm);Entries", 2000, -1, 1, AliDielectronVarManager::kImpactParXY);
+	histos->UserHistogram(histClass, "kImpactParZ", "Impact parameter in Z;kImpactParZ(cm);Entries", 1000, -50, 50, AliDielectronVarManager::kImpactParZ);
+	// Event track and SPD (tracklets) stats.
+	histos->UserHistogram(histClass, "kNaccTrcklts10Corr", "kNaccTrcklts10Corr;kNaccTrcklts10Corr;Entries", 200, 0., 200., AliDielectronVarManager::kNaccTrcklts10Corr);
+	histos->UserHistogram(histClass, "VtxZ_kNaccTrcklts10Corr", "VtxZ vs. kNaccTrcklts10Corr;VtxZ;kNaccTrcklts10Corr", 800, -40., 40., 200, 0., 200., AliDielectronVarManager::kZvPrim, AliDielectronVarManager::kNaccTrcklts10Corr);
+	histos->UserHistogram(histClass, "kNtrk", "Number of tracks;kNtrk;Entries", 4000, 0., 4000., AliDielectronVarManager::kNtrk);
+	histos->UserHistogram(histClass, "kNacc", "Number of accepted tracks;kNacc;Entries", 200, 0., 200., AliDielectronVarManager::kNacc);
+	histos->UserHistogram(histClass, "kNaccTrcklts", "Number of accepted SPD tracklets in |eta|<1.6;kNaccTrcklts;Entries", 1000, 0., 1000., AliDielectronVarManager::kNaccTrcklts);
+	//new multiplicity estimator: V0
+	histos->UserHistogram(histClass, "kMultV0", "kMultV0;kMultV0;Entries", 1000, 0., 1000., AliDielectronVarManager::kMultV0);
+	histos->UserHistogram(histClass, "kMultV0A", "kMultV0;kMultV0;Entries", 1000, 0., 1000., AliDielectronVarManager::kMultV0A);
+	histos->UserHistogram(histClass, "kMultV0C", "kMultV0;kMultV0;Entries", 1000, 0., 1000., AliDielectronVarManager::kMultV0C);
+	// 2D
+	histos->UserHistogram(histClass, "kMultV0A_kMultV0C", "kMultV0A vs. kMultV0C;kMultV0A;kMultV0C", 1000, 0., 1000., 1000, 0., 1000., AliDielectronVarManager::kMultV0A, AliDielectronVarManager::kMultV0C);
+	histos->UserHistogram(histClass, "kMultV0_kMultV0A", "kMultV0 vs. kMultV0A;kMultV0;kMultV0A", 1000, 0., 1000., 1000, 0., 1000., AliDielectronVarManager::kMultV0, AliDielectronVarManager::kMultV0A);
+	histos->UserHistogram(histClass, "kMultV0_kMultV0C", "kMultV0 vs. kMultV0C;kMultV0;kMultV0C", 1000, 0., 1000., 1000, 0., 1000., AliDielectronVarManager::kMultV0, AliDielectronVarManager::kMultV0C);
+	// vs Vertex Z
+	histos->UserHistogram(histClass, "VtxZ_kMultV0A", "VtxZ vs. kMultV0A;VtxZ;kMultV0A", 300, -15., 15., 1000, 0., 1000., AliDielectronVarManager::kZvPrim, AliDielectronVarManager::kMultV0A);
+	histos->UserHistogram(histClass, "VtxZ_kMultV0C", "VtxZ vs. kMultV0C;VtxZ;kMultV0C", 300, -15., 15., 1000, 0., 1000., AliDielectronVarManager::kZvPrim, AliDielectronVarManager::kMultV0C);
+	histos->UserHistogram(histClass, "VtxZ_kMultV0", "VtxZ vs. kMultV0;VtxZ;kMultV0", 300, -15., 15., 1000, 0., 1000., AliDielectronVarManager::kZvPrim, AliDielectronVarManager::kMultV0);
+
+	// Track and Calo for Run-wise QA
+	histos->UserHistogram(histClass, "kTrackStatus", "Track status bits;kTrackStatus [BITS?];#tracks", 1024, 0, 1024., AliDielectronVarManager::kTrackStatus, kTRUE);
+	histos->UserHistogram(histClass, "Pt", "Pt;Pt [GeV];#tracks", 1000, 0, 50., AliDielectronVarManager::kPt, kTRUE);
+	histos->UserHistogram(histClass, "Eta_Phi", "Eta Phi Map; Eta; Phi;#tracks",
+												100, -1, 1, 144, 0, TMath::TwoPi(), AliDielectronVarManager::kEta, AliDielectronVarManager::kPhi, kTRUE);
+	histos->UserHistogram(histClass, "TPCnCls", "Number of Clusters TPC;TPC number clusteres;#tracks", 160, 0, 160, AliDielectronVarManager::kNclsTPC, kTRUE);
+	histos->UserHistogram(histClass, "kNclsITS", "Number of clusters assigned in the ITS;kNclsITS;#tracks", 20000, 0, 20000, AliDielectronVarManager::kNclsITS, kTRUE);
+	histos->UserHistogram(histClass, "kNclsSMapITS", "ITS shared cluster map;kNclsSMapITS;#tracks", 20000, 0, 20000, AliDielectronVarManager::kNclsSMapITS, kTRUE);
+	histos->UserHistogram(histClass, "kEMCALNCells", "EmcalE;kEMCALNCells [GeV];#Clusters", 100, 0., 100., AliDielectronVarManager::kEMCALNCells, kTRUE);
+	histos->UserHistogram(histClass, "kTrackStatus", "Track status bits;kTrackStatus [BITS?];#tracks", 1024, 0, 1024., AliDielectronVarManager::kTrackStatus, kTRUE);											
+	histos->UserHistogram(histClass, "EoverP", "EMCal E/p ratio;E/p;#Clusters",
+												200, 0., 2., AliDielectronVarManager::kEMCALEoverP, kTRUE);
+
+	// Dielectron info.
+	histos->UserHistogram(histClass, "Npairs", "Number of Ev1PM pair candidates after all cuts;J/#psi candidates;#events", 100, 0, 100, AliDielectronVarManager::kPairs);
+}
 //______________________________________________________________________________________
 void InitHistogramsDieleData(AliDielectron *diele, Int_t cutDefinition, Bool_t isAOD)
 {
@@ -277,28 +321,15 @@ void InitHistogramsDieleData(AliDielectron *diele, Int_t cutDefinition, Bool_t i
 	//histos->AddClass(Form("Track_Legs_%s",PairClassName(AliDielectron::kEv1PMRot)));
 
 	/*
+		Histogram for Event (before event filter)
+	*/
+	InitHistogramsForEvent(histos, "Event_noCuts");
+
+	/*
 		Histogram for Event
 	*/
-	histos->AddClass("Event");
-	histos->UserHistogram("Event", "Npairs", "Number of Ev1PM pair candidates after all cuts;J/#psi candidates;#events", 100, 0, 100, AliDielectronVarManager::kPairs);
-	// Vertex Z and Multiplicity (SPD tracklets)
-	histos->UserHistogram("Event", "VtxZ", "Vertex Z;Z[cm];#events", 800, -40., 40., AliDielectronVarManager::kZvPrim);
-	histos->UserHistogram("Event", "kNaccTrcklts10Corr", "kNaccTrcklts10Corr;kNaccTrcklts10Corr;Entries", 200, 0., 200., AliDielectronVarManager::kNaccTrcklts10Corr);
-	histos->UserHistogram("Event", "VtxZ_kNaccTrcklts10Corr", "VtxZ vs. kNaccTrcklts10Corr;VtxZ;kNaccTrcklts10Corr", 800, -40., 40., 200, 0., 200., AliDielectronVarManager::kZvPrim, AliDielectronVarManager::kNaccTrcklts10Corr);
-
-	//new multiplicity estimator: V0
-	histos->UserHistogram("Event", "kMultV0", "kMultV0;kMultV0;Entries", 1000, 0., 1000., AliDielectronVarManager::kMultV0);
-	histos->UserHistogram("Event", "kMultV0A", "kMultV0;kMultV0;Entries", 1000, 0., 1000., AliDielectronVarManager::kMultV0A);
-	histos->UserHistogram("Event", "kMultV0C", "kMultV0;kMultV0;Entries", 1000, 0., 1000., AliDielectronVarManager::kMultV0C);
-	// 2D
-	histos->UserHistogram("Event", "kMultV0A_kMultV0C", "kMultV0A vs. kMultV0C;kMultV0A;kMultV0C", 1000, 0., 1000., 1000, 0., 1000., AliDielectronVarManager::kMultV0A, AliDielectronVarManager::kMultV0C);
-	histos->UserHistogram("Event", "kMultV0_kMultV0A", "kMultV0 vs. kMultV0A;kMultV0;kMultV0A", 1000, 0., 1000., 1000, 0., 1000., AliDielectronVarManager::kMultV0, AliDielectronVarManager::kMultV0A);
-	histos->UserHistogram("Event", "kMultV0_kMultV0C", "kMultV0 vs. kMultV0C;kMultV0;kMultV0C", 1000, 0., 1000., 1000, 0., 1000., AliDielectronVarManager::kMultV0, AliDielectronVarManager::kMultV0C);
-	// vs Vertex Z
-	histos->UserHistogram("Event", "VtxZ_kMultV0A", "VtxZ vs. kMultV0A;VtxZ;kMultV0A", 300, -15., 15., 1000, 0., 1000., AliDielectronVarManager::kZvPrim, AliDielectronVarManager::kMultV0A);
-	histos->UserHistogram("Event", "VtxZ_kMultV0C", "VtxZ vs. kMultV0C;VtxZ;kMultV0C", 300, -15., 15., 1000, 0., 1000., AliDielectronVarManager::kZvPrim, AliDielectronVarManager::kMultV0C);
-	histos->UserHistogram("Event", "VtxZ_kMultV0", "VtxZ vs. kMultV0;VtxZ;kMultV0", 300, -15., 15., 1000, 0., 1000., AliDielectronVarManager::kZvPrim, AliDielectronVarManager::kMultV0);
-
+	InitHistogramsForEvent(histos, "Event");
+	
 	/*
 	// Histogram for Track
 	*/
