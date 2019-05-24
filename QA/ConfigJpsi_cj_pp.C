@@ -272,21 +272,8 @@ void InitHistogramsForEvent(AliDielectronHistos* histos, const char* histClass){
 	histos->UserHistogram(histClass, "VtxZ_kMultV0C", "VtxZ vs. kMultV0C;VtxZ;kMultV0C", 300, -15., 15., 1000, 0., 1000., AliDielectronVarManager::kZvPrim, AliDielectronVarManager::kMultV0C);
 	histos->UserHistogram(histClass, "VtxZ_kMultV0", "VtxZ vs. kMultV0;VtxZ;kMultV0", 300, -15., 15., 1000, 0., 1000., AliDielectronVarManager::kZvPrim, AliDielectronVarManager::kMultV0);
 
- /*
-	// Track and Calo for Run-wise QA
-	histos->UserHistogram(histClass, "kTrackStatus", "Track status bits;kTrackStatus [BITS?];#tracks", 1024, 0, 1024., AliDielectronVarManager::kTrackStatus, kTRUE);
-	histos->UserHistogram(histClass, "Pt", "Pt;Pt [GeV];#tracks", 1000, 0, 50., AliDielectronVarManager::kPt, kTRUE);
-	histos->UserHistogram(histClass, "Eta_Phi", "Eta Phi Map; Eta; Phi;#tracks",
-												100, -1, 1, 144, 0, TMath::TwoPi(), AliDielectronVarManager::kEta, AliDielectronVarManager::kPhi, kTRUE);
-	histos->UserHistogram(histClass, "TPCnCls", "Number of Clusters TPC;TPC number clusteres;#tracks", 160, 0, 160, AliDielectronVarManager::kNclsTPC, kTRUE);
-	histos->UserHistogram(histClass, "kNclsITS", "Number of clusters assigned in the ITS;kNclsITS;#tracks", 20000, 0, 20000, AliDielectronVarManager::kNclsITS, kTRUE);
-	histos->UserHistogram(histClass, "kNclsSMapITS", "ITS shared cluster map;kNclsSMapITS;#tracks", 20000, 0, 20000, AliDielectronVarManager::kNclsSMapITS, kTRUE);
-	histos->UserHistogram(histClass, "kEMCALNCells", "EmcalE;kEMCALNCells [GeV];#Clusters", 100, 0., 100., AliDielectronVarManager::kEMCALNCells, kTRUE);
-	histos->UserHistogram(histClass, "kTrackStatus", "Track status bits;kTrackStatus [BITS?];#tracks", 1024, 0, 1024., AliDielectronVarManager::kTrackStatus, kTRUE);											
-	histos->UserHistogram(histClass, "EoverP", "EMCal E/p ratio;E/p;#Clusters",
-												200, 0., 2., AliDielectronVarManager::kEMCALEoverP, kTRUE);
-*/
-	// Dielectron info.
+  // Dielectron info.
+  histos->UserHistogram(histClass, "Ntracks", "Number of tracks/electron selected by AliDielectron after cuts;Ntracks;#events", 500, 0, 500, AliDielectronVarManager::kTracks);
 	histos->UserHistogram(histClass, "Npairs", "Number of Ev1PM pair candidates after all cuts;J/#psi candidates;#events", 100, 0, 100, AliDielectronVarManager::kPairs);
 }
 //______________________________________________________________________________________
@@ -324,7 +311,7 @@ void InitHistogramsDieleData(AliDielectron *diele, Int_t cutDefinition, Bool_t i
 	/*
 		Histogram for Event (before event filter)
 	*/
-	//InitHistogramsForEvent(histos, "Event_noCuts");
+	InitHistogramsForEvent(histos, "Event_noCuts");
 
 	/*
 		Histogram for Event
