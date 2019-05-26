@@ -9,13 +9,14 @@ AliESDtrackCuts *SetupESDtrackCutsDieleData(Int_t cutDefinition);
 //
 // Cut Definitions
 //
-TString namesDieleData = "EMCal;EMCal_loose;EMCal_strict";
+TString namesDieleData = "EMCal;EMCal_loose;EMCal_strict;RAW";
 enum CutType
 {
 	kEMCal,
 	kEMCal_loose,
 	kEMCal_strict,
-	kCutN = 3
+	kRAW,
+  kCutN = 4
 };
 TObjArray *arrNamesDieleData = namesDieleData.Tokenize(";");
 const Int_t nDie = arrNamesDieleData->GetEntries();
@@ -57,9 +58,10 @@ AliDielectron *ConfigJpsi_cj_pp(Int_t cutDefinition, Bool_t isAOD = kFALSE, Int_
 	}
 
 	// Cuts Setup
-	SetupTrackCutsDieleData(diele, cutDefinition, isAOD, isMC);
-	SetupPairCutsDieleData(diele, cutDefinition, isAOD, trigger_index, isMC);
-
+  if(cutDefinition != kRAW){
+	  SetupTrackCutsDieleData(diele, cutDefinition, isAOD, isMC);
+	  SetupPairCutsDieleData(diele, cutDefinition, isAOD, trigger_index, isMC);
+  }
 	// Histogram Setup
 	InitHistogramsDieleData(diele, cutDefinition, isAOD);
 	if (isMC)
@@ -293,33 +295,31 @@ void InitHistogramsDieleData(AliDielectron *diele, Int_t cutDefinition, Bool_t i
 	{
 		histos->AddClass(Form("Track_%s", AliDielectron::TrackClassName(i)));
 	}
-	//Pair classes
-	for (Int_t i = 0; i < 3; ++i)
-	{
-		histos->AddClass(Form("Pair_%s", AliDielectron::PairClassName(i)));
-	}
-	//Legs from pair
-	for (Int_t i = 0; i < 3; ++i)
-	{
-		histos->AddClass(Form("Track_Legs_%s", AliDielectron::PairClassName(i)));
-	}
-
+  if(cutDefinition != kRAW){
+	  //Pair classes
+	  for (Int_t i = 0; i < 3; ++i)
+      histos->AddClass(Form("Pair_%s", AliDielectron::PairClassName(i)));
+	  //Legs from pair
+	  for (Int_t i = 0; i < 3; ++i)
+  		histos->AddClass(Form("Track_Legs_%s", AliDielectron::PairClassName(i)));
+  }
 	//track rotation
 	//histos->AddClass(Form("Pair_%s",PairClassName(AliDielectron::kEv1PMRot)));
 	//histos->AddClass(Form("Track_Legs_%s",PairClassName(AliDielectron::kEv1PMRot)));
 
+  if(cutDefinition == kRAW){
 	/*
 		Histogram for Event (before event filter)
 	*/
-	InitHistogramsForEvent(histos, "Event_noCuts");
-
+	  InitHistogramsForEvent(histos, "Event_noCuts");
 	/*
 		Histogram for Event
 	*/
-	InitHistogramsForEvent(histos, "Event");
+	  InitHistogramsForEvent(histos, "Event");
+  }
 	
 	/*
-	// Histogram for Track
+	  Histogram for Track
 	*/
 	// Track kinetics parameter
 	histos->UserHistogram("Track", "Pt", "Pt;Pt [GeV];#tracks", 800, 0, 40., AliDielectronVarManager::kPt, kTRUE);

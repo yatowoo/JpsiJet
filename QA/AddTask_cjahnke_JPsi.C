@@ -53,7 +53,7 @@ AliAnalysisTask *AddTask_cjahnke_JPsi(Int_t trigger_index = 0, Bool_t isMC = kFA
 	// ======
 
 	//add dielectron analysis with different cuts to the task
-	for (Int_t i = 0; i < 3; ++i)
+	for (Int_t i = 0; i < 4; ++i)
 	{ //nDie defined in config file
 		AliDielectron *jpsi = reinterpret_cast<AliDielectron*>(gInterpreter->ExecuteMacro(Form("ConfigJpsi_cj_pp.C(%d, %d, %d, %d)",i, isAOD, trigger_index, hasMC)));
 		if (isAOD)

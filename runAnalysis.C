@@ -48,8 +48,8 @@ void runAnalysis(){
   gROOT->SetMacroPath(".:./QA/:./NanoAOD/");
   gInterpreter->ExecuteMacro("AddTaskJpsiQA.C");
   
-  gInterpreter->LoadMacro("NanoAOD/YatoJpsiFilterTask.cxx++g");
-  gInterpreter->ExecuteMacro("AddTaskJPSIFilter.C");
+  //gInterpreter->LoadMacro("NanoAOD/YatoJpsiFilterTask.cxx++g");
+  //gInterpreter->ExecuteMacro("AddTaskJPSIFilter.C");
   aodOutputH->SetOutputFileName("AliAOD.Dielectron.root");
   mgr->RegisterExtraFile("AliAOD.Dielectron.root");
 
