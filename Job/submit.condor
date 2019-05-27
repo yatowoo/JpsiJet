@@ -5,14 +5,14 @@
 # Pre-defined Macro : $(Cluster) $(Process)
 ###########
 
-EXE = run-alice.sh
+EXE = ./Job/run-alice.sh
 ALICE_DATA_DIR = /data2/ytwu/DATA/exp/ALICE/LHC16l_259888_pass1_AOD
-ALICE_OUTPUT_DIR = /data2/ytwu/LOG/ALICE_NanoAOD_debug
+ALICE_OUTPUT_DIR = /data2/ytwu/LOG/ALICE/JpsiJet_QA_Filter
 OUTPUT_DIR = $(ALICE_OUTPUT_DIR)
 
 N_JOBS = 73
 
-Initialdir = /data2/ytwu/CODE/ALICE_preAna
+Initialdir = /data2/ytwu/CODE/JpsiJet
 
 Universe = vanilla
 
