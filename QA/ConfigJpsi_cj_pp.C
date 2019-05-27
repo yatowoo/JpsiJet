@@ -259,7 +259,7 @@ void InitHistogramsForEvent(AliDielectronHistos* histos, const char* histClass){
 	histos->UserHistogram(histClass, "kNaccTrcklts10Corr", "kNaccTrcklts10Corr;kNaccTrcklts10Corr;Entries", 200, 0., 200., AliDielectronVarManager::kNaccTrcklts10Corr);
 	histos->UserHistogram(histClass, "VtxZ_kNaccTrcklts10Corr", "VtxZ vs. kNaccTrcklts10Corr;VtxZ;kNaccTrcklts10Corr", 800, -40., 40., 200, 0., 200., AliDielectronVarManager::kZvPrim, AliDielectronVarManager::kNaccTrcklts10Corr);
 	histos->UserHistogram(histClass, "kNTrk", "Number of tracks;kNTrk;Entries", 4000, 0., 4000., AliDielectronVarManager::kNTrk);
-	histos->UserHistogram(histClass, "kNacc", "Number of accepted tracks;kNacc;Entries", 200, 0., 200., AliDielectronVarManager::kNacc);
+	//histos->UserHistogram(histClass, "kNacc", "Number of accepted tracks;kNacc;Entries", 200, 0., 200., AliDielectronVarManager::kNacc);
 	histos->UserHistogram(histClass, "kNaccTrcklts", "Number of accepted SPD tracklets in |eta|<1.6;kNaccTrcklts;Entries", 1000, 0., 1000., AliDielectronVarManager::kNaccTrcklts);
 	//new multiplicity estimator: V0
 	histos->UserHistogram(histClass, "kMultV0", "kMultV0;kMultV0;Entries", 1000, 0., 1000., AliDielectronVarManager::kMultV0);
