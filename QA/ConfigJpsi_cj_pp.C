@@ -1,6 +1,6 @@
 void SetupTrackCutsDieleData(AliDielectron *diele, Int_t cutDefinition, Bool_t isAOD, Bool_t isMC);
 void SetupPairCutsDieleData(AliDielectron *diele, Int_t cutDefinition, Bool_t isAOD, Int_t trigger_index, Bool_t isMC);
-void InitHistogramsDieleData(AliDielectron *diele, Int_t cutDefinition, Bool_t isAOD);
+void InitHistogramsDieleData(AliDielectron *diele, Int_t cutDefinition, Int_t trigger_index, Bool_t isAOD);
 void InitCFDieleData(AliDielectron *diele, Int_t cutDefinition, Bool_t isAOD, Bool_t isMC);
 void AddMCSignals(AliDielectron *diele);
 
@@ -63,7 +63,7 @@ AliDielectron *ConfigJpsi_cj_pp(Int_t cutDefinition, Bool_t isAOD = kFALSE, Int_
 	  SetupPairCutsDieleData(diele, cutDefinition, isAOD, trigger_index, isMC);
   }
 	// Histogram Setup
-	InitHistogramsDieleData(diele, cutDefinition, isAOD);
+	InitHistogramsDieleData(diele, cutDefinition, trigger_index, isAOD);
 	if (isMC)
 	{
 		InitCFDieleData(diele, cutDefinition, isAOD, isMC);
@@ -279,7 +279,7 @@ void InitHistogramsForEvent(AliDielectronHistos* histos, const char* histClass){
 	histos->UserHistogram(histClass, "Npairs", "Number of Ev1PM pair candidates after all cuts;J/#psi candidates;#events", 100, 0, 100, AliDielectronVarManager::kPairs);
 }
 //______________________________________________________________________________________
-void InitHistogramsDieleData(AliDielectron *diele, Int_t cutDefinition, Bool_t isAOD)
+void InitHistogramsDieleData(AliDielectron *diele, Int_t cutDefinition, Int_t trigger_index, Bool_t isAOD)
 {
 	//
 	// Initialise the histograms
@@ -295,7 +295,7 @@ void InitHistogramsDieleData(AliDielectron *diele, Int_t cutDefinition, Bool_t i
 	{
 		histos->AddClass(Form("Track_%s", AliDielectron::TrackClassName(i)));
 	}
-  if(cutDefinition != kRAW){
+  if(cutDefinition != kRAW && trigger_index != 2){
 	  //Pair classes
 	  for (Int_t i = 0; i < 3; ++i)
       histos->AddClass(Form("Pair_%s", AliDielectron::PairClassName(i)));
@@ -307,7 +307,7 @@ void InitHistogramsDieleData(AliDielectron *diele, Int_t cutDefinition, Bool_t i
 	//histos->AddClass(Form("Pair_%s",PairClassName(AliDielectron::kEv1PMRot)));
 	//histos->AddClass(Form("Track_Legs_%s",PairClassName(AliDielectron::kEv1PMRot)));
 
-  if(cutDefinition == kRAW){
+  if(cutDefinition == kRAW || trigger_index == 2){
 	/*
 		Histogram for Event (before event filter)
 	*/

@@ -69,8 +69,7 @@ YatoJpsiFilterTask* AddTaskJPSIFilter(Bool_t storeLS = kTRUE, Bool_t hasMC_aod =
 	task->SetEventFilter(eventCuts);
   // Add AliDielectron
     // kEMCEGA + EMCal_loose
-  //AliDielectron* jpsi = reinterpret_cast<AliDielectron *>(gInterpreter->ExecuteMacro(Form("ConfigJpsi_cj_pp.C(1,%d,2)", isAOD)));
-  AliDielectron* jpsi = ConfigJpsi_cj_pp(1,isAOD,2,hasMC);
+  AliDielectron* jpsi = reinterpret_cast<AliDielectron *>(gInterpreter->ExecuteMacro(Form("ConfigJpsi_cj_pp.C(1,%d,2)", isAOD)));
   jpsi->SetHasMC(hasMC);
   task->SetDielectron(jpsi);
 
