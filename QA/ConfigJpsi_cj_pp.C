@@ -252,7 +252,7 @@ void InitHistogramsForEvent(AliDielectronHistos* histos, const char* histClass){
 	// Event Primary vertex and diamond (IP) stats.
 	histos->UserHistogram(histClass, "VtxZ", "Vertex Z;Z[cm];#events", 1000, -50., 50., AliDielectronVarManager::kZvPrim);
 	histos->UserHistogram(histClass, "VtxX", "Vertex X;X[cm];#events", 1000, -0.5, 0.5, AliDielectronVarManager::kXvPrim);
-	histos->UserHistogram(histClass, "VtxY", "Vertex Y;Y[cm];#events", 1000, -0.5, 0.5., AliDielectronVarManager::kXvPrim);
+	histos->UserHistogram(histClass, "VtxY", "Vertex Y;Y[cm];#events", 1000, -0.5, 0.5., AliDielectronVarManager::kYvPrim);
 	histos->UserHistogram(histClass, "kImpactParXY", "Impact parameter in XY plane;kImpactParXY(cm);Entries", 2000, -1, 1, AliDielectronVarManager::kImpactParXY);
 	histos->UserHistogram(histClass, "kImpactParZ", "Impact parameter in Z;kImpactParZ(cm);Entries", 1000, -50, 50, AliDielectronVarManager::kImpactParZ);
 	// Event track and SPD (tracklets) stats.

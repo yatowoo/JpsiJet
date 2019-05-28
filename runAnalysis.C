@@ -27,19 +27,29 @@ void runAnalysis(){
   // Task - Centrality / Multiplicity
   gInterpreter->ExecuteMacro("$ALICE_PHYSICS/OADB/COMMON/MULTIPLICITY/macros/AddTaskMultSelection.C");
 
+  // Task - Connect OCDB (ONLY for LEGO train)
+  //gInterpreter->ExecuteMacro("$ALICE_PHYSICS/PWGPP/PilotTrain/AddTaskCDBconnect.C");
+
+  // Task -EMCal Correction
+  AliEmcalCorrectionTask * correctionTask = AliEmcalCorrectionTask::AddTaskEmcalCorrectionTask();
+  correctionTask->SelectCollisionCandidates(AliVEvent::kINT7 | AliVEvent::kEMCEGA);
+  correctionTask->SetForceBeamType(static_cast<AliEmcalCorrectionTask::BeamType>(AliAnalysisTaskEmcal::kpp));
+  correctionTask->SetUserConfigurationFilename("$ALICE_PHYSICS/PWG/EMCAL/config/AliEmcalCorrectionConfiguration.yaml");
+  correctionTask->Initialize();
+
   // Task - Jet finder 
     // Charged Jet
   AliEmcalJetTask *pChJet02Task = AliEmcalJetTask::AddTaskEmcalJet("usedefault", "", AliJetContainer::antikt_algorithm, 0.2, AliJetContainer::kChargedJet, 0.15, 0, 0.01, AliJetContainer::pt_scheme, "Jet", 1., kFALSE, kFALSE);
-  pChJet02Task->SelectCollisionCandidates(AliVEvent::kAny);
+  pChJet02Task->SelectCollisionCandidates(AliVEvent::kINT7);
   pChJet02Task->SetNeedEmcalGeom(kFALSE);
     // Full Jet
   AliEmcalJetTask *pFuJet02Task = AliEmcalJetTask::AddTaskEmcalJet("usedefault", "usedefault", AliJetContainer::antikt_algorithm, 0.2, AliJetContainer::kFullJet, 0.15, 0.30, 0.01, AliJetContainer::pt_scheme, "Jet", 1., kFALSE, kFALSE);
-  pFuJet02Task->SelectCollisionCandidates(AliVEvent::kAny);
+  pFuJet02Task->SelectCollisionCandidates(AliVEvent::kINT7);
   // Task - PWGJE QA (Event, Track, Calo, Jet)
   AliAnalysisTaskPWGJEQA* jetQA = reinterpret_cast<AliAnalysisTaskPWGJEQA*>(gInterpreter->ExecuteMacro("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskPWGJEQA.C(\"usedefault\",\"usedefault\",\"usedefault\",\"\")"));
   AliJetContainer* jetChCont02 = jetQA->AddJetContainer(AliJetContainer::kChargedJet, AliJetContainer::antikt_algorithm, AliJetContainer::pt_scheme, 0.2, AliEmcalJet::kTPCfid, "Jet");
   AliJetContainer* jetFuCont02 = jetQA->AddJetContainer(AliJetContainer::kFullJet, AliJetContainer::antikt_algorithm, AliJetContainer::pt_scheme, 0.2, AliEmcalJet::kEMCALfid, "Jet");
-  
+
   // Task - PID QA
   gInterpreter->ExecuteMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C");
   gInterpreter->ExecuteMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDqa.C");
