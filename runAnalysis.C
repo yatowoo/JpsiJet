@@ -1,9 +1,82 @@
 /**
  * Main macro for running jobs on ALICE software
- * 
- * Environment: AliRoot_v5.09.43 @ ROOT6
+ * Arguments: doMult, doEmcalCorrection, doJetQA, doJpsiQA, doJpsiFilter, doPIDQA,
+ *   -- mode: local, test, full, merge, final
+ *   -- datasets
+ *   -- work_dir
+ * Environment: AliRoot_v5.09.43 @ ROOT5
  * Template from https://alice-doc.github.io/alice-analysis-tutorial/analysis/local.html
 */
+
+AliAnalysisAlien* gridHandler(
+    TString mode = "local",
+    TString datasets = "16l_pass1",
+    TString data_dir = "2016/LHC16l",
+    TString work_dir = "test"
+    ){
+
+  gROOT->LoadMacro("Datasets/DQ_pp_AOD.C");
+  DQ_pp_AOD();
+  TString runlist = DATASETS[datasets];
+  if(!runlist.Length()){
+    cout << "[X] ERROR - Wrong datasets : " << datasets << endl;
+    exit(1);
+  }
+
+
+  AliAnalysisAlien *alienHandler = new AliAnalysisAlien();
+
+  alienHandler->AddIncludePath("-I. -I$ROOTSYS/include -I$ALICE_ROOT -I$ALICE_ROOT/include -I$ALICE_PHYSICS/include");
+
+  alienHandler->SetAdditionalLibs("AddTaskJPSIFilter_pp.C AddTask_cjahnke_JPsi.C ConfigJpsi_cj_pp.C YatoJpsiFilterTask.h YatoJpsiFilterTask.cxx");
+  alienHandler->SetAnalysisSource("YatoJpsiFilterTask.cxx")
+
+  alienHandler->SetAliPhysicsVersion("vAN-20190522-1");
+
+  alienHandler->SetAPIVersion("V1.1x");
+
+  alienHandler->SetGridDataDir("/alice/data/"+dataDir);
+  alienHandler->SetDataPattern("*/pass1/AOD/*AOD.root");
+
+  alienHandler->SetRunPrefix("000");
+
+  alienHandler->AddRunNumber(runlist);
+
+  alienHandler->SetNrunsPerMaster(1);
+
+  alienHandler->SetSplitMaxInputFileNumber(50);
+
+  alienHandler->SetTTL(43200); // 12 hours
+
+
+  alienHandler->SetGridWorkingDir(work_dir);
+  alienHandler->SetGridOutputDir("OutputAOD");
+
+  alienHandler->SetAnalysisMacro(task_name + ".C");
+  alienHandler->SetExecutable(task_name + ".sh");
+  alienHandler->SetJDLName(task_name + ".jdl");
+  alienHandler->SetOutputToRunNo(kTRUE);
+  alienHandler->SetKeepLogs(kTRUE);
+
+  alienHandler->SetMergeAOD(kTRUE);
+  alienHandler->SetMaxMergeStages(1);
+  if(mode == "final")
+    alienHandler->SetMergeViaJDL(kFALSE);
+  else
+    alienHandler->SetMergeViaJDL(kTRUE);
+  if(mode == "test") {
+    alienHandler->SetNtestFiles(1);
+    alienHandler->SetRunMode("test");
+  } else if(mode == "full"){
+    alienHandler->SetRunMode("full");
+  } else if(mode == "merge" || mode == "final") {
+    alienHandler->SetRunMode("terminate");
+  } else{
+    cout << "[X] Error - Unknown mode : " << mode << endl;
+    exit(1);
+  }
+  retrun alienHandler;
+}
 
 void runAnalysis(
     Bool_t doMult = kFALSE,
@@ -11,7 +84,11 @@ void runAnalysis(
     Bool_t doJetQA = kTRUE,
     Bool_t doJpsiQA = kTRUE,
     Bool_t doJpsiFilter = kFALSE,
-    Bool_t doPIDQA = kFALSE
+    Bool_t doPIDQA = kFALSE,
+    TString mode = "local",
+    TString datasets = "16l_pass1",
+    TString data_dir = "2016/LHC16l",
+    TString work_dir = "test"
 ){
   // Include
   gInterpreter->ProcessLine(".include $ROOTSYS/include");
