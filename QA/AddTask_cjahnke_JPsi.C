@@ -135,7 +135,7 @@ AliAnalysisTask *AddTask_cjahnke_JPsi(Int_t trigger_index = 0, Bool_t isMC = kFA
 	//----------------------
 
 	TString containerName = mgr->GetCommonFileName();
-	containerName += ":PWGDQ_dielectron_EMCal";
+	containerName += Form(":PWGDQ_dielectron_MultiDie_EMCal_%d",trigger_index);
 
 	//create output container
 

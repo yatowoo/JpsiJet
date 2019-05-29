@@ -253,14 +253,11 @@ void InitHistogramsForEvent(AliDielectronHistos* histos, const char* histClass){
 	histos->UserHistogram(histClass, "VtxZ", "Vertex Z;Z[cm];#events", 1000, -50., 50., AliDielectronVarManager::kZvPrim);
 	histos->UserHistogram(histClass, "VtxX", "Vertex X;X[cm];#events", 1000, -0.5, 0.5, AliDielectronVarManager::kXvPrim);
 	histos->UserHistogram(histClass, "VtxY", "Vertex Y;Y[cm];#events", 1000, -0.5, 0.5., AliDielectronVarManager::kYvPrim);
-	histos->UserHistogram(histClass, "kImpactParXY", "Impact parameter in XY plane;kImpactParXY(cm);Entries", 2000, -1, 1, AliDielectronVarManager::kImpactParXY);
-	histos->UserHistogram(histClass, "kImpactParZ", "Impact parameter in Z;kImpactParZ(cm);Entries", 1000, -50, 50, AliDielectronVarManager::kImpactParZ);
 	// Event track and SPD (tracklets) stats.
+	histos->UserHistogram(histClass, "kNTrk", "Number of tracks;kNTrk;Entries", 4000, 0., 4000., AliDielectronVarManager::kNTrk);
+	histos->UserHistogram(histClass, "kNaccTrcklts", "Number of accepted SPD tracklets in |eta|<1.6;kNaccTrcklts;Entries", 1000, 0., 1000., AliDielectronVarManager::kNaccTrcklts);
 	histos->UserHistogram(histClass, "kNaccTrcklts10Corr", "kNaccTrcklts10Corr;kNaccTrcklts10Corr;Entries", 200, 0., 200., AliDielectronVarManager::kNaccTrcklts10Corr);
 	histos->UserHistogram(histClass, "VtxZ_kNaccTrcklts10Corr", "VtxZ vs. kNaccTrcklts10Corr;VtxZ;kNaccTrcklts10Corr", 800, -40., 40., 200, 0., 200., AliDielectronVarManager::kZvPrim, AliDielectronVarManager::kNaccTrcklts10Corr);
-	histos->UserHistogram(histClass, "kNTrk", "Number of tracks;kNTrk;Entries", 4000, 0., 4000., AliDielectronVarManager::kNTrk);
-	//histos->UserHistogram(histClass, "kNacc", "Number of accepted tracks;kNacc;Entries", 200, 0., 200., AliDielectronVarManager::kNacc);
-	histos->UserHistogram(histClass, "kNaccTrcklts", "Number of accepted SPD tracklets in |eta|<1.6;kNaccTrcklts;Entries", 1000, 0., 1000., AliDielectronVarManager::kNaccTrcklts);
 	//new multiplicity estimator: V0
 	histos->UserHistogram(histClass, "kMultV0", "kMultV0;kMultV0;Entries", 1000, 0., 1000., AliDielectronVarManager::kMultV0);
 	histos->UserHistogram(histClass, "kMultV0A", "kMultV0;kMultV0;Entries", 1000, 0., 1000., AliDielectronVarManager::kMultV0A);
@@ -275,7 +272,7 @@ void InitHistogramsForEvent(AliDielectronHistos* histos, const char* histClass){
 	histos->UserHistogram(histClass, "VtxZ_kMultV0", "VtxZ vs. kMultV0;VtxZ;kMultV0", 300, -15., 15., 1000, 0., 1000., AliDielectronVarManager::kZvPrim, AliDielectronVarManager::kMultV0);
 
   // Dielectron info.
-  histos->UserHistogram(histClass, "Ntracks", "Number of tracks/electron selected by AliDielectron after cuts;Ntracks;#events", 500, 0, 500, AliDielectronVarManager::kTracks);
+  histos->UserHistogram(histClass, "Ntracks", "Number of tracks/electron selected by AliDielectron after cuts;Ntracks;#events", 4000, 0, 4000, AliDielectronVarManager::kTracks);
 	histos->UserHistogram(histClass, "Npairs", "Number of Ev1PM pair candidates after all cuts;J/#psi candidates;#events", 100, 0, 100, AliDielectronVarManager::kPairs);
 }
 //______________________________________________________________________________________
@@ -325,8 +322,8 @@ void InitHistogramsDieleData(AliDielectron *diele, Int_t cutDefinition, Int_t tr
 	histos->UserHistogram("Track", "Pt", "Pt;Pt [GeV];#tracks", 800, 0, 40., AliDielectronVarManager::kPt, kTRUE);
 	histos->UserHistogram("Track", "Eta_Phi", "Eta Phi Map; Eta; Phi;#tracks",
 												100, -1, 1, 144, 0, TMath::TwoPi(), AliDielectronVarManager::kEta, AliDielectronVarManager::kPhi, kTRUE);
-	histos->UserHistogram("Track", "dXY", "dXY;dXY [cm];#tracks", 200, -5., 5., AliDielectronVarManager::kImpactParXY, kTRUE);
-	histos->UserHistogram("Track", "dZ", "dZ;dZ [cm];#tracks", 200, -10., 10., AliDielectronVarManager::kImpactParZ, kTRUE);
+	histos->UserHistogram("Track", "dXY", "dXY;dXY [cm];#tracks", 1000, -50, 50, AliDielectronVarManager::kImpactParXY, kTRUE);
+	histos->UserHistogram("Track", "dZ", "dZ;dZ [cm];#tracks", 1000, -50., 50., AliDielectronVarManager::kImpactParZ, kTRUE);
 	// Tracking quality
 	histos->UserHistogram("Track", "ITS_FirstCls", "ITS First Cluster;Layer No. of ITS 1st cluster;#Entries", 6, 0., 6., AliDielectronVarManager::kITSLayerFirstCls, kTRUE);
 	histos->UserHistogram("Track", "TPCnCls", "Number of Clusters TPC;TPC number clusteres;#tracks", 160, 0, 160, AliDielectronVarManager::kNclsTPC, kTRUE);
