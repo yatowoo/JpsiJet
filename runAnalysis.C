@@ -5,7 +5,14 @@
  * Template from https://alice-doc.github.io/alice-analysis-tutorial/analysis/local.html
 */
 
-void runAnalysis(){
+void runAnalysis(
+    Bool_t doMult = kFALSE,
+    Bool_t doEmcalCorrection = kFALSE,
+    Bool_t doJetQA = kTRUE,
+    Bool_t doJpsiQA = kTRUE,
+    Bool_t doJpsiFilter = kFALSE,
+    Bool_t doPIDQA = kFALSE
+){
   // Include
   gInterpreter->ProcessLine(".include $ROOTSYS/include");
   gInterpreter->ProcessLine(".include $ALICE_ROOT/include");
@@ -25,44 +32,44 @@ void runAnalysis(){
   gInterpreter->ExecuteMacro("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C");
 
   // Task - Centrality / Multiplicity
-  gInterpreter->ExecuteMacro("$ALICE_PHYSICS/OADB/COMMON/MULTIPLICITY/macros/AddTaskMultSelection.C");
+  if(doMult)
+    gInterpreter->ExecuteMacro("$ALICE_PHYSICS/OADB/COMMON/MULTIPLICITY/macros/AddTaskMultSelection.C");
 
-  // Task - Connect OCDB (ONLY for LEGO train)
-  //gInterpreter->ExecuteMacro("$ALICE_PHYSICS/PWGPP/PilotTrain/AddTaskCDBconnect.C");
+  if(doEmcalCorrection){
+    // Task - Connect OCDB (ONLY for LEGO train)
+    gInterpreter->ExecuteMacro("$ALICE_PHYSICS/PWGPP/PilotTrain/AddTaskCDBconnect.C");
 
-  // Task -EMCal Correction
-  AliEmcalCorrectionTask * correctionTask = AliEmcalCorrectionTask::AddTaskEmcalCorrectionTask();
-  correctionTask->SelectCollisionCandidates(AliVEvent::kINT7 | AliVEvent::kEMCEGA);
-  correctionTask->SetForceBeamType(static_cast<AliEmcalCorrectionTask::BeamType>(AliAnalysisTaskEmcal::kpp));
-  correctionTask->SetUserConfigurationFilename("$ALICE_PHYSICS/PWG/EMCAL/config/AliEmcalCorrectionConfiguration.yaml");
-  correctionTask->Initialize();
+    // Task - EMCal Correction
+    AliEmcalCorrectionTask * correctionTask = AliEmcalCorrectionTask::AddTaskEmcalCorrectionTask();
+    correctionTask->SelectCollisionCandidates(AliVEvent::kINT7 | AliVEvent::kEMCEGA);
+    correctionTask->SetForceBeamType(static_cast<AliEmcalCorrectionTask::BeamType>(AliAnalysisTaskEmcal::kpp));
+    correctionTask->SetUserConfigurationFilename("$ALICE_PHYSICS/PWGHF/hfe/macros/configs/pp/userConfigurationEMCele_pp_pPb.yaml");
+    correctionTask->Initialize();
+  }
+  
+  // QA directory - Git repo
+  gROOT->SetMacroPath(".:./QA/:./NanoAOD/");
 
-  // Task - Jet finder 
-    // Charged Jet
-  AliEmcalJetTask *pChJet02Task = AliEmcalJetTask::AddTaskEmcalJet("usedefault", "", AliJetContainer::antikt_algorithm, 0.2, AliJetContainer::kChargedJet, 0.15, 0, 0.01, AliJetContainer::pt_scheme, "Jet", 1., kFALSE, kFALSE);
-  pChJet02Task->SelectCollisionCandidates(AliVEvent::kINT7);
-  pChJet02Task->SetNeedEmcalGeom(kFALSE);
-    // Full Jet
-  AliEmcalJetTask *pFuJet02Task = AliEmcalJetTask::AddTaskEmcalJet("usedefault", "usedefault", AliJetContainer::antikt_algorithm, 0.2, AliJetContainer::kFullJet, 0.15, 0.30, 0.01, AliJetContainer::pt_scheme, "Jet", 1., kFALSE, kFALSE);
-  pFuJet02Task->SelectCollisionCandidates(AliVEvent::kINT7);
-  // Task - PWGJE QA (Event, Track, Calo, Jet)
-  AliAnalysisTaskPWGJEQA* jetQA = reinterpret_cast<AliAnalysisTaskPWGJEQA*>(gInterpreter->ExecuteMacro("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskPWGJEQA.C(\"usedefault\",\"usedefault\",\"usedefault\",\"\")"));
-  AliJetContainer* jetChCont02 = jetQA->AddJetContainer(AliJetContainer::kChargedJet, AliJetContainer::antikt_algorithm, AliJetContainer::pt_scheme, 0.2, AliEmcalJet::kTPCfid, "Jet");
-  AliJetContainer* jetFuCont02 = jetQA->AddJetContainer(AliJetContainer::kFullJet, AliJetContainer::antikt_algorithm, AliJetContainer::pt_scheme, 0.2, AliEmcalJet::kEMCALfid, "Jet");
+  // Task - Jet QA
+  if(doJetQA)
+    gInterpreter->ExecuteMacro("AddTaskJetQA.C");
 
   // Task - PID QA
-  gInterpreter->ExecuteMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C");
-  gInterpreter->ExecuteMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDqa.C");
+  if(doJpsiQA || doJpsiFilter)
+    gInterpreter->ExecuteMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C");
+  if(doPIDQA)
+    gInterpreter->ExecuteMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDqa.C");
 
   // Task - J/psi Filter
-  gROOT->SetMacroPath(".:./QA/:./NanoAOD/");
-  
-  gInterpreter->LoadMacro("YatoJpsiFilterTask.cxx++g");
-  gInterpreter->ExecuteMacro("AddTaskJPSIFilter.C");
-  aodOutputH->SetOutputFileName("AliAOD.Dielectron.root");
-  mgr->RegisterExtraFile("AliAOD.Dielectron.root");
+  if(doJpsiFilter){
+    gInterpreter->LoadMacro("YatoJpsiFilterTask.cxx++g");
+    gInterpreter->ExecuteMacro("AddTaskJPSIFilter.C");
+    aodOutputH->SetOutputFileName("AliAOD.Dielectron.root");
+    mgr->RegisterExtraFile("AliAOD.Dielectron.root");
+  }
   // Task - J/psi QA
-  gInterpreter->ExecuteMacro("AddTaskJpsiQA.C");
+  if(doJpsiQA)
+    gInterpreter->ExecuteMacro("AddTaskJpsiQA.C");
 
   // Input data file
   TChain *chain = new TChain("aodTree");

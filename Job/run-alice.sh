@@ -20,7 +20,7 @@ eval "`alienv shell-helper`"
 alienv q --no-refresh | grep -v "latest"
 alienv load AliPhysics/vAN-20190522 --no-refresh
 alienv list --no-refresh
-aliroot -l -b -x -q runAnalysis.C 1>run.out 2>run.err
+aliroot -l -b -x -q 'runAnalysis.C(0,0,1,0,0,0)' 1>run.out 2>run.err
 alienv unload AliPhysics/vAN-20190522 --no-refresh
 alienv list --no-refresh
 set +x
