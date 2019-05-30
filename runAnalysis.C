@@ -2,19 +2,21 @@
  * Main macro for running jobs on ALICE software
  * Arguments: doMult, doEmcalCorrection, doJetQA, doJpsiQA, doJpsiFilter, doPIDQA,
  *   -- mode: local, test, full, merge, final
- *   -- datasets
- *   -- work_dir
+ *   -- datasets: entry in Datasets/DQ_pp_AOD.C
+ *   -- data_dir: 20XX/LHCXX[period]
+ *   -- work_dir: output dir on AliEn
+ *   -- task_name
  * Environment: AliRoot_v5.09.43 @ ROOT5
  * Template from https://alice-doc.github.io/alice-analysis-tutorial/analysis/local.html
 */
 
-AliAnalysisAlien* gridHandler(
+AliAnalysisAlien* SetupGridHandler(
     TString mode = "local",
     TString datasets = "16l_pass1",
     TString data_dir = "2016/LHC16l",
-    TString work_dir = "test"
-    ){
-
+    TString work_dir = "test",
+    TString task_name = "JpsiJet"
+){
   gROOT->LoadMacro("Datasets/DQ_pp_AOD.C");
   DQ_pp_AOD();
   TString runlist = DATASETS[datasets];
@@ -28,14 +30,14 @@ AliAnalysisAlien* gridHandler(
 
   alienHandler->AddIncludePath("-I. -I$ROOTSYS/include -I$ALICE_ROOT -I$ALICE_ROOT/include -I$ALICE_PHYSICS/include");
 
-  alienHandler->SetAdditionalLibs("AddTaskJPSIFilter_pp.C AddTask_cjahnke_JPsi.C ConfigJpsi_cj_pp.C YatoJpsiFilterTask.h YatoJpsiFilterTask.cxx");
-  alienHandler->SetAnalysisSource("YatoJpsiFilterTask.cxx")
+  alienHandler->SetAdditionalLibs("NanoAOD/AddTaskJPSIFilter.C QA/AddTask_cjahnke_JPsi.C QA/ConfigJpsi_cj_pp.C QA/AddTaskJetQA.C NanoAOD/YatoJpsiFilterTask.h NanoAOD/YatoJpsiFilterTask.cxx");
+  alienHandler->SetAnalysisSource("YatoJpsiFilterTask.cxx");
 
   alienHandler->SetAliPhysicsVersion("vAN-20190522-1");
 
   alienHandler->SetAPIVersion("V1.1x");
 
-  alienHandler->SetGridDataDir("/alice/data/"+dataDir);
+  alienHandler->SetGridDataDir("/alice/data/"+data_dir);
   alienHandler->SetDataPattern("*/pass1/AOD/*AOD.root");
 
   alienHandler->SetRunPrefix("000");
@@ -75,7 +77,7 @@ AliAnalysisAlien* gridHandler(
     cout << "[X] Error - Unknown mode : " << mode << endl;
     exit(1);
   }
-  retrun alienHandler;
+  return alienHandler;
 }
 
 void runAnalysis(
@@ -88,7 +90,8 @@ void runAnalysis(
     TString mode = "local",
     TString datasets = "16l_pass1",
     TString data_dir = "2016/LHC16l",
-    TString work_dir = "test"
+    TString work_dir = "test",
+    TString task_name = "JpsiJet"
 ){
   // Include
   gInterpreter->ProcessLine(".include $ROOTSYS/include");
@@ -146,15 +149,21 @@ void runAnalysis(
   }
   // Task - J/psi QA
   if(doJpsiQA)
-    gInterpreter->ExecuteMacro("AddTaskJpsiQA.C");
+    gInterpreter->ExecuteMacro(Form("AddTaskJpsiQA.C(%d)", doJpsiFilter));
 
-  // Input data file
-  TChain *chain = new TChain("aodTree");
-  chain->Add("AliAOD_input.root");
-
-  // Start Analysis
+  // Start analysis
   if(!mgr->InitAnalysis()) return;
   mgr->PrintStatus();
   mgr->SetUseProgressBar(1, 25);
-  mgr->StartAnalysis("local", chain);
+  if(mode == "local"){
+    // Input data file
+    TChain *chain = new TChain("aodTree");
+    chain->Add("AliAOD_input.root");
+    // Start Analysis
+    mgr->StartAnalysis("local", chain);
+  }else{
+    AliAnalysisAlien* alienH = SetupGridHandler(mode, datasets, data_dir, work_dir, task_name);
+    mgr->SetGridHandler(alienH);
+    mgr->StartAnalysis("grid");
+  }
 }

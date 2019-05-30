@@ -51,11 +51,7 @@ AliAnalysisTask *AddTask_cjahnke_JPsi(Int_t trigger_index = 0, Bool_t isMC = kFA
 	///======
 	// Load configuration file
 	// ======
-  /*
-  const char* configFile = "ConfigJpsi_cj_pp.C";
-  if (!gInterpreter->IsLoaded(configFile)){
-    gROOT->LoadMacro(configFile);
-  }*/
+
 	//add dielectron analysis with different cuts to the task
 	for (Int_t i = 0; i < 4; ++i)
 	{ //nDie defined in config file

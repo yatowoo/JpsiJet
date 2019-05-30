@@ -1,7 +1,6 @@
-void AddTaskJpsiQA(){
-#ifdef __CINT__
-  gROOT->LoadMacro("ConfigJpsi_cj_pp.C");
-#endif
+void AddTaskJpsiQA(Bool_t doJpsiFilter){
+  if(!doJpsiFilter)
+    gROOT->LoadMacro("ConfigJpsi_cj_pp.C");
   cout << "[-] Add task : MultiDie_0 for kINT7/MB" << endl;
   gInterpreter->ExecuteMacro("AddTask_cjahnke_JPsi.C(0)");
   cout << "[-] Add task : MultiDie_3 for kEMCEGA EG1" << endl;
