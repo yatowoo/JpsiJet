@@ -4,6 +4,7 @@
 ### User ###
 *.pcm
 *.root
+*.xml
 
 ### C ###
 # Prerequisites

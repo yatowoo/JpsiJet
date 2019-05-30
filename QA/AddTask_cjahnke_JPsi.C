@@ -53,7 +53,8 @@ AliAnalysisTask *AddTask_cjahnke_JPsi(Int_t trigger_index = 0, Bool_t isMC = kFA
 	// ======
 
 	//add dielectron analysis with different cuts to the task
-	for (Int_t i = 0; i < 4; ++i)
+  // ONLY use RAW and EMCal_strict cut definition
+	for (Int_t i = 0; i < 2; ++i)
 	{ //nDie defined in config file
     AliDielectron *jpsi = ConfigJpsi_cj_pp(i, isAOD, trigger_index, hasMC);
 		if (isAOD)

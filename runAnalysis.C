@@ -30,7 +30,7 @@ AliAnalysisAlien* SetupGridHandler(
 
   alienHandler->AddIncludePath("-I. -I$ROOTSYS/include -I$ALICE_ROOT -I$ALICE_ROOT/include -I$ALICE_PHYSICS/include");
 
-  alienHandler->SetAdditionalLibs("NanoAOD/AddTaskJPSIFilter.C QA/AddTask_cjahnke_JPsi.C QA/ConfigJpsi_cj_pp.C QA/AddTaskJetQA.C NanoAOD/YatoJpsiFilterTask.h NanoAOD/YatoJpsiFilterTask.cxx");
+  alienHandler->SetAdditionalLibs("AddTaskJPSIFilter.C AddTask_cjahnke_JPsi.C ConfigJpsi_cj_pp.C AddTaskJetQA.C YatoJpsiFilterTask.h YatoJpsiFilterTask.cxx");
   alienHandler->SetAnalysisSource("YatoJpsiFilterTask.cxx");
 
   alienHandler->SetAliPhysicsVersion("vAN-20190522-1");
@@ -46,7 +46,7 @@ AliAnalysisAlien* SetupGridHandler(
 
   alienHandler->SetNrunsPerMaster(1);
 
-  alienHandler->SetSplitMaxInputFileNumber(50);
+  alienHandler->SetSplitMaxInputFileNumber(20);
 
   alienHandler->SetTTL(43200); // 12 hours
 

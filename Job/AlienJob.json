@@ -1,0 +1,14 @@
+{
+  "grid_test":{
+    "doMult": false,
+    "doEmcalCorrection": false,
+    "doJetQA": true,
+    "doJpsiQA": true,
+    "doJpsiFilter": false,
+    "doPIDQA": false,
+    "datasets": "16l_pass1",
+    "data_dir": "2016/LHC16l",
+    "work_dir": "JpsiJet_16l_test_190530",
+    "task_name": "JpsiJet"
+  }
+}

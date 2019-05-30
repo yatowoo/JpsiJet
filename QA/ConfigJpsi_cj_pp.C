@@ -12,10 +12,10 @@ AliESDtrackCuts *SetupESDtrackCutsDieleData(Int_t cutDefinition);
 TString namesDieleData = "EMCal;EMCal_loose;EMCal_strict;RAW";
 enum CutType
 {
-	kEMCal,
-	kEMCal_loose,
 	kEMCal_strict,
 	kRAW,
+	kEMCal,
+	kEMCal_loose,
   kCutN = 4
 };
 TObjArray *arrNamesDieleData = namesDieleData.Tokenize(";");
