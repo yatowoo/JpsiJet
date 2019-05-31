@@ -9,7 +9,7 @@ AliESDtrackCuts *SetupESDtrackCutsDieleData(Int_t cutDefinition);
 //
 // Cut Definitions
 //
-TString namesDieleData = "EMCal;EMCal_loose;EMCal_strict;RAW";
+TString namesDieleData = "EMCal_strict;RAW;EMCal;EMCal_loose";
 enum CutType
 {
 	kEMCal_strict,
@@ -58,9 +58,12 @@ AliDielectron *ConfigJpsi_cj_pp(Int_t cutDefinition, Bool_t isAOD = kFALSE, Int_
 	}
 
 	// Cuts Setup
+  //diele->SetCutQA(kTRUE);
   if(cutDefinition != kRAW){
 	  SetupTrackCutsDieleData(diele, cutDefinition, isAOD, isMC);
 	  SetupPairCutsDieleData(diele, cutDefinition, isAOD, trigger_index, isMC);
+  }else{
+    diele->SetNoPairing(kTRUE);
   }
 	// Histogram Setup
 	InitHistogramsDieleData(diele, cutDefinition, trigger_index, isAOD);
@@ -313,6 +316,8 @@ void InitHistogramsDieleData(AliDielectron *diele, Int_t cutDefinition, Int_t tr
 		Histogram for Event
 	*/
 	  InitHistogramsForEvent(histos, "Event");
+    // Event vs Track - by AliDielectronEvtVsTrkHist
+    //histos->AddClass("EvtVsTrk");
   }
 	
 	/*
