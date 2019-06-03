@@ -357,13 +357,17 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
     // Fill primary and SPD vertex
     AliAODVertex *vtxPriv = aodEv->GetPrimaryVertex();
     if(!vtxPriv) AliFatal("No primary vertex");
-    AliAODVertex *vtxSpd = aodEv->GetPrimaryVertexSPD();
+    AliAODVertex *vtxSPD = aodEv->GetPrimaryVertexSPD();
+    AliAODVertex *vtxTPC = aodEv->GetPrimaryVertexTPC();
     AliAODVertex *tmp = vtxPriv->CloneWithoutRefs();
     tmp->SetTitle("VertexerTracksMVWithConstraint");
     nanoEv->AddVertex(tmp);
-    AliAODVertex *tmpSpd = vtxSpd->CloneWithoutRefs(); 
-    tmpSpd->SetTitle(vtxSpd->GetTitle());
-    nanoEv->AddVertex(tmpSpd); 
+    AliAODVertex *tmpSPD = vtxSPD->CloneWithoutRefs(); 
+    tmpSPD->SetTitle(vtxSPD->GetTitle());
+    nanoEv->AddVertex(tmpSPD); 
+    AliAODVertex *tmpTPC = vtxTPC->CloneWithoutRefs(); 
+    tmpTPC->SetTitle(vtxTPC->GetTitle());
+    nanoEv->AddVertex(tmpTPC); 
 
     // Fill tracks
     Int_t nTracks = aodEv->GetNumberOfTracks();
@@ -398,12 +402,13 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
     }
 
     nanoEv->GetTracks()->Expand(nTracks);
-    nanoEv->GetVertices()->Expand(nTracks + 2);
+    nanoEv->GetVertices()->Expand(nTracks + 3);
     nanoEv->GetCaloClusters()->Expand(nanoEv->GetNumberOfCaloClusters());
 
     // Write output
     fExtAOD->SelectEvent();
-    fExtAOD->FinishEvent();
+    // DEBUG - not use FinishEvent() to avoid auto flush
+    fExtAOD->GetTree()->Fill();
     Int_t ncandidates = fDielectron->GetPairArray(1)->GetEntriesFast();
     if (ncandidates == 1)
       fEventStat->Fill((kNbinsEvent));
@@ -411,7 +416,8 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
       fEventStat->Fill((kNbinsEvent + 1));
     
     delete tmp;
-    delete tmpSpd;
+    delete tmpSPD;
+    delete tmpTPC;
   }
 
   

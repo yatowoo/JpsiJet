@@ -1,4 +1,4 @@
-void AddTaskJetQA(UInt_t kPhysSel = AliVEvent::kINT7){
+void AddTaskJetQA(UInt_t kPhysSel = AliVEvent::kINT7 | AliVEvent::kEMCEGA){
 
   // Task - Jet finder 
     // Charged Jet
