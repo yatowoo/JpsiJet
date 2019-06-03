@@ -14,6 +14,11 @@ YatoJpsiFilterTask::YatoJpsiFilterTask() :
   fIsToMerge(kFALSE),
   fOutputFileName("AliAOD.Dielectron.root"),
   fExtAOD(0x0),
+  fEMCalCells(0x0),
+  fPHOSCells(0x0),
+  fAODZDC(0x0),
+  fAODAD(0x0),
+  fAODTZERO(0x0),
   fDielectron(0),
   fSelectPhysics(kTRUE),
   fTriggerMask(AliVEvent::kMB),
@@ -38,6 +43,11 @@ YatoJpsiFilterTask::YatoJpsiFilterTask(const char* name) :
   fIsToMerge(kFALSE),
   fOutputFileName("AliAOD.Dielectron.root"),
   fExtAOD(0x0),
+  fEMCalCells(0x0),
+  fPHOSCells(0x0),
+  fAODZDC(0x0),
+  fAODAD(0x0),
+  fAODTZERO(0x0),
   fDielectron(0),
   fSelectPhysics(kTRUE),
   fTriggerMask(AliVEvent::kMB),
@@ -74,6 +84,12 @@ YatoJpsiFilterTask::~YatoJpsiFilterTask()
     delete fEventFilter;
   if(fQnList)
     delete fQnList;
+  if(fExtAOD) delete fExtAOD;
+  if(fAODZDC) delete fAODZDC;
+  if(fAODAD) delete fAODAD;
+  if(fAODTZERO) delete fAODTZERO;
+  if(fEMCalCells) delete fEMCalCells;
+  if(fPHOSCells) delete fPHOSCells;
 }
 
 Bool_t YatoJpsiFilterTask::Notify()
@@ -144,6 +160,21 @@ void YatoJpsiFilterTask::UserCreateOutputObjects()
   TClonesArray *nanoAODCaloCluster = new TClonesArray("AliAODCaloCluster",500);
   nanoAODCaloCluster->SetName("caloClusters");
   fExtAOD->AddBranch("TClonesArray", &nanoAODCaloCluster);
+  
+  fEMCalCells = new AliAODCaloCells;
+  fEMCalCells->SetName("emcalCells");
+  fExtAOD->AddBranch("AliAODCaloCells",&fEMCalCells);
+  fPHOSCells = new AliAODCaloCells;
+  fPHOSCells->SetName("phosCells");
+  
+  fExtAOD->AddBranch("AliAODCaloCells",&fPHOSCells);
+  fAODZDC = new AliAODZDC;
+  fExtAOD->AddBranch("AliAODZDC",&fAODZDC);
+  fAODAD = new AliAODAD;
+  fExtAOD->AddBranch("AliAODAD",&fAODAD);
+  fAODTZERO = new AliAODTZERO;
+  fExtAOD->AddBranch("AliAODTZERO",&fAODTZERO);
+
   fExtAOD->GetAOD()->GetStdContent();
 
   PostData(1, const_cast<THashList*>(fDielectron->GetHistogramList()));
@@ -159,11 +190,6 @@ void YatoJpsiFilterTask::Init(){
   if (!aodH) AliFatal("No AOD handler. Halting.");
   fExtAOD = aodH->AddFilteredAOD(fOutputFileName, "DielectronEvents", fIsToMerge);
   if(!fExtAOD) AliFatal("Fail to add filtered AOD");
-  fExtAOD->KeepUnspecifiedBranches();
-  fExtAOD->FilterBranch("v0s",0x0);
-  fExtAOD->FilterBranch("cascades",0x0);
-  fExtAOD->FilterBranch("jets",0x0);
-  fExtAOD->FilterBranch("dimuons",0x0);
 }
 
 // Update: copy title for primary vertex
@@ -305,12 +331,29 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
     // DEBUG - Fill all selected events
   if (kTRUE || hasCand)
   {
-  AliAODEvent *aodEv = (static_cast<AliAODEvent *>(InputEvent()));
+    AliAODEvent *aodEv = (static_cast<AliAODEvent *>(InputEvent()));
+    // Fill ZDC, AD, TZERO data
+    AliAODZDC* zdc = aodEv->GetZDCData();
+    fAODZDC->Clear("C");
+    *fAODZDC = *zdc;
+    AliAODAD* ad = aodEv->GetADData();
+    fAODAD->Clear("C");
+    *fAODAD = *ad;
+    AliAODTZERO* tzero = aodEv->GetTZEROData();
+    fAODTZERO->Clear("C");
+    *fAODTZERO = *tzero;
+    // Fill EMCal/PHOS cells
+    AliAODCaloCells* cells = aodEv->GetEMCALCells();
+    fEMCalCells->Clear("C");
+    *fEMCalCells = *cells;
+    cells = aodEv->GetPHOSCells();
+    fPHOSCells->Clear("C");
+    *fPHOSCells = *cells;
+    // Clear arrays
     AliAODEvent *nanoEv = fExtAOD->GetAOD();
     nanoEv->GetTracks()->Clear();
     nanoEv->GetVertices()->Clear();
     nanoEv->GetCaloClusters()->Clear();
-    TTree* nanoTree = fExtAOD->GetTree();
     // Fill primary and SPD vertex
     AliAODVertex *vtxPriv = aodEv->GetPrimaryVertex();
     if(!vtxPriv) AliFatal("No primary vertex");
@@ -359,7 +402,6 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
     nanoEv->GetCaloClusters()->Expand(nanoEv->GetNumberOfCaloClusters());
 
     // Write output
-    nanoTree->Fill();  
     fExtAOD->SelectEvent();
     fExtAOD->FinishEvent();
     Int_t ncandidates = fDielectron->GetPairArray(1)->GetEntriesFast();

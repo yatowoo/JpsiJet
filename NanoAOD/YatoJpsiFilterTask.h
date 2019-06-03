@@ -56,6 +56,13 @@ private:
   TString fOutputFileName;  // File name of filtered AOD file
   AliAODExtension* fExtAOD; // Filtered nano AOD
 
+  AliAODCaloCells* fEMCalCells;
+  AliAODCaloCells* fPHOSCells;
+  AliAODZDC* fAODZDC;
+  AliAODAD* fAODAD;
+  AliAODTZERO* fAODTZERO;
+  
+
 
 /*Copy from AliAnalysisTaskDielectronFilter*/
 public:
