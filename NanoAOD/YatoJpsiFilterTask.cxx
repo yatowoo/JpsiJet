@@ -5,12 +5,15 @@
 
 #include <AliLog.h>
 #include "AliAODCaloCluster.h"
+#include "AliAODBranchReplicator.h"
 
 ClassImp(YatoJpsiFilterTask)
 
 YatoJpsiFilterTask::YatoJpsiFilterTask() : 
   AliAnalysisTaskSE(),
   fIsToMerge(kFALSE),
+  fOutputFileName("AliAOD.Dielectron.root"),
+  fExtAOD(0x0),
 	fDielectron(0),
 	fSelectPhysics(kTRUE),
 	fTriggerMask(AliVEvent::kMB),
@@ -33,6 +36,8 @@ YatoJpsiFilterTask::YatoJpsiFilterTask() :
 YatoJpsiFilterTask::YatoJpsiFilterTask(const char* name) : 
   AliAnalysisTaskSE(name),
   fIsToMerge(kFALSE),
+  fOutputFileName("AliAOD.Dielectron.root"),
+  fExtAOD(0x0),
 	fDielectron(0),
 	fSelectPhysics(kTRUE),
 	fTriggerMask(AliVEvent::kMB),
@@ -129,6 +134,18 @@ void YatoJpsiFilterTask::UserCreateOutputObjects()
 		fEventStat->GetXaxis()->SetBinLabel((kNbinsEvent+2),Form("#splitline{With >1 candidate}{%s}",fDielectron->GetName()));
 	}
 
+  // Create brach to nano AOD - track/vertex/cluster
+  TClonesArray *nanoAODTracks = new TClonesArray("AliAODTrack",500);
+  nanoAODTracks->SetName("tracks");
+  fExtAOD->AddBranch("TClonesArray", &nanoAODTracks);
+  TClonesArray *nanoAODVertices = new TClonesArray("AliAODVertex",500);
+  nanoAODVertices->SetName("vertices");
+  fExtAOD->AddBranch("TClonesArray", &nanoAODVertices);
+  TClonesArray *nanoAODCaloCluster = new TClonesArray("AliAODCaloCluster",500);
+  nanoAODCaloCluster->SetName("caloClusters");
+  fExtAOD->AddBranch("TClonesArray", &nanoAODCaloCluster);
+  fExtAOD->GetAOD()->GetStdContent();
+
 	PostData(1, const_cast<THashList*>(fDielectron->GetHistogramList()));
 	PostData(2,fEventStat);
 }
@@ -140,7 +157,13 @@ void YatoJpsiFilterTask::Init(){
   // require AOD handler
   AliAODHandler *aodH = (AliAODHandler*)((AliAnalysisManager::GetAnalysisManager())->GetOutputEventHandler());
   if (!aodH) AliFatal("No AOD handler. Halting.");
-  aodH->AddFilteredAOD("AliAOD.Dielectron.root", "DielectronEvents", fIsToMerge);
+  fExtAOD = aodH->AddFilteredAOD(fOutputFileName, "DielectronEvents", fIsToMerge);
+  if(!fExtAOD) AliFatal("Fail to add filtered AOD");
+  fExtAOD->KeepUnspecifiedBranches();
+  fExtAOD->FilterBranch("v0s",0x0);
+  fExtAOD->FilterBranch("cascades",0x0);
+  fExtAOD->FilterBranch("jets",0x0);
+  fExtAOD->FilterBranch("dimuons",0x0);
 }
 
 // Update: copy title for primary vertex
@@ -227,7 +250,7 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
 	AliDielectronVarManager::Fill(InputEvent(), values);
 	AliDielectronVarManager::Fill(InputEvent(), valuesMC);
 
-	Bool_t hasMC = AliDielectronMC::Instance()->HasMC();
+	Bool_t hasMC = fDielectron->GetHasMC();
 	if (hasMC)
 	{
 		if (AliDielectronMC::Instance()->ConnectMCEvent())
@@ -278,21 +301,75 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
 	if (fStoreEventsWithSingleTracks)
 		hasCand = (hasCand || fDielectron->GetTrackArray(0) || fDielectron->GetTrackArray(1));
 
-	AliAODHandler *aodH = (AliAODHandler *)((AliAnalysisManager::GetAnalysisManager())->GetOutputEventHandler());
-	AliAODExtension *extDielectron = aodH->GetFilteredAOD("AliAOD.Dielectron.root");
-	if (hasCand)
-	{
-		AliAODEvent *aod = aodH->GetAOD();
-		AliDebug(2,Form("Select event with %d tracks.",aod->GetNumberOfESDTracks()));
+	// Fill nano AOD
+    // DEBUG - Fill all selected events
+  if (kTRUE || hasCand)
+  {
+  AliAODEvent *aodEv = (static_cast<AliAODEvent *>(InputEvent()));
+    AliAODEvent *nanoEv = fExtAOD->GetAOD();
+    nanoEv->GetTracks()->Clear();
+    nanoEv->GetVertices()->Clear();
+    nanoEv->GetCaloClusters()->Clear();
+    TTree* nanoTree = fExtAOD->GetTree();
+    // Fill primary and SPD vertex
+    AliAODVertex *vtxPriv = aodEv->GetPrimaryVertex();
+    if(!vtxPriv) AliFatal("No primary vertex");
+    AliAODVertex *vtxSpd = aodEv->GetPrimaryVertexSPD();
+    AliAODVertex *tmp = vtxPriv->CloneWithoutRefs();
+    tmp->SetTitle("VertexerTracksMVWithConstraint");
+    nanoEv->AddVertex(tmp);
+    AliAODVertex *tmpSpd = vtxSpd->CloneWithoutRefs(); 
+    tmpSpd->SetTitle(vtxSpd->GetTitle());
+    nanoEv->AddVertex(tmpSpd); 
 
-		extDielectron->SelectEvent();
+    // Fill tracks
+    Int_t nTracks = aodEv->GetNumberOfTracks();
+    for (int iTrk = 0; iTrk < nTracks; iTrk++)
+    {
+      AliAODTrack* oldTrack = (AliAODTrack*)(aodEv->GetTrack(iTrk));
+      Int_t trkID = nanoEv->AddTrack(oldTrack);
+      AliAODTrack* trk = (AliAODTrack*)(nanoEv->GetTrack(trkID));
+      trk->ResetBit(kIsReferenced);
+      trk->SetUniqueID(0);
+      // Vertex of origin
+      Int_t vtxID = nanoEv->AddVertex(oldTrack->GetProdVertex());
+      AliAODVertex* vtx = nanoEv->GetVertex(vtxID);
+      vtx->ResetBit(kIsReferenced);
+      vtx->SetUniqueID(0);
+      vtx->RemoveDaughters();
+      trk->SetProdVertex(vtx);
+      // Calo cluster
+      Int_t oldCaloID = oldTrack->GetEMCALcluster();
+      if(oldCaloID > 0){
+        AliAODCaloCluster* oldCalo = aodEv->GetCaloCluster(oldCaloID);
+        if (oldCalo)
+        {
+          Int_t caloID = nanoEv->AddCaloCluster(oldCalo);
+          trk->SetEMCALcluster(caloID);
+          AliAODCaloCluster *calo = nanoEv->GetCaloCluster(caloID);
+          for (int u = 0; u < calo->GetNTracksMatched(); u++)
+            calo->RemoveTrackMatched(calo->GetTrackMatched(u));
+          calo->AddTrackMatched(trk);
+        }
+      }
+    }
+
+    nanoEv->GetTracks()->Expand(nTracks);
+    nanoEv->GetVertices()->Expand(nTracks + 2);
+    nanoEv->GetCaloClusters()->Expand(nanoEv->GetNumberOfCaloClusters());
+
+    // Write output
+    nanoTree->Fill();  
+		fExtAOD->SelectEvent();
+    fExtAOD->FinishEvent();
 		Int_t ncandidates = fDielectron->GetPairArray(1)->GetEntriesFast();
 		if (ncandidates == 1)
 			fEventStat->Fill((kNbinsEvent));
 		else if (ncandidates > 1)
 			fEventStat->Fill((kNbinsEvent + 1));
-
-    extDielectron->FinishEvent();
+    
+    delete tmp;
+    delete tmpSpd;
 	}
 
   

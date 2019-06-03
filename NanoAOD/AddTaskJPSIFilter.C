@@ -39,16 +39,16 @@ YatoJpsiFilterTask* AddTaskJPSIFilter(Bool_t storeLS = kTRUE, Bool_t hasMC_aod =
     AliAODHandler *aodHandler = (AliAODHandler*)mgr->GetOutputEventHandler();
     aodHandler->SetCreateNonStandardAOD();
     aodHandler->SetNeedsHeaderReplication();
-    //aodHandler->SetNeedsTOFHeaderReplication();
-    //aodHandler->SetNeedsVZEROReplication();
+    aodHandler->SetNeedsTOFHeaderReplication();
+    aodHandler->SetNeedsVZEROReplication();
     //aodHandler->SetNeedsTracksBranchReplication();
     //aodHandler->SetNeedsVerticesBranchReplication();
-    //aodHandler->SetNeedsTrackletsBranchReplication();
-    //aodHandler->SetNeedsPMDClustersBranchReplication();
-    //aodHandler->SetNeedsFMDClustersBranchReplication();
+    aodHandler->SetNeedsTrackletsBranchReplication();
+    aodHandler->SetNeedsPMDClustersBranchReplication();
+    aodHandler->SetNeedsFMDClustersBranchReplication();
     //aodHandler->SetNeedsCaloClustersBranchReplication();
-    //aodHandler->SetNeedsCaloTriggerBranchReplication();
-    //aodHandler->SetNeedsHMPIDBranchReplication();
+    aodHandler->SetNeedsCaloTriggerBranchReplication();
+    aodHandler->SetNeedsHMPIDBranchReplication();
     if(hasMC) aodHandler->SetNeedsMCParticlesBranchReplication();
   }
   
@@ -58,6 +58,7 @@ YatoJpsiFilterTask* AddTaskJPSIFilter(Bool_t storeLS = kTRUE, Bool_t hasMC_aod =
   if (!hasMC) task->UsePhysicsSelection();
   if(storeLS) task->SetStoreLikeSignCandidates(storeLS);
   task->SetStoreRotatedPairs(storeTR);  
+  task->SetRejectPileup(kTRUE);
   task->SetToMerge(kTRUE);
 	//Add event filter
 	AliDielectronEventCuts *eventCuts = new AliDielectronEventCuts("eventCuts", "Vertex Track && |vtxZ|<10 && ncontrib>0");

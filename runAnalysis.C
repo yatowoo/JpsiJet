@@ -144,7 +144,7 @@ void runAnalysis(
   if(doJpsiFilter){
     gInterpreter->LoadMacro("YatoJpsiFilterTask.cxx++g");
     gInterpreter->ExecuteMacro("AddTaskJPSIFilter.C");
-    aodOutputH->SetOutputFileName("AliAOD.Dielectron.root");
+    aodOutputH->SetOutputFileName("AliAOD.root");
     mgr->RegisterExtraFile("AliAOD.Dielectron.root");
   }
   // Task - J/psi QA

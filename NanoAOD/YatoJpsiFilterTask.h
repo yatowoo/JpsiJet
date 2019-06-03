@@ -48,8 +48,14 @@ public:
   Bool_t IsToMerge() { return fIsToMerge;}
   void SetToMerge(Bool_t isToMerge = kTRUE){ fIsToMerge = isToMerge;}
 
+   Bool_t RejectPileup(){return fRejectPileup;}
+   void SetRejectPileup(Bool_t p = kTRUE){fRejectPileup = p;}
+
 private:
 	Bool_t fIsToMerge; // Option for AliAODExtension
+  TString fOutputFileName;  // File name of filtered AOD file
+  AliAODExtension* fExtAOD; // Filtered nano AOD
+
 
 /*Copy from AliAnalysisTaskDielectronFilter*/
 public:
