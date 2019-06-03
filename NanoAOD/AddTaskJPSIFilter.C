@@ -39,16 +39,16 @@ YatoJpsiFilterTask* AddTaskJPSIFilter(Bool_t storeLS = kTRUE, Bool_t hasMC_aod =
     AliAODHandler *aodHandler = (AliAODHandler*)mgr->GetOutputEventHandler();
     aodHandler->SetCreateNonStandardAOD();
     aodHandler->SetNeedsHeaderReplication();
-    aodHandler->SetNeedsTOFHeaderReplication();
-    aodHandler->SetNeedsVZEROReplication();
-    aodHandler->SetNeedsTracksBranchReplication();
-    aodHandler->SetNeedsVerticesBranchReplication();
-    aodHandler->SetNeedsTrackletsBranchReplication();
-    aodHandler->SetNeedsPMDClustersBranchReplication();
-    aodHandler->SetNeedsFMDClustersBranchReplication();
-    aodHandler->SetNeedsCaloClustersBranchReplication();
-    aodHandler->SetNeedsCaloTriggerBranchReplication();
-    aodHandler->SetNeedsHMPIDBranchReplication();
+    //aodHandler->SetNeedsTOFHeaderReplication();
+    //aodHandler->SetNeedsVZEROReplication();
+    //aodHandler->SetNeedsTracksBranchReplication();
+    //aodHandler->SetNeedsVerticesBranchReplication();
+    //aodHandler->SetNeedsTrackletsBranchReplication();
+    //aodHandler->SetNeedsPMDClustersBranchReplication();
+    //aodHandler->SetNeedsFMDClustersBranchReplication();
+    //aodHandler->SetNeedsCaloClustersBranchReplication();
+    //aodHandler->SetNeedsCaloTriggerBranchReplication();
+    //aodHandler->SetNeedsHMPIDBranchReplication();
     if(hasMC) aodHandler->SetNeedsMCParticlesBranchReplication();
   }
   

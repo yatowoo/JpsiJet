@@ -284,28 +284,6 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
 	{
 		AliAODEvent *aod = aodH->GetAOD();
 		AliDebug(2,Form("Select event with %d tracks.",aod->GetNumberOfESDTracks()));
-		//replace the references of the legs with the AOD references
-		TObjArray *obj = 0x0;
-		for (Int_t i = 0; i < 11; i++)
-		{
-			obj = (TObjArray *)((*(fDielectron->GetPairArraysPointer()))->UncheckedAt(i));
-			if (!obj)
-				continue;
-			for (int j = 0; j < obj->GetEntriesFast(); j++)
-			{
-				AliDielectronPair *pairObj = (AliDielectronPair *)obj->UncheckedAt(j);
-				Int_t id1 = ((AliVTrack *)pairObj->GetFirstDaughterP())->GetID();
-				Int_t id2 = ((AliVTrack *)pairObj->GetSecondDaughterP())->GetID();
-
-				for (Int_t it = 0; it < aod->GetNumberOfTracks(); it++)
-				{
-					if (aod->GetTrack(it)->GetID() == id1)
-						pairObj->SetRefFirstDaughter(aod->GetTrack(it));
-					if (aod->GetTrack(it)->GetID() == id2)
-						pairObj->SetRefSecondDaughter(aod->GetTrack(it));
-				}
-			}
-		}
 
 		extDielectron->SelectEvent();
 		Int_t ncandidates = fDielectron->GetPairArray(1)->GetEntriesFast();
@@ -317,18 +295,8 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
     extDielectron->FinishEvent();
 	}
 
-	if (fCreateNanoAOD && isAOD && (!hasCand) && fStoreHeader)
-	{
-		// set event plane
-		AliAODHeader *header = dynamic_cast<AliAODHeader *>(extDielectron->GetAOD()->GetHeader());
-		if (!header)
-			AliFatal("Not a standard AOD");
-		header->SetEventplane(((AliAODHeader *)(static_cast<AliAODEvent *>(InputEvent()))->GetHeader())->GetEventplaneP());
-		header->ResetEventplanePointer();
-		extDielectron->GetTree()->Fill(); // fill header for all events without tracks
-	}
   
-  // Clear track and pair arrays -- from fDielectron->ClearArrays();
+  // Clear pair arrays -- from fDielectron->ClearArrays();
   for (Int_t i=0;i<11;++i){
     TObjArray* pairArr = (TObjArray *)((*(fDielectron->GetPairArraysPointer()))->UncheckedAt(i));
     if (pairArr) pairArr->Delete();
