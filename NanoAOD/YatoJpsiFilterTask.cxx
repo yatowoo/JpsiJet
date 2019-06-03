@@ -14,23 +14,23 @@ YatoJpsiFilterTask::YatoJpsiFilterTask() :
   fIsToMerge(kFALSE),
   fOutputFileName("AliAOD.Dielectron.root"),
   fExtAOD(0x0),
-	fDielectron(0),
-	fSelectPhysics(kTRUE),
-	fTriggerMask(AliVEvent::kMB),
-	fExcludeTriggerMask(0),
-	fTriggerOnV0AND(kFALSE),
-	fRejectPileup(kFALSE),
-	fEventStat(0x0),
-	fTriggerLogic(kAny),
-	fTriggerAnalysis(0x0),
-	fStoreLikeSign(kFALSE),
-	fStoreRotatedPairs(kFALSE),
-	fStoreEventsWithSingleTracks(kFALSE),
-	fCreateNanoAOD(kFALSE),
-	fStoreHeader(kFALSE),
-	fStoreEventplanes(kFALSE),
-	fEventFilter(0x0),
-	fQnList(0x0)
+  fDielectron(0),
+  fSelectPhysics(kTRUE),
+  fTriggerMask(AliVEvent::kMB),
+  fExcludeTriggerMask(0),
+  fTriggerOnV0AND(kFALSE),
+  fRejectPileup(kFALSE),
+  fEventStat(0x0),
+  fTriggerLogic(kAny),
+  fTriggerAnalysis(0x0),
+  fStoreLikeSign(kFALSE),
+  fStoreRotatedPairs(kFALSE),
+  fStoreEventsWithSingleTracks(kFALSE),
+  fCreateNanoAOD(kFALSE),
+  fStoreHeader(kFALSE),
+  fStoreEventplanes(kFALSE),
+  fEventFilter(0x0),
+  fQnList(0x0)
 {}
 
 YatoJpsiFilterTask::YatoJpsiFilterTask(const char* name) : 
@@ -38,23 +38,23 @@ YatoJpsiFilterTask::YatoJpsiFilterTask(const char* name) :
   fIsToMerge(kFALSE),
   fOutputFileName("AliAOD.Dielectron.root"),
   fExtAOD(0x0),
-	fDielectron(0),
-	fSelectPhysics(kTRUE),
-	fTriggerMask(AliVEvent::kMB),
-	fExcludeTriggerMask(0),
-	fTriggerOnV0AND(kFALSE),
-	fRejectPileup(kFALSE),
-	fEventStat(0x0),
-	fTriggerLogic(kAny),
-	fTriggerAnalysis(0x0),
-	fStoreLikeSign(kFALSE),
-	fStoreRotatedPairs(kFALSE),
-	fStoreEventsWithSingleTracks(kFALSE),
-	fCreateNanoAOD(kFALSE),
-	fStoreHeader(kFALSE),
-	fStoreEventplanes(kFALSE),
-	fEventFilter(0x0),
-	fQnList(0x0)
+  fDielectron(0),
+  fSelectPhysics(kTRUE),
+  fTriggerMask(AliVEvent::kMB),
+  fExcludeTriggerMask(0),
+  fTriggerOnV0AND(kFALSE),
+  fRejectPileup(kFALSE),
+  fEventStat(0x0),
+  fTriggerLogic(kAny),
+  fTriggerAnalysis(0x0),
+  fStoreLikeSign(kFALSE),
+  fStoreRotatedPairs(kFALSE),
+  fStoreEventsWithSingleTracks(kFALSE),
+  fCreateNanoAOD(kFALSE),
+  fStoreHeader(kFALSE),
+  fStoreEventplanes(kFALSE),
+  fEventFilter(0x0),
+  fQnList(0x0)
 {
   DefineInput(0,TChain::Class());
   DefineOutput(1, THashList::Class());
@@ -78,61 +78,61 @@ YatoJpsiFilterTask::~YatoJpsiFilterTask()
 
 Bool_t YatoJpsiFilterTask::Notify()
 {
-	AddMetadataToUserInfo();
-	return kTRUE;
+  AddMetadataToUserInfo();
+  return kTRUE;
 }
 
 Bool_t YatoJpsiFilterTask::AddMetadataToUserInfo()
 {
-	static Bool_t copyFirst = kFALSE;
-	if (!copyFirst) {
-		AliAnalysisManager *mgr = AliAnalysisManager::GetAnalysisManager();
-		if (!mgr) {
-			AliError("YatoJpsiFilterTask::AddMetadataToUserInfo() : No analysis manager !");
-			return kFALSE;
-		}
-		TTree *aodTree = mgr->GetTree()->GetTree();
-		if (!aodTree) return kFALSE;
-		TNamed *alirootVersion = (TNamed*)aodTree->GetUserInfo()->FindObject("alirootVersion");
-		if (!alirootVersion) return kFALSE;
-		AliAODHandler *aodHandler = dynamic_cast<AliAODHandler*>(mgr->GetOutputEventHandler());
-		if (!aodHandler) return kFALSE;
-		AliAODExtension *extDielectron = aodHandler->GetFilteredAOD("AliAOD.Dielectron.root");
-		TTree *nanoaodTree = extDielectron->GetTree();
-		if (!nanoaodTree) return kFALSE;
-		nanoaodTree->GetUserInfo()->Add(new TNamed(*alirootVersion));
-		copyFirst = kTRUE;
-	}
-	return kTRUE;
+  static Bool_t copyFirst = kFALSE;
+  if (!copyFirst) {
+    AliAnalysisManager *mgr = AliAnalysisManager::GetAnalysisManager();
+    if (!mgr) {
+      AliError("YatoJpsiFilterTask::AddMetadataToUserInfo() : No analysis manager !");
+      return kFALSE;
+    }
+    TTree *aodTree = mgr->GetTree()->GetTree();
+    if (!aodTree) return kFALSE;
+    TNamed *alirootVersion = (TNamed*)aodTree->GetUserInfo()->FindObject("alirootVersion");
+    if (!alirootVersion) return kFALSE;
+    AliAODHandler *aodHandler = dynamic_cast<AliAODHandler*>(mgr->GetOutputEventHandler());
+    if (!aodHandler) return kFALSE;
+    AliAODExtension *extDielectron = aodHandler->GetFilteredAOD("AliAOD.Dielectron.root");
+    TTree *nanoaodTree = extDielectron->GetTree();
+    if (!nanoaodTree) return kFALSE;
+    nanoaodTree->GetUserInfo()->Add(new TNamed(*alirootVersion));
+    copyFirst = kTRUE;
+  }
+  return kTRUE;
 }
 
 void YatoJpsiFilterTask::UserCreateOutputObjects()
 {
-	if (!fDielectron) {
-		AliFatal("Dielectron framework class required. Please create and instance with proper cuts and set it via 'SetDielectron' before executing this task!!!");
-		return;
-	}
-	if(fStoreRotatedPairs) fDielectron->SetStoreRotatedPairs(kTRUE);
-	fDielectron->SetDontClearArrays();
-	fDielectron->Init();
+  if (!fDielectron) {
+    AliFatal("Dielectron framework class required. Please create and instance with proper cuts and set it via 'SetDielectron' before executing this task!!!");
+    return;
+  }
+  if(fStoreRotatedPairs) fDielectron->SetStoreRotatedPairs(kTRUE);
+  fDielectron->SetDontClearArrays();
+  fDielectron->Init();
 
-	Int_t nbins=kNbinsEvent+2;
-	if (!fEventStat){
-		fEventStat=new TH1D("hEventStat","Event statistics",nbins,0,nbins);
-		fEventStat->GetXaxis()->SetBinLabel(1,"Before Phys. Sel.");
-		fEventStat->GetXaxis()->SetBinLabel(2,"After Phys. Sel.");
+  Int_t nbins=kNbinsEvent+2;
+  if (!fEventStat){
+    fEventStat=new TH1D("hEventStat","Event statistics",nbins,0,nbins);
+    fEventStat->GetXaxis()->SetBinLabel(1,"Before Phys. Sel.");
+    fEventStat->GetXaxis()->SetBinLabel(2,"After Phys. Sel.");
 
-		fEventStat->GetXaxis()->SetBinLabel(3,"Bin3 not used");
-		fEventStat->GetXaxis()->SetBinLabel(4,"Bin4 not used");
-		fEventStat->GetXaxis()->SetBinLabel(5,"Bin5 not used");
+    fEventStat->GetXaxis()->SetBinLabel(3,"Bin3 not used");
+    fEventStat->GetXaxis()->SetBinLabel(4,"Bin4 not used");
+    fEventStat->GetXaxis()->SetBinLabel(5,"Bin5 not used");
 
-		if(fTriggerOnV0AND) fEventStat->GetXaxis()->SetBinLabel(3,"V0and triggers");
-		if (fEventFilter) fEventStat->GetXaxis()->SetBinLabel(4,"After Event Filter");
-		if (fRejectPileup) fEventStat->GetXaxis()->SetBinLabel(5,"After Pileup rejection");
+    if(fTriggerOnV0AND) fEventStat->GetXaxis()->SetBinLabel(3,"V0and triggers");
+    if (fEventFilter) fEventStat->GetXaxis()->SetBinLabel(4,"After Event Filter");
+    if (fRejectPileup) fEventStat->GetXaxis()->SetBinLabel(5,"After Pileup rejection");
 
-		fEventStat->GetXaxis()->SetBinLabel((kNbinsEvent+1),Form("#splitline{1 candidate}{%s}",fDielectron->GetName()));
-		fEventStat->GetXaxis()->SetBinLabel((kNbinsEvent+2),Form("#splitline{With >1 candidate}{%s}",fDielectron->GetName()));
-	}
+    fEventStat->GetXaxis()->SetBinLabel((kNbinsEvent+1),Form("#splitline{1 candidate}{%s}",fDielectron->GetName()));
+    fEventStat->GetXaxis()->SetBinLabel((kNbinsEvent+2),Form("#splitline{With >1 candidate}{%s}",fDielectron->GetName()));
+  }
 
   // Create brach to nano AOD - track/vertex/cluster
   TClonesArray *nanoAODTracks = new TClonesArray("AliAODTrack",500);
@@ -146,8 +146,8 @@ void YatoJpsiFilterTask::UserCreateOutputObjects()
   fExtAOD->AddBranch("TClonesArray", &nanoAODCaloCluster);
   fExtAOD->GetAOD()->GetStdContent();
 
-	PostData(1, const_cast<THashList*>(fDielectron->GetHistogramList()));
-	PostData(2,fEventStat);
+  PostData(1, const_cast<THashList*>(fDielectron->GetHistogramList()));
+  PostData(2,fEventStat);
 }
 
 
@@ -168,140 +168,140 @@ void YatoJpsiFilterTask::Init(){
 
 // Update: copy title for primary vertex
 void YatoJpsiFilterTask::UserExec(Option_t*){
-	//
-	// Main loop. Called for every event
-	//
+  //
+  // Main loop. Called for every event
+  //
 
-	if (!fDielectron)
-		return;
+  if (!fDielectron)
+    return;
 
-	AliAnalysisManager *man = AliAnalysisManager::GetAnalysisManager();
-	Bool_t isESD = man->GetInputEventHandler()->IsA() == AliESDInputHandler::Class();
-	Bool_t isAOD = man->GetInputEventHandler()->IsA() == AliAODInputHandler::Class();
+  AliAnalysisManager *man = AliAnalysisManager::GetAnalysisManager();
+  Bool_t isESD = man->GetInputEventHandler()->IsA() == AliESDInputHandler::Class();
+  Bool_t isAOD = man->GetInputEventHandler()->IsA() == AliAODInputHandler::Class();
 
-	AliInputEventHandler *inputHandler = (AliInputEventHandler *)(man->GetInputEventHandler());
-	if (!inputHandler)
-		return;
+  AliInputEventHandler *inputHandler = (AliInputEventHandler *)(man->GetInputEventHandler());
+  if (!inputHandler)
+    return;
 
-	if (inputHandler->GetPIDResponse())
-	{
-		AliDielectronVarManager::SetPIDResponse(inputHandler->GetPIDResponse());
-	}
-	else
-	{
-		AliFatal("This task needs the PID response attached to the input event handler!");
-	}
+  if (inputHandler->GetPIDResponse())
+  {
+    AliDielectronVarManager::SetPIDResponse(inputHandler->GetPIDResponse());
+  }
+  else
+  {
+    AliFatal("This task needs the PID response attached to the input event handler!");
+  }
 
-	// Was event selected ?
-	ULong64_t isSelected = AliVEvent::kAny;
-	Bool_t isRejected = kFALSE;
-	if (fSelectPhysics && inputHandler)
-	{
-		if ((isESD && inputHandler->GetEventSelection()) || isAOD)
-		{
-			isSelected = inputHandler->IsEventSelected();
-			if (fExcludeTriggerMask && (isSelected & fExcludeTriggerMask))
-				isRejected = kTRUE;
-			if (fTriggerLogic == kAny)
-				isSelected &= fTriggerMask;
-			else if (fTriggerLogic == kExact)
-				isSelected = ((isSelected & fTriggerMask) == fTriggerMask);
-		}
-	}
+  // Was event selected ?
+  ULong64_t isSelected = AliVEvent::kAny;
+  Bool_t isRejected = kFALSE;
+  if (fSelectPhysics && inputHandler)
+  {
+    if ((isESD && inputHandler->GetEventSelection()) || isAOD)
+    {
+      isSelected = inputHandler->IsEventSelected();
+      if (fExcludeTriggerMask && (isSelected & fExcludeTriggerMask))
+        isRejected = kTRUE;
+      if (fTriggerLogic == kAny)
+        isSelected &= fTriggerMask;
+      else if (fTriggerLogic == kExact)
+        isSelected = ((isSelected & fTriggerMask) == fTriggerMask);
+    }
+  }
 
-	//before physics selection
-	fEventStat->Fill(kAllEvents);
-	if (isSelected == 0 || isRejected)
-	{
-		PostData(2, fEventStat);
-		return;
-	}
-	//after physics selection
-	fEventStat->Fill(kSelectedEvents);
+  //before physics selection
+  fEventStat->Fill(kAllEvents);
+  if (isSelected == 0 || isRejected)
+  {
+    PostData(2, fEventStat);
+    return;
+  }
+  //after physics selection
+  fEventStat->Fill(kSelectedEvents);
 
-	//V0and
-	if (fTriggerOnV0AND)
-	{
-		if (isESD)
-		{
-			if (!fTriggerAnalysis->IsOfflineTriggerFired(static_cast<AliESDEvent *>(InputEvent()), AliTriggerAnalysis::kV0AND))
-				return;
-		}
-		if (isAOD)
-		{
-			if (!((static_cast<AliAODEvent *>(InputEvent()))->GetVZEROData()->GetV0ADecision() == AliVVZERO::kV0BB &&
-						(static_cast<AliAODEvent *>(InputEvent()))->GetVZEROData()->GetV0CDecision() == AliVVZERO::kV0BB))
-				return;
-		}
-	}
+  //V0and
+  if (fTriggerOnV0AND)
+  {
+    if (isESD)
+    {
+      if (!fTriggerAnalysis->IsOfflineTriggerFired(static_cast<AliESDEvent *>(InputEvent()), AliTriggerAnalysis::kV0AND))
+        return;
+    }
+    if (isAOD)
+    {
+      if (!((static_cast<AliAODEvent *>(InputEvent()))->GetVZEROData()->GetV0ADecision() == AliVVZERO::kV0BB &&
+            (static_cast<AliAODEvent *>(InputEvent()))->GetVZEROData()->GetV0CDecision() == AliVVZERO::kV0BB))
+        return;
+    }
+  }
 
-	fEventStat->Fill(kV0andEvents);
+  fEventStat->Fill(kV0andEvents);
 
-	//Fill Event histograms before the event filter
-	AliDielectronHistos *h = fDielectron->GetHistoManager();
+  //Fill Event histograms before the event filter
+  AliDielectronHistos *h = fDielectron->GetHistoManager();
 
-	Double_t values[AliDielectronVarManager::kNMaxValues] = {0};
-	Double_t valuesMC[AliDielectronVarManager::kNMaxValues] = {0};
-	if (h)
-		AliDielectronVarManager::SetFillMap(h->GetUsedVars());
-	else
-		AliDielectronVarManager::SetFillMap(0x0);
-	AliDielectronVarManager::SetEvent(InputEvent());
-	AliDielectronVarManager::Fill(InputEvent(), values);
-	AliDielectronVarManager::Fill(InputEvent(), valuesMC);
+  Double_t values[AliDielectronVarManager::kNMaxValues] = {0};
+  Double_t valuesMC[AliDielectronVarManager::kNMaxValues] = {0};
+  if (h)
+    AliDielectronVarManager::SetFillMap(h->GetUsedVars());
+  else
+    AliDielectronVarManager::SetFillMap(0x0);
+  AliDielectronVarManager::SetEvent(InputEvent());
+  AliDielectronVarManager::Fill(InputEvent(), values);
+  AliDielectronVarManager::Fill(InputEvent(), valuesMC);
 
-	Bool_t hasMC = fDielectron->GetHasMC();
-	if (hasMC)
-	{
-		if (AliDielectronMC::Instance()->ConnectMCEvent())
-			AliDielectronVarManager::Fill(AliDielectronMC::Instance()->GetMCEvent(), valuesMC);
-	}
+  Bool_t hasMC = fDielectron->GetHasMC();
+  if (hasMC)
+  {
+    if (AliDielectronMC::Instance()->ConnectMCEvent())
+      AliDielectronVarManager::Fill(AliDielectronMC::Instance()->GetMCEvent(), valuesMC);
+  }
 
-	if (h)
-	{
-		if (h->GetHistogramList()->FindObject("Event_noCuts"))
-			h->FillClass("Event_noCuts", AliDielectronVarManager::kNMaxValues, values);
-		if (hasMC && h->GetHistogramList()->FindObject("MCEvent_noCuts"))
-			h->FillClass("Event_noCuts", AliDielectronVarManager::kNMaxValues, valuesMC);
-	}
+  if (h)
+  {
+    if (h->GetHistogramList()->FindObject("Event_noCuts"))
+      h->FillClass("Event_noCuts", AliDielectronVarManager::kNMaxValues, values);
+    if (hasMC && h->GetHistogramList()->FindObject("MCEvent_noCuts"))
+      h->FillClass("Event_noCuts", AliDielectronVarManager::kNMaxValues, valuesMC);
+  }
 
-	//event filter
-	if (fEventFilter)
-	{
-		if (!fEventFilter->IsSelected(InputEvent()))
-			return;
-	}
-	fEventStat->Fill(kFilteredEvents);
+  //event filter
+  if (fEventFilter)
+  {
+    if (!fEventFilter->IsSelected(InputEvent()))
+      return;
+  }
+  fEventStat->Fill(kFilteredEvents);
 
-	//pileup
-	if (fRejectPileup)
-	{
-		if (InputEvent()->IsPileupFromSPD(3, 0.8, 3., 2., 5.))
-			return;
-	}
-	fEventStat->Fill(kPileupEvents);
+  //pileup
+  if (fRejectPileup)
+  {
+    if (InputEvent()->IsPileupFromSPD(3, 0.8, 3., 2., 5.))
+      return;
+  }
+  fEventStat->Fill(kPileupEvents);
 
-	//bz for AliKF
-	Double_t bz = InputEvent()->GetMagneticField();
-	AliKFParticle::SetField(bz);
+  //bz for AliKF
+  Double_t bz = InputEvent()->GetMagneticField();
+  AliKFParticle::SetField(bz);
 
-	AliDielectronPID::SetCorrVal((Double_t)InputEvent()->GetRunNumber());
+  AliDielectronPID::SetCorrVal((Double_t)InputEvent()->GetRunNumber());
 
-	fDielectron->Process(InputEvent());
+  fDielectron->Process(InputEvent());
 
-	Bool_t hasCand = kFALSE;
-	if (fStoreLikeSign)
-		hasCand = (fDielectron->HasCandidates() || fDielectron->HasCandidatesLikeSign());
-	else
-		hasCand = (fDielectron->HasCandidates());
+  Bool_t hasCand = kFALSE;
+  if (fStoreLikeSign)
+    hasCand = (fDielectron->HasCandidates() || fDielectron->HasCandidatesLikeSign());
+  else
+    hasCand = (fDielectron->HasCandidates());
 
-	if (fStoreRotatedPairs)
-		hasCand = (hasCand || fDielectron->HasCandidatesTR());
+  if (fStoreRotatedPairs)
+    hasCand = (hasCand || fDielectron->HasCandidatesTR());
 
-	if (fStoreEventsWithSingleTracks)
-		hasCand = (hasCand || fDielectron->GetTrackArray(0) || fDielectron->GetTrackArray(1));
+  if (fStoreEventsWithSingleTracks)
+    hasCand = (hasCand || fDielectron->GetTrackArray(0) || fDielectron->GetTrackArray(1));
 
-	// Fill nano AOD
+  // Fill nano AOD
     // DEBUG - Fill all selected events
   if (kTRUE || hasCand)
   {
@@ -360,17 +360,17 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
 
     // Write output
     nanoTree->Fill();  
-		fExtAOD->SelectEvent();
+    fExtAOD->SelectEvent();
     fExtAOD->FinishEvent();
-		Int_t ncandidates = fDielectron->GetPairArray(1)->GetEntriesFast();
-		if (ncandidates == 1)
-			fEventStat->Fill((kNbinsEvent));
-		else if (ncandidates > 1)
-			fEventStat->Fill((kNbinsEvent + 1));
+    Int_t ncandidates = fDielectron->GetPairArray(1)->GetEntriesFast();
+    if (ncandidates == 1)
+      fEventStat->Fill((kNbinsEvent));
+    else if (ncandidates > 1)
+      fEventStat->Fill((kNbinsEvent + 1));
     
     delete tmp;
     delete tmpSpd;
-	}
+  }
 
   
   // Clear pair arrays -- from fDielectron->ClearArrays();
@@ -379,7 +379,7 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
     if (pairArr) pairArr->Delete();
   }
 
-	PostData(1, const_cast<THashList *>(fDielectron->GetHistogramList()));
-	PostData(2, fEventStat);
-	return;
+  PostData(1, const_cast<THashList *>(fDielectron->GetHistogramList()));
+  PostData(2, fEventStat);
+  return;
 } 
