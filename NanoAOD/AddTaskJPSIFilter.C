@@ -43,12 +43,12 @@ YatoJpsiFilterTask* AddTaskJPSIFilter(Bool_t storeLS = kTRUE, Bool_t hasMC_aod =
     aodHandler->SetNeedsVZEROReplication();
     //aodHandler->SetNeedsTracksBranchReplication();
     //aodHandler->SetNeedsVerticesBranchReplication();
-    aodHandler->SetNeedsTrackletsBranchReplication();
-    aodHandler->SetNeedsPMDClustersBranchReplication();
-    aodHandler->SetNeedsFMDClustersBranchReplication();
+    //aodHandler->SetNeedsTrackletsBranchReplication();
+    //aodHandler->SetNeedsPMDClustersBranchReplication();
+    //aodHandler->SetNeedsFMDClustersBranchReplication();
     //aodHandler->SetNeedsCaloClustersBranchReplication();
-    aodHandler->SetNeedsCaloTriggerBranchReplication();
-    aodHandler->SetNeedsHMPIDBranchReplication();
+    //aodHandler->SetNeedsCaloTriggerBranchReplication();
+    //aodHandler->SetNeedsHMPIDBranchReplication();
     if(hasMC) aodHandler->SetNeedsMCParticlesBranchReplication();
   }
   

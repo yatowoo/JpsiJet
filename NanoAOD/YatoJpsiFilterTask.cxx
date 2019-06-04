@@ -328,8 +328,7 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
     hasCand = (hasCand || fDielectron->GetTrackArray(0) || fDielectron->GetTrackArray(1));
 
   // Fill nano AOD
-    // DEBUG - Fill all selected events
-  if (kTRUE || hasCand)
+  if ( hasCand)
   {
     AliAODEvent *aodEv = (static_cast<AliAODEvent *>(InputEvent()));
     // Fill ZDC, AD, TZERO data
