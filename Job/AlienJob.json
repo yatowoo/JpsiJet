@@ -14,6 +14,7 @@
       "TTL": 43200,
       "MaxInput": 20
     },
+    "git_commit": "d803754",
     "result":{
       "N_run": 51,
       "Total": 1578,
@@ -23,6 +24,35 @@
       "Expired": 50,
       "ratio": 0.82,
       "comment": "ERROR_E - Running longer than the TTL (43200s = 12:00)"
+    }
+  },
+  "grid_test2":{
+    "doMult": true,
+    "doEmcalCorrection": false,
+    "doJetQA": true,
+    "doJpsiQA": true,
+    "doJpsiFilter": true,
+    "doPIDQA": false,
+    "datasets": "16l_pass1",
+    "data_dir": "2016/LHC16l",
+    "work_dir": "JpsiJet_QAFilter_test_190603",
+    "task_name": "JpsiJet",
+    "alien_config":{
+      "TTL": 43200,
+      "MaxInput": 20
+    },
+    "git_commit": "c77daf",
+    "result":{
+      "PID": [1512628425, 1512629836],
+      "N_run": 51,
+      "Total": 1578,
+      "Done": 1046,
+      "ERROR_V": 28,
+      "ERROR_E": 263,
+      "Expired": 238,
+      "Zombie": 3,
+      "ratio": 0.0,
+      "comment":"ERROR_E: Too much allocated memory;Expired: memory issue" 
     }
   }
 }
