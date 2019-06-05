@@ -14,6 +14,9 @@ YatoJpsiFilterTask::YatoJpsiFilterTask() :
   fIsToMerge(kFALSE),
   fOutputFileName("AliAOD.Dielectron.root"),
   fExtAOD(0x0),
+  fSPD(0x0),
+  fEMCALTrigger(0x0),
+  fPHOSTrigger(0x0),
   fEMCalCells(0x0),
   fPHOSCells(0x0),
   fAODZDC(0x0),
@@ -43,6 +46,9 @@ YatoJpsiFilterTask::YatoJpsiFilterTask(const char* name) :
   fIsToMerge(kFALSE),
   fOutputFileName("AliAOD.Dielectron.root"),
   fExtAOD(0x0),
+  fSPD(0x0),
+  fEMCALTrigger(0x0),
+  fPHOSTrigger(0x0),
   fEMCalCells(0x0),
   fPHOSCells(0x0),
   fAODZDC(0x0),
@@ -150,7 +156,7 @@ void YatoJpsiFilterTask::UserCreateOutputObjects()
     fEventStat->GetXaxis()->SetBinLabel((kNbinsEvent+2),Form("#splitline{With >1 candidate}{%s}",fDielectron->GetName()));
   }
 
-  // Create brach to nano AOD - track/vertex/cluster
+  // Create branch to nano AOD - track/vertex/cluster
   TClonesArray *nanoAODTracks = new TClonesArray("AliAODTrack",500);
   nanoAODTracks->SetName("tracks");
   fExtAOD->AddBranch("TClonesArray", &nanoAODTracks);
@@ -160,7 +166,18 @@ void YatoJpsiFilterTask::UserCreateOutputObjects()
   TClonesArray *nanoAODCaloCluster = new TClonesArray("AliAODCaloCluster",500);
   nanoAODCaloCluster->SetName("caloClusters");
   fExtAOD->AddBranch("TClonesArray", &nanoAODCaloCluster);
-  
+  // Create branch for other objects (not TClonesArray) 
+  fSPD = new AliAODTracklets;
+  fSPD->SetName("tracklets");
+  fExtAOD->AddBranch("AliAODTracklets",&fSPD);
+
+  fEMCALTrigger = new AliAODCaloTrigger;
+  fEMCALTrigger->SetName("emcalTrigger");
+  fExtAOD->AddBranch("AliAODCaloTrigger",&fEMCALTrigger);
+  fPHOSTrigger = new AliAODCaloTrigger;
+  fEMCALTrigger->SetName("phosTrigger");
+  fExtAOD->AddBranch("AliAODCaloTrigger",&fPHOSTrigger);
+
   fEMCalCells = new AliAODCaloCells;
   fEMCalCells->SetName("emcalCells");
   fExtAOD->AddBranch("AliAODCaloCells",&fEMCalCells);
@@ -341,6 +358,16 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
     AliAODTZERO* tzero = aodEv->GetTZEROData();
     fAODTZERO->Clear("C");
     *fAODTZERO = *tzero;
+    // Fil tracklets, EMCal/PHOS calo trigger
+    AliAODTracklets* spd = aodEv->GetMultiplicity();
+    fSPD->Clear("C");
+    *fSPD = *spd;
+    AliAODCaloTrigger* caloTrig = aodEv->GetCaloTrigger("EMCAL");
+    fEMCALTrigger->Clear("C");
+    *fEMCALTrigger = *caloTrig;
+    caloTrig = aodEv->GetCaloTrigger("PHOS");
+    fPHOSTrigger->Clear("C");
+    *fPHOSTrigger = *caloTrig;
     // Fill EMCal/PHOS cells
     AliAODCaloCells* cells = aodEv->GetEMCALCells();
     fEMCalCells->Clear("C");
