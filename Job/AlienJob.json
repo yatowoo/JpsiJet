@@ -83,7 +83,7 @@
       "ratio": 0.98,
       "comment":"Expired (resubmit);FIXED mem issue (RSS-1.4GB,VMS,3.8GB)"
     }
-  }
+  },
   "QAFilter_0605":{
     "doMult": true,
     "doEmcalCorrection": false,
