@@ -175,7 +175,7 @@ void YatoJpsiFilterTask::UserCreateOutputObjects()
   fEMCALTrigger->SetName("emcalTrigger");
   fExtAOD->AddBranch("AliAODCaloTrigger",&fEMCALTrigger);
   fPHOSTrigger = new AliAODCaloTrigger;
-  fEMCALTrigger->SetName("phosTrigger");
+  fPHOSTrigger->SetName("phosTrigger");
   fExtAOD->AddBranch("AliAODCaloTrigger",&fPHOSTrigger);
 
   fEMCalCells = new AliAODCaloCells;
