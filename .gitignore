@@ -5,6 +5,24 @@
 *.pcm
 *.root
 *.xml
+# AliRoot
+AddTaskJPSIFilter.C
+AddTaskJetQA.C
+AddTaskJpsiQA.C
+AddTask_cjahnke_JPsi.C
+ConfigJpsi_cj_pp.C
+JpsiJet.C
+JpsiJet.jdl
+JpsiJet.sh
+JpsiJet_merge.C
+JpsiJet_merge.jdl
+JpsiJet_merge.sh
+JpsiJet_merge_final.jdl
+JpsiJet_validation.sh
+JpsiJet_validation_merge.sh
+YatoJpsiFilterTask.cxx
+YatoJpsiFilterTask.h
+stderr
 
 ### C ###
 # Prerequisites

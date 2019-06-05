@@ -74,14 +74,14 @@
     "result":{
       "PID": [1513943805, 1513943939],
       "N_run": 5,
-      "Total": 0,
-      "Done": 1046,
-      "ERROR_V": 28,
-      "ERROR_E": 263,
-      "Expired": 238,
-      "Zombie": 3,
-      "ratio": 0.0,
-      "comment":"ERROR_E: Too much allocated memory;Expired: memory issue" 
+      "Total": 194,
+      "Done": 191,
+      "ERROR_V": 0,
+      "ERROR_E": 0,
+      "Expired": 3,
+      "Zombie": 0,
+      "ratio": 0.98,
+      "comment":"Expired (resubmit);FIXED mem issue (RSS-1.4GB,VMS,3.8GB)"
     }
   }
   "QAFilter_0605":{
@@ -99,18 +99,18 @@
       "TTL": 43200,
       "MaxInput": 20
     },
-    "git_commit": "g47256c8",
+    "git_commit": "g8dbe977",
     "result":{
-      "PID": [1514108391, 1514109354],
+      "PID": [1514412239, 1514416124],
       "N_run": 51,
-      "Total": 0,
-      "Done": 1046,
-      "ERROR_V": 28,
-      "ERROR_E": 263,
-      "Expired": 238,
+      "Total": 1578,
+      "Done": 1549,
+      "ERROR_V": 6,
+      "ERROR_E": 3,
+      "Expired": 0,
       "Zombie": 3,
-      "ratio": 0.0,
-      "comment":"ERROR_E: Too much allocated memory;Expired: memory issue" 
+      "ratio": 0.98,
+      "comment":"Result in 5 hrs;ERROR_E: Too much allocated memory (ramping VMS)" 
     }
   }
 }
