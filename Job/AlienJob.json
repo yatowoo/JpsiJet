@@ -54,7 +54,7 @@
       "ratio": 0.0,
       "comment":"ERROR_E: Too much allocated memory;Expired: memory issue" 
     }
-  }
+  },
   "grid_test3":{
     "doMult": true,
     "doEmcalCorrection": false,
@@ -74,6 +74,35 @@
     "result":{
       "PID": [1513943805, 1513943939],
       "N_run": 5,
+      "Total": 0,
+      "Done": 1046,
+      "ERROR_V": 28,
+      "ERROR_E": 263,
+      "Expired": 238,
+      "Zombie": 3,
+      "ratio": 0.0,
+      "comment":"ERROR_E: Too much allocated memory;Expired: memory issue" 
+    }
+  }
+  "QAFilter_0605":{
+    "doMult": true,
+    "doEmcalCorrection": false,
+    "doJetQA": true,
+    "doJpsiQA": true,
+    "doJpsiFilter": true,
+    "doPIDQA": false,
+    "datasets": "16l_pass1",
+    "data_dir": "2016/LHC16l",
+    "work_dir": "JpsiJet_QAFilter_16l_190605",
+    "task_name": "JpsiJet",
+    "alien_config":{
+      "TTL": 43200,
+      "MaxInput": 20
+    },
+    "git_commit": "g47256c8",
+    "result":{
+      "PID": [1514108391, 1514109354],
+      "N_run": 51,
       "Total": 0,
       "Done": 1046,
       "ERROR_V": 28,
