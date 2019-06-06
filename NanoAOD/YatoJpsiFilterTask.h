@@ -28,6 +28,9 @@ class AliDielectron;
 #include "AliDielectronVarManager.h"
 class AliDielectronVarManager;
 
+#include "AliEmcalJet.h"
+#include "AliJetContainer.h"
+
 #include "AliAnalysisTaskSE.h"
 
 class AliESDInputHandler;
@@ -65,7 +68,9 @@ private:
   AliAODAD* fAODAD;
   AliAODTZERO* fAODTZERO;
   
-
+  TClonesArray* fPairs;  // J/psi candidates - AliDielectronPair
+  TClonesArray* fJets02; // Jet found with R=0.2 - AliEmcalJet
+  TClonesArray* fJets04; // Jet found with R=0.4 - AliEmcalJet
 
 /*Copy from AliAnalysisTaskDielectronFilter*/
 public:

@@ -13,7 +13,7 @@ class AliDielectronEventCuts;
 class YatoJpsiFilterTask;
 #endif
 
-YatoJpsiFilterTask* AddTaskJPSIFilter(Bool_t storeLS = kTRUE, Bool_t hasMC_aod = kFALSE, Bool_t storeTR = kTRUE){
+YatoJpsiFilterTask* AddTaskJPSIFilter(Bool_t storeLS = kFALSE, Bool_t hasMC_aod = kFALSE, Bool_t storeTR = kFALSE){
   //get the current analysis manager
   AliAnalysisManager *mgr = AliAnalysisManager::GetAnalysisManager();
   if (!mgr) {

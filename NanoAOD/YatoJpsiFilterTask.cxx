@@ -22,6 +22,9 @@ YatoJpsiFilterTask::YatoJpsiFilterTask() :
   fAODZDC(0x0),
   fAODAD(0x0),
   fAODTZERO(0x0),
+  fPairs(0x0),
+  fJets02(0x0),
+  fJets04(0x0),
   fDielectron(0),
   fSelectPhysics(kTRUE),
   fTriggerMask(AliVEvent::kMB),
@@ -54,6 +57,9 @@ YatoJpsiFilterTask::YatoJpsiFilterTask(const char* name) :
   fAODZDC(0x0),
   fAODAD(0x0),
   fAODTZERO(0x0),
+  fPairs(0x0),
+  fJets02(0x0),
+  fJets04(0x0),
   fDielectron(0),
   fSelectPhysics(kTRUE),
   fTriggerMask(AliVEvent::kMB),
@@ -91,11 +97,26 @@ YatoJpsiFilterTask::~YatoJpsiFilterTask()
   if(fQnList)
     delete fQnList;
   if(fExtAOD) delete fExtAOD;
+  if(fSPD) delete fSPD;
+  if(fEMCALTrigger) delete fEMCALTrigger;
+  if(fPHOSTrigger) delete fPHOSTrigger;
+  if(fEMCalCells) delete fEMCalCells;
+  if(fPHOSCells) delete fPHOSCells;
   if(fAODZDC) delete fAODZDC;
   if(fAODAD) delete fAODAD;
   if(fAODTZERO) delete fAODTZERO;
-  if(fEMCalCells) delete fEMCalCells;
-  if(fPHOSCells) delete fPHOSCells;
+  if(fPairs){
+    fPairs->Clear("C");
+    delete fPairs;
+  }
+  if(fJets02){
+    fJets02->Clear("C");
+    delete fJets02;
+  }
+  if(fJets04){
+    fJets04->Clear("C");
+    delete fJets04;
+  }
 }
 
 Bool_t YatoJpsiFilterTask::Notify()
@@ -191,6 +212,17 @@ void YatoJpsiFilterTask::UserCreateOutputObjects()
   fExtAOD->AddBranch("AliAODAD",&fAODAD);
   fAODTZERO = new AliAODTZERO;
   fExtAOD->AddBranch("AliAODTZERO",&fAODTZERO);
+  
+  // Create branch for user-defined objects
+  fPairs = new TClonesArray("AliDielectronPair",10);
+  fPairs->SetName("dielectrons");
+  fExtAOD->AddBranch("TClonesArray", &fPairs);
+  fJets02 = new TClonesArray("AliEmcalJet", 100);
+  fJets02->SetName("jets02");
+  fExtAOD->AddBranch("TClonesArray", &fJets02);
+  fJets04 = new TClonesArray("AliEmcalJet", 100);
+  fJets04->SetName("jets04");
+  fExtAOD->AddBranch("TClonesArray", &fJets04);
 
   fExtAOD->GetAOD()->GetStdContent();
 
@@ -377,9 +409,9 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
     *fPHOSCells = *cells;
     // Clear arrays
     AliAODEvent *nanoEv = fExtAOD->GetAOD();
-    nanoEv->GetTracks()->Clear();
-    nanoEv->GetVertices()->Clear();
-    nanoEv->GetCaloClusters()->Clear();
+    nanoEv->GetTracks()->Clear("C");
+    nanoEv->GetVertices()->Clear("C");
+    nanoEv->GetCaloClusters()->Clear("C");
     // Fill primary and SPD vertex
     AliAODVertex *vtxPriv = aodEv->GetPrimaryVertex();
     if(!vtxPriv) AliFatal("No primary vertex");
@@ -431,15 +463,24 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
     nanoEv->GetVertices()->Expand(nTracks + 3);
     nanoEv->GetCaloClusters()->Expand(nanoEv->GetNumberOfCaloClusters());
 
-    // Write output
-    fExtAOD->SelectEvent();
-    // DEBUG - not use FinishEvent() to avoid auto flush
-    fExtAOD->GetTree()->Fill();
+    // Fill pairs
     Int_t ncandidates = fDielectron->GetPairArray(1)->GetEntriesFast();
     if (ncandidates == 1)
       fEventStat->Fill((kNbinsEvent));
     else if (ncandidates > 1)
       fEventStat->Fill((kNbinsEvent + 1));
+    fPairs->Clear("C");
+    const TObjArray* candidates = fDielectron->GetPairArray(1);
+    for(Int_t i = 0; i < ncandidates; i++){
+      AliDielectronPair* pair = (AliDielectronPair*)(candidates->UncheckedAt(i));
+      new((*fPairs)[i]) AliDielectronPair(*pair);
+    }
+    fPairs->Expand(ncandidates);
+
+    // Write output
+    fExtAOD->SelectEvent();
+    // DEBUG - not use FinishEvent() to avoid auto flush
+    fExtAOD->GetTree()->Fill();
     
     delete tmp;
     delete tmpSPD;
