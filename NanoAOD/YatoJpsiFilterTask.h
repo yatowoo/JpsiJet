@@ -72,6 +72,9 @@ private:
   TClonesArray* fJets02; // Jet found with R=0.2 - AliEmcalJet
   TClonesArray* fJets04; // Jet found with R=0.4 - AliEmcalJet
 
+private:
+  void FillJets(AliAODEvent* aodEv, TClonesArray* jetArray, TString jetName);
+
 /*Copy from AliAnalysisTaskDielectronFilter*/
 public:
   enum ETriggerLogig {kAny, kExact};

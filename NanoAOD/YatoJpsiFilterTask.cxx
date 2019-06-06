@@ -477,6 +477,10 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
     }
     fPairs->Expand(ncandidates);
 
+    // Fill jets
+    FillJets(aodEv, fJets02, "Jet_AKTChargedR020_tracks_pT0150_pt_scheme");
+    FillJets(aodEv, fJets04, "Jet_AKTChargedR040_tracks_pT0150_pt_scheme");
+
     // Write output
     fExtAOD->SelectEvent();
     // DEBUG - not use FinishEvent() to avoid auto flush
@@ -498,3 +502,16 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
   PostData(2, fEventStat);
   return;
 } 
+
+void YatoJpsiFilterTask::FillJets(AliAODEvent* aodEv, TClonesArray* jetArray, TString jetName){
+  TClonesArray* jets = dynamic_cast<TClonesArray*>(aodEv->FindListObject(jetName));
+  if(jets){
+    for(Int_t i = 0; i < jets->GetEntriesFast(); i++){
+      AliEmcalJet* jet = dynamic_cast<AliEmcalJet*>(jets->UncheckedAt(i));
+      new((*jetArray)[i]) AliEmcalJet(*jet);
+    }
+  }else{
+    AliInfo(Form("Could not found jet container : %s", jetName.Data()));
+  }
+
+}

@@ -65,13 +65,14 @@ AliAnalysisTaskRho* AddRho(Float_t jetRadius, TString jetName, TString rhoName){
 
 AliEmcalJetTask* AddJetFinder(Float_t jetRadius){
   AliEmcalJetTask* jetFinder = AliEmcalJetTask::AddTaskEmcalJet("usedefault", "", AliJetContainer::antikt_algorithm, jetRadius, AliJetContainer::kChargedJet, 0.15, 0.3, 0.01, AliJetContainer::pt_scheme, "Jet", 1., kFALSE, kFALSE);
+ 
   // DEBUG for rho task
   AliEmcalJetTask* jetFinderDEBUG = AliEmcalJetTask::AddTaskEmcalJet("usedefault", "", AliJetContainer::kt_algorithm, jetRadius, AliJetContainer::kChargedJet, 0.15, 0.3, 0.01, AliJetContainer::pt_scheme, "Jet", 1., kFALSE, kFALSE);
   jetFinderDEBUG->SelectCollisionCandidates(AliVEvent::kINT7);
   jetFinderDEBUG->SetNeedEmcalGeom(kFALSE);
 
   jetFinder->SetForceBeamType(AliAnalysisTaskEmcal::kpp);
-  jetFinder->SelectCollisionCandidates(AliVEvent::kINT7);
+  jetFinder->SelectCollisionCandidates(AliVEvent::kINT7 | AliVEvent::kEMCEGA);
   jetFinder->SetUseAliAnaUtils(kTRUE);
   jetFinder->SetZvertexDiffValue(0.5);
   jetFinder->SetNeedEmcalGeom(kFALSE);
