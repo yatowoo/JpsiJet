@@ -48,7 +48,8 @@ AliAnalysisTaskDeltaPt* AddDeltaPt(Double_t jetRadius, TString jetName, TString 
 }
 
 AliAnalysisTaskRho* AddRho(Double_t jetRadius, TString jetName, TString rhoName){
-  AliAnalysisTaskRho* jetRho = AliAnalysisTaskRho::AddTaskRhoNew("tracks","", rhoName, jetRadius, AliEmcalJet::kTPCfid, AliJetContainer::kChargedJet, kTRUE, AliJetContainer::pt_scheme, rhoName);
+
+  AliAnalysisTaskRho* jetRho = AliAnalysisTaskRho::AddTaskRhoNew("usedefault", "", rhoName.Data(), jetRadius, AliEmcalJet::kTPCfid, AliJetContainer::kChargedJet, kTRUE, AliJetContainer::pt_scheme, rhoName.Data());
 
   jetRho->SetExcludeLeadJets(2);
   jetRho->SetOutRhoName(rhoName);
@@ -73,8 +74,8 @@ AliEmcalJetTask* AddJetFinder(Double_t jetRadius){
   jetFinder->SetZvertexDiffValue(0.5);
   jetFinder->SetNeedEmcalGeom(kFALSE);
 
-  TString jetName = Form("Jet_AKTChargedR%03d_tracks_pT0150_pt_scheme",int(jetRadius*100));
-  TString rhoName = Form("Rho%02d",int(jetRadius*10));
+  TString jetName = Form("Jet_AKTChargedR%03.0f_tracks_pT0150_pt_scheme",jetRadius*100);
+  TString rhoName = Form("Rho%02.0f",jetRadius*10);
   AddRho(jetRadius, jetName, rhoName);
   AddDeltaPt(jetRadius, jetName, rhoName);
 
@@ -83,7 +84,7 @@ AliEmcalJetTask* AddJetFinder(Double_t jetRadius){
 
 AliJetContainer* AddContainer(AliAnalysisTaskEmcalJet* jetTask, Double_t jetRadius){
   AliJetContainer* jetContCh = jetTask->AddJetContainer(AliJetContainer::kChargedJet, AliJetContainer::antikt_algorithm, AliJetContainer::pt_scheme, 0.2, AliJetContainer::kTPCfid,  "tracks", "", "Jet");
-  jetContCh->SetRhoName(Form("Rho%02d",int(jetRadius*10)));
+  jetContCh->SetRhoName(Form("Rho%02.0f",jetRadius*10));
   jetContCh->SetPercAreaCut(0.6);
 
   return jetContCh;
