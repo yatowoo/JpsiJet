@@ -28,11 +28,11 @@
       Wagon: 	JE_QA_pp_Leticia (Last run: 20190507)
 */
 
-AliAnalysisTaskDeltaPt* AddDeltaPt(Float_t jetRadius, TString jetName, TString rhoName){
+AliAnalysisTaskDeltaPt* AddDeltaPt(Float_t jetRadius, TString jetName, TString rhoName, UInt_t kPhysSel){
   gROOT->LoadMacro("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskDeltaPt.C");
   AliAnalysisTaskDeltaPt* jetDeltaPt = AddTaskDeltaPt("tracks", "", jetName.Data(),"","", "", "tracks","", rhoName.Data(), jetRadius, 0.01, 0.15, 0.3, "TPC", "AliAnalysisTaskDeltaPt");
 
-  jetDeltaPt->SelectCollisionCandidates(AliVEvent::kINT7);
+  jetDeltaPt->SelectCollisionCandidates(kPhysSel);
   jetDeltaPt->SetForceBeamType(AliAnalysisTaskEmcal::kpp);
   jetDeltaPt->SetUseNewCentralityEstimation(kTRUE);
   jetDeltaPt->SetNCentBins(1);
@@ -47,12 +47,12 @@ AliAnalysisTaskDeltaPt* AddDeltaPt(Float_t jetRadius, TString jetName, TString r
   return jetDeltaPt;
 }
 
-AliAnalysisTaskRho* AddRho(Float_t jetRadius, TString jetName, TString rhoName){
+AliAnalysisTaskRho* AddRho(Float_t jetRadius, TString jetName, TString rhoName, UInt_t kPhysSel){
 
   AliAnalysisTaskRho* jetRho = AliAnalysisTaskRho::AddTaskRhoNew("usedefault", "", rhoName.Data(), jetRadius, AliEmcalJet::kTPCfid, AliJetContainer::kChargedJet, kTRUE, AliJetContainer::pt_scheme, rhoName.Data());
 
   jetRho->SetExcludeLeadJets(2);
-  jetRho->SelectCollisionCandidates(AliVEvent::kINT7);
+  jetRho->SelectCollisionCandidates(kPhysSel);
   
   jetRho->SetForceBeamType(AliAnalysisTaskEmcal::kpp);
   jetRho->SetUseNewCentralityEstimation(kTRUE);
@@ -63,7 +63,7 @@ AliAnalysisTaskRho* AddRho(Float_t jetRadius, TString jetName, TString rhoName){
   return jetRho;
 }
 
-AliEmcalJetTask* AddJetFinder(Float_t jetRadius){
+AliEmcalJetTask* AddJetFinder(Float_t jetRadius, UInt_t kPhysSel){
   AliEmcalJetTask* jetFinder = AliEmcalJetTask::AddTaskEmcalJet("usedefault", "", AliJetContainer::antikt_algorithm, jetRadius, AliJetContainer::kChargedJet, 0.15, 0.3, 0.01, AliJetContainer::pt_scheme, "Jet", 1., kFALSE, kFALSE);
  
   // DEBUG for rho task
@@ -72,15 +72,15 @@ AliEmcalJetTask* AddJetFinder(Float_t jetRadius){
   jetFinderDEBUG->SetNeedEmcalGeom(kFALSE);
 
   jetFinder->SetForceBeamType(AliAnalysisTaskEmcal::kpp);
-  jetFinder->SelectCollisionCandidates(AliVEvent::kINT7 | AliVEvent::kEMCEGA);
+  jetFinder->SelectCollisionCandidates(kPhysSel);
   jetFinder->SetUseAliAnaUtils(kTRUE);
   jetFinder->SetZvertexDiffValue(0.5);
   jetFinder->SetNeedEmcalGeom(kFALSE);
 
   TString jetName = Form("Jet_AKTChargedR%03.0f_tracks_pT0150_pt_scheme",jetRadius*100);
   TString rhoName = Form("Rho%02.0f",jetRadius*10);
-  AddRho(jetRadius, jetName, rhoName);
-  AddDeltaPt(jetRadius, jetName, rhoName);
+  AddRho(jetRadius, jetName, rhoName, kPhysSel);
+  AddDeltaPt(jetRadius, jetName, rhoName, kPhysSel);
 
   return jetFinder;
 }
@@ -101,26 +101,27 @@ AliJetContainer* AddContainer(AliAnalysisTaskEmcalJetLight* jetTask, Double_t je
   return jetContCh;
 }
 
-void AddTaskJetQA(UInt_t kPhysSel = AliVEvent::kINT7){
+void AddTaskJetQA(UInt_t kPhysSel = AliVEvent::kINT7 | AliVEvent::kEMCEGA){
 
   // Task - Jet finder 
-  AliEmcalJetTask * jetFinder02 = AddJetFinder(0.2);
-  AliEmcalJetTask * jetFinder04 = AddJetFinder(0.4);
+  AliEmcalJetTask * jetFinder02 = AddJetFinder(0.2, kPhysSel);
+  AliEmcalJetTask * jetFinder04 = AddJetFinder(0.4, kPhysSel);
   
   // Task - PWGJE QA (Event, Track, Calo, Jet)
+    // for JpsiFilter task
   AliAnalysisTaskPWGJEQA* jetQA = reinterpret_cast<AliAnalysisTaskPWGJEQA*>(gInterpreter->ExecuteMacro("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskPWGJEQA.C(\"usedefault\",\"usedefault\",\"usedefault\",\"\")"));
   
   AddContainer(jetQA, 0.2);
   AddContainer(jetQA, 0.4);
 
-  jetQA->SelectCollisionCandidates(kPhysSel);
+  jetQA->SelectCollisionCandidates(AliVEvent::kEMCEGA);
   jetQA->SetUseNewCentralityEstimation(kTRUE);
   jetQA->SetNCentBins(1);
   jetQA->SetForceBeamType(AliAnalysisTaskEmcal::kpp);
   jetQA->SetUseAliEventCuts(1);
 
 
-  // Task - Jet Spectra QA
+  // Task - Jet Spectra QA (to compare with Yongzhen's result)
   AliAnalysisTaskEmcalJetSpectraQA* jetSpectraQA = AliAnalysisTaskEmcalJetSpectraQA::AddTaskEmcalJetSpectraQA("usedefault", "", 0.15, 0.30, "");
 
   AddContainer(jetSpectraQA, 0.2);
@@ -128,7 +129,7 @@ void AddTaskJetQA(UInt_t kPhysSel = AliVEvent::kINT7){
 
   jetSpectraQA->SetHistoType(AliAnalysisTaskEmcalJetSpectraQA::kTH2);
   jetSpectraQA->SetPtBin(1.,200.);
-  jetSpectraQA->SelectCollisionCandidates(kPhysSel);
+  jetSpectraQA->SelectCollisionCandidates(AliVEvent::kINT7);
   jetSpectraQA->SetForceBeamType(AliAnalysisTaskEmcalLight::kpp);
   jetSpectraQA->SetCentralityEstimation(1);
   jetSpectraQA->SetCentRange(0, 100);
