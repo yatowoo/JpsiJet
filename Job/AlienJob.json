@@ -112,5 +112,34 @@
       "ratio": 0.98,
       "comment":"Result in 5 hrs;ERROR_E: Too much allocated memory (ramping VMS)" 
     }
+  },
+  "grid_test4":{
+    "doMult": true,
+    "doEmcalCorrection": false,
+    "doJetQA": true,
+    "doJpsiQA": true,
+    "doJpsiFilter": true,
+    "doPIDQA": false,
+    "datasets": "16l_pass1_test",
+    "data_dir": "2016/LHC16l",
+    "work_dir": "JpsiJet_QAFilter_test_190607",
+    "task_name": "JpsiJet",
+    "alien_config":{
+      "TTL": 43200,
+      "MaxInput": 20
+    },
+    "git_commit": "g491a4cd",
+    "result":{
+      "PID": [1516696707, 1516696711],
+      "N_run": 5,
+      "Total": 194,
+      "Done": 181,
+      "ERROR_V": 0,
+      "ERROR_E": 12,
+      "Expired": 1,
+      "Zombie": 0,
+      "ratio": 0.93,
+      "comment":"ERROR_E : Running longer than TTL (7 in ALICE::FZK::LCG)" 
+    }
   }
 }
