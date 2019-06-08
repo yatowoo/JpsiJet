@@ -1,4 +1,5 @@
-#ifndef __CINT__ && __MultiDie__ 
+#ifndef __CINT__ 
+#ifndef __MultiDie__
 #define __MultiDie__
 #include "AliDielectron.h"
 class AliDielectron;
@@ -16,6 +17,7 @@ class AliDielectronTrackCuts;
 class AliDielectronCF;
 #include "AliAnalysisTaskMultiDielectron.h"
 class AliAnalysisTaskMultiDielectron;
+#endif
 #endif // __MultiDie__
 
 AliAnalysisTask *AddTask_cjahnke_JPsi(Int_t trigger_index = 0, Bool_t isMC = kFALSE)

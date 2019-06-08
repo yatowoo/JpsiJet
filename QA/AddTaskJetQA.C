@@ -29,8 +29,7 @@
 */
 
 AliAnalysisTaskDeltaPt* AddDeltaPt(Float_t jetRadius, TString jetName, TString rhoName, UInt_t kPhysSel){
-  gROOT->LoadMacro("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskDeltaPt.C");
-  AliAnalysisTaskDeltaPt* jetDeltaPt = AddTaskDeltaPt("tracks", "", jetName.Data(),"","", "", "tracks","", rhoName.Data(), jetRadius, 0.01, 0.15, 0.3, "TPC", "AliAnalysisTaskDeltaPt");
+  AliAnalysisTaskDeltaPt* jetDeltaPt = reinterpret_cast<AliAnalysisTaskDeltaPt*>(gInterpreter->ExecuteMacro(Form("$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskDeltaPt.C(\"tracks\", \"\", \"%s\" ,\"\", \"\", \"\", \"tracks\",\"\", \"%s\", %f, 0.01, 0.15, 0.3, \"TPC\", \"AliAnalysisTaskDeltaPt\")", jetName.Data(), rhoName.Data(), jetRadius)));
 
   jetDeltaPt->SelectCollisionCandidates(kPhysSel);
   jetDeltaPt->SetForceBeamType(AliAnalysisTaskEmcal::kpp);
@@ -41,8 +40,8 @@ AliAnalysisTaskDeltaPt* AddDeltaPt(Float_t jetRadius, TString jetName, TString r
   jetDeltaPt->SetZvertexDiffValue(0.5);
   jetDeltaPt->SetNeedEmcalGeom(kFALSE);
   jetDeltaPt->SetRCperEvent(100);
-  jetDeltaPt->SetJetMinRC2LJ(0.2);
-  jetDeltaPt->SetConeRadius(0.2);
+  jetDeltaPt->SetJetMinRC2LJ(jetRadius);
+  jetDeltaPt->SetConeRadius(jetRadius);
 
   return jetDeltaPt;
 }
@@ -131,7 +130,7 @@ void AddTaskJetQA(UInt_t kPhysSel = AliVEvent::kINT7 | AliVEvent::kEMCEGA){
   jetSpectraQA->SetPtBin(1.,200.);
   jetSpectraQA->SelectCollisionCandidates(AliVEvent::kINT7);
   jetSpectraQA->SetForceBeamType(AliAnalysisTaskEmcalLight::kpp);
-  jetSpectraQA->SetCentralityEstimation(1);
+  jetSpectraQA->SetCentralityEstimation(AliAnalysisTaskEmcalLight::kNewCentrality);
   jetSpectraQA->SetCentRange(0, 100);
   jetSpectraQA->SetCentralityEstimator("V0M");
   jetSpectraQA->SetMinNVertCont(1);

@@ -1,3 +1,25 @@
+#ifndef __CINT__
+#ifndef __MultiDie__
+#define __MultiDie__
+#include "AliDielectron.h"
+class AliDielectron;
+#include "AliESDtrackCuts.h"
+class AliESDtrackCuts;
+#include "AliDielectronVarManager.h"
+class AliDielectronVarManager;
+#include "AliDielectronVarCuts.h"
+class AliDielectronVarCuts;
+#include "AliDielectronPairLegCuts.h"
+class AliDielectronPairLegCuts;
+#include "AliDielectronTrackCuts.h"
+class AliDielectronTrackCuts;
+#include "AliDielectronCF.h"
+class AliDielectronCF;
+#include "AliAnalysisTaskMultiDielectron.h"
+class AliAnalysisTaskMultiDielectron;
+#endif
+#endif // __MultiDie__
+
 void SetupTrackCutsDieleData(AliDielectron *diele, Int_t cutDefinition, Bool_t isAOD, Bool_t isMC);
 void SetupPairCutsDieleData(AliDielectron *diele, Int_t cutDefinition, Bool_t isAOD, Int_t trigger_index, Bool_t isMC);
 void InitHistogramsDieleData(AliDielectron *diele, Int_t cutDefinition, Int_t trigger_index, Bool_t isAOD);
@@ -255,7 +277,7 @@ void InitHistogramsForEvent(AliDielectronHistos* histos, const char* histClass){
 	// Event Primary vertex and diamond (IP) stats.
 	histos->UserHistogram(histClass, "VtxZ", "Vertex Z;Z[cm];#events", 1000, -50., 50., AliDielectronVarManager::kZvPrim);
 	histos->UserHistogram(histClass, "VtxX", "Vertex X;X[cm];#events", 1000, -0.5, 0.5, AliDielectronVarManager::kXvPrim);
-	histos->UserHistogram(histClass, "VtxY", "Vertex Y;Y[cm];#events", 1000, -0.5, 0.5., AliDielectronVarManager::kYvPrim);
+	histos->UserHistogram(histClass, "VtxY", "Vertex Y;Y[cm];#events", 1000, -0.5, 0.5, AliDielectronVarManager::kYvPrim);
 	// Event track and SPD (tracklets) stats.
 	histos->UserHistogram(histClass, "kNTrk", "Number of tracks;kNTrk;Entries", 4000, 0., 4000., AliDielectronVarManager::kNTrk);
 	histos->UserHistogram(histClass, "kNaccTrcklts", "Number of accepted SPD tracklets in |eta|<1.6;kNaccTrcklts;Entries", 1000, 0., 1000., AliDielectronVarManager::kNaccTrcklts);

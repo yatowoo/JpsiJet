@@ -10,6 +10,10 @@
  * Template from https://alice-doc.github.io/alice-analysis-tutorial/analysis/local.html
 */
 
+class AliAnalysisTaskEmcal;
+
+#include "Datasets/DQ_pp_AOD.C"
+
 AliAnalysisAlien* SetupGridHandler(
     TString mode = "local",
     TString datasets = "16l_pass1",

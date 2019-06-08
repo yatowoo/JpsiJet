@@ -32,7 +32,7 @@ function list_runs(){
 
 }
 
-function list_subjobs(){
+function list_subjob_outputs(){
   for run in $(ls $1/OutputAOD/ | grep 000);
   do
     run_path=$1/OutputAOD/$run
