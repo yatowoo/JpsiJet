@@ -12,7 +12,7 @@ Local: R710.star.ustc.edu.cn `(Dual-E5520 + 16* Dual-E5504)`
 
 Development and post-processing are performed on local environment `(vAN-20190328_ROOT6)`. But for alien, all jobs would run on latest version after debug.
 
-For better display of this document, please install browser extension `MathJax Plugin for Github`  ([Chrome](https://chrome.google.com/webstore/detail/mathjax-plugin-for-github/ioemnmodlmafdkllaclgeombjnmnbima)) or try this [external page](https://ustc.fun/doc/README.html) (temp and not latest). The best solution is to open preview in `VS Code` with [Markdown Preview Enhanced](https://shd101wyy.github.io/markdown-preview-enhanced/).
+__For better display of this document, please install browser extension `MathJax Plugin for Github`  ([Chrome](https://chrome.google.com/webstore/detail/mathjax-plugin-for-github/ioemnmodlmafdkllaclgeombjnmnbima)) or try this [external page](https://ustc.fun/doc/README.html) (temp and not latest). The best solution is to open preview in `VS Code` with [Markdown Preview Enhanced](https://shd101wyy.github.io/markdown-preview-enhanced/).__
 
 Author: [Yìtāo WÚ](mailto:yitao.wu@cern.ch)
 
@@ -37,8 +37,8 @@ Author: [Yìtāo WÚ](mailto:yitao.wu@cern.ch)
   - [Event selection](#event-selection)
   - [PID for electron](#pid-for-electron)
   - [$J/\psi$ reconstruction](#j\psi-reconstruction)
-  - [Nano AODs](#nano-aods)
   - [Jet finder](#jet-finder)
+  - [Nano AODs](#nano-aods)
 - [Correction](#correction)
   - [TPC post-calibration](#tpc-post-calibration)
   - [EMCal correction and embedding framework](#emcal-correction-and-embedding-framework)
@@ -47,6 +47,7 @@ Author: [Yìtāo WÚ](mailto:yitao.wu@cern.ch)
 - [Systematic uncertainties](#systematic-uncertainties)
 - [Preliminary Result](#preliminary-result)
 - [Publication](#publication)
+- [Appendix - Macros & Scripts](#appendix-macros-and-scripts)
 
 ## Resource
 
@@ -726,9 +727,72 @@ DG1|$15916\pm386$|$8392\pm95$|$10287\pm175$|$8608\pm279$|
 3. Cross section vs $p_{T}$, after normalized with EMCal rejection factor.
 4. Pseudo-proper decay length $\ell_{J/\psi}=L_{xyz}m_{J/\psi}c/|p_{ee}|$, for the seperation of prompt and non-prompt $J/\psi$. $L_{xyz}$ is the distance between the primary and dielectron vertices. The prompt, non-prompt and background components are parameterized using data and MC events after unfolded with [$_{s}\mathcal{P}lot$](http://inspirehep.net/record/644725) technique.
 
+### Jet finder
+
+> Source: QA/AddTaskJetQA.C
+
+* Refer:
+  - LEGO train - JE_EMC_pp
+  - runEMCalJetSampleTask.C
+* Configuration:
+  - JetFinder: AddTaskEmcalJet, Wagon-PPJetFinder_charged_AKT_02/04
+
+Parameter|Value|Description|
+-|-|-|
+nTrack|"usedefault"|name of track branch
+nClusters|""|name of cluster branch
+jetAlgo|antikt_algorithm|AliJetContainer::EJetAlgo_t
+radius|0.2 / 0.4|Radius of jet cone on $\eta-\phi$ plane
+jetType|kChargedJet|AliJetContainer::EJetType_t
+minTrPt|0.15|Track pt cut (GeV/c)
+minClPt|0.30|Cluster energy cut (GeV)
+ghostArea|0.01|
+reco|pt_scheme|AliJetContainer::ERecoScheme_t
+tag|"Jet"|Jet name in container
+minJetPt|1.|
+lockTask|kFALSE|
+bFillGhosts|kFALSE|
+
+  - Rho: AddTaskRhoSparse, Wagon-HMRhoTask_02/04
+    - ? Parameter in wagon can not match current macro
+    - runEMCalJetSampleTask.C, AliAnalysisTaskRho::AddTaskRhoNew
+  - DeltaPt: AddTaskDeltaPt, Wagon-HMDeltaPt_02/04
+ 
+Main task:
+- SpectraQA: AliAnalysisTaskEmcalJetSpectraQA
+  - Trigger: kINT7 (to compare results with AN-850)
+  - Wagon: JetSpectra/ppJetSpectra13TeV_QA
+- PWGJEQA: AliAnalysisTaskPWGJEQA
+  - Trigger: kEMCEGA (to perform QA for $J/\psi$ filter)
+  - Wagon: 	QA/JE_QA_pp_Leticia (Last run: 20190507)
+
 ### Nano AODs
 
-### Jet finder
+> Source: NanoAOD/YatoJpsiFilterTask.h/cxx
+
+* Refer:
+  - DielectronFilter: Use AliDielectron to select events with candidates
+  - NanoAODFilter/Replicator: Copy and save objects/branch in AliAODEvent.
+
+* Output: AliAOD.Dielectron.root
+  - __AliAODOutputHandler__: header, AliTOFHeader, AliAODVZERO 
+  - __Filter__: tracks, vertices, caloClusters, tracklets, emcalTrigger, phosTrigger, emcalCells, phosCells, AliAODZDC, AliAODAD, AliAODTZERO
+  - __NEW__: dielectrons, jets02, jets04
+
+```C++
+  // Access jet container by formatted name
+  TString jetName = AliJetContainer::GenerateJetName(jetType, jetAlgo, recoScheme, radius, partCont, clusCont, tag);
+  // TODO: AddJetContainer by user
+    // jets02 = "Jet_AKTChargedR020_tracks_pT0150_pt_scheme"
+    // jets04 = "Jet_AKTChargedR040_tracks_pT0150_pt_scheme"
+  TClonesArray* jets = dynamic_cast<TClonesArray*>(aodEv->FindListObject(jetName));
+```
+
+* Selection
+  - Trigger: __AliVEvent::kEMCEGA__
+  - Cuts definition: __EMCal_loose__
+  - Pari mass: $[1.0, 5.0]~(GeV/c^2)$ (for background estimation)
+  - Jet: no cuts (__*TODO*__: set by user)
 
 ## Correction
 
