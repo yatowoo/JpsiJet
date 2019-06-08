@@ -40,8 +40,8 @@ AliAnalysisTaskDeltaPt* AddDeltaPt(Float_t jetRadius, TString jetName, TString r
   jetDeltaPt->SetZvertexDiffValue(0.5);
   jetDeltaPt->SetNeedEmcalGeom(kFALSE);
   jetDeltaPt->SetRCperEvent(100);
-  jetDeltaPt->SetJetMinRC2LJ(0.2);
-  jetDeltaPt->SetConeRadius(0.2);
+  jetDeltaPt->SetJetMinRC2LJ(jetRadius);
+  jetDeltaPt->SetConeRadius(jetRadius);
 
   return jetDeltaPt;
 }
