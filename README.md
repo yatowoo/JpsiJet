@@ -47,7 +47,7 @@ Author: [Yìtāo WÚ](mailto:yitao.wu@cern.ch)
 - [Systematic uncertainties](#systematic-uncertainties)
 - [Preliminary Result](#preliminary-result)
 - [Publication](#publication)
-- [Appendix - Macros & Scripts](#appendix-macros-and-scripts)
+- [Appendix - Macros & Scripts](#appendix-tasks-and-scripts)
 
 ## Resource
 
@@ -838,3 +838,25 @@ The procedure is carried out in two dimensions, z and jet $p_{T}$ with D'Agostin
 ## Preliminary Result
 
 ## Publication
+
+## Appendix: Tasks and Scripts
+
+Analysis Task|Description|Configuration|Full Path|
+-|-|-|-|-|
+-|__runAnalysis.C__|
+Physics Selection|Selects collision candidates from data runs, applying selection cuts on triggers and background rejection based on the content of the ESD|-|[OADB](https://github.com/alisw/AliPhysics/blob/master/OADB/macros/AddTaskPhysicsSelection.C)|
+MultSelection|New centrality estimator||[OADB](https://github.com/alisw/AliPhysics/blob/master/OADB/COMMON/MULTIPLICITY/macros/AddTaskMultSelection.C)|
+CDB Connect|Task just allowing connection to CDB (no lock)|-|[PWGPP](https://github.com/alisw/AliPhysics/blob/master/PWGPP/PilotTrain/AddTaskCDBconnect.C)|
+EMCal Correction|Perform correction on bad channel, energy, timing and clusterizer.|[YAML-PWGHF](https://github.com/alisw/AliPhysics/blob/master/PWGHF/hfe/macros/configs/pp/userConfigurationEMCele_pp_pPb.yaml)|[PWG/EMCAL](https://github.com/alisw/AliPhysics/blob/master/PWG/EMCAL/EMCALtasks/AliEmcalCorrectionTask.h "AddTaskEmcalCorrectionTask")|
+PID response|Basic PID task|-|[AliRoot](https://github.com/alisw/AliRoot/blob/master/ANALYSIS/macros/AddTaskPIDResponse.C)
+PID QA|QA for PID result on full AOD|-|[AliRoot](https://github.com/alisw/AliPhysics/blob/master/ANALYSIS/macros/AddTaskPIDqa.C)
+-|__QA/AddTaskJetQA.C__|
+Emcal Jet|Jet finder, create jet container|kCharged, R=0.2/0.4, anti_kt|[AddTaskEmcalJet](https://github.com/alisw/AliPhysics/blob/master/PWGJE/EMCALJetTasks/AliEmcalJetTask.cxx)|
+Rho|Estimate jet background by kt_algorithm||[AddTaskRhoNew](https://github.com/alisw/AliPhysics/blob/master/PWGJE/EMCALJetTasks/AliAnalysisTaskRho.cxx)|
+DeltaPt|Jet Pt correction|RCperEv=100, MinRC2LJ=R|[PWGJE/EMCALJetTasks](https://github.com/alisw/AliPhysics/blob/master/PWGJE/EMCALJetTasks/macros/AddTaskDeltaPt.C)|
+PWGJEQA|Performs basic QA relevant to the jet group, by run-wise, event, track, cluster and cells. [AliDoc](http://alidoc.cern.ch/AliPhysics/master/READMEjetQA.html)|EMCEGA|[PWGJE/EMCALJetTasks](https://github.com/alisw/AliPhysics/blob/master/PWGJE/EMCALJetTasks/macros/AddTaskPWGJEQA.C)|
+Spectra QA|Perform QA on jet spectra by multiplicity.|INT7, [Jets_EMC_pp](https://alimonitor.cern.ch/trains/train.jsp?train_id=47 "JetSpectra/ppJetSpectra13TeV_QA")
+-|__QA/AddTaskJpsiQA.C__|
+MultiDielectron|Basic Analysis task for Dielectron by single event analysis with multiple cuts definition (__AliDielectron__)  |ConfigJpsi_cj_pp.C (INT7/EG1/EG2/DG1/DG2, EMCal_strict+RAW)|QA/AddTask_cjahnke_JPsi|
+-|__NanoAOD/AddTaskJPSIFilter.C__|
+Jpsi Filter|Filter AOD with dielectron candidates on __event level__; Create branch for dielectron pairs and jets|kEMCEGA + EMCal_loose|NanoAOD/YatoJpsiFilterTask|

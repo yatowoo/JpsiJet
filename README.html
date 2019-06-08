@@ -324,7 +324,7 @@ pre[data-line] .line-highlight[data-end]:after {
 <li><a href="#systematic-uncertainties">Systematic uncertainties</a></li>
 <li><a href="#preliminary-result">Preliminary Result</a></li>
 <li><a href="#publication">Publication</a></li>
-<li><a href="#appendix-macros-and-scripts">Appendix - Macros &amp; Scripts</a></li>
+<li><a href="#appendix-tasks-and-scripts">Appendix - Macros &amp; Scripts</a></li>
 </ul>
 <h2 class="mume-header" id="resource">Resource</h2>
 
@@ -3005,7 +3005,7 @@ TH1<span class="token operator">*</span> <span class="token function">GetPriorDi
 
 <h2 class="mume-header" id="publication">Publication</h2>
 
-<h2 class="mume-header" id="appendix-macros-and-scripts">Appendix: Macros and Scripts</h2>
+<h2 class="mume-header" id="appendix-tasks-and-scripts">Appendix: Tasks and Scripts</h2>
 
 <table>
 <thead>
@@ -3037,8 +3037,8 @@ TH1<span class="token operator">*</span> <span class="token function">GetPriorDi
 </tr>
 <tr>
 <td>CDB Connect</td>
-<td></td>
-<td></td>
+<td>Task just allowing connection to CDB (no lock)</td>
+<td>-</td>
 <td><a href="https://github.com/alisw/AliPhysics/blob/master/PWGPP/PilotTrain/AddTaskCDBconnect.C">PWGPP</a></td>
 </tr>
 <tr>
@@ -3069,29 +3069,29 @@ TH1<span class="token operator">*</span> <span class="token function">GetPriorDi
 <td>Emcal Jet</td>
 <td>Jet finder, create jet container</td>
 <td>kCharged, R=0.2/0.4, anti_kt</td>
-<td>AliEmcalJetTask::AddTaskEmcalJet</td>
+<td><a href="https://github.com/alisw/AliPhysics/blob/master/PWGJE/EMCALJetTasks/AliEmcalJetTask.cxx">AddTaskEmcalJet</a></td>
 </tr>
 <tr>
 <td>Rho</td>
 <td>Estimate jet background by kt_algorithm</td>
 <td></td>
-<td>AliAnalysisTaskRho::AddTaskRhoNew</td>
+<td><a href="https://github.com/alisw/AliPhysics/blob/master/PWGJE/EMCALJetTasks/AliAnalysisTaskRho.cxx">AddTaskRhoNew</a></td>
 </tr>
 <tr>
 <td>DeltaPt</td>
 <td>Jet Pt correction</td>
-<td></td>
-<td><a href="https://github.com/alisw/AliPhysics/blob/master/PWGJE/EMCALJetTasks/macros/AddTaskDeltaPt.C">PWGJE</a></td>
+<td>RCperEv=100, MinRC2LJ=R</td>
+<td><a href="https://github.com/alisw/AliPhysics/blob/master/PWGJE/EMCALJetTasks/macros/AddTaskDeltaPt.C">PWGJE/EMCALJetTasks</a></td>
 </tr>
 <tr>
 <td>PWGJEQA</td>
-<td></td>
-<td>EMCEGA,</td>
-<td>$ALICE_PHYSICS/PWGJE/EMCALJetTasks/macros/AddTaskPWGJEQA.C</td>
+<td>Performs basic QA relevant to the jet group, by run-wise, event, track, cluster and cells. <a href="http://alidoc.cern.ch/AliPhysics/master/READMEjetQA.html">AliDoc</a></td>
+<td>EMCEGA</td>
+<td><a href="https://github.com/alisw/AliPhysics/blob/master/PWGJE/EMCALJetTasks/macros/AddTaskPWGJEQA.C">PWGJE/EMCALJetTasks</a></td>
 </tr>
 <tr>
 <td>Spectra QA</td>
-<td></td>
+<td>Perform QA on jet spectra by multiplicity.</td>
 <td>INT7, <a href="https://alimonitor.cern.ch/trains/train.jsp?train_id=47" title="JetSpectra/ppJetSpectra13TeV_QA">Jets_EMC_pp</a></td>
 <td></td>
 </tr>
@@ -3103,9 +3103,9 @@ TH1<span class="token operator">*</span> <span class="token function">GetPriorDi
 </tr>
 <tr>
 <td>MultiDielectron</td>
-<td>ConfigJpsi_cj_pp.C</td>
-<td>INT7/EG1/EG2/DG1/DG2, EMCal_strict+RAW</td>
-<td>AddTask_cjahnke_JPsi</td>
+<td>Basic Analysis task for Dielectron by single event analysis with multiple cuts definition (<strong>AliDielectron</strong>)</td>
+<td>ConfigJpsi_cj_pp.C (INT7/EG1/EG2/DG1/DG2, EMCal_strict+RAW)</td>
+<td>QA/AddTask_cjahnke_JPsi</td>
 </tr>
 <tr>
 <td>-</td>
@@ -3117,7 +3117,7 @@ TH1<span class="token operator">*</span> <span class="token function">GetPriorDi
 <td>Jpsi Filter</td>
 <td>Filter AOD with dielectron candidates on <strong>event level</strong>; Create branch for dielectron pairs and jets</td>
 <td>kEMCEGA + EMCal_loose</td>
-<td>YatoJpsiFilterTask</td>
+<td>NanoAOD/YatoJpsiFilterTask</td>
 </tr>
 </tbody>
 </table>
