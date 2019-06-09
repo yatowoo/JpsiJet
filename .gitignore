@@ -23,6 +23,9 @@ JpsiJet_validation_merge.sh
 YatoJpsiFilterTask.cxx
 YatoJpsiFilterTask.h
 stderr
+# ACLiC
+*_cxx_ACLiC_linkdef.h
+*_cxx_ACLiC_map.in
 
 ### C ###
 # Prerequisites
