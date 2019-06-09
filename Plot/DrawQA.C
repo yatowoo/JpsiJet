@@ -15,6 +15,7 @@ void DrawQA(
     TString runNumber = runlist->At(i)->GetName();
     cout << "[+] Run " << runNumber << " Found. Start processing : " << endl;
     TFile* anaResult = new TFile(Form("%s/OutputAOD/%s/AnalysisResults.root",output_dir.Data(),runNumber.Data()));
+    // Dielectron filter QA - kEMCEGA + EMCal_loose
     TH1* filterEventStat = (TH1*)(anaResult->Get("PWGDQ_dielectronFilter/hEventStat"));
     auto eventQA = (THashList*)(anaResult->Get("PWGDQ_dielectronFilter/jpsi_FilterQA")->FindObject("Event"));
     auto nTracks = (TH1*)(eventQA->FindObject("kNTrk"));
@@ -32,6 +33,20 @@ void DrawQA(
     cout << "<Z_vtx>:\t\t" << vtxZ->GetMean() << endl; 
     cout << "RMS_Zvtx:\t\t" << vtxZ->GetRMS() << endl; 
     cout << "<Multiplicity_V0>:\t" << vzero->GetMean() << endl; 
+    // PWGJEQA - kEMCEGA, trackPt>0.15, caloE>0.30
+    auto jetQA = ((AliEmcalList*)(anaResult->Get("AliAnalysisTaskPWGJEQA_tracks_caloClusters_emcalCells_histos")));
+    auto trigClass = (TH1*)(jetQA->FindObject("fHistTriggerClasses"));
+      // Pt, eta, phi, type, dPt/Pt
+    auto jetTrackQA = (THnSparseT<TArrayD>*)(jetQA->FindObject("tracks"));
+      // E, eta, phi, type
+    auto jetCaloQA = (THnSparseT<TArrayD>*)(jetQA->FindObject("caloClusters")->FindObject("clusterObservables"));
+      // Ntracks, Pt_leading, Nclusters, E_leading
+    auto jetEventQA = (THnSparseT<TArrayD>*)(jetQA->FindObject("eventQA"));
+      // fHistCellEnergy, fProfCellAbsIdEnergy, fHistCellTime, fProfCellAbsIdTime, fHistCellEvsTime
+    auto jetCellQA = (THashList*)(jetQA->FindObject("emcalCells"));
+      // eta, phi, Pt, Pt_leading
+    auto jets02QA = (THnSparseT<TArrayD>*)(jetQA->FindObject("Jet_AKTChargedR020_tracks_pT0150_pt_scheme")->FindObject("fHistJetObservables"));
+    auto jets04QA = (THnSparseT<TArrayD>*)(jetQA->FindObject("Jet_AKTChargedR040_tracks_pT0150_pt_scheme")->FindObject("fHistJetObservables"));
     
     anaResult->Close();
   }// Loop runlist
