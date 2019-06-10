@@ -67,7 +67,7 @@ AliEmcalJetTask* AddJetFinder(Float_t jetRadius, UInt_t kPhysSel){
  
   // DEBUG for rho task
   AliEmcalJetTask* jetFinderDEBUG = AliEmcalJetTask::AddTaskEmcalJet("usedefault", "", AliJetContainer::kt_algorithm, jetRadius, AliJetContainer::kChargedJet, 0.15, 0.3, 0.01, AliJetContainer::pt_scheme, "Jet", 1., kFALSE, kFALSE);
-  jetFinderDEBUG->SelectCollisionCandidates(AliVEvent::kINT7);
+  jetFinderDEBUG->SelectCollisionCandidates(kPhysSel);
   jetFinderDEBUG->SetNeedEmcalGeom(kFALSE);
 
   jetFinder->SetForceBeamType(AliAnalysisTaskEmcal::kpp);

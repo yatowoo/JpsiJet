@@ -37,7 +37,7 @@ AliAnalysisAlien* SetupGridHandler(
   alienHandler->SetAdditionalLibs("AddTaskJPSIFilter.C AddTask_cjahnke_JPsi.C ConfigJpsi_cj_pp.C AddTaskJetQA.C YatoJpsiFilterTask.h YatoJpsiFilterTask.cxx");
   alienHandler->SetAnalysisSource("YatoJpsiFilterTask.cxx");
 
-  alienHandler->SetAliPhysicsVersion("vAN-20190522-1");
+  alienHandler->SetAliPhysicsVersion("vAN-20190522_ROOT6-1");
 
   alienHandler->SetAPIVersion("V1.1x");
 
