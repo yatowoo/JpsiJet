@@ -187,7 +187,7 @@
       "MaxInput": 20,
       "AliPhysics": "vAN-20190522-1" 
     },
-    "git_commit": "gf84c54e",
+    "git_commit": "f84c54e",
     "result":{
       "PID": [1518685466, 1518689082],
       "N_run": 51,
