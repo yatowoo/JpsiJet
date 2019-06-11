@@ -8,51 +8,85 @@
 const Int_t LINE_WIDTH = 1;
 const Int_t MARKER_SIZE = 2;
 
-void DrawQA(
-  TString output_dir = "/data2/ytwu/LOG/ALICE/JpsiJet_QAFilter_test_190608"
-){
+enum RunwiseVar{
+  kNEventTotal,
+  kNEventMB,
+  kNEventEGA,
+  kNEventEG1,
+  kNEventEG2,
+  kNEventDG1,
+  kNEventDG2,
+  kNEventFilter,
+  kNEventListN
+};
+// Name, Title, Label
+const char* HISTO_SETUP[kNEventListN][3] = {
+  {"hEvTot", "FullAOD", "N_{events}"},
+  {"hEvMB", "MB/INT7", "N_{events}"},
+  {"hEvEGA", "EGA", "N_{events}"},
+  {"hEvEG1", "EG1", "N_{events}"},
+  {"hEvEG2", "EG2", "N_{events}"},
+  {"hEvDG1", "DG1", "N_{events}"},
+  {"hEvDG2", "DG2", "N_{events}"},
+  {"hEvNano", "Nano", "N_{events}"}
+};
 
-  TString ret = gSystem->GetFromPipe(Form("ls %s/OutputAOD/ | grep 000",output_dir.Data()));
+TH1* histos[kNEventListN] = {NULL};
+Int_t SelectColor(){
+  static const Int_t COLOR_NUMBER = 9;
+  static const Int_t COLOR_SET[COLOR_NUMBER] = {kBlack, kRed, kBlue, kGreen+3, kOrange, kViolet, kCyan, kOrange-6, kPink};
+  static Int_t CURRENT_INDEX = -1;
+  CURRENT_INDEX = (CURRENT_INDEX+1) % COLOR_NUMBER;
+  return COLOR_SET[CURRENT_INDEX];
+}
 
+Int_t SelectMarkerStyle(){
+  static const Int_t MARKER_NUMBER = 10;
+  static const Int_t MARKER_SET[MARKER_NUMBER] = {20, 25, 34, 22, 27, 29, 21, 28, 33, 31};
+  static Int_t CURRENT_INDEX = -1;
+  CURRENT_INDEX = (CURRENT_INDEX+1) % MARKER_NUMBER;
+  return MARKER_SET[CURRENT_INDEX];
+}
 
-  TObjArray* runlist = ret.Tokenize("\n");
-  Int_t N_RUNS = runlist->GetEntriesFast();
-  // Init histogram for run-wise QA
-  TH1* hEventTotal = new TH1F("hEvTot","Event number (Total);Run Number;#events", N_RUNS, 0, N_RUNS);
-  TH1* hEventEGA = new TH1F("hEvEGA","Event number (kEMCEGA);Run Number;#events", N_RUNS, 0, N_RUNS);
-  TH1* hEventMB = new TH1F("hEvMB","Event number (kINT7);Run Number;#events", N_RUNS, 0, N_RUNS);
-  
-  // Loop for result by run
-  for(Int_t i = 0; i < runlist->GetEntriesFast(); i++){
-    TString runDir = runlist->At(i)->GetName();
-    TString runNumber = runDir.Strip(TString::kLeading,'0');
-    cout << "[+] Run " << runNumber << " Found. Start processing : " << endl;
-    TFile* anaResult = new TFile(Form("%s/OutputAOD/%s/AnalysisResults.root",output_dir.Data(),runDir.Data()));
-    // Dielectron filter QA - kEMCEGA + EMCal_loose
-    TH1* filterEventStat = (TH1*)(anaResult->Get("PWGDQ_dielectronFilter/hEventStat"));
-    auto eventQA = (THashList*)(anaResult->Get("PWGDQ_dielectronFilter/jpsi_FilterQA")->FindObject("Event"));
-    auto nTracks = (TH1*)(eventQA->FindObject("kNTrk"));
-    auto nSPDtracklets = (TH1*)(eventQA->FindObject("kNaccTrcklts10Corr"));
-    auto nEletrons = (TH1*)(eventQA->FindObject("Ntracks"));
-    auto vtxZ = (TH1*)(eventQA->FindObject("VtxZ"));
-    auto vzero= (TH1*)(eventQA->FindObject("kMultV0"));
-    cout << "Before PS:\t\t" << filterEventStat->GetBinContent(1) << endl;
-    hEventTotal->Fill(runNumber.Data(),filterEventStat->GetBinContent(1));
-    cout << "After PS:\t\t" << filterEventStat->GetBinContent(2) << endl;
-    cout << "After Event Filter:\t" << filterEventStat->GetBinContent(4) << endl;
-    cout << "After Pileup Rejection:\t" << filterEventStat->GetBinContent(5) << endl;
-    hEventEGA->Fill(runNumber.Data(),filterEventStat->GetBinContent(5));
-    cout << "<N_tracks>:\t\t" << nTracks->GetMean() << endl;
-    cout << "<N_SPDtracklets>:\t" << nSPDtracklets->GetMean() << endl;
-    cout << "<N_electrons>:\t\t" << nEletrons->GetMean() << endl; 
-    cout << "<Z_vtx>:\t\t" << vtxZ->GetMean() << endl; 
-    cout << "RMS_Zvtx:\t\t" << vtxZ->GetRMS() << endl; 
-    cout << "<Multiplicity_V0>:\t" << vzero->GetMean() << endl; 
-    // Dielectron QA - INT7/EG1/EG2/DG1/DG2 + EMCal_strict/RAW
-    auto eventQA_MB = (THashList*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_0/cjahnke_QA_0")->FindObject("RAW")->FindObject("Event"));
-    auto hEventStat_MB = (TH1*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_0/hEventStat"));
-    hEventMB->Fill(runNumber.Data(),hEventStat_MB->GetBinContent(7));
+void InitHistograms(Int_t N_RUNS){
+  for(Int_t i = 0; i < kNEventListN; i++)
+    histos[i] = new TH1F(HISTO_SETUP[i][0],HISTO_SETUP[i][1],N_RUNS,0,N_RUNS);
+}
 
+void FillHistograms(TFile* anaResult, TString runNumber){
+  // Dielectron filter QA - kEMCEGA + EMCal_loose
+  TH1* filterEventStat = (TH1*)(anaResult->Get("PWGDQ_dielectronFilter/hEventStat"));
+  histos[kNEventTotal]->Fill(runNumber.Data(),filterEventStat->GetBinContent(1));
+  histos[kNEventEGA]->Fill(runNumber.Data(),filterEventStat->GetBinContent(5));
+  auto eventQA = (THashList*)(anaResult->Get("PWGDQ_dielectronFilter/jpsi_FilterQA")->FindObject("Event"));
+  auto nTracks = (TH1*)(eventQA->FindObject("kNTrk"));
+  auto nSPDtracklets = (TH1*)(eventQA->FindObject("kNaccTrcklts10Corr"));
+  auto nEletrons = (TH1*)(eventQA->FindObject("Ntracks"));
+  auto vtxZ = (TH1*)(eventQA->FindObject("VtxZ"));
+  auto vzero= (TH1*)(eventQA->FindObject("kMultV0"));
+  cout << "Before PS:\t\t" << filterEventStat->GetBinContent(1) << endl;
+  cout << "After PS:\t\t" << filterEventStat->GetBinContent(2) << endl;
+  cout << "After Event Filter:\t" << filterEventStat->GetBinContent(4) << endl;
+  cout << "After Pileup Rejection:\t" << filterEventStat->GetBinContent(5) << endl;
+  cout << "<N_tracks>:\t\t" << nTracks->GetMean() << endl;
+  cout << "<N_SPDtracklets>:\t" << nSPDtracklets->GetMean() << endl;
+  cout << "<N_electrons>:\t\t" << nEletrons->GetMean() << endl; 
+  cout << "<Z_vtx>:\t\t" << vtxZ->GetMean() << endl; 
+  cout << "RMS_Zvtx:\t\t" << vtxZ->GetRMS() << endl; 
+  cout << "<Multiplicity_V0>:\t" << vzero->GetMean() << endl; 
+  // Dielectron QA - INT7/EG1/EG2/DG1/DG2 + EMCal_strict/RAW
+  auto eventQA_MB = (THashList*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_0/cjahnke_QA_0")->FindObject("RAW")->FindObject("Event"));
+  auto hEventStat_MB = (TH1*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_0/hEventStat"));
+  histos[kNEventMB]->Fill(runNumber.Data(),hEventStat_MB->GetBinContent(7));
+  auto hEventStat = (TH1*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_3/hEventStat"));
+  histos[kNEventEG1]->Fill(runNumber.Data(),hEventStat->GetBinContent(7));
+  hEventStat = (TH1*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_4/hEventStat"));
+  histos[kNEventEG2]->Fill(runNumber.Data(),hEventStat->GetBinContent(7));
+  hEventStat = (TH1*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_30/hEventStat"));
+  histos[kNEventDG1]->Fill(runNumber.Data(),hEventStat->GetBinContent(7));
+  hEventStat = (TH1*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_40/hEventStat"));
+  histos[kNEventDG2]->Fill(runNumber.Data(),hEventStat->GetBinContent(7));
+/*
     // PWGJEQA - kEMCEGA, trackPt>0.15, caloE>0.30
     auto jetQA = ((AliEmcalList*)(anaResult->Get("AliAnalysisTaskPWGJEQA_tracks_caloClusters_emcalCells_histos")));
     auto trigClass = (TH1*)(jetQA->FindObject("fHistTriggerClasses"));
@@ -67,34 +101,61 @@ void DrawQA(
       // eta, phi, Pt, Pt_leading
     auto jets02QA = (THnSparseT<TArrayD>*)(jetQA->FindObject("Jet_AKTChargedR020_tracks_pT0150_pt_scheme")->FindObject("fHistJetObservables"));
     auto jets04QA = (THnSparseT<TArrayD>*)(jetQA->FindObject("Jet_AKTChargedR040_tracks_pT0150_pt_scheme")->FindObject("fHistJetObservables"));
-    
-    anaResult->Close();
-  }// Loop runlist
+*/
+}
 
+void DrawHistograms(){
+  if(!histos[0]) return;
   // Drawing style
   gStyle->SetOptLogy(kTRUE);
   gStyle->SetOptStat(kFALSE);
   gStyle->SetOptTitle(kFALSE);
 
-  hEventTotal->SetStats(kFALSE);
-  hEventTotal->SetLineColor(kBlack);
-  hEventTotal->SetMarkerColor(kBlack);
-  hEventTotal->SetMarkerStyle(20);
-  hEventTotal->SetMarkerSize(MARKER_SIZE);
-  hEventTotal->Draw("E0");
-  hEventTotal->GetYaxis()->SetRangeUser(1,5*hEventTotal->GetMaximum());
+  histos[0]->SetStats(kFALSE);
+  Int_t color = SelectColor();
+  histos[0]->SetLineColor(color);
+  histos[0]->SetMarkerColor(color);
+  histos[0]->SetMarkerStyle(SelectMarkerStyle());
+  histos[0]->SetMarkerSize(MARKER_SIZE);
+  histos[0]->Draw("E0");
+  histos[0]->GetYaxis()->SetRangeUser(1,5*histos[0]->GetMaximum());
 
-  hEventEGA->SetStats(kFALSE);
-  hEventEGA->SetLineColor(kBlue);
-  hEventEGA->SetMarkerColor(kBlue);
-  hEventEGA->SetMarkerStyle(26);
-  hEventEGA->SetMarkerSize(MARKER_SIZE);
-  hEventEGA->Draw("same E0");
+  for(Int_t i = 1; i < kNEventListN; i++){
+    histos[i]->SetStats(kFALSE);
+    Int_t color = SelectColor();
+    histos[i]->SetLineColor(color);
+    histos[i]->SetMarkerColor(color);
+    histos[i]->SetMarkerStyle(SelectMarkerStyle());
+    histos[i]->SetMarkerSize(MARKER_SIZE);
+    histos[i]->Draw("same E0");
+  }// Loop - histos
 
-  hEventMB->SetStats(kFALSE);
-  hEventMB->SetLineColor(kRed);
-  hEventMB->SetMarkerColor(kRed);
-  hEventMB->SetMarkerStyle(34);
-  hEventMB->SetMarkerSize(MARKER_SIZE);
-  hEventMB->Draw("same E0");
+}
+
+void DrawQA(
+  TString output_dir = "/data2/ytwu/LOG/ALICE/JpsiJet_QAFilter_test_190608"
+){
+
+  TString ret = gSystem->GetFromPipe(Form("ls %s/OutputAOD/ | grep 000",output_dir.Data()));
+
+
+  TObjArray* runlist = ret.Tokenize("\n");
+  Int_t N_RUNS = runlist->GetEntriesFast();
+  // Init histogram for run-wise QA
+  InitHistograms(N_RUNS);
+  
+  // Loop for result by run
+  for(Int_t i = 0; i < runlist->GetEntriesFast(); i++){
+    TString runDir = runlist->At(i)->GetName();
+    TString runNumber = runDir.Strip(TString::kLeading,'0');
+    cout << "[+] Run " << runNumber << " Found. Start processing : " << endl;
+    TFile* anaResult = new TFile(Form("%s/OutputAOD/%s/AnalysisResults.root",output_dir.Data(),runDir.Data()));
+
+    FillHistograms(anaResult, runNumber);
+    
+    anaResult->Close();
+  }// Loop runlist
+
+  // Plot and output
+  DrawHistograms();
 }
