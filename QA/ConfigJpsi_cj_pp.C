@@ -317,7 +317,7 @@ void InitHistogramsDieleData(AliDielectron *diele, Int_t cutDefinition, Int_t tr
 	{
 		histos->AddClass(Form("Track_%s", AliDielectron::TrackClassName(i)));
 	}
-  if(cutDefinition != kRAW && trigger_index != 2){
+  if(cutDefinition != kRAW){
 	  //Pair classes
 	  for (Int_t i = 0; i < 3; ++i)
       histos->AddClass(Form("Pair_%s", AliDielectron::PairClassName(i)));
@@ -421,7 +421,7 @@ void InitHistogramsDieleData(AliDielectron *diele, Int_t cutDefinition, Int_t tr
 	histos->UserHistogram("Pair", "InvMass", "Inv.Mass;Inv. Mass (GeV/c^{2});#pairs/(40 MeV/c^{2})",
 												100, 1.0, 5.0, AliDielectronVarManager::kM);
 	histos->UserHistogram("Pair", "pT", "Pt;Pt (GeV/c);#pairs",
-												100, 1.0, 5.0, AliDielectronVarManager::kPt);
+												800, 0., 40.0, AliDielectronVarManager::kPt);
 	histos->UserHistogram("Pair", "Phi", "Phi;#phi;#pairs",
 												200, 0., TMath::TwoPi(), AliDielectronVarManager::kPhi);
 	histos->UserHistogram("Pair", "Rapidity", "Rapidity;Rapidity;#pairs",
