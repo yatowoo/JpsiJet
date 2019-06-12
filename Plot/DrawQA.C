@@ -17,10 +17,26 @@ enum RunwiseVar{
   kNEventDG1,
   kNEventDG2,
   kNEventFilter,
-  kNEventListN
+  kNEventListN,
+  // Filter QA - Event
+  kVtxZ = kNEventListN,
+  kNTracks,
+  kNElectrons,
+  kNSPDtracklets,
+  kV0,
+  // Filter QA - Track (EMCal_loose)
+  kElectron_Pt,
+  kElectron_Eta,
+  kElectron_Phi,
+  kEMCalE,
+  // PWGJEQA - EMCEGA
+  kNTracks_Jet,
+  kNCaloClusters,
+  // End
+  kVarN
 };
 // Name, Title, Label
-const char* HISTO_SETUP[kNEventListN][3] = {
+const char* HISTO_SETUP[kVarN][3] = {
   {"hEvTot", "FullAOD", "N_{events}"},
   {"hEvMB", "MB/INT7", "N_{events}"},
   {"hEvEGA", "EGA", "N_{events}"},
@@ -28,10 +44,21 @@ const char* HISTO_SETUP[kNEventListN][3] = {
   {"hEvEG2", "EG2", "N_{events}"},
   {"hEvDG1", "DG1", "N_{events}"},
   {"hEvDG2", "DG2", "N_{events}"},
-  {"hEvNano", "Nano", "N_{events}"}
+  {"hEvNano", "Nano", "N_{events}"},
+  {"hVtxZ","Primary Vertex Z","<Z_{vtx}> [cm]"},
+  {"hNTrk","Number of tracks (no cuts)","<N_{tracks}>"},
+  {"hNEle","Number of electrons (with cuts: EMCal_loose)","<N_{electrons}>"},
+  {"hSPD","Multiplicity by SPD tracklets (|#eta|<1.0)","<N_{SPDtracklets}>"},
+  {"hV0","Multiplicity by V0 amplitude","<V0 amp.>"},
+  {"hElePt","Electrons/Positrons p_{T}","<p^{e}_{T}>"},
+  {"hEleEta","Electrons/Positrons #eta","<#eta_{e}>"},
+  {"hElePhi","Electrons/Positrons #phi","<#phi_{e}>"},
+  {"hEleE","EMCal cluster energy","<E_{cluster}>"},
+  {"hNTrkJet","Number of tracks (p_{T}>0.15 GeV/c for jet finder)","<N_{tracks}>"},
+  {"hNCaloCls","Number of calo/EMCal clusters (E_{cluster} > 0.3 GeV)","<N_{cluster}>"}
 };
 
-TH1* histos[kNEventListN] = {NULL};
+TH1* histos[kVarN] = {NULL};
 Int_t SelectColor(){
   static const Int_t COLOR_NUMBER = 9;
   static const Int_t COLOR_SET[COLOR_NUMBER] = {kBlack, kRed, kBlue, kGreen+3, kOrange, kViolet, kCyan, kOrange-6, kPink};
@@ -49,8 +76,10 @@ Int_t SelectMarkerStyle(){
 }
 
 void InitHistograms(Int_t N_RUNS){
-  for(Int_t i = 0; i < kNEventListN; i++)
-    histos[i] = new TH1F(HISTO_SETUP[i][0],HISTO_SETUP[i][1],N_RUNS,0,N_RUNS);
+  for(Int_t i = 0; i < kVarN; i++)
+    histos[i] = new TH1F(HISTO_SETUP[i][0],
+        Form("%s;Run No.;%s",HISTO_SETUP[i][1],HISTO_SETUP[i][2]),
+        N_RUNS,0,N_RUNS);
 }
 
 void FillHistograms(TFile* anaResult, TString runNumber){
@@ -60,20 +89,36 @@ void FillHistograms(TFile* anaResult, TString runNumber){
   histos[kNEventEGA]->Fill(runNumber.Data(),filterEventStat->GetBinContent(5));
   auto eventQA = (THashList*)(anaResult->Get("PWGDQ_dielectronFilter/jpsi_FilterQA")->FindObject("Event"));
   auto nTracks = (TH1*)(eventQA->FindObject("kNTrk"));
+  histos[kNTracks]->Fill(runNumber.Data(),nTracks->GetMean());
   auto nSPDtracklets = (TH1*)(eventQA->FindObject("kNaccTrcklts10Corr"));
+  histos[kNSPDtracklets]->Fill(runNumber.Data(),nSPDtracklets->GetMean());
   auto nEletrons = (TH1*)(eventQA->FindObject("Ntracks"));
+  histos[kNElectrons]->Fill(runNumber.Data(),nEletrons->GetMean());
   auto vtxZ = (TH1*)(eventQA->FindObject("VtxZ"));
+  histos[kVtxZ]->Fill(runNumber.Data(),vtxZ->GetMean());
   auto vzero= (TH1*)(eventQA->FindObject("kMultV0"));
-  cout << "Before PS:\t\t" << filterEventStat->GetBinContent(1) << endl;
-  cout << "After PS:\t\t" << filterEventStat->GetBinContent(2) << endl;
-  cout << "After Event Filter:\t" << filterEventStat->GetBinContent(4) << endl;
-  cout << "After Pileup Rejection:\t" << filterEventStat->GetBinContent(5) << endl;
-  cout << "<N_tracks>:\t\t" << nTracks->GetMean() << endl;
-  cout << "<N_SPDtracklets>:\t" << nSPDtracklets->GetMean() << endl;
-  cout << "<N_electrons>:\t\t" << nEletrons->GetMean() << endl; 
-  cout << "<Z_vtx>:\t\t" << vtxZ->GetMean() << endl; 
-  cout << "RMS_Zvtx:\t\t" << vtxZ->GetRMS() << endl; 
-  cout << "<Multiplicity_V0>:\t" << vzero->GetMean() << endl; 
+  histos[kV0]->Fill(runNumber.Data(),vzero->GetMean());
+  auto nPair = (TH1*)(eventQA->FindObject("Npairs"));
+  Int_t nEvNano = nPair->GetEntries() - nPair->GetBinContent(1);
+  histos[kNEventFilter]->Fill(runNumber.Data(),nEvNano);
+  cout << "N events (Before PS):\t" << filterEventStat->GetBinContent(1) << endl;
+  cout << "N events (EMCEGA):\t" << filterEventStat->GetBinContent(5) << endl;
+  cout << "N events (NanoAOD):\t" << nEvNano << endl;
+  
+    // Filtered Electrons
+  auto trackQA = (THashList*)(anaResult->Get("PWGDQ_dielectronFilter/jpsi_FilterQA")->FindObject("Track_ev1+"));
+  auto trackQA_tmp = (THashList*)(anaResult->Get("PWGDQ_dielectronFilter/jpsi_FilterQA")->FindObject("Track_ev1-"));
+  auto elePt = (TH1*)(trackQA->FindObject("Pt"));
+  elePt->Add((TH1*)(trackQA_tmp->FindObject("Pt")));
+  histos[kElectron_Pt]->Fill(runNumber.Data(),elePt->GetMean());
+  auto eleEtaPhi = (TH2*)(trackQA->FindObject("Eta_Phi"));
+  eleEtaPhi->Add((TH2*)(trackQA_tmp->FindObject("Eta_Phi")));
+  histos[kElectron_Eta]->Fill(runNumber.Data(),eleEtaPhi->GetMean(1));
+  histos[kElectron_Phi]->Fill(runNumber.Data(),eleEtaPhi->GetMean(2));
+  auto eleE = (TH1*)(trackQA->FindObject("EMCal_E"));
+  eleE->Add((TH1*)(trackQA_tmp->FindObject("EMCal_E")));
+  histos[kEMCalE]->Fill(runNumber.Data(),eleE->GetMean());
+  
   // Dielectron QA - INT7/EG1/EG2/DG1/DG2 + EMCal_strict/RAW
   auto eventQA_MB = (THashList*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_0/cjahnke_QA_0")->FindObject("RAW")->FindObject("Event"));
   auto hEventStat_MB = (TH1*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_0/hEventStat"));
@@ -86,22 +131,25 @@ void FillHistograms(TFile* anaResult, TString runNumber){
   histos[kNEventDG1]->Fill(runNumber.Data(),hEventStat->GetBinContent(7));
   hEventStat = (TH1*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_40/hEventStat"));
   histos[kNEventDG2]->Fill(runNumber.Data(),hEventStat->GetBinContent(7));
-/*
-    // PWGJEQA - kEMCEGA, trackPt>0.15, caloE>0.30
-    auto jetQA = ((AliEmcalList*)(anaResult->Get("AliAnalysisTaskPWGJEQA_tracks_caloClusters_emcalCells_histos")));
-    auto trigClass = (TH1*)(jetQA->FindObject("fHistTriggerClasses"));
-      // Pt, eta, phi, type, dPt/Pt
-    auto jetTrackQA = (THnSparseT<TArrayD>*)(jetQA->FindObject("tracks"));
-      // E, eta, phi, type
-    auto jetCaloQA = (THnSparseT<TArrayD>*)(jetQA->FindObject("caloClusters")->FindObject("clusterObservables"));
-      // Ntracks, Pt_leading, Nclusters, E_leading
-    auto jetEventQA = (THnSparseT<TArrayD>*)(jetQA->FindObject("eventQA"));
-      // fHistCellEnergy, fProfCellAbsIdEnergy, fHistCellTime, fProfCellAbsIdTime, fHistCellEvsTime
-    auto jetCellQA = (THashList*)(jetQA->FindObject("emcalCells"));
-      // eta, phi, Pt, Pt_leading
-    auto jets02QA = (THnSparseT<TArrayD>*)(jetQA->FindObject("Jet_AKTChargedR020_tracks_pT0150_pt_scheme")->FindObject("fHistJetObservables"));
-    auto jets04QA = (THnSparseT<TArrayD>*)(jetQA->FindObject("Jet_AKTChargedR040_tracks_pT0150_pt_scheme")->FindObject("fHistJetObservables"));
-*/
+  
+  // PWGJEQA - kEMCEGA, trackPt>0.15, caloE>0.30
+  auto jetQA = ((AliEmcalList*)(anaResult->Get("AliAnalysisTaskPWGJEQA_tracks_caloClusters_emcalCells_histos")));
+  auto trigClass = (TH1*)(jetQA->FindObject("fHistTriggerClasses"));
+  // Pt, eta, phi, type, dPt/Pt
+  auto jetTrackQA = (THnSparseT<TArrayD>*)(jetQA->FindObject("tracks"));
+  // E, eta, phi, type
+  auto jetCaloQA = (THnSparseT<TArrayD>*)(jetQA->FindObject("caloClusters")->FindObject("clusterObservables"));
+  // Ntracks, Pt_leading, Nclusters, E_leading
+  auto jetEventQA = (THnSparseT<TArrayD>*)(jetQA->FindObject("eventQA"));
+  auto nTracksJet = jetEventQA->Projection(0);
+  histos[kNTracks_Jet]->Fill(runNumber.Data(),nTracksJet->GetMean());
+  auto nCaloJet= jetEventQA->Projection(2);
+  histos[kNCaloClusters]->Fill(runNumber.Data(),nCaloJet->GetMean());
+  // fHistCellEnergy, fProfCellAbsIdEnergy, fHistCellTime, fProfCellAbsIdTime, fHistCellEvsTime
+  auto jetCellQA = (THashList*)(jetQA->FindObject("emcalCells"));
+  // eta, phi, Pt, Pt_leading
+  //auto jets02QA = (THnSparseT<TArrayD>*)(jetQA->FindObject("Jet_AKTChargedR020_tracks_pT0150_pt_scheme")->FindObject("fHistJetObservables"));
+  //auto jets04QA = (THnSparseT<TArrayD>*)(jetQA->FindObject("Jet_AKTChargedR040_tracks_pT0150_pt_scheme")->FindObject("fHistJetObservables"));
 }
 
 void DrawHistograms(){
@@ -129,6 +177,15 @@ void DrawHistograms(){
     histos[i]->SetMarkerSize(MARKER_SIZE);
     histos[i]->Draw("same E0");
   }// Loop - histos
+
+  TCanvas* cRunwise = new TCanvas("cQA","Runwise QA",800,600);
+  cRunwise->cd();
+  cRunwise->SetLogy(kFALSE); 
+  gStyle->SetOptTitle(kTRUE);
+  for(Int_t i = kNEventListN; i < kVarN; i++){
+    histos[i]->SetStats(kFALSE);
+    histos[i]->Draw("P0");
+  }
 
 }
 
