@@ -217,18 +217,18 @@
       "MaxInput": 20,
       "AliPhysics": "vAN-20190522_ROOT6-1" 
     },
-    "git_commit": "51e2af5",
+    "git_commit": "d8f9082",
     "result":{
-      "PID": [1518685466, 1518689082],
-      "N_run": 51,
-      "Total": 1578,
-      "Done": 1562,
-      "ERROR_V": 5,
-      "ERROR_E": 5,
-      "Expired": 6,
+      "PID": [1519917101, 1519917169],
+      "N_run": 5,
+      "Total": 194,
+      "Done": 188,
+      "ERROR_V": 1,
+      "ERROR_E": 2,
+      "Expired": 2,
       "Zombie": 0,
-      "ratio": 0.99,
-      "comment":"ERROR_E : Too much allocated memory (VSS);ERROR_V :  The file EventStat_temp.root doesn't exist." 
+      "ratio": 0.97,
+      "comment":"ERROR_E : Too much allocated memory (VSS);ERROR_V : Fail to load library" 
     }
   }
 }
