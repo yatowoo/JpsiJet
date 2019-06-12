@@ -6,7 +6,7 @@
 
 // Drawing style
 const Int_t LINE_WIDTH = 1;
-const Int_t MARKER_SIZE = 2;
+const Float_t MARKER_SIZE = 1.5;
 
 enum RunwiseVar{
   kNEventTotal,
@@ -59,19 +59,25 @@ const char* HISTO_SETUP[kVarN][3] = {
 };
 
 TH1* histos[kVarN] = {NULL};
-Int_t SelectColor(){
+Int_t SelectColor(Bool_t newSets = kFALSE){
   static const Int_t COLOR_NUMBER = 9;
   static const Int_t COLOR_SET[COLOR_NUMBER] = {kBlack, kRed, kBlue, kGreen+3, kOrange, kViolet, kCyan, kOrange-6, kPink};
   static Int_t CURRENT_INDEX = -1;
-  CURRENT_INDEX = (CURRENT_INDEX+1) % COLOR_NUMBER;
+  if(!newSets)
+    CURRENT_INDEX = (CURRENT_INDEX+1) % COLOR_NUMBER;
+  else
+    CURRENT_INDEX = 0;
   return COLOR_SET[CURRENT_INDEX];
 }
 
-Int_t SelectMarkerStyle(){
+Int_t SelectMarkerStyle(Bool_t newSets = kFALSE){
   static const Int_t MARKER_NUMBER = 10;
   static const Int_t MARKER_SET[MARKER_NUMBER] = {20, 25, 34, 22, 27, 29, 21, 28, 33, 31};
   static Int_t CURRENT_INDEX = -1;
-  CURRENT_INDEX = (CURRENT_INDEX+1) % MARKER_NUMBER;
+  if(!newSets)
+    CURRENT_INDEX = (CURRENT_INDEX+1) % MARKER_NUMBER;
+  else
+    CURRENT_INDEX = 0;
   return MARKER_SET[CURRENT_INDEX];
 }
 
@@ -152,7 +158,10 @@ void FillHistograms(TFile* anaResult, TString runNumber){
   //auto jets04QA = (THnSparseT<TArrayD>*)(jetQA->FindObject("Jet_AKTChargedR040_tracks_pT0150_pt_scheme")->FindObject("fHistJetObservables"));
 }
 
-void DrawHistograms(){
+void DrawHistograms(TString outputFileName = "OutputQA.root"){
+  TFile* outputQA = new TFile(outputFileName,"RECREATE");
+  TCanvas* cNEvent = new TCanvas("cEv","Event Number QA");
+  cNEvent->SetLogy(kTRUE);
   if(!histos[0]) return;
   // Drawing style
   gStyle->SetOptLogy(kTRUE);
@@ -177,15 +186,23 @@ void DrawHistograms(){
     histos[i]->SetMarkerSize(MARKER_SIZE);
     histos[i]->Draw("same E0");
   }// Loop - histos
+  cNEvent->Write();
 
   TCanvas* cRunwise = new TCanvas("cQA","Runwise QA",800,600);
-  cRunwise->cd();
+  cRunwise->Divide(4,4);
   cRunwise->SetLogy(kFALSE); 
   gStyle->SetOptTitle(kTRUE);
   for(Int_t i = kNEventListN; i < kVarN; i++){
+    cRunwise->cd(i-kNEventListN+1);
     histos[i]->SetStats(kFALSE);
+    histos[i]->SetMarkerStyle(SelectMarkerStyle(kTRUE));
+    histos[i]->SetMarkerSize(MARKER_SIZE);
     histos[i]->Draw("P0");
+    histos[i]->GetYaxis()->SetRangeUser(0,1.5*histos[i]->GetMaximum());
   }
+
+  for(Int_t i = 0; i < kVarN; i++)
+    histos[i]->Write();
 
 }
 
