@@ -504,12 +504,14 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
 } 
 
 void YatoJpsiFilterTask::FillJets(AliAODEvent* aodEv, TClonesArray* jetArray, TString jetName){
+  jetArray->Clear("C");
   TClonesArray* jets = dynamic_cast<TClonesArray*>(aodEv->FindListObject(jetName));
   if(jets){
     for(Int_t i = 0; i < jets->GetEntriesFast(); i++){
       AliEmcalJet* jet = dynamic_cast<AliEmcalJet*>(jets->UncheckedAt(i));
       new((*jetArray)[i]) AliEmcalJet(*jet);
     }
+    jetArray->Expand(jets->GetEntriesFast());
   }else{
     AliInfo(Form("Could not found jet container : %s", jetName.Data()));
   }
