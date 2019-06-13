@@ -64,7 +64,7 @@ int SelectSignalRegion(TH1* InvMass, Double_t mlow, Double_t mup, Double_t width
   * Count data points
   */
   Int_t xBinLow = InvMass->FindBin(mlow);
-  Int_t xBinHigh = InvMass->FindBin(mup);
+  Int_t xBinHigh = InvMass->FindBin(mup) - 1;
   Double_t errData = 0.0;
   Double_t Ndata = InvMass->IntegralAndError(xBinLow, xBinHigh, errData);
 
@@ -198,6 +198,7 @@ int ExtractSignal(TH1* invmass, Double_t mlow = 1.5, Double_t mup = 4.5){
   if(invmass == NULL) return 1;
 
   // Fit & draw
+  invmass->SetTitle("Invariant mass spectrum of e^{+}e^{-} pairs");
   invmass->SetLineColor(kBlue);
   invmass->SetMarkerColor(kBlue);
   invmass->SetMarkerStyle(20);

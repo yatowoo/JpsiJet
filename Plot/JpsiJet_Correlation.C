@@ -18,15 +18,15 @@ Bool_t JpsiCut(AliDielectronPair* jpsi, Bool_t reqPrompt = kFALSE){
 
 Double_t DeltaPhi(Double_t phi1, Double_t phi2){
   Double_t dPhi = phi1 - phi2;
-  if(dPhi > TMath::Pi())
+  if(dPhi > 1.5 * TMath::Pi())
     dPhi = dPhi - TMath::TwoPi();
-  else if(dPhi < -TMath::Pi())
+  else if(dPhi < - 0.5 * TMath::Pi())
     dPhi = TMath::TwoPi() + dPhi;
   return dPhi; 
 }
 
 void JpsiJet_Correlation(
-    const char* fileName = "/data2/ytwu/LOG/ALICE/JpsiJet_QAFilter_16l_190608/AliAOD.Dielectron.root")
+    const char* fileName = "/data2/ytwu/LOG/ALICE/JpsiJet_QAFilter_16l_190608/AliAOD.Dielectron_strict.root")
 {
   TFile* nanoAOD = new TFile(fileName);
   TTree* aodTree = (TTree*)(nanoAOD->Get("aodTree"));
@@ -38,11 +38,14 @@ void JpsiJet_Correlation(
   aodTree->SetBranchAddress("jets04",&jets);
 
   TH2D* hMap = new TH2D("hMap","J/#psi-Jet correlation function (#Delta#eta-#Delta#phi)",
-      100, -2, 2,
-      200, -TMath::Pi(), TMath::Pi());
+      40, -2, 2,
+      100, -4, 6);
   TH2D* hJpsiMap = new TH2D("hJpsi","J/#psi #eta-#phi distribution",
+      20,-1,1,
+      100, -2, 8);
+  TH2D* hJetMap = new TH2D("hJet","Jet #eta-#phi distribution",
       50,-1,1,
-      200, -TMath::Pi(), TMath::Pi());
+      100, -2, 8);
   Int_t nJpsi = 0;
   for(Int_t i = 0 ; i < aodTree->GetEntries(); i++){
     aodTree->GetEntry(i);
@@ -52,15 +55,17 @@ void JpsiJet_Correlation(
     AliDielectronPair* jpsi = NULL;
     while(jpsi = static_cast<AliDielectronPair*>(nextPair())){
       if(!JpsiCut(jpsi)) continue;
+      Double_t jpsiPhi = TVector2::Phi_0_2pi(jpsi->Phi());
       cout << "[+] J/psi found (Total: "  << ++nJpsi << "): " 
-        << jpsi->M() << ", " << jpsi->Pt() << ", " << jpsi->Eta() << ", " << jpsi->Phi() << endl;
-      hJpsiMap->Fill(jpsi->Eta(),jpsi->Phi());
+        << jpsi->M() << ", " << jpsi->Pt() << ", " << jpsi->Eta() << ", " << jpsiPhi << endl;
+      hJpsiMap->Fill(jpsi->Eta(),jpsiPhi);
       TIter nextJet(jets);
       AliEmcalJet* jet = NULL;
       while(jet = static_cast<AliEmcalJet*>(nextJet())){
+        hJetMap->Fill(jet->Eta(),jet->Phi());
         hMap->Fill(
           jpsi->Eta() - jet->Eta(),
-          DeltaPhi(jpsi->Phi(),jet->Phi()));
+          DeltaPhi(jpsiPhi,jet->Phi()));
       }// Loop - jets
     }// Loop - pairs
   }// Loop - events
