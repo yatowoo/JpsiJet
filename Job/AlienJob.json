@@ -230,5 +230,35 @@
       "ratio": 0.97,
       "comment":"ERROR_E : Too much allocated memory (VSS);ERROR_V : Fail to load library" 
     }
+  },
+  "QAFilter_test":{
+    "doMult": true,
+    "doEmcalCorrection": false,
+    "doJetQA": true,
+    "doJpsiQA": true,
+    "doJpsiFilter": true,
+    "doPIDQA": false,
+    "datasets": "16l_pass1_test",
+    "data_dir": "2016/LHC16l",
+    "work_dir": "JpsiJet_QAFilter_ROOT6_test_190614",
+    "task_name": "JpsiJet",
+    "alien_config":{
+      "TTL": 43200,
+      "MaxInput": 20,
+      "AliPhysics": "vAN-20190522_ROOT6-1" 
+    },
+    "git_commit": "d8f9082",
+    "result":{
+      "PID": [1519917101, 1519917169],
+      "N_run": 5,
+      "Total": 194,
+      "Done": 188,
+      "ERROR_V": 1,
+      "ERROR_E": 2,
+      "Expired": 2,
+      "Zombie": 0,
+      "ratio": 0.97,
+      "comment":"ERROR_E : Too much allocated memory (VSS);ERROR_V : Fail to load library" 
+    }
   }
 }

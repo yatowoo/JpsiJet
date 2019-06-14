@@ -48,8 +48,7 @@ AliAnalysisTaskDeltaPt* AddDeltaPt(Float_t jetRadius, TString jetName, TString r
 
 AliAnalysisTaskRhoBase* AddRho(Float_t jetRadius, TString jetName, TString rhoName, UInt_t kPhysSel){
 
-  AliAnalysisTaskRho* jetRho = AliAnalysisTaskRho::AddTaskRhoNew("usedefault", "", rhoName.Data(), jetRadius, AliEmcalJet::kTPCfid, AliJetContainer::kChargedJet, kTRUE, AliJetContainer::pt_scheme, rhoName.Data());
-  AliAnalysisTaskRhoSparse* jetRho = AliAnalysisTaskRhoSparse::AddTaskRhoSparse("usedefault", "", rhoName.Data(), jetRadius, AliEmcalJet::kTPCfid, AliJetContainer::kChargedJet, AliJetContainer::pt_scheme, kTRUE, "", "TPC", 1.0, 0.01, 0, "");
+  AliAnalysisTaskRhoSparse* jetRho = AliAnalysisTaskRhoSparse::AddTaskRhoSparse("usedefault", "", rhoName.Data(), jetRadius, AliEmcalJet::kTPCfid, AliJetContainer::kChargedJet, AliJetContainer::pt_scheme, kTRUE, "", "TPC", 1.0, 0.01, 0, rhoName.Data());
 
   jetRho->SetExcludeLeadJets(2);
   jetRho->SelectCollisionCandidates(kPhysSel);
