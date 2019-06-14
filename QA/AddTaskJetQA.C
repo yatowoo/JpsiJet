@@ -46,9 +46,10 @@ AliAnalysisTaskDeltaPt* AddDeltaPt(Float_t jetRadius, TString jetName, TString r
   return jetDeltaPt;
 }
 
-AliAnalysisTaskRho* AddRho(Float_t jetRadius, TString jetName, TString rhoName, UInt_t kPhysSel){
+AliAnalysisTaskRhoBase* AddRho(Float_t jetRadius, TString jetName, TString rhoName, UInt_t kPhysSel){
 
   AliAnalysisTaskRho* jetRho = AliAnalysisTaskRho::AddTaskRhoNew("usedefault", "", rhoName.Data(), jetRadius, AliEmcalJet::kTPCfid, AliJetContainer::kChargedJet, kTRUE, AliJetContainer::pt_scheme, rhoName.Data());
+  AliAnalysisTaskRhoSparse* jetRho = AliAnalysisTaskRhoSparse::AddTaskRhoSparse("usedefault", "", rhoName.Data(), jetRadius, AliEmcalJet::kTPCfid, AliJetContainer::kChargedJet, AliJetContainer::pt_scheme, kTRUE, "", "TPC", 1.0, 0.01, 0, "");
 
   jetRho->SetExcludeLeadJets(2);
   jetRho->SelectCollisionCandidates(kPhysSel);
@@ -65,16 +66,19 @@ AliAnalysisTaskRho* AddRho(Float_t jetRadius, TString jetName, TString rhoName, 
 AliEmcalJetTask* AddJetFinder(Float_t jetRadius, UInt_t kPhysSel){
   AliEmcalJetTask* jetFinder = AliEmcalJetTask::AddTaskEmcalJet("usedefault", "", AliJetContainer::antikt_algorithm, jetRadius, AliJetContainer::kChargedJet, 0.15, 0.3, 0.01, AliJetContainer::pt_scheme, "Jet", 1., kFALSE, kFALSE);
  
-  // DEBUG for rho task
-  AliEmcalJetTask* jetFinderDEBUG = AliEmcalJetTask::AddTaskEmcalJet("usedefault", "", AliJetContainer::kt_algorithm, jetRadius, AliJetContainer::kChargedJet, 0.15, 0.3, 0.01, AliJetContainer::pt_scheme, "Jet", 1., kFALSE, kFALSE);
-  jetFinderDEBUG->SelectCollisionCandidates(kPhysSel);
-  jetFinderDEBUG->SetNeedEmcalGeom(kFALSE);
-
   jetFinder->SetForceBeamType(AliAnalysisTaskEmcal::kpp);
   jetFinder->SelectCollisionCandidates(kPhysSel);
   jetFinder->SetUseAliAnaUtils(kTRUE);
   jetFinder->SetZvertexDiffValue(0.5);
   jetFinder->SetNeedEmcalGeom(kFALSE);
+  
+  // For rho task
+  AliEmcalJetTask* jetFinderDEBUG = AliEmcalJetTask::AddTaskEmcalJet("usedefault", "", AliJetContainer::kt_algorithm, jetRadius, AliJetContainer::kChargedJet, 0.15, 0.3, 0.01, AliJetContainer::pt_scheme, "Jet", 1., kFALSE, kFALSE);
+  jetFinderDEBUG->SelectCollisionCandidates(kPhysSel);
+  jetFinderDEBUG->SetForceBeamType(AliAnalysisTaskEmcal::kpp);
+  jetFinderDEBUG->SetNeedEmcalGeom(kFALSE);
+  jetFinderDEBUG->SetUseAliAnaUtils(kTRUE);
+  jetFinderDEBUG->SetZvertexDiffValue(0.5);
 
   TString jetName = Form("Jet_AKTChargedR%03.0f_tracks_pT0150_pt_scheme",jetRadius*100);
   TString rhoName = Form("Rho%02.0f",jetRadius*10);
