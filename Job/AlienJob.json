@@ -247,18 +247,18 @@
       "MaxInput": 20,
       "AliPhysics": "vAN-20190522_ROOT6-1" 
     },
-    "git_commit": "d8f9082",
+    "git_commit": "073d178",
     "result":{
-      "PID": [1519917101, 1519917169],
+      "PID": [1523995597, 1523995636],
       "N_run": 5,
       "Total": 194,
-      "Done": 188,
-      "ERROR_V": 1,
-      "ERROR_E": 2,
-      "Expired": 2,
+      "Done": 193,
+      "ERROR_V": 0,
+      "ERROR_E": 1,
+      "Expired": 0,
       "Zombie": 0,
-      "ratio": 0.97,
-      "comment":"ERROR_E : Too much allocated memory (VSS);ERROR_V : Fail to load library" 
+      "ratio": 0.99,
+      "comment":"ERROR_E : Running longer than TTL" 
     }
   }
 }
