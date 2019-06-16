@@ -298,8 +298,8 @@ void InitHistogramsForEvent(AliDielectronHistos* histos, const char* histClass){
 	histos->UserHistogram(histClass, "VtxZ_kMultV0", "VtxZ vs. kMultV0;VtxZ;kMultV0", 300, -15., 15., 1000, 0., 1000., AliDielectronVarManager::kZvPrim, AliDielectronVarManager::kMultV0);
 
   // Dielectron info.
-  histos->UserHistogram(histClass, "Nelectrons", "Number of tracks/electron selected by AliDielectron after cuts;N_{e};#events", 100, 0, 100, AliDielectronVarManager::kTracks);
-	histos->UserHistogram(histClass, "Npairs", "Number of Ev1PM pair candidates after all cuts;J/#psi candidates;#events", 50, 0, 50, AliDielectronVarManager::kPairs);
+  histos->UserHistogram(histClass, "Nelectrons", "Number of tracks/electron selected by AliDielectron after cuts;N_{e};#events", 50, 0, 50, AliDielectronVarManager::kTracks);
+	histos->UserHistogram(histClass, "Npairs", "Number of Ev1PM pair candidates after all cuts;J/#psi candidates;#events", 20, 0, 20, AliDielectronVarManager::kPairs);
 }
 //______________________________________________________________________________________
 void InitHistogramsDieleData(AliDielectron *diele, Int_t cutDefinition, Int_t trigger_index, Bool_t isAOD)
@@ -424,8 +424,7 @@ void InitHistogramsDieleData(AliDielectron *diele, Int_t cutDefinition, Int_t tr
 	histos->UserHistogram("Pair", "pT", "Pt;Pt (GeV/c);#pairs",
 												2000, 0., 100.0, AliDielectronVarManager::kPt);
 	histos->UserHistogram("Pair", "Eta_Phi", "#eta-#phi map of dielectron pairs;#eta_{ee};#phi_{ee};#pairs",
-                        200, -1, 1, AliDielectronVarManager::kEta,
-												200, 0., 10, AliDielectronVarManager::kPhi);
+                        200, -1, 1, 200, 0., 10, AliDielectronVarManager::kEta, AliDielectronVarManager::kPhi);
 	histos->UserHistogram("Pair", "Rapidity", "Rapidity;Rapidity;#pairs",
 												200, -1., 1., AliDielectronVarManager::kY);
 	histos->UserHistogram("Pair", "OpeningAngle", "Opening angle / rad;#pairs",
