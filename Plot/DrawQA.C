@@ -88,25 +88,43 @@ void InitHistograms(Int_t N_RUNS){
         N_RUNS,0,N_RUNS);
 }
 
+Bool_t FillHistogramValue(const char* hLabel, TH1* hQA, TH1* hSource){
+  if(!hSource) return kFALSE;
+  Int_t binNo = hQA->Fill(hLabel,hSource->GetMean());
+  // TODO: need better decision
+  hQA->SetBinError(binNo, hSource->GetRMS());
+  return kTRUE;
+}
+
 void FillHistograms(TFile* anaResult, TString runNumber){
   // Dielectron filter QA - kEMCEGA + EMCal_loose
+   // Number of events with triggers
   TH1* filterEventStat = (TH1*)(anaResult->Get("PWGDQ_dielectronFilter/hEventStat"));
   histos[kNEventTotal]->Fill(runNumber.Data(),filterEventStat->GetBinContent(1));
   histos[kNEventEGA]->Fill(runNumber.Data(),filterEventStat->GetBinContent(5));
+   // Number of dielectron filtered events
   auto eventQA = (THashList*)(anaResult->Get("PWGDQ_dielectronFilter/jpsi_FilterQA")->FindObject("Event"));
-  auto nTracks = (TH1*)(eventQA->FindObject("kNTrk"));
-  histos[kNTracks]->Fill(runNumber.Data(),nTracks->GetMean());
-  auto nSPDtracklets = (TH1*)(eventQA->FindObject("kNaccTrcklts10Corr"));
-  histos[kNSPDtracklets]->Fill(runNumber.Data(),nSPDtracklets->GetMean());
-  auto nEletrons = (TH1*)(eventQA->FindObject("Ntracks"));
-  histos[kNElectrons]->Fill(runNumber.Data(),nEletrons->GetMean());
-  auto vtxZ = (TH1*)(eventQA->FindObject("VtxZ"));
-  histos[kVtxZ]->Fill(runNumber.Data(),vtxZ->GetMean());
-  auto vzero= (TH1*)(eventQA->FindObject("kMultV0"));
-  histos[kV0]->Fill(runNumber.Data(),vzero->GetMean());
   auto nPair = (TH1*)(eventQA->FindObject("Npairs"));
   Int_t nEvNano = nPair->GetEntries() - nPair->GetBinContent(1);
   histos[kNEventFilter]->Fill(runNumber.Data(),nEvNano);
+    // Dielectron QA - INT7/EG1/EG2/DG1/DG2 + EMCal_strict/RAW
+  auto eventQA_MB = (THashList*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_0/cjahnke_QA_0")->FindObject("RAW")->FindObject("Event"));
+  auto hEventStat_MB = (TH1*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_0/hEventStat"));
+  histos[kNEventMB]->Fill(runNumber.Data(),hEventStat_MB->GetBinContent(7));
+  auto hEventStat = (TH1*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_3/hEventStat"));
+  histos[kNEventEG1]->Fill(runNumber.Data(),hEventStat->GetBinContent(7));
+  hEventStat = (TH1*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_4/hEventStat"));
+  histos[kNEventEG2]->Fill(runNumber.Data(),hEventStat->GetBinContent(7));
+  hEventStat = (TH1*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_30/hEventStat"));
+  histos[kNEventDG1]->Fill(runNumber.Data(),hEventStat->GetBinContent(7));
+  hEventStat = (TH1*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_40/hEventStat"));
+  histos[kNEventDG2]->Fill(runNumber.Data(),hEventStat->GetBinContent(7));
+   // Event Variables
+  FillHistogramValue(runNumber.Data(), histos[kNTracks], (TH1*)(eventQA->FindObject("kNTrk")));
+  FillHistogramValue(runNumber.Data(), histos[kNSPDtracklets], (TH1*)(eventQA->FindObject("kNaccTrcklts10Corr")));
+  FillHistogramValue(runNumber.Data(), histos[kNElectrons], (TH1*)(eventQA->FindObject("Ntracks")));
+  FillHistogramValue(runNumber.Data(), histos[kVtxZ], (TH1*)(eventQA->FindObject("VtxZ")));
+  FillHistogramValue(runNumber.Data(), histos[kV0], (TH1*)(eventQA->FindObject("kMultV0")));
   cout << "N events (Before PS):\t" << filterEventStat->GetBinContent(1) << endl;
   cout << "N events (EMCEGA):\t" << filterEventStat->GetBinContent(5) << endl;
   cout << "N events (NanoAOD):\t" << nEvNano << endl;
@@ -125,18 +143,6 @@ void FillHistograms(TFile* anaResult, TString runNumber){
   eleE->Add((TH1*)(trackQA_tmp->FindObject("EMCal_E")));
   histos[kEMCalE]->Fill(runNumber.Data(),eleE->GetMean());
   
-  // Dielectron QA - INT7/EG1/EG2/DG1/DG2 + EMCal_strict/RAW
-  auto eventQA_MB = (THashList*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_0/cjahnke_QA_0")->FindObject("RAW")->FindObject("Event"));
-  auto hEventStat_MB = (TH1*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_0/hEventStat"));
-  histos[kNEventMB]->Fill(runNumber.Data(),hEventStat_MB->GetBinContent(7));
-  auto hEventStat = (TH1*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_3/hEventStat"));
-  histos[kNEventEG1]->Fill(runNumber.Data(),hEventStat->GetBinContent(7));
-  hEventStat = (TH1*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_4/hEventStat"));
-  histos[kNEventEG2]->Fill(runNumber.Data(),hEventStat->GetBinContent(7));
-  hEventStat = (TH1*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_30/hEventStat"));
-  histos[kNEventDG1]->Fill(runNumber.Data(),hEventStat->GetBinContent(7));
-  hEventStat = (TH1*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_40/hEventStat"));
-  histos[kNEventDG2]->Fill(runNumber.Data(),hEventStat->GetBinContent(7));
   
   // PWGJEQA - kEMCEGA, trackPt>0.15, caloE>0.30
   auto jetQA = ((AliEmcalList*)(anaResult->Get("AliAnalysisTaskPWGJEQA_tracks_caloClusters_emcalCells_histos")));
@@ -147,10 +153,8 @@ void FillHistograms(TFile* anaResult, TString runNumber){
   auto jetCaloQA = (THnSparseT<TArrayD>*)(jetQA->FindObject("caloClusters")->FindObject("clusterObservables"));
   // Ntracks, Pt_leading, Nclusters, E_leading
   auto jetEventQA = (THnSparseT<TArrayD>*)(jetQA->FindObject("eventQA"));
-  auto nTracksJet = jetEventQA->Projection(0);
-  histos[kNTracks_Jet]->Fill(runNumber.Data(),nTracksJet->GetMean());
-  auto nCaloJet= jetEventQA->Projection(2);
-  histos[kNCaloClusters]->Fill(runNumber.Data(),nCaloJet->GetMean());
+  FillHistogramValue(runNumber.Data(), histos[kNTracks_Jet], jetEventQA->Projection(0));
+  FillHistogramValue(runNumber.Data(), histos[kNCaloClusters], jetEventQA->Projection(2));
   // fHistCellEnergy, fProfCellAbsIdEnergy, fHistCellTime, fProfCellAbsIdTime, fHistCellEvsTime
   auto jetCellQA = (THashList*)(jetQA->FindObject("emcalCells"));
   // eta, phi, Pt, Pt_leading
@@ -194,11 +198,18 @@ void DrawHistograms(TString outputFileName = "OutputQA.root"){
   gStyle->SetOptTitle(kTRUE);
   for(Int_t i = kNEventListN; i < kVarN; i++){
     cRunwise->cd(i-kNEventListN+1);
+    gPad->SetLogy(kFALSE);
     histos[i]->SetStats(kFALSE);
     histos[i]->SetMarkerStyle(SelectMarkerStyle(kTRUE));
     histos[i]->SetMarkerSize(MARKER_SIZE);
-    histos[i]->Draw("P0");
-    histos[i]->GetYaxis()->SetRangeUser(0,1.5*histos[i]->GetMaximum());
+    histos[i]->Draw("E0");
+    // Set value range
+    Double_t mean = histos[i]->GetBinContent(1);
+    Double_t err = histos[i]->GetBinError(1);
+    Double_t ymin = mean - 3 * err;
+    Double_t ymax = mean + 3 * err;
+    if(ymin > 0 || i != kVtxZ) ymin = 0;
+    histos[i]->GetYaxis()->SetRangeUser(ymin, ymax);
   }
 
   for(Int_t i = 0; i < kVarN; i++)
