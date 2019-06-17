@@ -5,9 +5,11 @@
  * Input: AliAOD.Dielectron.root
  * */
 
-Bool_t JpsiCut(AliDielectronPair* jpsi, Bool_t reqPrompt = kFALSE){
+Bool_t Accept(AliDielectronPair* jpsi, Bool_t reqPrompt = kFALSE){
  
   Double_t invMass = jpsi->M();
+  // pT cut - with EG2 threshold
+  if(jpsi->Pt() < 5.0) return kFALSE;
   if(invMass < 2.92 || invMass > 3.16)
     return kFALSE;
   if(reqPrompt){
@@ -16,7 +18,15 @@ Bool_t JpsiCut(AliDielectronPair* jpsi, Bool_t reqPrompt = kFALSE){
   return kTRUE; 
 }
 
+Bool_t Accept(AliEmcalJet* jet){
+  
+  if(jet->Pt() < 5.0) return kFALSE;
+
+  return kTRUE;
+}
+
 Double_t DeltaPhi(Double_t phi1, Double_t phi2){
+  // Range from -3/2\pi to 1/2\pi
   Double_t dPhi = phi1 - phi2;
   if(dPhi > 1.5 * TMath::Pi())
     dPhi = dPhi - TMath::TwoPi();
@@ -37,13 +47,13 @@ void JpsiJet_Correlation(
   TClonesArray* jets = new TClonesArray("AliEmcalJet",100);
   aodTree->SetBranchAddress("jets04",&jets);
 
-  TH2D* hMap = new TH2D("hMap","J/#psi-Jet correlation function (#Delta#eta-#Delta#phi)",
+  TH2D* hMap = new TH2D("hMap","J/#psi-Jet correlation function (#Delta#eta-#Delta#phi);#Delta#eta;#Delta#phi (rad);#entries",
       40, -2, 2,
       100, -4, 6);
-  TH2D* hJpsiMap = new TH2D("hJpsi","J/#psi #eta-#phi distribution",
+  TH2D* hJpsiMap = new TH2D("hJpsi","J/#psi #eta-#phi distribution;#Delta#eta;#Delta#phi (rad);#entries",
       20,-1,1,
       100, -2, 8);
-  TH2D* hJetMap = new TH2D("hJet","Jet #eta-#phi distribution",
+  TH2D* hJetMap = new TH2D("hJet","Jet #eta-#phi distribution;#Delta#eta;#Delta#phi (rad);#entries",
       50,-1,1,
       100, -2, 8);
   Int_t nJpsi = 0;
@@ -54,7 +64,7 @@ void JpsiJet_Correlation(
     TIter nextPair(pairs);
     AliDielectronPair* jpsi = NULL;
     while(jpsi = static_cast<AliDielectronPair*>(nextPair())){
-      if(!JpsiCut(jpsi)) continue;
+      if(!Accept(jpsi)) continue;
       Double_t jpsiPhi = TVector2::Phi_0_2pi(jpsi->Phi());
       cout << "[+] J/psi found (Total: "  << ++nJpsi << "): " 
         << jpsi->M() << ", " << jpsi->Pt() << ", " << jpsi->Eta() << ", " << jpsiPhi << endl;
@@ -62,6 +72,7 @@ void JpsiJet_Correlation(
       TIter nextJet(jets);
       AliEmcalJet* jet = NULL;
       while(jet = static_cast<AliEmcalJet*>(nextJet())){
+        if(!Accept(jet)) continue;
         hJetMap->Fill(jet->Eta(),jet->Phi());
         hMap->Fill(
           jpsi->Eta() - jet->Eta(),
