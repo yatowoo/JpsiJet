@@ -91,8 +91,7 @@ void InitHistograms(Int_t N_RUNS){
 Bool_t FillHistogramValue(const char* hLabel, TH1* hQA, TH1* hSource){
   if(!hSource) return kFALSE;
   Int_t binNo = hQA->Fill(hLabel,hSource->GetMean());
-  // TODO: need better decision
-  hQA->SetBinError(binNo, hSource->GetRMS());
+  hQA->SetBinError(binNo, hSource->GetMeanError());
   return kTRUE;
 }
 
@@ -206,9 +205,12 @@ void DrawHistograms(TString outputFileName = "OutputQA.root"){
     // Set value range
     Double_t mean = histos[i]->GetBinContent(1);
     Double_t err = histos[i]->GetBinError(1);
-    Double_t ymin = mean - 3 * err;
-    Double_t ymax = mean + 3 * err;
-    if(ymin > 0 || i != kVtxZ) ymin = 0;
+    Double_t ymin = 0.;
+    Double_t ymax = 2.5 * mean;
+    if(i == kVtxZ){
+      ymin = -1.;
+      ymax = 1.;
+    }
     histos[i]->GetYaxis()->SetRangeUser(ymin, ymax);
   }
 

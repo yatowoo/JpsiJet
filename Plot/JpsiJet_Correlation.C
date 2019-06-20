@@ -5,15 +5,15 @@
  * Input: AliAOD.Dielectron.root
  * */
 
-TH1* SubsctractSideband(TH1* hTotal, TH1* hSideband){
+TH2* SubsctractSideband(TH2* hTotal, TH2* hSideband){
 
-  TH1* h = (TH1*)(hTotal->Clone("hCorr"));
+  TH2* h = (TH2*)(hTotal->Clone("hCorr"));
   h->Reset();
-  for(Int_t i = i; i <= hTotal->GetNbinsX(); i++){
+  for(Int_t i = 0; i <= hTotal->GetNbinsX(); i++){
     for(Int_t j = 0; j <= hTotal->GetNbinsY(); j++){
       Double_t nTotal = hTotal->GetBinContent(i,j);
       Double_t nSB = hSideband->GetBinContent(i,j);
-      if(nTotal < 1.) continue;
+      if(TMath::Abs(nTotal) < 0.1) continue;
       h->SetBinContent(i,j, nTotal - nSB);
     }
   }
@@ -39,9 +39,12 @@ Bool_t Accept(AliDielectronPair* jpsi, Bool_t reqSideBand = kFALSE, Bool_t reqPr
   return kTRUE; 
 }
 
-Bool_t Accept(AliEmcalJet* jet){
+Bool_t Accept(AliEmcalJet* jet, Float_t jetR = 0.4){
   
   if(jet->Pt() < 5.0) return kFALSE;
+  // Geometry cut - TPCfid
+  if(TMath::Abs(jet->Eta()) > 0.9 - jetR)
+    return kFALSE;
 
   return kTRUE;
 }
@@ -57,7 +60,7 @@ Double_t DeltaPhi(Double_t phi1, Double_t phi2){
 }
 
 void JpsiJet_Correlation(
-    const char* fileName = "/data2/ytwu/LOG/ALICE/JpsiJet_QAFilter_16l_190608/AliAOD.Dielectron_strict.root")
+    const char* fileName = "/data2/ytwu/LOG/ALICE/JpsiJet_QAFilter_16l_190608/OutputAOD/AliAOD.Dielectron_strict.root")
 {
   TFile* nanoAOD = new TFile(fileName);
   TTree* aodTree = (TTree*)(nanoAOD->Get("aodTree"));
