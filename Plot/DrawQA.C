@@ -41,17 +41,32 @@ TH1* GetEMCalE(TList* dieQA,const char* trigName, const char* cutDef = "RAW"){
 
 void EMCalRF(){
   if(!fcn) fcn = new TF1("fNorm","[0]", 0, 100);  
+  TCanvas* cEMCal = new TCanvas("cE","QA for EMCal", 1600, 600);
+  cEMCal->Divide(2);
   TH1* hMB = GetEMCalE((TList*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_0/cjahnke_QA_0")),"MB");
   TH1* hEG1 = GetEMCalE((TList*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_3/cjahnke_QA_3")),"EG1");
   TH1* hEG2 = GetEMCalE((TList*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_4/cjahnke_QA_4")),"EG2");
   TH1* hDG1 = GetEMCalE((TList*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_30/cjahnke_QA_30")),"DG1");
   TH1* hDG2 = GetEMCalE((TList*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_40/cjahnke_QA_40")),"DG2");
+  cEMCal->cd(0);
   hMB->Draw("P");
   hEG1->Draw("same P");
   hEG2->Draw("same P");
   hDG1->Draw("same P");
   hDG2->Draw("same P");
   hMB->GetYaxis()->SetRangeUser(1e-6,30);
+  gPad->SetLogy(kTRUE);
+  // Rejection Factor
+  auto RF1 = (TH1*)(hEG1->Clone("hRF1"));
+  RF1->Divide(hMB);
+  RF1->SetDirectory(NULL);
+  auto RF2 = (TH1*)(hEG2->Clone("hRF2"));
+  RF2->Divide(hMB);
+  RF2->SetDirectory(NULL);
+  cEMCal->cd(1);
+  RF1->Draw("P");
+  RF2->Draw("same P");
+  RF1->GetYaxis()->SetRangeUser(1,1000);
   gPad->SetLogy(kTRUE);
 }
 
