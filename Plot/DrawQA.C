@@ -26,7 +26,7 @@ TH1* GetEMCalE(TList* dieQA,const char* trigName, const char* cutDef = "RAW"){
   htmp = (TH1*)(dieQA->FindObject(cutDef)->FindObject("Track_ev1-")->FindObject("EMCal_E"));
   hE->Add(htmp);
   // Get event number
-  htmp = (TH1*)(dieQA->FindObject(cutDef)->FindObject("Event")->FindObject("VtxZ"));
+  htmp = (TH1*)(dieQA->FindObject("RAW")->FindObject("Event")->FindObject("VtxZ"));
   Int_t nEvent = htmp->GetEntries();
   fcn->SetParameter(0,nEvent * hE->GetBinWidth(1));
   hE->Divide(fcn);
@@ -48,7 +48,7 @@ void EMCalRF(){
   TH1* hEG2 = GetEMCalE((TList*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_4/cjahnke_QA_4")),"EG2");
   TH1* hDG1 = GetEMCalE((TList*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_30/cjahnke_QA_30")),"DG1");
   TH1* hDG2 = GetEMCalE((TList*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_40/cjahnke_QA_40")),"DG2");
-  cEMCal->cd(0);
+  cEMCal->cd(1);
   hMB->Draw("P");
   hEG1->Draw("same P");
   hEG2->Draw("same P");
@@ -63,7 +63,7 @@ void EMCalRF(){
   auto RF2 = (TH1*)(hEG2->Clone("hRF2"));
   RF2->Divide(hMB);
   RF2->SetDirectory(NULL);
-  cEMCal->cd(1);
+  cEMCal->cd(2);
   RF1->Draw("P");
   RF2->Draw("same P");
   RF1->GetYaxis()->SetRangeUser(1,1000);
