@@ -12,6 +12,7 @@ ClassImp(YatoJpsiFilterTask)
 YatoJpsiFilterTask::YatoJpsiFilterTask() : 
   AliAnalysisTaskSE(),
   fIsToMerge(kFALSE),
+  fIsToReplace(kFALSE),
   fOutputFileName("AliAOD.Dielectron.root"),
   fExtAOD(0x0),
   fSPD(0x0),
@@ -47,6 +48,7 @@ YatoJpsiFilterTask::YatoJpsiFilterTask() :
 YatoJpsiFilterTask::YatoJpsiFilterTask(const char* name) : 
   AliAnalysisTaskSE(name),
   fIsToMerge(kFALSE),
+  fIsToReplace(kFALSE),
   fOutputFileName("AliAOD.Dielectron.root"),
   fExtAOD(0x0),
   fSPD(0x0),
