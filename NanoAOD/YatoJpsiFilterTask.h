@@ -72,11 +72,14 @@ private:
   AliAODTZERO* fAODTZERO;
   
   TClonesArray* fPairs;  // J/psi candidates - AliDielectronPair
+  TClonesArray* fDaughters; // Daughters of e+e- pairs
   TClonesArray* fJets02; // Jet found with R=0.2 - AliEmcalJet
   TClonesArray* fJets04; // Jet found with R=0.4 - AliEmcalJet
 
 private:
   void FillJets(AliAODEvent* aodEv, TClonesArray* jetArray, TString jetName);
+  Bool_t FindDaughters(AliVTrack* trk);
+  AliAODTrack* GetTrackFromPair(AliDielectronPair* pair, AliAODTrack* tmp);
 
 /*Copy from AliAnalysisTaskDielectronFilter*/
 public:

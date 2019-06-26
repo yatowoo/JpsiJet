@@ -23,7 +23,7 @@ AliAODTrack* GetTrackFromPair(AliDielectronPair* pair, AliAODTrack* tmp){
       p, kTRUE,
       v, kFALSE,
       cov,
-      (Short_t)(tmp->GetSign()),
+      tmp->Charge(),
       tmp->GetITSClusterMap(),
       tmp->GetProdVertex(), // PrimaryVertex?
       tmp->GetUsedForVtxFit(),
@@ -32,6 +32,8 @@ AliAODTrack* GetTrackFromPair(AliDielectronPair* pair, AliAODTrack* tmp){
       tmp->GetFilterMap(),
       tmp->Chi2perNDF()
       );
+
+  trk->SetStatus(AliVTrack::kEmbedded);
 
   return trk;
 }

@@ -24,6 +24,7 @@ YatoJpsiFilterTask::YatoJpsiFilterTask() :
   fAODAD(0x0),
   fAODTZERO(0x0),
   fPairs(0x0),
+  fDaughters(0x0),
   fJets02(0x0),
   fJets04(0x0),
   fDielectron(0),
@@ -60,6 +61,7 @@ YatoJpsiFilterTask::YatoJpsiFilterTask(const char* name) :
   fAODAD(0x0),
   fAODTZERO(0x0),
   fPairs(0x0),
+  fDaughters(0x0),
   fJets02(0x0),
   fJets04(0x0),
   fDielectron(0),
@@ -110,6 +112,10 @@ YatoJpsiFilterTask::~YatoJpsiFilterTask()
   if(fPairs){
     fPairs->Clear("C");
     delete fPairs;
+  }
+  if(fDaughters){
+    fDaughters->Clear("C");
+    delete fDaughters;
   }
   if(fJets02){
     fJets02->Clear("C");
@@ -230,6 +236,10 @@ void YatoJpsiFilterTask::UserCreateOutputObjects()
 
   PostData(1, const_cast<THashList*>(fDielectron->GetHistogramList()));
   PostData(2,fEventStat);
+
+  // Init array for pair daughter
+  fDaughters = new TClonesArray("TLorentzVector",20);
+  fDaughters->SetName("daughters");
 }
 
 
@@ -428,12 +438,41 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
     AliAODVertex *tmpTPC = vtxTPC->CloneWithoutRefs(); 
     tmpTPC->SetTitle(vtxTPC->GetTitle());
     nanoEv->AddVertex(tmpTPC); 
+    
+    // Fill pairs
+    Int_t ncandidates = fDielectron->GetPairArray(1)->GetEntriesFast();
+    if (ncandidates == 1)
+      fEventStat->Fill((kNbinsEvent));
+    else if (ncandidates > 1)
+      fEventStat->Fill((kNbinsEvent + 1));
+    fPairs->Clear("C");
+    fDaughters->Clear("C");
+    Int_t nD = 0;
+    const TObjArray* candidates = fDielectron->GetPairArray(1);
+    for(Int_t i = 0; i < ncandidates; i++){
+      AliDielectronPair* pair = (AliDielectronPair*)(candidates->UncheckedAt(i));
+      new((*fPairs)[i]) AliDielectronPair(*pair);
+      const AliKFParticle& d1 = pair->GetKFFirstDaughter();
+      new ((*fDaughters)[nD++]) TLorentzVector(d1.GetPx(),d1.GetPy(),d1.GetPz(),d1.GetE());
+      const AliKFParticle& d2 = pair->GetKFSecondDaughter();
+      new ((*fDaughters)[nD++]) TLorentzVector(d2.GetPx(),d2.GetPy(),d2.GetPz(),d2.GetE());
+    }
+    fPairs->Expand(ncandidates);
 
     // Fill tracks
     Int_t nTracks = aodEv->GetNumberOfTracks();
+    Int_t nTrackMatched = 0;
+    AliAODTrack* trkTemplate = NULL; // To insert pair as track
     for (int iTrk = 0; iTrk < nTracks; iTrk++)
     {
       AliAODTrack* oldTrack = (AliAODTrack*)(aodEv->GetTrack(iTrk));
+      // To remove tracks used as pair daughters
+      if(fIsToReplace && FindDaughters(oldTrack)){
+        nTrackMatched++;
+        if(!trkTemplate || trkTemplate->Pt() < oldTrack->Pt()) trkTemplate = oldTrack;
+        continue;
+      }
+      // Add track for nano AOD
       Int_t trkID = nanoEv->AddTrack(oldTrack);
       AliAODTrack* trk = (AliAODTrack*)(nanoEv->GetTrack(trkID));
       trk->ResetBit(kIsReferenced);
@@ -460,24 +499,18 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
         }
       }
     }
-
-    nanoEv->GetTracks()->Expand(nTracks);
-    nanoEv->GetVertices()->Expand(nTracks + 3);
+    if(fIsToReplace){
+      TIter nextPair(fPairs);
+      AliDielectronPair* pair = NULL;
+      while(pair = static_cast<AliDielectronPair*>(nextPair())){
+        AliAODTrack* trk = GetTrackFromPair(pair, trkTemplate);
+        nanoEv->AddTrack(trk); 
+      }
+    }
+    nanoEv->GetTracks()->Expand(nanoEv->GetNumberOfTracks());
+    nanoEv->GetVertices()->Expand(nanoEv->GetNumberOfVertices());
     nanoEv->GetCaloClusters()->Expand(nanoEv->GetNumberOfCaloClusters());
 
-    // Fill pairs
-    Int_t ncandidates = fDielectron->GetPairArray(1)->GetEntriesFast();
-    if (ncandidates == 1)
-      fEventStat->Fill((kNbinsEvent));
-    else if (ncandidates > 1)
-      fEventStat->Fill((kNbinsEvent + 1));
-    fPairs->Clear("C");
-    const TObjArray* candidates = fDielectron->GetPairArray(1);
-    for(Int_t i = 0; i < ncandidates; i++){
-      AliDielectronPair* pair = (AliDielectronPair*)(candidates->UncheckedAt(i));
-      new((*fPairs)[i]) AliDielectronPair(*pair);
-    }
-    fPairs->Expand(ncandidates);
 
     // Fill jets
     FillJets(aodEv, fJets02, "Jet_AKTChargedR020_tracks_pT0150_pt_scheme");
@@ -518,4 +551,48 @@ void YatoJpsiFilterTask::FillJets(AliAODEvent* aodEv, TClonesArray* jetArray, TS
     AliInfo(Form("Could not found jet container : %s", jetName.Data()));
   }
 
+}
+
+Bool_t YatoJpsiFilterTask::FindDaughters(AliVTrack* trk){
+  static const Double_t ERR_LIMIT = 1e-6;
+  TIter nextEle(fDaughters);
+  TLorentzVector* vec = NULL;
+  while(vec = static_cast<TLorentzVector*>(nextEle())){
+    if(TMath::Abs(vec->Pt() - trk->Pt()) < ERR_LIMIT &&
+       TMath::Abs(vec->Eta() - trk->Eta()) < ERR_LIMIT &&
+       TMath::Abs(TVector2::Phi_0_2pi(vec->Phi()) - trk->Phi()) < ERR_LIMIT )
+      return kTRUE;
+  }
+  return kFALSE;
+}
+
+AliAODTrack* YatoJpsiFilterTask::GetTrackFromPair(AliDielectronPair* pair, AliAODTrack* tmp){
+
+  Double_t p[3] = {0.};
+  Double_t v[3] = {0.};
+  Double_t cov[21] = {0.};
+  pair->PxPyPz(p);
+  pair->XvYvZv(v);
+  
+  tmp->GetCovarianceXYZPxPyPz(cov);
+  
+  AliAODTrack* trk = new AliAODTrack(
+      tmp->GetID(),
+      tmp->GetLabel(),
+      p, kTRUE,
+      v, kFALSE,
+      cov,
+      tmp->Charge(),
+      tmp->GetITSClusterMap(),
+      tmp->GetProdVertex(), // PrimaryVertex?
+      tmp->GetUsedForVtxFit(),
+      tmp->GetUsedForPrimVtxFit(),
+      AliAODTrack::kPrimary,
+      tmp->GetFilterMap(),
+      tmp->Chi2perNDF()
+      );
+  trk->SetFlags(tmp->GetFlags());
+  trk->SetStatus(AliVTrack::kEmbedded);
+
+  return trk;
 }
