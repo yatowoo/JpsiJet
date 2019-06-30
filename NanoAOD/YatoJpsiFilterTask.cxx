@@ -389,7 +389,7 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
     hasCand = (hasCand || fDielectron->GetTrackArray(0) || fDielectron->GetTrackArray(1));
 
   // Fill nano AOD
-  if ( hasCand)
+  if ( hasCand || fIsToReplace)
   {
     AliAODEvent *aodEv = (static_cast<AliAODEvent *>(InputEvent()));
     // Fill ZDC, AD, TZERO data
@@ -504,6 +504,7 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
       AliDielectronPair* pair = NULL;
       while(pair = static_cast<AliDielectronPair*>(nextPair())){
         AliAODTrack* trk = GetTrackFromPair(pair, trkTemplate);
+        trk->SetProdVertex(nanoEv->GetPrimaryVertex());
         nanoEv->AddTrack(trk); 
       }
       AliDebug(2, Form("Remove Ndaughters : %d, Add Npairs : %d", nTrackMatched, ncandidates));
