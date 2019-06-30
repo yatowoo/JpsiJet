@@ -6,6 +6,7 @@ TTree* aodT = NULL;
 AliAODEvent* aod = NULL;
 TClonesArray* pairs = NULL;
 TClonesArray* daughters = NULL;
+TClonesArray* jets = NULL;
 
 AliAODTrack* GetTrackFromPair(AliDielectronPair* pair, AliAODTrack* tmp){
 
@@ -51,6 +52,84 @@ Bool_t FindDaughters(AliVTrack* trk){
   return kFALSE;
 }
 
+Bool_t TestPairDaughter(){
+  
+  // DEBUG - Shared electron?
+  if(pairs->GetEntries() == 1) continue;
+  TIter nextPair(pairs);
+  AliDielectronPair* jpsi = NULL;
+  daughters->Clear("C");
+  Int_t nEle = 0;
+  while(jpsi = static_cast<AliDielectronPair*>(nextPair())){
+    AliKFParticle& ele = jpsi->GetKFFirstDaughter();
+    new ((*daughters)[nEle++]) TLorentzVector(ele.GetPx(),ele.GetPy(),ele.GetPz(),ele.GetE());
+    ele = jpsi->GetKFSecondDaughter();
+    new ((*daughters)[nEle++]) TLorentzVector(ele.GetPx(),ele.GetPy(),ele.GetPz(),ele.GetE());
+  }
+  if(nEle == 0) continue;
+  cout << "[-] Event " << i << " - Pairs=" << pairs->GetEntries()
+    << " Daughters=" << daughters->GetEntries() << endl; 
+  TIter nextTrack(aod->GetTracks());
+  AliAODTrack* trk = NULL;
+  AliAODTrack* tmp = NULL;
+  Int_t nTrackMatched = 0;
+  while(trk = static_cast<AliAODTrack*>(nextTrack())){
+    if(FindDaughters(trk)){
+      nTrackMatched++;
+      if(!tmp || tmp->Pt() < trk->Pt()) tmp = trk;
+    }
+  }
+  if(nEle != nTrackMatched){
+    cout << "[X] ERROR - event " << i << " : nTrackMatched=" << nTrackMatched << endl;
+    daughters->Print();
+    //exit(1);
+  }
+  nextPair.Reset();
+  while(jpsi = static_cast<AliDielectronPair*>(nextPair())){
+    trk = GetTrackFromPair(jpsi, tmp);
+    trk->Print();
+    delete trk;trk=NULL;
+  }
+
+
+  return kTRUE;
+}
+  
+TH1* h = NULL; 
+TH1* h2 = NULL;
+
+Bool_t TestJpsiInJet(){
+
+  if(!h){
+    h = new TH1D("hZall","pT ratio of leading track",20,0,2);
+    h2 = new TH1D("hZpair","pT ratio of dielectron pair",20,0,2);
+  }
+  
+  AliAODTrack* pTrk = (AliAODTrack*)(aod->GetTrack(aod->GetNumberOfTracks()-1));
+  Int_t pairTrackID = aod->GetNumberOfTracks() -1;
+
+  TIter nextJet(jets);
+
+  while( jet = static_cast<AliEmcalJet*>(nextJet())){
+
+    if(jet->Pt() > 0. ){
+
+      if(jet->ContainsTrack(pairTrackID) >= 0){
+        jet->Print();
+        pTrk->Print();
+        h2->Fill(pTrk->Pt() / jet->Pt());
+      }
+      
+      Double_t maxPt = jet->MaxChargedPt();
+      Double_t pt = jet->Pt();
+      Double_t z = maxPt/pt;
+      h->Fill(z);
+    }
+  }
+
+  return kTRUE;
+}
+
 void TestNanoAOD(const char* fileName = "AliAOD.ANA.root"){
 
   f = new TFile(fileName);
@@ -61,45 +140,14 @@ void TestNanoAOD(const char* fileName = "AliAOD.ANA.root"){
   pairs = new TClonesArray("AliDielectronPair",100);
   aodTree->SetBranchAddress("dielectrons",&pairs);
 
+  jets = new TClonesArray("AliEmcalJet",100);
+  aodTree->SetBranchAddress("jets04",&jets);
+
   daughters = new TClonesArray("TLorentzVector",100);
 
   for(Int_t i = 0 ; i < aodT->GetEntries(); i++){
     aodT->GetEntry(i);
-    // DEBUG - Shared electron?
-    if(pairs->GetEntries() == 1) continue;
-    TIter nextPair(pairs);
-    AliDielectronPair* jpsi = NULL;
-    daughters->Clear("C");
-    Int_t nEle = 0;
-    while(jpsi = static_cast<AliDielectronPair*>(nextPair())){
-      AliKFParticle& ele = jpsi->GetKFFirstDaughter();
-      new ((*daughters)[nEle++]) TLorentzVector(ele.GetPx(),ele.GetPy(),ele.GetPz(),ele.GetE());
-      ele = jpsi->GetKFSecondDaughter();
-      new ((*daughters)[nEle++]) TLorentzVector(ele.GetPx(),ele.GetPy(),ele.GetPz(),ele.GetE());
-    }
-    if(nEle == 0) continue;
-    cout << "[-] Event " << i << " - Pairs=" << pairs->GetEntries()
-     << " Daughters=" << daughters->GetEntries() << endl; 
-    TIter nextTrack(aod->GetTracks());
-    AliAODTrack* trk = NULL;
-    AliAODTrack* tmp = NULL;
-    Int_t nTrackMatched = 0;
-    while(trk = static_cast<AliAODTrack*>(nextTrack())){
-      if(FindDaughters(trk)){
-        nTrackMatched++;
-        if(!tmp || tmp->Pt() < trk->Pt()) tmp = trk;
-      }
-    }
-    if(nEle != nTrackMatched){
-      cout << "[X] ERROR - event " << i << " : nTrackMatched=" << nTrackMatched << endl;
-      daughters->Print();
-      //exit(1);
-    }
-    nextPair.Reset();
-    while(jpsi = static_cast<AliDielectronPair*>(nextPair())){
-      trk = GetTrackFromPair(jpsi, tmp);
-      trk->Print();
-      delete trk;trk=NULL;
-    }
+    //TestPairDaughter();
+    TestJpsiInJet();
   }
 }
