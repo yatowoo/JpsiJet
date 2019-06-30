@@ -486,7 +486,7 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
       trk->SetProdVertex(vtx);
       // Calo cluster
       Int_t oldCaloID = oldTrack->GetEMCALcluster();
-      if(oldCaloID > 0){
+      if(oldCaloID >= 0){
         AliAODCaloCluster* oldCalo = aodEv->GetCaloCluster(oldCaloID);
         if (oldCalo)
         {
@@ -506,6 +506,7 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
         AliAODTrack* trk = GetTrackFromPair(pair, trkTemplate);
         nanoEv->AddTrack(trk); 
       }
+      AliDebug(2, Form("Remove Ndaughters : %d, Add Npairs : %d", nTrackMatched, ncandidates));
     }
     nanoEv->GetTracks()->Expand(nanoEv->GetNumberOfTracks());
     nanoEv->GetVertices()->Expand(nanoEv->GetNumberOfVertices());
