@@ -13,7 +13,7 @@ class AliDielectronEventCuts;
 class YatoJpsiFilterTask;
 #endif
 
-YatoJpsiFilterTask* AddTaskJPSIFilter(Bool_t storeLS = kFALSE, Bool_t hasMC_aod = kFALSE, Bool_t storeTR = kFALSE){
+YatoJpsiFilterTask* AddTaskJPSIFilter(Bool_t doPhysAna = kFALSE, Bool_t storeLS = kFALSE, Bool_t hasMC_aod = kFALSE, Bool_t storeTR = kFALSE){
   //get the current analysis manager
   AliAnalysisManager *mgr = AliAnalysisManager::GetAnalysisManager();
   if (!mgr) {
@@ -41,6 +41,7 @@ YatoJpsiFilterTask* AddTaskJPSIFilter(Bool_t storeLS = kFALSE, Bool_t hasMC_aod 
     aodHandler->SetNeedsHeaderReplication();
     aodHandler->SetNeedsTOFHeaderReplication();
     aodHandler->SetNeedsVZEROReplication();
+    // DO NOT ENABLE - to avoid memory leak!
     //aodHandler->SetNeedsTracksBranchReplication();
     //aodHandler->SetNeedsVerticesBranchReplication();
     //aodHandler->SetNeedsTrackletsBranchReplication();
@@ -70,10 +71,14 @@ YatoJpsiFilterTask* AddTaskJPSIFilter(Bool_t storeLS = kFALSE, Bool_t hasMC_aod 
   task->SetEventFilter(eventCuts);
   // Add AliDielectron
     // kEMCEGA + EMCal_loose
-  AliDielectron* jpsi = reinterpret_cast<AliDielectron *>(gInterpreter->ExecuteMacro(Form("ConfigJpsi_cj_pp.C(3,%d,2)", isAOD)));
+  Int_t trigger_index = 3; // EMCal_loose
+  if(doPhysAna){
+    trigger_index = 0; // EMCal_strict
+    task->SetToReplace(kTRUE); // Replace daughter tracks with pair
+  }
+  AliDielectron* jpsi = reinterpret_cast<AliDielectron *>(gInterpreter->ExecuteMacro(Form("ConfigJpsi_cj_pp.C(%d,%d,2)", trigger_index, isAOD)));
   jpsi->SetHasMC(hasMC);
   task->SetDielectron(jpsi);
-  task->SetToReplace(kFALSE);
 
   mgr->AddTask(task);
 

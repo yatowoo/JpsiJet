@@ -91,6 +91,7 @@ void runAnalysis(
     Bool_t doJpsiQA = kTRUE,
     Bool_t doJpsiFilter = kFALSE,
     Bool_t doPIDQA = kFALSE,
+    Bool_t doPhysAna = kFALSE,
     TString mode = "local",
     TString datasets = "16l_pass1",
     TString data_dir = "2016/LHC16l",
@@ -147,7 +148,7 @@ void runAnalysis(
   // Task - J/psi Filter
   if(doJpsiFilter){
     gInterpreter->LoadMacro("YatoJpsiFilterTask.cxx++g");
-    gInterpreter->ExecuteMacro("AddTaskJPSIFilter.C");
+    gInterpreter->ExecuteMacro(Form("AddTaskJPSIFilter.C(%d)",int(doPhysAna)));
     aodOutputH->SetOutputFileName("AliAOD.root");
     mgr->RegisterExtraFile("AliAOD.Dielectron.root");
   }
