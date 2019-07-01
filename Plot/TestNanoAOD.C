@@ -1,6 +1,8 @@
 // Script to validate nano AOD
 //
 
+Bool_t yatoDebug = kFALSE;
+
 TFile* f = NULL;
 TTree* aodT = NULL;
 AliAODEvent* aod = NULL;
@@ -8,31 +10,15 @@ TClonesArray* pairs = NULL;
 TClonesArray* daughters = NULL;
 TClonesArray* jets = NULL;
 
+Int_t trkID_EleMaxPt = 0;
+
 AliAODTrack* GetTrackFromPair(AliDielectronPair* pair, AliAODTrack* tmp){
 
-  Double_t p[3] = {0.};
-  Double_t v[3] = {0.};
-  Double_t cov[21] = {0.};
-  pair->PxPyPz(p);
-  pair->XvYvZv(v);
-  
-  tmp->GetCovarianceXYZPxPyPz(cov);
-  
-  AliAODTrack* trk = new AliAODTrack(
-      tmp->GetID(),
-      tmp->GetLabel(),
-      p, kTRUE,
-      v, kFALSE,
-      cov,
-      tmp->Charge(),
-      tmp->GetITSClusterMap(),
-      tmp->GetProdVertex(), // PrimaryVertex?
-      tmp->GetUsedForVtxFit(),
-      tmp->GetUsedForPrimVtxFit(),
-      tmp->GetType(),
-      tmp->GetFilterMap(),
-      tmp->Chi2perNDF()
-      );
+  AliAODTrack* trk = (AliAODTrack*)(tmp->Clone("AliAODTrack"));
+
+  trk->SetPt(pair->Pt());
+  trk->SetPhi(TVector2::Phi_0_2pi(pair->Phi()));
+  trk->SetTheta(TMath::ACos(pair->Pz() / pair->P()));
 
   trk->SetStatus(AliVTrack::kEmbedded);
 
@@ -54,8 +40,6 @@ Bool_t FindDaughters(AliVTrack* trk){
 
 Bool_t TestPairDaughter(){
   
-  // DEBUG - Shared electron?
-  if(pairs->GetEntries() == 1) continue;
   TIter nextPair(pairs);
   AliDielectronPair* jpsi = NULL;
   daughters->Clear("C");
@@ -67,7 +51,7 @@ Bool_t TestPairDaughter(){
     new ((*daughters)[nEle++]) TLorentzVector(ele.GetPx(),ele.GetPy(),ele.GetPz(),ele.GetE());
   }
   if(nEle == 0) continue;
-  cout << "[-] Event " << i << " - Pairs=" << pairs->GetEntries()
+  cout << "[-] TestPairDaughter - Pairs=" << pairs->GetEntries()
     << " Daughters=" << daughters->GetEntries() << endl; 
   TIter nextTrack(aod->GetTracks());
   AliAODTrack* trk = NULL;
@@ -79,15 +63,16 @@ Bool_t TestPairDaughter(){
       if(!tmp || tmp->Pt() < trk->Pt()) tmp = trk;
     }
   }
+  trkID_EleMaxPt = aod->GetTracks()->IndexOf(tmp);
   if(nEle != nTrackMatched){
-    cout << "[X] ERROR - event " << i << " : nTrackMatched=" << nTrackMatched << endl;
-    daughters->Print();
+    cout << "[X] ERROR TestPairDaughter -  nTrackMatched=" << nTrackMatched << endl;
     //exit(1);
   }
   nextPair.Reset();
   while(jpsi = static_cast<AliDielectronPair*>(nextPair())){
+    if(yatoDebug) tmp->Print();
     trk = GetTrackFromPair(jpsi, tmp);
-    trk->Print();
+    if(yatoDebug) trk->Print();
     delete trk;trk=NULL;
   }
 
@@ -104,19 +89,17 @@ Bool_t TestJpsiInJet(){
     h = new TH1D("hZall","pT ratio of leading track",20,0,2);
     h2 = new TH1D("hZpair","pT ratio of dielectron pair",20,0,2);
   }
-  
-  AliAODTrack* pTrk = (AliAODTrack*)(aod->GetTrack(aod->GetNumberOfTracks()-1));
-  Int_t pairTrackID = aod->GetNumberOfTracks() -1;
+  //Int_t pairTrackID = aod->GetNumberOfTracks() -1;
+  Int_t pairTrackID = trkID_EleMaxPt;
+  AliAODTrack* pTrk = (AliAODTrack*)(aod->GetTrack(pairTrackID));
 
   TIter nextJet(jets);
 
   while( jet = static_cast<AliEmcalJet*>(nextJet())){
 
-    if(jet->Pt() > 0. ){
+    if(jet->Pt() > 5. ){
 
-      if(jet->ContainsTrack(pairTrackID) >= 0){
-        jet->Print();
-        pTrk->Print();
+      if(jet->ContainsTrack(trkID_EleMaxPt) >= 0){
         h2->Fill(pTrk->Pt() / jet->Pt());
       }
       
@@ -130,7 +113,9 @@ Bool_t TestJpsiInJet(){
   return kTRUE;
 }
 
-void TestNanoAOD(const char* fileName = "AliAOD.ANA.root"){
+void TestNanoAOD(const char* fileName = "AliAOD.ANA.root", Bool_t usrDebug = kFALSE){
+
+  yatoDebug= usrDebug;
 
   f = new TFile(fileName);
   aodT = (TTree*)(f->Get("aodTree"));
@@ -147,7 +132,8 @@ void TestNanoAOD(const char* fileName = "AliAOD.ANA.root"){
 
   for(Int_t i = 0 ; i < aodT->GetEntries(); i++){
     aodT->GetEntry(i);
-    //TestPairDaughter();
-    TestJpsiInJet();
+    if(yatoDebug) cout << "[-] Event " << i << " ------> " << endl;
+    TestPairDaughter();
+    //TestJpsiInJet();
   }
 }
