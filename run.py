@@ -20,6 +20,7 @@ doJetQA = int(CONFIG[JOB_NAME]["doJetQA"])
 doJpsiQA = int(CONFIG[JOB_NAME]["doJpsiQA"])
 doJpsiFilter = int(CONFIG[JOB_NAME]["doJpsiFilter"])
 doPIDQA = int(CONFIG[JOB_NAME]["doPIDQA"])
+doPhysAna = int(CONFIG[JOB_NAME]["doPhysAna"])
 
 cmd = "aliroot -b -l -q -x \'runAnalysis.C(" \
     + repr(doMult) + ',' \
@@ -28,6 +29,7 @@ cmd = "aliroot -b -l -q -x \'runAnalysis.C(" \
     + repr(doJpsiQA) + ',' \
     + repr(doJpsiFilter) + ',' \
     + repr(doPIDQA) + ',' \
+    + repr(doPhysAna) + ',' \
     + '"' + JOB_MODE + '",' \
     + '"' + CONFIG[JOB_NAME]["datasets"] + '",' \
     + '"' + CONFIG[JOB_NAME]["data_dir"] + '",' \

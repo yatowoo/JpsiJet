@@ -1,6 +1,6 @@
 /**
  * Main macro for running jobs on ALICE software
- * Arguments: doMult, doEmcalCorrection, doJetQA, doJpsiQA, doJpsiFilter, doPIDQA,
+ * Arguments: doMult, doEmcalCorrection, doJetQA, doJpsiQA, doJpsiFilter, doPIDQA, doPhysAna
  *   -- mode: local, test, full, merge, final
  *   -- datasets: entry in Datasets/DQ_pp_AOD.C
  *   -- data_dir: 20XX/LHCXX[period]
