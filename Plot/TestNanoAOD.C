@@ -83,6 +83,17 @@ Bool_t TestPairDaughter(){
 TH1* h = NULL; 
 TH1* h2 = NULL;
 
+Bool_t Accept(AliEmcalJet* jet, Float_t jetR = 0.4){
+  
+  if(jet->Pt() < 5.0) return kFALSE;
+  // Geometry cut - TPCfid
+  if(TMath::Abs(jet->Eta()) > 0.9 - jetR)
+    return kFALSE;
+
+  return kTRUE;
+}
+
+
 Bool_t TestJpsiInJet(){
 
   if(!h){
@@ -97,7 +108,7 @@ Bool_t TestJpsiInJet(){
 
   while( jet = static_cast<AliEmcalJet*>(nextJet())){
 
-    if(jet->Pt() > 5. ){
+    if(Accept(jet)){
 
       if(jet->ContainsTrack(pairTrackID) >= 0){
         if(yatoDebug){
