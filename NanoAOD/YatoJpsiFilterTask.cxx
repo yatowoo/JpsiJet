@@ -389,7 +389,7 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
     hasCand = (hasCand || fDielectron->GetTrackArray(0) || fDielectron->GetTrackArray(1));
 
   // Fill nano AOD
-  if ( hasCand || fIsToReplace)
+  if ( hasCand)
   {
     AliAODEvent *aodEv = (static_cast<AliAODEvent *>(InputEvent()));
     // Fill ZDC, AD, TZERO data
@@ -505,6 +505,7 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
       while(pair = static_cast<AliDielectronPair*>(nextPair())){
         AliAODTrack* trk = GetTrackFromPair(pair, trkTemplate);
         trk->SetProdVertex(nanoEv->GetPrimaryVertex());
+        trk->SetAODEvent(nanoEv);
         nanoEv->AddTrack(trk); 
       }
       AliDebug(2, Form("Remove Ndaughters : %d, Add Npairs : %d", nTrackMatched, ncandidates));
@@ -569,32 +570,17 @@ Bool_t YatoJpsiFilterTask::FindDaughters(AliVTrack* trk){
 }
 
 AliAODTrack* YatoJpsiFilterTask::GetTrackFromPair(AliDielectronPair* pair, AliAODTrack* tmp){
-
-  Double_t p[3] = {0.};
-  Double_t v[3] = {0.};
-  Double_t cov[21] = {0.};
-  pair->PxPyPz(p);
-  pair->XvYvZv(v);
   
-  tmp->GetCovarianceXYZPxPyPz(cov);
-  
-  AliAODTrack* trk = new AliAODTrack(
-      tmp->GetID(),
-      tmp->GetLabel(),
-      p, kTRUE,
-      v, kFALSE,
-      cov,
-      tmp->Charge(),
-      tmp->GetITSClusterMap(),
-      tmp->GetProdVertex(), // PrimaryVertex?
-      tmp->GetUsedForVtxFit(),
-      tmp->GetUsedForPrimVtxFit(),
-      AliAODTrack::kPrimary,
-      tmp->GetFilterMap(),
-      tmp->Chi2perNDF()
-      );
-  trk->SetFlags(tmp->GetFlags());
+  AliAODTrack* trk = (AliAODTrack*)(tmp->Clone("AliAODTrack"));
   trk->SetStatus(AliVTrack::kEmbedded);
+
+  trk->SetPt(pair->Pt());
+  trk->SetPhi(TVector2::Phi_0_2pi(pair->Phi()));
+  trk->SetTheta(TMath::ACos(pair->Pz() / pair->P()));
+
+  // Remove EMCal
+  trk->ResetStatus(AliVTrack::kEMCALmatch);
+  trk->SetEMCALcluster(AliVTrack::kEMCALNoMatch);
 
   return trk;
 }
