@@ -503,10 +503,10 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
       TIter nextPair(fPairs);
       AliDielectronPair* pair = NULL;
       while(pair = static_cast<AliDielectronPair*>(nextPair())){
-        AliAODTrack* trk = GetTrackFromPair(pair, trkTemplate);
+        Int_t trkID = nanoEv->AddTrack(trkTemplate);
+        AliAODTrack* trk = (AliAODTrack*)(nanoEv->GetTrack(trkID));
+        SetTrackFromPair(pair, trk);
         trk->SetProdVertex(nanoEv->GetPrimaryVertex());
-        trk->SetAODEvent(nanoEv);
-        nanoEv->AddTrack(trk); 
       }
       AliDebug(2, Form("Remove Ndaughters : %d, Add Npairs : %d", nTrackMatched, ncandidates));
     }
@@ -569,10 +569,9 @@ Bool_t YatoJpsiFilterTask::FindDaughters(AliVTrack* trk){
   return kFALSE;
 }
 
-AliAODTrack* YatoJpsiFilterTask::GetTrackFromPair(AliDielectronPair* pair, AliAODTrack* tmp){
+void YatoJpsiFilterTask::SetTrackFromPair(AliDielectronPair* pair, AliAODTrack* trk){
   
-  AliAODTrack* trk = (AliAODTrack*)(tmp->Clone("AliAODTrack"));
-  trk->SetStatus(AliVTrack::kEmbedded);
+  //trk->SetStatus(AliVTrack::kEmbedded);
 
   trk->SetPt(pair->Pt());
   trk->SetPhi(TVector2::Phi_0_2pi(pair->Phi()));
@@ -582,5 +581,7 @@ AliAODTrack* YatoJpsiFilterTask::GetTrackFromPair(AliDielectronPair* pair, AliAO
   trk->ResetStatus(AliVTrack::kEMCALmatch);
   trk->SetEMCALcluster(AliVTrack::kEMCALNoMatch);
 
-  return trk;
+  // Reset reference
+  trk->ResetBit(kIsReferenced);
+  trk->SetUniqueID(0);
 }

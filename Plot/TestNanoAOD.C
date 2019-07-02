@@ -89,8 +89,8 @@ Bool_t TestJpsiInJet(){
     h = new TH1D("hZall","pT ratio of leading track",20,0,2);
     h2 = new TH1D("hZpair","pT ratio of dielectron pair",20,0,2);
   }
-  //Int_t pairTrackID = aod->GetNumberOfTracks() -1;
-  Int_t pairTrackID = trkID_EleMaxPt;
+  Int_t pairTrackID = aod->GetNumberOfTracks() -1;
+  //Int_t pairTrackID = trkID_EleMaxPt;
   AliAODTrack* pTrk = (AliAODTrack*)(aod->GetTrack(pairTrackID));
 
   TIter nextJet(jets);
@@ -99,7 +99,11 @@ Bool_t TestJpsiInJet(){
 
     if(jet->Pt() > 5. ){
 
-      if(jet->ContainsTrack(trkID_EleMaxPt) >= 0){
+      if(jet->ContainsTrack(pairTrackID) >= 0){
+        if(yatoDebug){
+          pTrk->Print();
+          jet->Print();
+        }
         h2->Fill(pTrk->Pt() / jet->Pt());
       }
       
@@ -113,7 +117,7 @@ Bool_t TestJpsiInJet(){
   return kTRUE;
 }
 
-void TestNanoAOD(const char* fileName = "AliAOD.ANA.root", Bool_t usrDebug = kFALSE){
+void TestNanoAOD( Bool_t usrDebug = kFALSE, const char* fileName = "AliAOD.ANA.root"){
 
   yatoDebug= usrDebug;
 
@@ -133,7 +137,7 @@ void TestNanoAOD(const char* fileName = "AliAOD.ANA.root", Bool_t usrDebug = kFA
   for(Int_t i = 0 ; i < aodT->GetEntries(); i++){
     aodT->GetEntry(i);
     if(yatoDebug) cout << "[-] Event " << i << " ------> " << endl;
-    TestPairDaughter();
-    //TestJpsiInJet();
+    //TestPairDaughter();
+    TestJpsiInJet();
   }
 }

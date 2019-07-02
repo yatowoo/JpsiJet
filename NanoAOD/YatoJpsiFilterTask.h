@@ -79,7 +79,7 @@ private:
 private:
   void FillJets(AliAODEvent* aodEv, TClonesArray* jetArray, TString jetName);
   Bool_t FindDaughters(AliVTrack* trk);
-  AliAODTrack* GetTrackFromPair(AliDielectronPair* pair, AliAODTrack* tmp);
+  void SetTrackFromPair(AliDielectronPair* pair, AliAODTrack* tmp);
 
 /*Copy from AliAnalysisTaskDielectronFilter*/
 public:
