@@ -12,6 +12,25 @@ TClonesArray* jets = NULL;
 
 Int_t trkID_EleMaxPt = 0;
 
+Bool_t Accept(AliAODTrack* jpsi, Bool_t reqSideBand = kFALSE, Bool_t reqPrompt = kFALSE){
+ 
+  Double_t invMass = jpsi->GetTrackPhiOnEMCal();
+  Double_t lxy = jpsi->GetTrackEtaOnEMCal();
+  // pT cut - with EG2 threshold
+  if(jpsi->Pt() < 5.0) return kFALSE;
+  Double_t Mmin = 2.92;
+  Double_t Mmax = 3.16;
+  if(reqSideBand){
+    Mmin = 3.24;
+    Mmax = 3.56;
+  }
+  if(invMass < Mmin || invMass > Mmax)
+    return kFALSE;
+  if(reqPrompt && TMath::Abs(lxy) > 0.1)
+    return kFALSE;
+  return kTRUE; 
+}
+
 AliAODTrack* GetTrackFromPair(AliDielectronPair* pair, AliAODTrack* tmp){
 
   AliAODTrack* trk = (AliAODTrack*)(tmp->Clone("AliAODTrack"));
@@ -80,9 +99,6 @@ Bool_t TestPairDaughter(){
   return kTRUE;
 }
   
-TH1* h = NULL; 
-TH1* h2 = NULL;
-
 Bool_t Accept(AliEmcalJet* jet, Float_t jetR = 0.4){
   
   if(jet->Pt() < 5.0) return kFALSE;
@@ -93,12 +109,20 @@ Bool_t Accept(AliEmcalJet* jet, Float_t jetR = 0.4){
   return kTRUE;
 }
 
+TH1* h = NULL; 
+TH1* hPrompt = NULL;
+TH1* hNonPrompt = NULL;
+TH1* hPromptSB = NULL;
+TH1* hNonPromptSB = NULL;
 
 Bool_t TestJpsiInJet(){
 
   if(!h){
     h = new TH1D("hZall","pT ratio of leading track",20,0,2);
-    h2 = new TH1D("hZpair","pT ratio of dielectron pair",20,0,2);
+    hPrompt = new TH1D("hZpair","pT ratio of dielectron pair",20,0,2);
+    hNonPrompt = new TH1D("hZpairB","pT ratio of dielectron pair",20,0,2);
+    hPromptSB = new TH1D("hZSB","pT ratio of dielectron pair",20,0,2);
+    hNonPromptSB = new TH1D("hZSBB","pT ratio of dielectron pair",20,0,2);
   }
   Int_t pairTrackID = aod->GetNumberOfTracks() -1;
   //Int_t pairTrackID = trkID_EleMaxPt;
@@ -115,7 +139,11 @@ Bool_t TestJpsiInJet(){
           pTrk->Print();
           jet->Print();
         }
-        h2->Fill(pTrk->Pt() / jet->Pt());
+        Double_t z = pTrk->Pt() / jet->Pt();
+        if(Accept(pTrk, kFALSE, kTRUE)) hPrompt->Fill(z);
+        if(Accept(pTrk, kFALSE, kFALSE)) hNonPrompt->Fill(z);
+        if(Accept(pTrk, kTRUE, kTRUE)) hPromptSB->Fill(z);
+        if(Accept(pTrk, kTRUE, kFALSE)) hNonPromptSB->Fill(z);
       }
       
       Double_t maxPt = jet->MaxChargedPt();
