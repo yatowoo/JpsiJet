@@ -584,4 +584,13 @@ void YatoJpsiFilterTask::SetTrackFromPair(AliDielectronPair* pair, AliAODTrack* 
   // Reset reference
   trk->ResetBit(kIsReferenced);
   trk->SetUniqueID(0);
+
+  // DEBUG - Pseudo-proper decay length
+  auto aod = (AliAODEvent*)(InputEvent());
+  auto priv = aod->GetPrimaryVertex();
+  Double_t errPseudoProperTime2 = 0.;
+  AliKFParticle kfPair = pair->GetKFParticle();
+  Double_t lxy = kfPair.GetPseudoProperDecayTime(*priv, TDatabasePDG::Instance()->GetParticle(443)->Mass(), &errPseudoProperTime2 );
+  trk->SetTrackPhiEtaPtOnEMCal(pair->M(), lxy, 0.);
+
 }
