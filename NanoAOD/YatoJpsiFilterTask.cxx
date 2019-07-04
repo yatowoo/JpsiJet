@@ -389,7 +389,7 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
     hasCand = (hasCand || fDielectron->GetTrackArray(0) || fDielectron->GetTrackArray(1));
 
   // Fill nano AOD
-  if ( hasCand || fIsToReplace)
+  if ( hasCand)
   {
     AliAODEvent *aodEv = (static_cast<AliAODEvent *>(InputEvent()));
     // Fill ZDC, AD, TZERO data
@@ -503,9 +503,10 @@ void YatoJpsiFilterTask::UserExec(Option_t*){
       TIter nextPair(fPairs);
       AliDielectronPair* pair = NULL;
       while(pair = static_cast<AliDielectronPair*>(nextPair())){
-        AliAODTrack* trk = GetTrackFromPair(pair, trkTemplate);
+        Int_t trkID = nanoEv->AddTrack(trkTemplate);
+        AliAODTrack* trk = (AliAODTrack*)(nanoEv->GetTrack(trkID));
+        SetTrackFromPair(pair, trk);
         trk->SetProdVertex(nanoEv->GetPrimaryVertex());
-        nanoEv->AddTrack(trk); 
       }
       AliDebug(2, Form("Remove Ndaughters : %d, Add Npairs : %d", nTrackMatched, ncandidates));
     }
@@ -568,33 +569,28 @@ Bool_t YatoJpsiFilterTask::FindDaughters(AliVTrack* trk){
   return kFALSE;
 }
 
-AliAODTrack* YatoJpsiFilterTask::GetTrackFromPair(AliDielectronPair* pair, AliAODTrack* tmp){
-
-  Double_t p[3] = {0.};
-  Double_t v[3] = {0.};
-  Double_t cov[21] = {0.};
-  pair->PxPyPz(p);
-  pair->XvYvZv(v);
+void YatoJpsiFilterTask::SetTrackFromPair(AliDielectronPair* pair, AliAODTrack* trk){
   
-  tmp->GetCovarianceXYZPxPyPz(cov);
-  
-  AliAODTrack* trk = new AliAODTrack(
-      tmp->GetID(),
-      tmp->GetLabel(),
-      p, kTRUE,
-      v, kFALSE,
-      cov,
-      tmp->Charge(),
-      tmp->GetITSClusterMap(),
-      tmp->GetProdVertex(), // PrimaryVertex?
-      tmp->GetUsedForVtxFit(),
-      tmp->GetUsedForPrimVtxFit(),
-      AliAODTrack::kPrimary,
-      tmp->GetFilterMap(),
-      tmp->Chi2perNDF()
-      );
-  trk->SetFlags(tmp->GetFlags());
-  trk->SetStatus(AliVTrack::kEmbedded);
+  //trk->SetStatus(AliVTrack::kEmbedded);
 
-  return trk;
+  trk->SetPt(pair->Pt());
+  trk->SetPhi(TVector2::Phi_0_2pi(pair->Phi()));
+  trk->SetTheta(TMath::ACos(pair->Pz() / pair->P()));
+
+  // Remove EMCal
+  trk->ResetStatus(AliVTrack::kEMCALmatch);
+  trk->SetEMCALcluster(AliVTrack::kEMCALNoMatch);
+
+  // Reset reference
+  trk->ResetBit(kIsReferenced);
+  trk->SetUniqueID(0);
+
+  // DEBUG - Pseudo-proper decay length
+  auto aod = (AliAODEvent*)(InputEvent());
+  auto priv = aod->GetPrimaryVertex();
+  Double_t errPseudoProperTime2 = 0.;
+  AliKFParticle kfPair = pair->GetKFParticle();
+  Double_t lxy = kfPair.GetPseudoProperDecayTime(*priv, TDatabasePDG::Instance()->GetParticle(443)->Mass(), &errPseudoProperTime2 );
+  trk->SetTrackPhiEtaPtOnEMCal(pair->M(), lxy, 0.);
+
 }
