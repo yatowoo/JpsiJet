@@ -26,8 +26,14 @@ Bool_t Accept(AliAODTrack* jpsi, Bool_t reqSideBand = kFALSE, Bool_t reqPrompt =
   }
   if(invMass < Mmin || invMass > Mmax)
     return kFALSE;
-  if(reqPrompt && TMath::Abs(lxy) > 0.1)
+  if(reqPrompt && TMath::Abs(lxy) > 0.01)
     return kFALSE;
+  if(!reqPrompt && lxy < 0.01)
+    return kFALSE;
+  
+  if(yatoDebug){
+    cout << "[-] Pair info - M=" << invMass << ", Lxy=" << lxy << endl;
+  }
   return kTRUE; 
 }
 
@@ -114,15 +120,30 @@ TH1* hPrompt = NULL;
 TH1* hNonPrompt = NULL;
 TH1* hPromptSB = NULL;
 TH1* hNonPromptSB = NULL;
+  
+TF1* fcn = NULL;
+
+void HistoNorm(TH1* h, Long_t nEvent = 0){
+  if(nEvent == 0) nEvent = h->GetEntries();
+  Double_t normFactor = nEvent * h->GetBinWidth(1);
+  if(yatoDebug) cout << "[+] Histogram Normalization Factor : " << normFactor << endl;
+  if(!fcn) fcn = new TF1("fNorm","[0]",-1e6,1e6);
+  fcn->SetParameter(0, normFactor);
+  h->Divide(fcn);
+  for(Int_t i = 0; i <= h->GetNbinsX(); i++){
+    h->SetBinError(i, h->GetBinError(i) / TMath::Sqrt(normFactor)) ;
+  }
+
+}
 
 Bool_t TestJpsiInJet(){
 
   if(!h){
-    h = new TH1D("hZall","pT ratio of leading track",20,0,2);
-    hPrompt = new TH1D("hZpair","pT ratio of dielectron pair",20,0,2);
-    hNonPrompt = new TH1D("hZpairB","pT ratio of dielectron pair",20,0,2);
-    hPromptSB = new TH1D("hZSB","pT ratio of dielectron pair",20,0,2);
-    hNonPromptSB = new TH1D("hZSBB","pT ratio of dielectron pair",20,0,2);
+    h = new TH1D("hZall","pT ratio of leading track;z;1/N dN/dz",12,0,1.2);
+    hPrompt = new TH1D("hZpair","pT ratio of dielectron pair (Prompt);z;1/N dN/dz",12,0,1.2);
+    hNonPrompt = new TH1D("hZpairB","pT ratio of dielectron pair (Non-prompt);z;1/N dN/dz",12,0,1.2);
+    hPromptSB = new TH1D("hZSB","pT ratio of dielectron pair (Prompt SB);z;1/N dN/dz",12,0,1.2);
+    hNonPromptSB = new TH1D("hZSBB","pT ratio of dielectron pair (Non-prompt SB);z;1/N dN/dz",12,0,1.2);
   }
   Int_t pairTrackID = aod->GetNumberOfTracks() -1;
   //Int_t pairTrackID = trkID_EleMaxPt;
@@ -140,10 +161,16 @@ Bool_t TestJpsiInJet(){
           jet->Print();
         }
         Double_t z = pTrk->Pt() / jet->Pt();
-        if(Accept(pTrk, kFALSE, kTRUE)) hPrompt->Fill(z);
-        if(Accept(pTrk, kFALSE, kFALSE)) hNonPrompt->Fill(z);
-        if(Accept(pTrk, kTRUE, kTRUE)) hPromptSB->Fill(z);
-        if(Accept(pTrk, kTRUE, kFALSE)) hNonPromptSB->Fill(z);
+        // Signal region
+        if(Accept(pTrk, kFALSE, kTRUE))
+          hPrompt->Fill(z);
+        if(Accept(pTrk, kFALSE, kFALSE))
+          hNonPrompt->Fill(z);
+        // Side band
+        if(Accept(pTrk, kTRUE, kTRUE))
+          hPromptSB->Fill(z);
+        if(Accept(pTrk, kTRUE, kFALSE))
+          hNonPromptSB->Fill(z);
       }
       
       Double_t maxPt = jet->MaxChargedPt();
