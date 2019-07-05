@@ -41,10 +41,17 @@ AliAnalysisAlien* SetupGridHandler(
 
   alienHandler->SetAPIVersion("V1.1x");
 
-  alienHandler->SetGridDataDir("/alice/data/"+data_dir);
-  alienHandler->SetDataPattern("*/pass1/AOD/*AOD.root");
-
-  alienHandler->SetRunPrefix("000");
+  // MC production
+  if(data_dir.Length() > 11){
+    alienHandler->SetGridDataDir("/alice/sim/"+data_dir);
+    alienHandler->SetDataPattern("*/AOD/*AOD.root");
+    alienHandler->SetRunPrefix("");
+  }
+  else{
+    alienHandler->SetGridDataDir("/alice/data/"+data_dir);
+    alienHandler->SetDataPattern("*/pass1/AOD/*AOD.root");
+    alienHandler->SetRunPrefix("000");
+  }
 
   alienHandler->AddRunNumber(runlist);
 
@@ -114,7 +121,8 @@ void runAnalysis(
   mgr->SetOutputEventHandler(aodOutputH);
 
   // Task - Physics Selection
-  gInterpreter->ExecuteMacro("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C");
+  if(data_dir.Length() == 11) // Exp. data
+    gInterpreter->ExecuteMacro("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C");
 
   // Task - Centrality / Multiplicity
   if(doMult)
