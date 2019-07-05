@@ -138,8 +138,8 @@ void FillHistograms(TFile* anaResult, TString runNumber){
   eleEtaPhi->Add((TH2*)(trackQA_tmp->FindObject("Eta_Phi")));
   histos[kElectron_Eta]->Fill(runNumber.Data(),eleEtaPhi->GetMean(1));
   histos[kElectron_Phi]->Fill(runNumber.Data(),eleEtaPhi->GetMean(2));
-  auto eleE = (TH1*)(trackQA->FindObject("EMCal_E"));
-  eleE->Add((TH1*)(trackQA_tmp->FindObject("EMCal_E")));
+  auto eleE = (TH1*)(trackQA->FindObject("EMCalE"));
+  eleE->Add((TH1*)(trackQA_tmp->FindObject("EMCalE")));
   histos[kEMCalE]->Fill(runNumber.Data(),eleE->GetMean());
   
   
@@ -219,7 +219,7 @@ void DrawHistograms(TString outputFileName = "OutputQA.root"){
 
 }
 
-void DrawQA(
+void DrawQA_Runwise(
   TString output_dir = "/data2/ytwu/LOG/ALICE/JpsiJet_QAFilter_test_190608"
 ){
 
