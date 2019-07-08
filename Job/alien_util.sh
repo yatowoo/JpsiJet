@@ -45,7 +45,7 @@ function list_subjob_outputs(){
 
 function clean_workdir(){
   # List runs
-  for run in $(ls $1/OutputAOD/ | grep 000);
+  for run in $(ls $1/OutputAOD/ | grep 2);
   do
     run_path=$1/OutputAOD/$run
     echo "[+] Run " $run " Found"
