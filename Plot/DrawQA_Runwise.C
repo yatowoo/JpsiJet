@@ -98,14 +98,28 @@ Bool_t FillHistogramValue(const char* hLabel, TH1* hQA, TH1* hSource){
 void FillHistograms(TFile* anaResult, TString runNumber){
   // Dielectron filter QA - kEMCEGA + EMCal_loose
    // Number of events with triggers
+  
   TH1* filterEventStat = (TH1*)(anaResult->Get("PWGDQ_dielectronFilter/hEventStat"));
   histos[kNEventTotal]->Fill(runNumber.Data(),filterEventStat->GetBinContent(1));
   histos[kNEventEGA]->Fill(runNumber.Data(),filterEventStat->GetBinContent(5));
    // Number of dielectron filtered events
-  auto eventQA = (THashList*)(anaResult->Get("PWGDQ_dielectronFilter/jpsi_FilterQA")->FindObject("Event"));
+  auto filterQA = (THashList*)(anaResult->Get("PWGDQ_dielectronFilter/jpsi_FilterQA"));
+  filterQA->SetOwner(kTRUE);
+  auto eventQA = (THashList*)(filterQA->FindObject("Event"));
+  eventQA->SetOwner(kTRUE);
   auto nPair = (TH1*)(eventQA->FindObject("Npairs"));
+  
   Int_t nEvNano = nPair->GetEntries() - nPair->GetBinContent(1);
+  
   histos[kNEventFilter]->Fill(runNumber.Data(),nEvNano);
+  
+  cout << "N events (Before PS):\t" << filterEventStat->GetBinContent(1) << endl;
+  cout << "N events (EMCEGA):\t" << filterEventStat->GetBinContent(5) << endl;
+  cout << "N events (NanoAOD):\t" << nEvNano << endl;
+  
+  delete filterEventStat;
+  delete filterQA;
+  /*
     // Dielectron QA - INT7/EG1/EG2/DG1/DG2 + EMCal_strict/RAW
   auto eventQA_MB = (THashList*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_0/cjahnke_QA_0")->FindObject("RAW")->FindObject("Event"));
   auto hEventStat_MB = (TH1*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_0/hEventStat"));
@@ -124,10 +138,8 @@ void FillHistograms(TFile* anaResult, TString runNumber){
   FillHistogramValue(runNumber.Data(), histos[kNElectrons], (TH1*)(eventQA->FindObject("Ntracks")));
   FillHistogramValue(runNumber.Data(), histos[kVtxZ], (TH1*)(eventQA->FindObject("VtxZ")));
   FillHistogramValue(runNumber.Data(), histos[kV0], (TH1*)(eventQA->FindObject("kMultV0")));
-  cout << "N events (Before PS):\t" << filterEventStat->GetBinContent(1) << endl;
-  cout << "N events (EMCEGA):\t" << filterEventStat->GetBinContent(5) << endl;
-  cout << "N events (NanoAOD):\t" << nEvNano << endl;
-  
+  */
+  /*
     // Filtered Electrons
   auto trackQA = (THashList*)(anaResult->Get("PWGDQ_dielectronFilter/jpsi_FilterQA")->FindObject("Track_ev1+"));
   auto trackQA_tmp = (THashList*)(anaResult->Get("PWGDQ_dielectronFilter/jpsi_FilterQA")->FindObject("Track_ev1-"));
@@ -159,6 +171,7 @@ void FillHistograms(TFile* anaResult, TString runNumber){
   // eta, phi, Pt, Pt_leading
   //auto jets02QA = (THnSparseT<TArrayD>*)(jetQA->FindObject("Jet_AKTChargedR020_tracks_pT0150_pt_scheme")->FindObject("fHistJetObservables"));
   //auto jets04QA = (THnSparseT<TArrayD>*)(jetQA->FindObject("Jet_AKTChargedR040_tracks_pT0150_pt_scheme")->FindObject("fHistJetObservables"));
+  */
 }
 
 void DrawHistograms(TString outputFileName = "OutputQA.root"){
@@ -223,7 +236,7 @@ void DrawQA_Runwise(
   TString output_dir = "/data2/ytwu/LOG/ALICE/JpsiJet_QAFilter_test_190608"
 ){
 
-  TString ret = gSystem->GetFromPipe(Form("ls %s/OutputAOD/ | grep 000",output_dir.Data()));
+  TString ret = gSystem->GetFromPipe(Form("ls %s/OutputAOD/ | grep 2",output_dir.Data()));
 
 
   TObjArray* runlist = ret.Tokenize("\n");
@@ -241,6 +254,7 @@ void DrawQA_Runwise(
     FillHistograms(anaResult, runNumber);
     
     anaResult->Close();
+    delete anaResult;
   }// Loop runlist
 
   // Plot and output
