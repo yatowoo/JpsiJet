@@ -107,7 +107,7 @@ Bool_t TestPairDaughter(){
   
 Bool_t Accept(AliEmcalJet* jet, Float_t jetR = 0.4){
   
-  if(jet->Pt() < 5.0) return kFALSE;
+  if(jet->Pt() < 15.0) return kFALSE;
   // Geometry cut - TPCfid
   if(TMath::Abs(jet->Eta()) > 0.9 - jetR)
     return kFALSE;
@@ -136,6 +136,10 @@ void HistoNorm(TH1* h, Long_t nEvent = 0){
 
 }
 
+Bool_t IsIsolated(AliEmcalJet* jet){
+  return (jet->GetNumberOfTracks() == 1);
+}
+
 Bool_t TestJpsiInJet(){
 
   if(!h){
@@ -162,6 +166,9 @@ Bool_t TestJpsiInJet(){
           jet->Print();
         }
         Double_t z = pTrk->Pt() / jet->Pt();
+
+        if(IsIsolated(jet)) z = 1.;
+        
         // Signal region
         if(Accept(pTrk, kFALSE, kTRUE))
           hPrompt->Fill(z);
@@ -177,6 +184,7 @@ Bool_t TestJpsiInJet(){
       Double_t maxPt = jet->MaxChargedPt();
       Double_t pt = jet->Pt();
       Double_t z = maxPt/pt;
+      if(IsIsolated(jet)) z = 1.;
       h->Fill(z);
     }
   }
