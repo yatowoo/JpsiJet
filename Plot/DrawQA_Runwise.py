@@ -12,7 +12,10 @@ if(len(sys.argv) == 1):
 else:
   work_dir = sys.argv[1] + '/OutputAOD/'
 
-print('======\n  ROOT - ' + ROOT.gROOT.GetVersion()+'\n======\n')
+gRootVer = ROOT.gROOT.GetVersion()
+print('=' * 50)
+print('\tJpsiJet Runwise QA\n  Python ' + sys.version[0:5] + ' + ROOT ' + gRootVer)
+print('=' * 50)
 
 for runDir in os.listdir(work_dir):
   if(not os.path.isdir(work_dir + runDir)):
@@ -24,7 +27,10 @@ for runDir in os.listdir(work_dir):
   filterEventStat= resultFile.Get('PWGDQ_dielectronFilter/hEventStat')
   print('----> Event Number (EMCEGA) : '+repr(filterEventStat.GetBinContent(5)))
   filterQA = resultFile.Get('PWGDQ_dielectronFilter/jpsi_FilterQA')
+  filterQA.SetOwner(True)
   eventQA = filterQA.FindObject('Event')
+  eventQA.SetOwner(True)
   nPair = eventQA.FindObject('Npairs')
-  print('----> Pair stat. : '+repr(nPair.GetSum()-nPair.GetBinContent(1))+','+repr(nPair.GetMean()))
+  print('----> Pair stat. : %d, %.3f' %(nPair.GetSum()-nPair.GetBinContent(1), nPair.GetMean()))
   resultFile.Close()
+  filterQA.Delete("slow")
