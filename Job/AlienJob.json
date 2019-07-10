@@ -1,4 +1,17 @@
 {
+  "MC":{
+    "doMult": true,
+    "doEmcalCorrection": false,
+    "doJetQA": true,
+    "doJpsiQA": false,
+    "doJpsiFilter": true,
+    "doPIDQA": false,
+    "doPhysAna": true,
+    "datasets": "16l_pass1",
+    "data_dir": "2016/LHC16j4a",
+    "work_dir": "Dev_Debug",
+    "task_name": "JpsiJet"
+  },
   "grid_test":{
     "doMult": false,
     "doEmcalCorrection": false,

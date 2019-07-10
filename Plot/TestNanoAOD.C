@@ -70,12 +70,12 @@ Bool_t TestPairDaughter(){
   daughters->Clear("C");
   Int_t nEle = 0;
   while(jpsi = static_cast<AliDielectronPair*>(nextPair())){
-    AliKFParticle& ele = jpsi->GetKFFirstDaughter();
+    const AliKFParticle& ele = jpsi->GetKFFirstDaughter();
     new ((*daughters)[nEle++]) TLorentzVector(ele.GetPx(),ele.GetPy(),ele.GetPz(),ele.GetE());
-    ele = jpsi->GetKFSecondDaughter();
-    new ((*daughters)[nEle++]) TLorentzVector(ele.GetPx(),ele.GetPy(),ele.GetPz(),ele.GetE());
+    const AliKFParticle& ele2 = jpsi->GetKFSecondDaughter();
+    new ((*daughters)[nEle++]) TLorentzVector(ele2.GetPx(),ele2.GetPy(),ele2.GetPz(),ele2.GetE());
   }
-  if(nEle == 0) continue;
+  if(nEle == 0) return kFALSE;
   cout << "[-] TestPairDaughter - Pairs=" << pairs->GetEntries()
     << " Daughters=" << daughters->GetEntries() << endl; 
   TIter nextTrack(aod->GetTracks());
@@ -150,6 +150,7 @@ Bool_t TestJpsiInJet(){
   AliAODTrack* pTrk = (AliAODTrack*)(aod->GetTrack(pairTrackID));
 
   TIter nextJet(jets);
+  AliEmcalJet* jet = NULL;
 
   while( jet = static_cast<AliEmcalJet*>(nextJet())){
 
@@ -190,13 +191,13 @@ void TestNanoAOD( Bool_t usrDebug = kFALSE, const char* fileName = "AliAOD.ANA.r
   f = new TFile(fileName);
   aodT = (TTree*)(f->Get("aodTree"));
   aod = new AliAODEvent;
-  aod->ReadFromTree(aodTree);
+  aod->ReadFromTree(aodT);
   
   pairs = new TClonesArray("AliDielectronPair",100);
-  aodTree->SetBranchAddress("dielectrons",&pairs);
+  aodT->SetBranchAddress("dielectrons",&pairs);
 
   jets = new TClonesArray("AliEmcalJet",100);
-  aodTree->SetBranchAddress("jets04",&jets);
+  aodT->SetBranchAddress("jets04",&jets);
 
   daughters = new TClonesArray("TLorentzVector",100);
 
