@@ -192,6 +192,29 @@ Bool_t TestJpsiInJet(){
   return kTRUE;
 }
 
+void HistoStyle(TH1* hist, Int_t color, Int_t marker, const char* legend){
+  HistoNorm(hist);
+  hist->SetLineColor(color);
+  hist->SetMarkerSize(1.5);
+  hist->SetMarkerColor(color);
+  hist->SetMarkerStyle(marker);
+  hist->SetTitle(legend);
+}
+
+void DrawFF(){
+  Int_t nJets = h->GetEntries();
+  Int_t nPrompt = hPrompt->GetEntries();
+  Int_t nNonprompt = hNonPrompt->GetEntries();
+  HistoStyle(h, kBlack, 20, Form("Leading Track (%d)",nJets));
+  HistoStyle(hPrompt, kRed, 25, Form("Prompt (%d)",nPrompt));
+  HistoStyle(hNonPrompt, kBlue, 34, Form("Nonprompt (%d)",nNonprompt));
+  h->Draw("E");
+  hPrompt->Draw("same E");
+  hNonPrompt->Draw("same E");
+  h->GetYaxis()->SetRangeUser(0,5);
+  h->SetTitle("z #equiv p_{T} ratio of track in jet");
+}
+
 void TestNanoAOD( Bool_t usrDebug = kFALSE, const char* fileName = "AliAOD.ANA.root"){
 
   yatoDebug= usrDebug;
@@ -215,4 +238,5 @@ void TestNanoAOD( Bool_t usrDebug = kFALSE, const char* fileName = "AliAOD.ANA.r
     //TestPairDaughter();
     TestJpsiInJet();
   }
+  DrawFF();
 }
