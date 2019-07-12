@@ -10,6 +10,16 @@ TClonesArray* pairs = NULL;
 TClonesArray* daughters = NULL;
 TClonesArray* jets = NULL;
 
+const Double_t CUT_Jet_Pt = 15.0;
+const Double_t CUT_Jet_TPCrange = 0.9;
+const Double_t CUT_Jpsi_Pt = 5.0;
+const Double_t CUT_Jpsi_Prompt = 0.01;
+const Double_t CUT_Jpsi_Nonprompt = 0.01;
+const Double_t CUT_Jpsi_Mmin = 2.92;
+const Double_t CUT_Jpsi_Mmax = 3.16;
+const Double_t CUT_Jpsi_Mmin_SIDEBAND = 3.24;
+const Double_t CUT_Jpsi_Mmax_SIDEBAND = 3.56;
+
 Int_t trkID_EleMaxPt = 0;
 
 Bool_t Accept(AliAODTrack* jpsi, Bool_t reqSideBand = kFALSE, Bool_t reqPrompt = kFALSE){
@@ -17,18 +27,18 @@ Bool_t Accept(AliAODTrack* jpsi, Bool_t reqSideBand = kFALSE, Bool_t reqPrompt =
   Double_t invMass = jpsi->GetTrackPhiOnEMCal();
   Double_t lxy = jpsi->GetTrackEtaOnEMCal();
   // pT cut - with EG2 threshold
-  if(jpsi->Pt() < 5.0) return kFALSE;
-  Double_t Mmin = 2.92;
-  Double_t Mmax = 3.16;
+  if(jpsi->Pt() < CUT_Jpsi_Pt) return kFALSE;
+  Double_t Mmin = CUT_Jpsi_Mmin;
+  Double_t Mmax = CUT_Jpsi_Mmax;
   if(reqSideBand){
-    Mmin = 3.24;
-    Mmax = 3.56;
+    Mmin = CUT_Jpsi_Mmin_SIDEBAND;
+    Mmax = CUT_Jpsi_Mmax_SIDEBAND;
   }
   if(invMass < Mmin || invMass > Mmax)
     return kFALSE;
-  if(reqPrompt && TMath::Abs(lxy) > 0.01)
+  if(reqPrompt && TMath::Abs(lxy) > CUT_Jpsi_Prompt)
     return kFALSE;
-  if(!reqPrompt && lxy < 0.01)
+  if(!reqPrompt && lxy < CUT_Jpsi_Nonprompt)
     return kFALSE;
   
   if(yatoDebug){
@@ -107,9 +117,9 @@ Bool_t TestPairDaughter(){
   
 Bool_t Accept(AliEmcalJet* jet, Float_t jetR = 0.4){
   
-  if(jet->Pt() < 15.0) return kFALSE;
+  if(jet->Pt() < CUT_Jet_Pt) return kFALSE;
   // Geometry cut - TPCfid
-  if(TMath::Abs(jet->Eta()) > 0.9 - jetR)
+  if(TMath::Abs(jet->Eta()) > CUT_Jet_TPCrange - jetR)
     return kFALSE;
 
   return kTRUE;
@@ -206,12 +216,15 @@ void DrawFF(){
   Int_t nPrompt = hPrompt->GetEntries();
   Int_t nNonprompt = hNonPrompt->GetEntries();
   HistoStyle(h, kBlack, 20, Form("Leading Track (%d)",nJets));
-  HistoStyle(hPrompt, kRed, 25, Form("Prompt (%d)",nPrompt));
+  HistoStyle(hPrompt, kRed, 22, Form("Prompt (%d)",nPrompt));
   HistoStyle(hNonPrompt, kBlue, 34, Form("Nonprompt (%d)",nNonprompt));
+  TCanvas* c = new TCanvas(Form("cZ_pt%2d",int(CUT_Jet_Pt)), Form("Pad for Z by jet > %2.1f",CUT_Jet_Pt), 650, 550);
   h->Draw("E");
   hPrompt->Draw("same E");
   hNonPrompt->Draw("same E");
   h->GetYaxis()->SetRangeUser(0,5);
+  gPad->BuildLegend(0.15, 0.60, 0.45, 0.85);
+  gStyle->SetOptStat(kFALSE);
   h->SetTitle("z #equiv p_{T} ratio of track in jet");
 }
 
