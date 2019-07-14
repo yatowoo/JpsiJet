@@ -836,6 +836,26 @@ The procedure is carried out in two dimensions, z and jet $p_{T}$ with D'Agostin
 
 ## Systematic uncertainties
 
+### Tracking
+
+With different cut definitions.
+
+### ITS-TPC matching
+
+Matching efficiency
+
+### PID
+
+PID cuts for electron, electron from conversion, electron efficiency, hadron rejection ...
+
+### Signal extraction
+
+Fitting method and errors.
+
+### Normalization
+
+Branching ratio, luminosity ...
+
 ## Preliminary Result
 
 ## Publication
