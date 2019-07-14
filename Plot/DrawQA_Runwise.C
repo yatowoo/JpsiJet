@@ -82,6 +82,11 @@ Int_t SelectMarkerStyle(Bool_t newSets = kFALSE){
   return MARKER_SET[CURRENT_INDEX];
 }
 
+const char* ObjTitle(TString str){
+  if(gIsMC) str = str + "_MC";
+  return str.Data();
+}
+
 void InitHistograms(Int_t N_RUNS){
   for(Int_t i = 0; i < kVarN; i++){
     TString hTitle = HISTO_SETUP[i][0];
@@ -136,14 +141,16 @@ void FillHistograms(TFile* anaResult, TString runNumber){
   trackQA_tmp->SetOwner(kTRUE);
   auto elePt = (TH1*)(trackQA->FindObject("Pt"));
   elePt->Add((TH1*)(trackQA_tmp->FindObject("Pt")));
-  histos[kElectron_Pt]->Fill(runNumber.Data(),elePt->GetMean());
+  FillHistogramValue(runNumber.Data(), histos[kElectron_Pt], elePt);
+ 
   auto eleEtaPhi = (TH2*)(trackQA->FindObject("Eta_Phi"));
   eleEtaPhi->Add((TH2*)(trackQA_tmp->FindObject("Eta_Phi")));
-  histos[kElectron_Eta]->Fill(runNumber.Data(),eleEtaPhi->GetMean(1));
-  histos[kElectron_Phi]->Fill(runNumber.Data(),eleEtaPhi->GetMean(2));
+  FillHistogramValue(runNumber.Data(), histos[kElectron_Eta], eleEtaPhi->ProjectionX());
+  FillHistogramValue(runNumber.Data(), histos[kElectron_Phi], eleEtaPhi->ProjectionY());
+  
   auto eleE = (TH1*)(trackQA->FindObject("EMCalE"));
   eleE->Add((TH1*)(trackQA_tmp->FindObject("EMCalE")));
-  histos[kEMCalE]->Fill(runNumber.Data(),eleE->GetMean());
+  FillHistogramValue(runNumber.Data(), histos[kEMCalE], eleE);
   
   
   delete filterEventStat;
@@ -170,6 +177,7 @@ void FillHistograms(TFile* anaResult, TString runNumber){
   delete jetQA;
   
   if(gIsMC) return;
+  /*
     // Dielectron QA - INT7/EG1/EG2/DG1/DG2 + EMCal_strict/RAW
   auto eventQA_MB = (THashList*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_0/cjahnke_QA_0")->FindObject("RAW")->FindObject("Event"));
   auto hEventStat_MB = (TH1*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_0/hEventStat"));
@@ -182,12 +190,14 @@ void FillHistograms(TFile* anaResult, TString runNumber){
   histos[kNEventDG1]->Fill(runNumber.Data(),hEventStat->GetBinContent(7));
   hEventStat = (TH1*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_40/hEventStat"));
   histos[kNEventDG2]->Fill(runNumber.Data(),hEventStat->GetBinContent(7));
+  */
 }
 
 void DrawHistograms(TString outputFileName = "OutputQA.root"){
   if(gIsMC) outputFileName = "OutputQA_MC.root";
   TFile* outputQA = new TFile(outputFileName,"RECREATE");
-  TCanvas* cNEvent = new TCanvas("cEv","Event Number QA");
+  
+  TCanvas* cNEvent = new TCanvas(ObjTitle("cEv"),"Event Number QA");
   cNEvent->SetLogy(kTRUE);
   if(!histos[0]) return;
   // Drawing style
@@ -215,14 +225,14 @@ void DrawHistograms(TString outputFileName = "OutputQA.root"){
   }// Loop - histos
   cNEvent->Write();
 
-  TCanvas* cRunwise = new TCanvas("cQA","Runwise QA",800,600);
+  TCanvas* cRunwise = new TCanvas(ObjTitle("cQA"),"Runwise QA",800,600);
   cRunwise->Divide(4,4);
   cRunwise->SetLogy(kFALSE); 
   gStyle->SetOptTitle(kTRUE);
   for(Int_t i = kNEventListN; i < kVarN; i++){
     cRunwise->cd(i-kNEventListN+1);
     gPad->SetLogy(kFALSE);
-    Int_t color = SelectColor();
+    Int_t color = SelectColor(kTRUE);
     if(gIsMC) color = kRed;
     histos[i]->SetLineColor(color);
     histos[i]->SetMarkerColor(color);
@@ -241,6 +251,7 @@ void DrawHistograms(TString outputFileName = "OutputQA.root"){
     }
     histos[i]->GetYaxis()->SetRangeUser(ymin, ymax);
   }
+  cRunwise->Write();
 
   for(Int_t i = 0; i < kVarN; i++)
     histos[i]->Write();
