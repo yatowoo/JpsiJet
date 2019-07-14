@@ -795,6 +795,12 @@ Main task:
   - Pari mass: $[1.0, 5.0]~(GeV/c^2)$ (for background estimation)
   - Jet: no cuts (__*TODO*__: set by user)
 
+### Fragmentation Function
+
+1. Replace daughters with $J/\psi$ pseudo track.
+2. Reclustering with new track array.
+3. Find $J/\psi$ track in jets and calculate $p_{T}$ ratio (z).
+
 ## Correction
 
 ### TPC post-calibration
