@@ -20,10 +20,10 @@ Int_t SelectColor(Bool_t newSets = kFALSE){
 
 TH1* GetEMCalE(TList* dieQA,const char* trigName, const char* cutDef = "RAW"){
   // Get EMCal_E with +/- tracks
-  TH1* htmp = (TH1*)(dieQA->FindObject(cutDef)->FindObject("Track_ev1+")->FindObject("EMCal_E"));
+  TH1* htmp = (TH1*)(dieQA->FindObject(cutDef)->FindObject("Track_ev1+")->FindObject("EMCalE"));
   TH1* hE = (TH1*)(htmp->Clone(Form("hEMCalE_%s",trigName)));
   hE->SetTitle(trigName);
-  htmp = (TH1*)(dieQA->FindObject(cutDef)->FindObject("Track_ev1-")->FindObject("EMCal_E"));
+  htmp = (TH1*)(dieQA->FindObject(cutDef)->FindObject("Track_ev1-")->FindObject("EMCalE"));
   hE->Add(htmp);
   // Get event number
   htmp = (TH1*)(dieQA->FindObject("RAW")->FindObject("Event")->FindObject("VtxZ"));
@@ -42,6 +42,7 @@ TH1* GetEMCalE(TList* dieQA,const char* trigName, const char* cutDef = "RAW"){
 void EMCalRF(){
   if(!fcn) fcn = new TF1("fNorm","[0]", 0, 100);  
   TCanvas* cEMCal = new TCanvas("cE","QA for EMCal", 1600, 600);
+  gStyle->SetOptStat(kFALSE);
   cEMCal->Divide(2);
   TH1* hMB = GetEMCalE((TList*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_0/cjahnke_QA_0")),"MB");
   TH1* hEG1 = GetEMCalE((TList*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_3/cjahnke_QA_3")),"EG1");
@@ -56,27 +57,37 @@ void EMCalRF(){
   hDG2->Draw("same P");
   hMB->GetYaxis()->SetRangeUser(1e-6,30);
   gPad->SetLogy(kTRUE);
+  gPad->BuildLegend();
   // Rejection Factor
   auto RF1 = (TH1*)(hEG1->Clone("hRF1"));
   RF1->Divide(hMB);
-  RF1->SetDirectory(NULL);
+  RF1->SetTitle("EG1/MB");
   auto RF2 = (TH1*)(hEG2->Clone("hRF2"));
   RF2->Divide(hMB);
-  RF2->SetDirectory(NULL);
+  RF2->SetTitle("EG2/MB");
+  auto RF10 = (TH1*)(hDG1->Clone("hRF10"));
+  RF10->Divide(hMB);
+  RF10->SetTitle("DG1/MB");
+  auto RF20 = (TH1*)(hDG2->Clone("hRF20"));
+  RF20->Divide(hMB);
+  RF20->SetTitle("DG2/MB");
   cEMCal->cd(2);
   RF1->Draw("P");
   RF2->Draw("same P");
+  RF10->Draw("same P");
+  RF20->Draw("same P");
   RF1->GetYaxis()->SetRangeUser(1,1000);
   gPad->SetLogy(kTRUE);
+  gPad->BuildLegend();
 }
 
 void DrawQA(
-    const char* anaResultFileName = "~/LOG/ALICE/JpsiJet_QAFilter_16l_190608/OutputAOD/AnalysisResults.root"){
+    const char* anaResultFileName = "AnalysisResults.root"){
   anaResult = new TFile(anaResultFileName);
   
   anaResult->ls();
 
   EMCalRF();
 
-  anaResult->Close();
+  //anaResult->Close();
 }
