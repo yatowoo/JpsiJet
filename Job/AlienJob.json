@@ -373,14 +373,15 @@
       "PID": [1551907927, 1551909825],
       "N_run": 51,
       "Total": 1578,
-      "Done": 1010,
-      "ERROR_V": 4,
-      "ERROR_E": 0,
-      "Expired": 3,
+      "Done": 1512,
+      "ERROR_V": 21,
+      "ERROR_E": 5,
+      "Expired": 2,
       "InputBox": 5,
+      "Saving": 33,
       "Zombie": 0,
-      "ratio": 0.99,
-      "comment":"" 
+      "ratio": 0.95,
+      "comment":"Pool network between grids" 
     }
   }
 }
