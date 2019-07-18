@@ -28,8 +28,12 @@ TH1* GetEMCalE(TList* dieQA,const char* trigName, const char* cutDef = "RAW"){
   // Get event number
   htmp = (TH1*)(dieQA->FindObject("RAW")->FindObject("Event")->FindObject("VtxZ"));
   Int_t nEvent = htmp->GetEntries();
-  fcn->SetParameter(0,nEvent * hE->GetBinWidth(1));
+  Double_t normFactor = nEvent * hE->GetBinWidth(1);
+  fcn->SetParameter(0,normFactor);
   hE->Divide(fcn);
+  for(Int_t i = 0; i <= hE->GetNbinsX(); i++)
+    hE->SetBinError(i, hE->GetBinError(i) / TMath::Sqrt(normFactor));
+
   hE->SetYTitle("1/N_{ev} dN/dE_{cls}");
   hE->SetMarkerColor(SelectColor());
   hE->SetMarkerStyle(20);
@@ -50,14 +54,16 @@ void EMCalRF(){
   TH1* hDG1 = GetEMCalE((TList*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_30/cjahnke_QA_30")),"DG1");
   TH1* hDG2 = GetEMCalE((TList*)(anaResult->Get("PWGDQ_dielectron_MultiDie_EMCal_40/cjahnke_QA_40")),"DG2");
   cEMCal->cd(1);
-  hMB->Draw("P");
-  hEG1->Draw("same P");
-  hEG2->Draw("same P");
-  hDG1->Draw("same P");
-  hDG2->Draw("same P");
+  hMB->Draw("E");
+  hEG1->Draw("same E");
+  hEG2->Draw("same E");
+  hDG1->Draw("same E");
+  hDG2->Draw("same E");
   hMB->GetYaxis()->SetRangeUser(1e-6,30);
   gPad->SetLogy(kTRUE);
   gPad->BuildLegend();
+  hMB->SetTitle("EMCal cluster energy distribution");
+  gPad->Update();
   // Rejection Factor
   auto RF1 = (TH1*)(hEG1->Clone("hRF1"));
   RF1->Divide(hMB);
@@ -71,14 +77,25 @@ void EMCalRF(){
   auto RF20 = (TH1*)(hDG2->Clone("hRF20"));
   RF20->Divide(hMB);
   RF20->SetTitle("DG2/MB");
+  auto RF12 = (TH1*)(hEG1->Clone("hRF12"));
+  RF12->Divide(hEG2);
+  RF12->SetTitle("EG1/EG2");
+  RF12->SetMarkerStyle(24);
+  auto RF120 = (TH1*)(hDG1->Clone("hRF120"));
+  RF120->Divide(hEG2);
+  RF120->SetTitle("DG1/DG2");
+  RF120->SetMarkerStyle(24);
   cEMCal->cd(2);
-  RF1->Draw("P");
-  RF2->Draw("same P");
-  RF10->Draw("same P");
-  RF20->Draw("same P");
-  RF1->GetYaxis()->SetRangeUser(1,1000);
+  RF1->Draw("E");
+  RF2->Draw("same E");
+  RF10->Draw("same E");
+  RF20->Draw("same E");
+  RF12->Draw("same E");
+  RF120->Draw("same E");
+  RF1->GetYaxis()->SetRangeUser(1e-2,1000);
   gPad->SetLogy(kTRUE);
   gPad->BuildLegend();
+  RF1->SetTitle("Rejection factor of EMCal trigger");
 }
 
 void DrawQA(
