@@ -7,6 +7,8 @@ TFile* anaResult = NULL;
 
 TF1* fcn = NULL;
 
+TString fgCutDef = "RAW";
+
 Int_t SelectColor(Bool_t newSets = kFALSE){
   static const Int_t COLOR_NUMBER = 9;
   static const Int_t COLOR_SET[COLOR_NUMBER] = {kBlack, kRed, kBlue, kGreen+3, kOrange, kViolet, kCyan, kOrange-6, kPink};
@@ -18,12 +20,12 @@ Int_t SelectColor(Bool_t newSets = kFALSE){
   return COLOR_SET[CURRENT_INDEX];
 }
 
-TH1* GetEMCalE(TList* dieQA,const char* trigName, const char* cutDef = "RAW"){
+TH1* GetEMCalE(TList* dieQA,const char* trigName){
   // Get EMCal_E with +/- tracks
-  TH1* htmp = (TH1*)(dieQA->FindObject(cutDef)->FindObject("Track_ev1+")->FindObject("EMCalE"));
+  TH1* htmp = (TH1*)(dieQA->FindObject(fgCutDef.Data())->FindObject("Track_ev1+")->FindObject("EMCalE"));
   TH1* hE = (TH1*)(htmp->Clone(Form("hEMCalE_%s",trigName)));
   hE->SetTitle(trigName);
-  htmp = (TH1*)(dieQA->FindObject(cutDef)->FindObject("Track_ev1-")->FindObject("EMCalE"));
+  htmp = (TH1*)(dieQA->FindObject(fgCutDef.Data())->FindObject("Track_ev1-")->FindObject("EMCalE"));
   hE->Add(htmp);
   // Get event number
   htmp = (TH1*)(dieQA->FindObject("RAW")->FindObject("Event")->FindObject("VtxZ"));
@@ -59,7 +61,7 @@ void EMCalRF(){
   hEG2->Draw("same E");
   hDG1->Draw("same E");
   hDG2->Draw("same E");
-  hMB->GetYaxis()->SetRangeUser(1e-6,30);
+  hMB->GetYaxis()->SetRangeUser(1e-7,30);
   gPad->SetLogy(kTRUE);
   gPad->BuildLegend();
   hMB->SetTitle("EMCal cluster energy distribution");
@@ -92,17 +94,20 @@ void EMCalRF(){
   RF20->Draw("same E");
   RF12->Draw("same E");
   RF120->Draw("same E");
-  RF1->GetYaxis()->SetRangeUser(1e-2,1000);
+  RF1->GetYaxis()->SetRangeUser(1e-2,1e5);
   gPad->SetLogy(kTRUE);
   gPad->BuildLegend();
   RF1->SetTitle("Rejection factor of EMCal trigger");
 }
 
 void DrawQA(
-    const char* anaResultFileName = "AnalysisResults.root"){
+    const char* anaResultFileName = "AnalysisResults.root",
+    const char* cutDef = "RAW"){
   anaResult = new TFile(anaResultFileName);
-  
+
   anaResult->ls();
+
+  fgCutDef = cutDef;
 
   EMCalRF();
 
