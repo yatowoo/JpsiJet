@@ -1,4 +1,17 @@
 {
+  "DATA":{
+    "doMult": true,
+    "doEmcalCorrection": true,
+    "doJetQA": true,
+    "doJpsiQA": true,
+    "doJpsiFilter": true,
+    "doPIDQA": false,
+    "doPhysAna": false,
+    "datasets": "16l_pass1",
+    "data_dir": "2016/LHC16l",
+    "work_dir": "Dev_Debug",
+    "task_name": "JpsiJet"
+  },
   "MC":{
     "doMult": true,
     "doEmcalCorrection": false,
@@ -336,6 +349,39 @@
       "Zombie": 0,
       "ratio": 0.99,
       "comment":"Resubmit;ERROR_V - Network is unreachable(error code: 3014" 
+    }
+  },
+  "EMCorr":{
+    "doMult": true,
+    "doEmcalCorrection": true,
+    "doJetQA": true,
+    "doJpsiQA": true,
+    "doJpsiFilter": true,
+    "doPIDQA": false,
+    "doPhysAna": false,
+    "datasets": "16l_pass1",
+    "data_dir": "2016/LHC16l",
+    "work_dir": "JpsiJet_EMCorr_16l_190716",
+    "task_name": "JpsiJet",
+    "alien_config":{
+      "TTL": 43200,
+      "MaxInput": 20,
+      "AliPhysics": "vAN-20190614_ROOT6-1" 
+    },
+    "git_commit": "193d4bd",
+    "result":{
+      "PID": [1551907927, 1551909825],
+      "N_run": 51,
+      "Total": 1578,
+      "Done": 1512,
+      "ERROR_V": 21,
+      "ERROR_E": 5,
+      "Expired": 2,
+      "InputBox": 5,
+      "Saving": 33,
+      "Zombie": 0,
+      "ratio": 0.95,
+      "comment":"Pool network between grids" 
     }
   }
 }
