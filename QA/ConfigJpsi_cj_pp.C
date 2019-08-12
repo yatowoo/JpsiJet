@@ -216,15 +216,15 @@ void SetupPairCutsDieleData(AliDielectron *diele, Int_t cutDefinition, Bool_t is
 	// EMCEGA - L1 trigger, use L0 threshold for nano AOD filter
 	if (trigger_index == 1 || trigger_index == 2)
 		emcCut->AddCut(AliDielectronVarManager::kEMCALE, 3, 1e30);
-	// EMCEGA - EG1/DG1, LHC16 except 16k
+	// EMCEGA - EG1/DG1, except 16l
 	else if (trigger_index == 3 || trigger_index == 30)
-		emcCut->AddCut(AliDielectronVarManager::kEMCALE, 7, 1e30);
+		emcCut->AddCut(AliDielectronVarManager::kEMCALE, 11, 1e30);
 	// EMCEGA - EG2/DG2
 	else if (trigger_index == 4 || trigger_index == 40)
 		emcCut->AddCut(AliDielectronVarManager::kEMCALE, 5, 50.);
-	// EMCEGA - EG1/DG1 (16k)
-	else if (trigger_index == 6 || trigger_index == 60)
-		emcCut->AddCut(AliDielectronVarManager::kEMCALE, 11, 50.);
+	// EMCEGA - EG1 (16l)
+	else if (trigger_index == 6)
+		emcCut->AddCut(AliDielectronVarManager::kEMCALE, 7, 50.);
 	else
 		emcCut->AddCut(AliDielectronVarManager::kEMCALE, 1, 50.);
 
