@@ -5,12 +5,11 @@ void AddTaskJpsiQA(Bool_t doJpsiFilter, TString datasets="16l_pass1"){
   gInterpreter->ExecuteMacro("AddTask_cjahnke_JPsi.C(0)");
   cout << "[-] Add task : MultiDie_3 for kEMCEGA EG1" << endl;
   if(datasets.Contains("16l"))
-    gInterpreter->Execute("AddTask_cjahnke_JPsi","3");
+    gInterpreter->Execute("AddTask_cjahnke_JPsi","6");
   else
   {
-    gInterpreter->Execute("AddTask_cjahnke_JPsi","6");
+    gInterpreter->Execute("AddTask_cjahnke_JPsi","3");
   }
-  
   cout << "[-] Add task : MultiDie_4 for kEMCEGA EG2" << endl;
   gInterpreter->Execute("AddTask_cjahnke_JPsi","4");
   cout << "[-] Add task : MultiDie_30 for kEMCEGA DG1" << endl;
