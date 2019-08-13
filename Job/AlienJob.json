@@ -383,5 +383,38 @@
       "ratio": 0.95,
       "comment":"Pool network between grids" 
     }
+  },
+  "QAFilter_16k":{
+    "doMult": true,
+    "doEmcalCorrection": true,
+    "doJetQA": true,
+    "doJpsiQA": true,
+    "doJpsiFilter": true,
+    "doPIDQA": true,
+    "doPhysAna": false,
+    "datasets": "16k_pass1_child1",
+    "data_dir": "2016/LHC16k",
+    "work_dir": "JpsiJet_QAFilter_16l_190813",
+    "task_name": "JpsiJet",
+    "alien_config":{
+      "TTL": 43200,
+      "MaxInput": 20,
+      "AliPhysics": "vAN-20190614_ROOT6-1" 
+    },
+    "git_commit": "cbba1c6",
+    "result":{
+      "PID": [1581750085, 1581751033],
+      "N_run": 33,
+      "Total": 966,
+      "Done": 0,
+      "ERROR_V": 0,
+      "ERROR_E": 0,
+      "Expired": 0,
+      "InputBox": 0,
+      "Saving": 0,
+      "Zombie": 0,
+      "ratio": 0.,
+      "comment":"" 
+    }
   }
 }
