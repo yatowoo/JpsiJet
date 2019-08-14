@@ -156,13 +156,13 @@ void runAnalysis(
   // Task - J/psi Filter
   if(doJpsiFilter){
     gInterpreter->LoadMacro("YatoJpsiFilterTask.cxx++g");
-    gInterpreter->ExecuteMacro(Form("AddTaskJPSIFilter.C(%d,\"%s\")",int(doPhysAna),datasets.Data()));
+    gInterpreter->ExecuteMacro(Form("AddTaskJPSIFilter.C(%d)",int(doPhysAna)));
     aodOutputH->SetOutputFileName("AliAOD.root");
     mgr->RegisterExtraFile("AliAOD.Dielectron.root");
   }
   // Task - J/psi QA
   if(doJpsiQA)
-    gInterpreter->ExecuteMacro(Form("AddTaskJpsiQA.C(%d)", doJpsiFilter));
+    gInterpreter->ExecuteMacro(Form("AddTaskJpsiQA.C(%d,\"%s\")", doJpsiFilter,datasets.Data()));
 
   // Start analysis
   if(!mgr->InitAnalysis()) return;

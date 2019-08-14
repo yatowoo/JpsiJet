@@ -413,7 +413,7 @@
       "InputBox": 0,
       "Saving": 0,
       "Zombie": 0,
-      "ratio": 0.,
+      "ratio": 0.0,
       "comment":"" 
     }
   }
