@@ -439,13 +439,8 @@
       "PID": [1582854384, 1582855223],
       "N_run": 33,
       "Total": 752,
-      "Done": 0,
-      "ERROR_V": 0,
-      "ERROR_E": 0,
-      "Expired": 0,
-      "InputBox": 0,
-      "Saving": 0,
-      "Zombie": 0,
+      "Done": 749,
+      "ERROR_V": 3,
       "ratio": 0.0,
       "comment":"" 
     }
