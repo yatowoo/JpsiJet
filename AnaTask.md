@@ -4,6 +4,13 @@ AliPhysics @ ROOT6
 
 Event data model: AOD
 
+## Pre-requisities
+
+Physics selection
+PID response
+CDB connect
+EMCal correction
+
 ## Dependency
 
 PWGDQ/dielectron - AliDielectron
