@@ -92,10 +92,11 @@ AliAnalysisAlien* SetupGridHandler(
 }
 
 void runAnalysis(
+    Bool_t doDevPWG = kTRUE,
     Bool_t doMult = kFALSE,
     Bool_t doEmcalCorrection = kFALSE,
-    Bool_t doJetQA = kTRUE,
-    Bool_t doJpsiQA = kTRUE,
+    Bool_t doJetQA = kFALSE,
+    Bool_t doJpsiQA = kFALSE,
     Bool_t doJpsiFilter = kFALSE,
     Bool_t doPIDQA = kFALSE,
     Bool_t doPhysAna = kFALSE,
@@ -121,7 +122,7 @@ void runAnalysis(
   mgr->SetOutputEventHandler(aodOutputH);
 
   // Task - Physics Selection
-  if(data_dir.Length() == 11) // Exp. data
+  if(data_dir.Length() == 11 && !doDevPWG) // Exp. data
     gInterpreter->ExecuteMacro("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C");
 
   // Task - Centrality / Multiplicity
@@ -141,7 +142,7 @@ void runAnalysis(
   }
   
   // QA directory - Git repo
-  gROOT->SetMacroPath(".:./QA/:./NanoAOD/");
+  gROOT->SetMacroPath(".:./QA/:./NanoAOD/:./PWG");
 
   // Task - Jet QA
   if(doJetQA)
@@ -163,6 +164,13 @@ void runAnalysis(
   // Task - J/psi QA
   if(doJpsiQA)
     gInterpreter->ExecuteMacro(Form("AddTaskJpsiQA.C(%d,\"%s\")", doJpsiFilter,datasets.Data()));
+
+  // Task - JpsiJet
+  if(doDevPWG){
+    gInterpreter->AddIncludePath("./PWG");
+    gInterpreter->LoadMacro("AliAnalysisTaskJpsiJet.cxx++g");
+    gInterpreter->ExecuteMacro("AddTaskJpsiJet_pp.C");
+  }
 
   // Start analysis
   if(!mgr->InitAnalysis()) return;

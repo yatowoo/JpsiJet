@@ -31,7 +31,11 @@
  * More details: [Analysis Repo](https://github.com/yatowoo/JpsiJet) 
 **/
 
+#include "AliAnalysisCuts.h"
+
 #include "AliAnalysisTaskSE.h"
+
+class AliAnalysisCuts;
 
 class AliAnalysisTaskJpsiJet : public AliAnalysisTaskSE
 {
@@ -49,7 +53,7 @@ public:
 
   // Event selection
 public:
-  void     SetTrigger(UInt64_t trigger){fSelectedTrigger = trigger;}
+  void     SetTrigger(UInt_t trigger){fSelectedTrigger = trigger;}
   UInt_t GetTrigger(){return fSelectedTrigger;}
   void     SetTriggerClasses(TString trigClasses){fSelectedTriggerClasses = trigClasses;}
   TString  GetTriggerClasses(){return fSelectedTriggerClasses;}
