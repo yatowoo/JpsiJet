@@ -118,6 +118,13 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForEventQA(const char* histClass){
   fHistosQA->Add(eventQA);
 
   TH1* hTrigger = new TH1D("Trigger","Number of event by offline triggers;Nbits in AliVEvent;N_{events}",32,-0.5,31.5);
+  const char* labelOfflineTrigger[32] = {
+    "MB/INT1", "INT7", "MUON", "HM", "EMC1", "INT5", "MUS", "MUSH7",
+    "MUL7", "MUU7", "EMC7/8", "MUS7", "PHI1", "PHI7/8", "EMCEJE", "EMCEGA",
+    "HMV0/CENT", "SemiCENT", "DG/5", "ZED", "SPI/7", "INT8", "MUSL8", "MUSH8",
+    "MULL8", "MUUL8", "MUUL0", "UserDef", "TRD", "MUCalo", "FastOnly", ""};
+  for(int i = 1; i <= 32; i++)
+    hTrigger->GetXaxis()->SetBinLabel(i, labelOfflineTrigger[i]);
   eventQA->Add(hTrigger);
 
   TH1* hTriggerClass = new TH1D("TriggerClass","Number of event by fired trigger class;Trig. Descriptor;N_{events}",10,-0.5,9.5);
