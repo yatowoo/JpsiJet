@@ -66,7 +66,15 @@ void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
   fHistosQA = new TList();
   fHistosQA->SetOwner(kTRUE);
 
-  fHistEventStat = new TH1D("EventStats","Event statistics",int(kEventStatusN),-0.5,float(kEventStatusN)-0.5);
+  fHistEventStat = new TH1D("EventStats","Event statistics;Status;N_{event}",int(kEventStatusN),-0.5,float(kEventStatusN)-0.5);
+  fHistEventStat->GetXaxis()->SetBinLabel(kAllInAOD + 1, "Before PS");
+  fHistEventStat->GetXaxis()->SetBinLabel(kPhysSelected + 1, "After");
+  fHistEventStat->GetXaxis()->SetBinLabel(kV0ANDtrigger + 1, "V0AND Trig. ");
+  fHistEventStat->GetXaxis()->SetBinLabel(kTRDtrigger + 1, "TRD Trig.");
+  fHistEventStat->GetXaxis()->SetBinLabel(kAfterPileUp + 1, "Pileup Rejected");
+  fHistEventStat->GetXaxis()->SetBinLabel(kWithSinglePair + 1, "N_{pair}==1");
+  fHistEventStat->GetXaxis()->SetBinLabel(kWithMultiPair + 1, "N_{pair}>1");
+  fHistEventStat->GetXaxis()->SetBinLabel(kWithPairInJet + 1, "e^{+}e^{-} pair in jet");
   fHistosQA->Add(fHistEventStat);
 
   InitHistogramsForEventQA("Event_noCuts");
