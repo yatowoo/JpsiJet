@@ -51,6 +51,12 @@ public:
   virtual Bool_t UserNotify() { return kTRUE; }
   virtual void NotifyRun() { ; }
 
+  // Histograms
+  void InitHistogramsForEventQA(const char* histClass);
+  TH1* GetHist(const char* histClass, const char* histName);
+  void FillHist(const char* histClass, const char* histName, Double_t value, Double_t weight = 1.0);
+  void FillHist(const char* histClass, const char* histName, const char* value);
+
   // Event selection
 public:
   void     SetTrigger(UInt_t trigger){fSelectedTrigger = trigger;}
@@ -70,6 +76,9 @@ public:
 enum EventStatus{ // for histogram event stats
   kAllInAOD,
   kPhysSelected,
+  kV0ANDtrigger,
+  kTRDtrigger,
+  kAfterPileUp,
   kWithSinglePair,
   kWithMultiPair,
   kWithPairInJet,

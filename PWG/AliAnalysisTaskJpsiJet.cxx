@@ -66,14 +66,11 @@ void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
   fHistosQA = new TList();
   fHistosQA->SetOwner(kTRUE);
 
-  fHistEventStat = new TH1D("hEventStats","Number of events by status",int(kEventStatusN),-0.5,float(kEventStatusN)-0.5);
+  fHistEventStat = new TH1D("EventStats","Event statistics",int(kEventStatusN),-0.5,float(kEventStatusN)-0.5);
   fHistosQA->Add(fHistEventStat);
 
-  fHistTrigger = new TH1D("hEventTrigger","Number of event by offline triggers",32,-0.5,31.5);
-  fHistosQA->Add(fHistTrigger);
-
-  fHistTriggerClass = new TH1D("hEventTriggerClass","Number of event by fired trigger class",10,-0.5,9.5);
-  fHistosQA->Add(fHistTriggerClass);
+  InitHistogramsForEventQA("Event_noCuts");
+  InitHistogramsForEventQA("Event");
 
   PostData(1, fHistosQA);
 }
@@ -87,7 +84,7 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
   AliAODHeader* header = dynamic_cast<AliAODHeader*>(aod->GetHeader());
   UInt_t offlineTrigger = header->GetOfflineTrigger();
   for(Short_t i = 0; i < 32; i++){
-    if(offlineTrigger & BIT(i)) fHistTrigger->Fill(i);
+    if(offlineTrigger & BIT(i)) FillHist("Event_noCuts", "Trigger", i);
   }
   // Trigger Classes
   TString triggerClass = aod->GetFiredTriggerClasses();
@@ -96,7 +93,7 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
     TString strClass = tcArray->At(i)->GetName();
     TObjArray* tmp = strClass.Tokenize("-");
     strClass = tmp->At(0)->GetName();
-    fHistTriggerClass->Fill(strClass.Data(), 1.);
+    FillHist("Event_noCuts", "TriggerClass", strClass.Data());
     tmp->SetOwner(kTRUE);
     delete tmp;
   }
@@ -104,4 +101,53 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
   delete tcArray;
 
   PostData(1, fHistosQA);
+}
+
+// Create event QA histograms in output list
+void AliAnalysisTaskJpsiJet::InitHistogramsForEventQA(const char* histClass){
+  // Check existence
+  if(!fHistosQA || fHistosQA->FindObject(histClass)){
+    AliWarning(Form("Histograms for QA : %s existed.", histClass));
+    return;
+  }
+
+  // Init histograms
+  TList* eventQA = new TList();
+  eventQA->SetName(histClass);
+  eventQA->SetOwner(kTRUE);
+  fHistosQA->Add(eventQA);
+
+  TH1* hTrigger = new TH1D("Trigger","Number of event by offline triggers;Nbits in AliVEvent;N_{events}",32,-0.5,31.5);
+  eventQA->Add(hTrigger);
+
+  TH1* hTriggerClass = new TH1D("TriggerClass","Number of event by fired trigger class;Trig. Descriptor;N_{events}",10,-0.5,9.5);
+  eventQA->Add(hTriggerClass);
+
+}
+
+// Locate histograms by names
+TH1* AliAnalysisTaskJpsiJet::GetHist(const char* histClass, const char* histName){
+  // Check existence
+  if(!fHistosQA) return NULL;
+  if(!fHistosQA->FindObject(histClass)) return NULL;
+  return (TH1*)(fHistosQA->FindObject(histClass)->FindObject(histName));
+}
+
+void AliAnalysisTaskJpsiJet::FillHist(const char* histClass, const char* histName, Double_t value, Double_t weight){
+  TH1* hist = GetHist(histClass, histName);
+  if(!hist){
+    AliWarning(Form("QA histograms : Can not find histogram %s/%s", histClass, histName));
+    return;
+  }
+  hist->Fill(value, weight);
+}
+
+// Fill string/label directly
+void AliAnalysisTaskJpsiJet::FillHist(const char* histClass, const char* histName, const char* value){
+  TH1* hist = GetHist(histClass, histName);
+  if(!hist){
+    AliWarning(Form("QA histograms : Can not find histogram %s/%s", histClass, histName));
+    return;
+  }
+  hist->Fill(value, 1.);
 }
