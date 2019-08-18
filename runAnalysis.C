@@ -55,7 +55,7 @@ AliAnalysisAlien* SetupGridHandler(
 
   alienHandler->AddRunNumber(runlist);
 
-  alienHandler->SetNrunsPerMaster(1);
+  alienHandler->SetNrunsPerMaster(200);
 
   alienHandler->SetSplitMaxInputFileNumber(20);
 
@@ -72,7 +72,7 @@ AliAnalysisAlien* SetupGridHandler(
   alienHandler->SetKeepLogs(kTRUE);
 
   alienHandler->SetMergeAOD(kTRUE);
-  alienHandler->SetMaxMergeStages(1);
+  alienHandler->SetMaxMergeStages(2);
   if(mode == "final")
     alienHandler->SetMergeViaJDL(kFALSE);
   else
