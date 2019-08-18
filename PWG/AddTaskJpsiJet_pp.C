@@ -6,6 +6,9 @@ AliAnalysisTaskJpsiJet* AddTaskJpsiJet_pp(){
 
   AliAnalysisTaskJpsiJet *task = new AliAnalysisTaskJpsiJet("JpsiJet_PP13TeV");
 
+  task->SetTrigger(AliVEvent::kAny);
+  task->SetTriggerClasses("INT7;EG1;EG2;DG1;DG2");
+
   if(task) mgr->AddTask(task);
 
   // Output container

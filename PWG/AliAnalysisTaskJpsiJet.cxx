@@ -27,6 +27,7 @@ ClassImp(AliAnalysisTaskJpsiJet)
 
 AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet():
   AliAnalysisTaskSE(),
+  fAOD(NULL),
   fSelectedTrigger(0),
   fSelectedTriggerClasses(""),
   fFiredTriggerTag(""),
@@ -42,6 +43,7 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet():
 
 AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   AliAnalysisTaskSE(taskName),
+  fAOD(NULL),
   fSelectedTrigger(0),
   fSelectedTriggerClasses(""),
   fFiredTriggerTag(""),
@@ -68,13 +70,14 @@ void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
 
   fHistEventStat = new TH1D("EventStats","Event statistics;Status;N_{event}",int(kEventStatusN),-0.5,float(kEventStatusN)-0.5);
   fHistEventStat->GetXaxis()->SetBinLabel(kAllInAOD + 1, "Before PS");
-  fHistEventStat->GetXaxis()->SetBinLabel(kPhysSelected + 1, "After");
+  fHistEventStat->GetXaxis()->SetBinLabel(kPhysSelected + 1, "After PS");
   fHistEventStat->GetXaxis()->SetBinLabel(kV0ANDtrigger + 1, "V0AND Trig. ");
   fHistEventStat->GetXaxis()->SetBinLabel(kTRDtrigger + 1, "TRD Trig.");
+  fHistEventStat->GetXaxis()->SetBinLabel(kFiltered + 1, "After cuts");
   fHistEventStat->GetXaxis()->SetBinLabel(kAfterPileUp + 1, "Pileup Rejected");
   fHistEventStat->GetXaxis()->SetBinLabel(kWithSinglePair + 1, "N_{pair}==1");
   fHistEventStat->GetXaxis()->SetBinLabel(kWithMultiPair + 1, "N_{pair}>1");
-  fHistEventStat->GetXaxis()->SetBinLabel(kWithPairInJet + 1, "e^{+}e^{-} pair in jet");
+  fHistEventStat->GetXaxis()->SetBinLabel(kWithPairInJet + 1, "e^{+}e^{-} in jet");
   fHistosQA->Add(fHistEventStat);
 
   InitHistogramsForEventQA("Event_noCuts");
@@ -84,29 +87,41 @@ void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
 }
 
 void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
-  AliAODEvent *aod = dynamic_cast<AliAODEvent*>(InputEvent());
+  fAOD = dynamic_cast<AliAODEvent*>(InputEvent());
 
   fHistEventStat->Fill(kAllInAOD);
 
-  // Offline Trigger
-  AliAODHeader* header = dynamic_cast<AliAODHeader*>(aod->GetHeader());
+  FillHistogramsForEventQA("Event_noCuts");
+
+/*
+ *  Event Physics Selection  
+**/
+  UInt_t isSelected = AliVEvent::kAny;
+  // Select trigger
+  AliAODHeader* header = dynamic_cast<AliAODHeader*>(fAOD->GetHeader());
   UInt_t offlineTrigger = header->GetOfflineTrigger();
-  for(Short_t i = 0; i < 32; i++){
-    if(offlineTrigger & BIT(i)) FillHist("Event_noCuts", "Trigger", i);
+  isSelected &= (fSelectedTrigger & offlineTrigger);
+  // Select trigger classes
+  TString triggerClass = fAOD->GetFiredTriggerClasses();
+  Bool_t isFired = kFALSE;
+  if(fSelectedTriggerClasses != ""){
+    TObjArray* selectedTrigClasses = fSelectedTriggerClasses.Tokenize(";");
+    selectedTrigClasses->SetOwner(kTRUE);
+    for(int i = 0; i < selectedTrigClasses->GetEntries(); i++){
+      TString tag = selectedTrigClasses->At(i)->GetName();
+      if(triggerClass.Contains(tag)){
+        isFired = kTRUE;
+        fFiredTriggerTag += tag + "_";
+      }
+    }
+    if(fFiredTriggerTag != "")
+      fFiredTriggerTag.Remove(fFiredTriggerTag.Length()-1);
   }
-  // Trigger Classes
-  TString triggerClass = aod->GetFiredTriggerClasses();
-  TObjArray* tcArray = triggerClass.Tokenize(" ");
-  for(Short_t i = 0; i < tcArray->GetEntries(); i++){
-    TString strClass = tcArray->At(i)->GetName();
-    TObjArray* tmp = strClass.Tokenize("-");
-    strClass = tmp->At(0)->GetName();
-    FillHist("Event_noCuts", "TriggerClass", strClass.Data());
-    tmp->SetOwner(kTRUE);
-    delete tmp;
-  }
-  tcArray->SetOwner(kTRUE);
-  delete tcArray;
+  if(!isSelected || !isFired) return;
+
+  fHistEventStat->Fill(kPhysSelected);
+
+  FillHistogramsForEventQA("Event");
 
   PostData(1, fHistosQA);
 }
@@ -165,4 +180,26 @@ void AliAnalysisTaskJpsiJet::FillHist(const char* histClass, const char* histNam
     return;
   }
   hist->Fill(value, 1.);
+}
+
+void AliAnalysisTaskJpsiJet::FillHistogramsForEventQA(const char* histClass){
+  // Offline Trigger
+  AliAODHeader* header = dynamic_cast<AliAODHeader*>(fAOD->GetHeader());
+  UInt_t offlineTrigger = header->GetOfflineTrigger();
+  for(Short_t i = 0; i < 32; i++){
+    if(offlineTrigger & BIT(i)) FillHist(histClass, "Trigger", i);
+  }
+  // Trigger Classes
+  TString triggerClass = fAOD->GetFiredTriggerClasses();
+  TObjArray* tcArray = triggerClass.Tokenize(" ");
+  for(Short_t i = 0; i < tcArray->GetEntries(); i++){
+    TString strClass = tcArray->At(i)->GetName();
+    TObjArray* tmp = strClass.Tokenize("-");
+    strClass = tmp->At(0)->GetName();
+    FillHist(histClass, "TriggerClass", strClass.Data());
+    tmp->SetOwner(kTRUE);
+    delete tmp;
+  }
+  tcArray->SetOwner(kTRUE);
+  delete tcArray;
 }

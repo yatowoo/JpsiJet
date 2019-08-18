@@ -31,6 +31,7 @@
  * More details: [Analysis Repo](https://github.com/yatowoo/JpsiJet) 
 **/
 
+#include "AliAODEvent.h"
 #include "AliAnalysisCuts.h"
 
 #include "AliAnalysisTaskSE.h"
@@ -56,6 +57,7 @@ public:
   TH1* GetHist(const char* histClass, const char* histName);
   void FillHist(const char* histClass, const char* histName, Double_t value, Double_t weight = 1.0);
   void FillHist(const char* histClass, const char* histName, const char* value);
+  void FillHistogramsForEventQA(const char* histClass);
 
   // Event selection
 public:
@@ -76,6 +78,7 @@ public:
 enum EventStatus{ // for histogram event stats
   kAllInAOD,
   kPhysSelected,
+  kFiltered,
   kV0ANDtrigger,
   kTRDtrigger,
   kAfterPileUp,
@@ -86,7 +89,8 @@ enum EventStatus{ // for histogram event stats
 };
 
 private:
-  UInt_t           fSelectedTrigger; // Event offline trigger
+  AliAODEvent       *fAOD; // Input AOD event
+  UInt_t             fSelectedTrigger; // Event offline trigger
   TString            fSelectedTriggerClasses; // Event fired trigger classes (separated by ';')
   TString            fFiredTriggerTag; // MB, EG1, EG2, DG1, DG2 
   Bool_t             fRejectPileup;
