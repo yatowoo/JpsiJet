@@ -99,8 +99,6 @@ private:
 
 // Histograms
   TH1               *fHistEventStat;
-  TH1               *fHistTrigger;
-  TH1               *fHistTriggerClass;
 
 private:
   ClassDef(AliAnalysisTaskJpsiJet, 0);

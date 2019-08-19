@@ -34,9 +34,7 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet():
   fRejectPileup(kFALSE),
   fIsPileup(kFALSE),
   fEventFilter(NULL),
-  fHistEventStat(NULL),
-  fHistTrigger(NULL),
-  fHistTriggerClass(NULL)
+  fHistEventStat(NULL)
 {
   // Constructor
 }
@@ -50,9 +48,7 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   fRejectPileup(kFALSE),
   fIsPileup(kFALSE),
   fEventFilter(NULL),
-  fHistEventStat(NULL),
-  fHistTrigger(NULL),
-  fHistTriggerClass(NULL)
+  fHistEventStat(NULL)
 {
   // IO
   DefineInput(0, TChain::Class());
@@ -62,6 +58,8 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
 AliAnalysisTaskJpsiJet::~AliAnalysisTaskJpsiJet(){
   // Destructor
   if(fEventFilter) delete fEventFilter;
+  // Histogram list from AliAnalysisTaskSE
+  if(fHistosQA) delete fHistosQA;
 }
 
 void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
@@ -82,6 +80,7 @@ void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
 
   InitHistogramsForEventQA("Event_ALL");
   InitHistogramsForEventQA("Event_beforeCuts");
+  InitHistogramsForEventQA("Event_afterCuts");
 
   PostData(1, fHistosQA);
 }
@@ -122,6 +121,15 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
 
   FillHistogramsForEventQA("Event_beforeCuts");
 
+  // Event cuts
+  if(fEventFilter && !fEventFilter->IsSelected(fAOD)) return;
+  fHistEventStat->Fill(kFiltered);
+  // Pileup
+  fIsPileup = fAOD->IsPileupFromSPD(3, 0.8, 3., 2., 5.);
+  if(fRejectPileup && fIsPileup) return;
+  fHistEventStat->Fill(kAfterPileUp);
+
+  FillHistogramsForEventQA("Event_afterCuts");
 }
 
 // Create event QA histograms in output list
