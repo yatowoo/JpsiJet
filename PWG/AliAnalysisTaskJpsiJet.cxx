@@ -80,8 +80,8 @@ void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
   fHistEventStat->GetXaxis()->SetBinLabel(kWithPairInJet + 1, "e^{+}e^{-} in jet");
   fHistosQA->Add(fHistEventStat);
 
-  InitHistogramsForEventQA("Event_noCuts");
-  InitHistogramsForEventQA("Event");
+  InitHistogramsForEventQA("Event_ALL");
+  InitHistogramsForEventQA("Event_beforeCuts");
 
   PostData(1, fHistosQA);
 }
@@ -91,8 +91,7 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
 
   fHistEventStat->Fill(kAllInAOD);
 
-  FillHistogramsForEventQA("Event_noCuts");
-
+  FillHistogramsForEventQA("Event_ALL");
 /*
  *  Event Physics Selection  
 **/
@@ -121,9 +120,8 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
 
   fHistEventStat->Fill(kPhysSelected);
 
-  FillHistogramsForEventQA("Event");
+  FillHistogramsForEventQA("Event_beforeCuts");
 
-  PostData(1, fHistosQA);
 }
 
 // Create event QA histograms in output list
@@ -146,8 +144,8 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForEventQA(const char* histClass){
     "MUL7", "MUU7", "EMC7/8", "MUS7", "PHI1", "PHI7/8", "EMCEJE", "EMCEGA",
     "HMV0/CENT", "SemiCENT", "DG/5", "ZED", "SPI/7", "INT8", "MUSL8", "MUSH8",
     "MULL8", "MUUL8", "MUUL0", "UserDef", "TRD", "MUCalo", "FastOnly", ""};
-  for(int i = 1; i <= 32; i++)
-    hTrigger->GetXaxis()->SetBinLabel(i, labelOfflineTrigger[i]);
+  for(int i = 0; i < 32; i++)
+    hTrigger->GetXaxis()->SetBinLabel(i+1, labelOfflineTrigger[i]);
   eventQA->Add(hTrigger);
 
   TH1* hTriggerClass = new TH1D("TriggerClass","Number of event by fired trigger class;Trig. Descriptor;N_{events}",10,-0.5,9.5);
@@ -189,6 +187,7 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForEventQA(const char* histClass){
   for(Short_t i = 0; i < 32; i++){
     if(offlineTrigger & BIT(i)) FillHist(histClass, "Trigger", i);
   }
+
   // Trigger Classes
   TString triggerClass = fAOD->GetFiredTriggerClasses();
   TObjArray* tcArray = triggerClass.Tokenize(" ");
