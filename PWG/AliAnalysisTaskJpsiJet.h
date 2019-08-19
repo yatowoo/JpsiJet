@@ -33,6 +33,7 @@
 
 #include "AliAODEvent.h"
 #include "AliAnalysisCuts.h"
+#include "AliEmcalJetTask.h"
 
 #include "AliAnalysisTaskSE.h"
 
@@ -46,11 +47,13 @@ public:
   virtual ~AliAnalysisTaskJpsiJet();
   // Interface for anslysis manager (based on TaskSE)
 public:
+  virtual void LocalInit();
   virtual void UserCreateOutputObjects();
   virtual void UserExec(Option_t * /*option*/);
   virtual void UserExecMix(Option_t * /*option*/) { ; }
   virtual Bool_t UserNotify() { return kTRUE; }
   virtual void NotifyRun() { ; }
+  virtual void Terminate(Option_t *option="");
 
   // Histograms
   void InitHistogramsForEventQA(const char* histClass);
@@ -58,6 +61,25 @@ public:
   void FillHist(const char* histClass, const char* histName, Double_t value, Double_t weight = 1.0);
   void FillHist(const char* histClass, const char* histName, const char* value);
   void FillHistogramsForEventQA(const char* histClass);
+
+  // Jet finder task
+  // -- These sub-tasks are managed by this task, not by AliAnalysisManager.
+public:
+  void AddTaskEmcalJet(
+    const TString nTracks = "usedefault",
+    const TString nClusters = "",
+    const AliJetContainer::EJetAlgo_t jetAlgo = AliJetContainer::antikt_algorithm,
+    const Double_t radius = 0.4,
+    const AliJetContainer::EJetType_t jetType = AliJetContainer::kFullJet,
+    const Double_t minTrPt = 0.15,
+    const Double_t minClPt = 0.30,
+    const Double_t ghostArea = 0.005,
+    const AliJetContainer::ERecoScheme_t reco = AliJetContainer::pt_scheme,
+    const TString tag = "Jet",
+    const Double_t minJetPt = 0.0,
+    const Bool_t lockTask = kTRUE,
+    const Bool_t bFillGhosts = kFALSE);
+  void InitJetFinders();
 
   // Event selection
 public:
@@ -90,6 +112,7 @@ enum EventStatus{ // for histogram event stats
 
 private:
   AliAODEvent       *fAOD; // Input AOD event
+  TList             *fJetTasks; // Jet finder tasks
   UInt_t             fSelectedTrigger; // Event offline trigger
   TString            fSelectedTriggerClasses; // Event fired trigger classes (separated by ';')
   TString            fFiredTriggerTag; // MB, EG1, EG2, DG1, DG2 

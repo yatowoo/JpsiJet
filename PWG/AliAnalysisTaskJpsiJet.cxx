@@ -16,6 +16,7 @@
 #include "TChain.h"
 
 #include "AliAODEvent.h"
+#include "AliAnalysisManager.h"
 
 #include "AliAnalysisTaskJpsiJet.h"
 
@@ -28,6 +29,7 @@ ClassImp(AliAnalysisTaskJpsiJet)
 AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet():
   AliAnalysisTaskSE(),
   fAOD(NULL),
+  fJetTasks(NULL),
   fSelectedTrigger(0),
   fSelectedTriggerClasses(""),
   fFiredTriggerTag(""),
@@ -42,6 +44,7 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet():
 AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   AliAnalysisTaskSE(taskName),
   fAOD(NULL),
+  fJetTasks(NULL),
   fSelectedTrigger(0),
   fSelectedTriggerClasses(""),
   fFiredTriggerTag(""),
@@ -53,6 +56,8 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   // IO
   DefineInput(0, TChain::Class());
   DefineOutput(1, TList::Class());
+  // Jet task
+  InitJetFinders();
 }
 
 AliAnalysisTaskJpsiJet::~AliAnalysisTaskJpsiJet(){
@@ -83,6 +88,12 @@ void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
   InitHistogramsForEventQA("Event_afterCuts");
 
   PostData(1, fHistosQA);
+
+  // Init jet finder tasks
+  AliEmcalJetTask* jetFinder = NULL;
+  TIter next(fJetTasks);
+  while(jetFinder=(AliEmcalJetTask*)next())
+    jetFinder->CreateOutputObjects();
 }
 
 void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
@@ -130,6 +141,15 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
   fHistEventStat->Fill(kAfterPileUp);
 
   FillHistogramsForEventQA("Event_afterCuts");
+
+  // Run jet finder tasks
+  AliEmcalJetTask* jetFinder = NULL;
+  TIter next(fJetTasks);
+  while(jetFinder=(AliEmcalJetTask*)next()){
+    jetFinder->Reset();
+    jetFinder->SetActive(kTRUE);
+    jetFinder->Exec("");
+  }
 }
 
 // Create event QA histograms in output list
@@ -209,4 +229,111 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForEventQA(const char* histClass){
   }
   tcArray->SetOwner(kTRUE);
   delete tcArray;
+}
+
+// Copy from AliEmcalJetTask::AddTaskEmcalJet
+void AliAnalysisTaskJpsiJet::AddTaskEmcalJet(
+  const TString nTracks, const TString nClusters,
+  const AliJetContainer::EJetAlgo_t jetAlgo, const Double_t radius, const AliJetContainer::EJetType_t jetType,
+  const Double_t minTrPt, const Double_t minClPt,
+  const Double_t ghostArea, const AliJetContainer::ERecoScheme_t reco,
+  const TString tag, const Double_t minJetPt,
+  const Bool_t lockTask, const Bool_t bFillGhosts
+){
+  // Setup containers
+  TString trackName(nTracks);
+  TString clusName(nClusters);
+  if (trackName == "usedefault") {
+    trackName = "tracks";
+  }
+  if (clusName == "usedefault") {
+      clusName = "caloClusters";
+  }
+
+  AliParticleContainer* partCont = 0;
+  if (trackName.Contains("mcparticles")) {  // must be contains in order to allow for non-standard particle containers
+    AliMCParticleContainer* mcpartCont = new AliMCParticleContainer(trackName);
+    partCont = mcpartCont;
+  }
+  else if (trackName == "tracks" || trackName == "Tracks") {
+    AliTrackContainer* trackCont = new AliTrackContainer(trackName);
+    partCont = trackCont;
+  }
+  else if (!trackName.IsNull()) {
+    partCont = new AliParticleContainer(trackName);
+  }
+  if (partCont) partCont->SetParticlePtCut(minTrPt);
+
+  AliClusterContainer* clusCont = 0;
+  if (!clusName.IsNull()) {
+    clusCont = new AliClusterContainer(clusName);
+    clusCont->SetClusECut(0.);
+    clusCont->SetClusPtCut(0.);
+    clusCont->SetClusHadCorrEnergyCut(minClPt);
+    clusCont->SetDefaultClusterEnergy(AliVCluster::kHadCorr);
+  }
+
+  switch (jetType) {
+  case AliJetContainer::kChargedJet:
+    if (partCont) partCont->SetCharge(AliParticleContainer::kCharged);
+    break;
+  case AliJetContainer::kNeutralJet:
+    if (partCont) partCont->SetCharge(AliParticleContainer::kNeutral);
+    break;
+  default:
+    break;
+  }
+  
+  TString name = AliJetContainer::GenerateJetName(jetType, jetAlgo, reco, radius, partCont, clusCont, tag);
+  ;
+  if(fJetTasks->FindObject(name.Data())){
+    AliWarning(Form("Jet task existed: %s", name.Data()));
+    return;
+  }
+  AliInfo(Form("Jet task name : %s", name.Data()));
+
+  AliEmcalJetTask* jetTask = new AliEmcalJetTask(name);
+  fJetTasks->Add(jetTask);
+
+  jetTask->SetJetType(jetType);
+  jetTask->SetJetAlgo(jetAlgo);
+  jetTask->SetRecombScheme(reco);
+  jetTask->SetRadius(radius);
+  if (partCont) jetTask->AdoptParticleContainer(partCont);
+  if (clusCont) jetTask->AdoptClusterContainer(clusCont);
+  jetTask->SetJetsName(tag);
+  jetTask->SetMinJetPt(minJetPt);
+  jetTask->SetGhostArea(ghostArea);
+
+  if (bFillGhosts) jetTask->SetFillGhost();
+  if (lockTask) jetTask->SetLocked();
+
+  jetTask->SetForceBeamType(AliAnalysisTaskEmcal::kpp);
+  jetTask->SelectCollisionCandidates(fSelectedTrigger);
+  jetTask->SetUseAliAnaUtils(kTRUE);
+  jetTask->SetZvertexDiffValue(0.5);
+  jetTask->SetNeedEmcalGeom(kFALSE);
+
+  // Connect input
+  AliAnalysisManager *mgr = AliAnalysisManager::GetAnalysisManager();
+  jetTask->ConnectInput(0, mgr->GetCommonInputContainer());
+}
+
+void AliAnalysisTaskJpsiJet::InitJetFinders(){
+  if(!fJetTasks) fJetTasks = new TList;
+  AddTaskEmcalJet("usedefault", "", AliJetContainer::antikt_algorithm, 0.4, AliJetContainer::kChargedJet, 0.15, 0.3, 0.01, AliJetContainer::pt_scheme, "Jet", 1., kFALSE, kFALSE);
+}
+
+void AliAnalysisTaskJpsiJet::LocalInit(){
+  AliEmcalJetTask* jetFinder = NULL;
+  TIter next(fJetTasks);
+  while(jetFinder=(AliEmcalJetTask*)next())
+    jetFinder->LocalInit();
+}
+
+void AliAnalysisTaskJpsiJet::Terminate(Option_t*){
+  AliEmcalJetTask* jetFinder = NULL;
+  TIter next(fJetTasks);
+  while(jetFinder=(AliEmcalJetTask*)next())
+    jetFinder->Terminate();
 }
