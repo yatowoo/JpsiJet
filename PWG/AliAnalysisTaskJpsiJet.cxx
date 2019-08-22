@@ -14,6 +14,7 @@
  **************************************************************************/
 
 #include "TChain.h"
+#include "THnSparse.h"
 
 #include "AliAODEvent.h"
 #include "AliAnalysisManager.h"
@@ -89,13 +90,14 @@ void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
   InitHistogramsForEventQA("Event_beforeCuts");
   InitHistogramsForEventQA("Event_afterCuts");
 
-  PostData(1, fHistosQA);
-
   // Init jet finder tasks
   AliEmcalJetTask* jetFinder = NULL;
   TIter next(fJetTasks);
-  while(jetFinder=(AliEmcalJetTask*)next())
+  while((jetFinder=(AliEmcalJetTask*)next()))
     jetFinder->CreateOutputObjects();
+  InitHistogramsForJetQA("Jet");
+
+  PostData(1, fHistosQA);
 }
 
 void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
@@ -147,11 +149,12 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
   // Run jet finder tasks
   AliEmcalJetTask* jetFinder = NULL;
   TIter next(fJetTasks);
-  while(jetFinder=(AliEmcalJetTask*)next()){
+  while((jetFinder=(AliEmcalJetTask*)next())){
     jetFinder->Reset();
     jetFinder->SetActive(kTRUE);
     jetFinder->Exec("");
   }
+  FillHistogramsForJetQA("Jet");
 }
 
 // Create event QA histograms in output list
@@ -311,7 +314,7 @@ void AliAnalysisTaskJpsiJet::AddTaskEmcalJet(
   if (lockTask) jetTask->SetLocked();
 
   jetTask->SetForceBeamType(AliAnalysisTaskEmcal::kpp);
-  jetTask->SelectCollisionCandidates(fSelectedTrigger);
+  jetTask->SelectCollisionCandidates(AliVEvent::kAny);
   jetTask->SetUseAliAnaUtils(kTRUE);
   jetTask->SetZvertexDiffValue(0.5);
   jetTask->SetNeedEmcalGeom(kFALSE);
@@ -321,7 +324,7 @@ void AliAnalysisTaskJpsiJet::AddTaskEmcalJet(
   jetTask->ConnectInput(0, mgr->GetCommonInputContainer());
 
   // Add jet container
-  AliJetContainer *cont = new AliJetContainer(jetType, jetAlgo, recoScheme, radius, partCont, clusCont, tag);
+  AliJetContainer *cont = new AliJetContainer(jetType, jetAlgo, reco, radius, partCont, clusCont, tag);
   cont->SetPercAreaCut(0.6);
   if(jetType == AliJetContainer::kChargedJet)
     cont->SetJetAcceptanceType(AliJetContainer::kTPCfid);
@@ -339,7 +342,7 @@ void AliAnalysisTaskJpsiJet::InitJetFinders(){
   AddTaskEmcalJet("usedefault", "", AliJetContainer::antikt_algorithm, 0.4, AliJetContainer::kChargedJet, 0.15, 0.3, 0.01, AliJetContainer::pt_scheme, "Jet", 1., kFALSE, kFALSE);
 }
 
-void AliAnalysisTaskJpsiJet::InitHistogramsForJetQA(){
+void AliAnalysisTaskJpsiJet::InitHistogramsForJetQA(const char* histClass){
   // Check existence
   if(!fHistosQA || fHistosQA->FindObject(histClass)){
     AliWarning(Form("Histograms for QA : %s existed.", histClass));
@@ -363,7 +366,8 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForJetQA(){
     Int_t nBins[3]   = {2000, 200, 100};
     Double_t xmin[3] = {0.,   -1., -2.};
     Double_t xmax[3] = {100.,  1.,  8.};
-    THnSparse* hs = new THnSparse("jetPtEtaPhi", "THnSparse for jet kinetic variables (#p_{T}-#eta-#phi)", nBins, xmin, xmax);
+    THnSparse* hs = new THnSparseD("jetPtEtaPhi", "THnSparse for jet kinetic variables (p_{T}-#eta-#phi)", 3, nBins, xmin, xmax);
+    qaHistos->Add(hs);
   }
 }
 
@@ -373,7 +377,9 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForJetQA(const char* histClass){
   AliJetContainer* jets = NULL;
   TIter next(fJetContainers);
   while((jets = static_cast<AliJetContainer*>(next()))){
-    auto hs = (THnSparse*)(fHistosQA->FindObject(histClass)->FindObject(jets->GetName()));
+    jets->NextEvent(fAOD);
+    jets->SetArray(fAOD);
+    auto hs = (THnSparse*)(fHistosQA->FindObject(histClass)->FindObject(jets->GetName())->FindObject("jetPtEtaPhi"));
     for(auto jet : jets->all()){
       Double_t x[3] = {0.};
       x[0] = jet->Pt();
@@ -387,13 +393,13 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForJetQA(const char* histClass){
 void AliAnalysisTaskJpsiJet::LocalInit(){
   AliEmcalJetTask* jetFinder = NULL;
   TIter next(fJetTasks);
-  while(jetFinder=(AliEmcalJetTask*)next())
+  while((jetFinder=(AliEmcalJetTask*)next()))
     jetFinder->LocalInit();
 }
 
 void AliAnalysisTaskJpsiJet::Terminate(Option_t*){
   AliEmcalJetTask* jetFinder = NULL;
   TIter next(fJetTasks);
-  while(jetFinder=(AliEmcalJetTask*)next())
+  while((jetFinder=(AliEmcalJetTask*)next()))
     jetFinder->Terminate();
 }
