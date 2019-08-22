@@ -379,8 +379,15 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForJetQA(const char* histClass){
   while((jets = static_cast<AliJetContainer*>(next()))){
     jets->NextEvent(fAOD);
     jets->SetArray(fAOD);
+
     auto hs = (THnSparse*)(fHistosQA->FindObject(histClass)->FindObject(jets->GetName())->FindObject("jetPtEtaPhi"));
     for(auto jet : jets->all()){
+      // Jet cuts
+      UInt_t rejectionReason = 0;
+      if (!jets->AcceptJet(jet, rejectionReason)) {
+        AliDebug(Form("Jet was rejected for reason : %d", rejectionReason));
+        return;
+      }
       Double_t x[3] = {0.};
       x[0] = jet->Pt();
       x[1] = jet->Eta();
