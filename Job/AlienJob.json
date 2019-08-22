@@ -536,5 +536,67 @@
       "ratio": 97.3,
       "comment":"" 
     }
+  },
+  "MC_16k_Jet":{
+    "doMult": true,
+    "doEmcalCorrection": true,
+    "doJetQA": true,
+    "doJpsiQA": true,
+    "doJpsiFilter": true,
+    "doPIDQA": true,
+    "doPhysAna": false,
+    "datasets": "16k_pass1",
+    "data_dir": "2017/LHC17d20a1",
+    "work_dir": "JpsiJet_MC16k_17d20a1_190818",
+    "task_name": "JpsiJet",
+    "alien_config":{
+      "TTL": 43200,
+      "MaxInput": 20,
+      "MaxMergeStages": 2,
+      "NrunsPerMaster": 200,
+      "AliPhysics": "vAN-20190614_ROOT6-1" 
+    },
+    "git_commit": "7938b17",
+    "result":{
+      "PID": 1588014826,
+      "N_run": 151,
+      "Total": 453,
+      "Done": 441,
+      "ERROR_V": 4,
+      "Expired": 8,
+      "ratio": 97.3,
+      "comment":"MC used as ANA-850" 
+    }
+  },
+  "MC_16k_Jpsi":{
+    "doMult": true,
+    "doEmcalCorrection": true,
+    "doJetQA": true,
+    "doJpsiQA": true,
+    "doJpsiFilter": true,
+    "doPIDQA": true,
+    "doPhysAna": false,
+    "datasets": "16k_pass1",
+    "data_dir": "2017/LHC17h2h",
+    "work_dir": "JpsiJet_MC16k_Jpsi_17h2h_190818",
+    "task_name": "JpsiJet",
+    "alien_config":{
+      "TTL": 43200,
+      "MaxInput": 20,
+      "MaxMergeStages": 2,
+      "NrunsPerMaster": 200,
+      "AliPhysics": "vAN-20190614_ROOT6-1" 
+    },
+    "git_commit": "7938b17",
+    "result":{
+      "PID": 0,
+      "N_run": 151,
+      "Total": 453,
+      "Done": 441,
+      "ERROR_V": 4,
+      "Expired": 8,
+      "ratio": 97.3,
+      "comment":"MC used as ANA-850" 
+    }
   }
 }
