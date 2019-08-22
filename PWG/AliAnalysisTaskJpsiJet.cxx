@@ -30,6 +30,7 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet():
   AliAnalysisTaskSE(),
   fAOD(NULL),
   fJetTasks(NULL),
+  fJetContainers(NULL),
   fSelectedTrigger(0),
   fSelectedTriggerClasses(""),
   fFiredTriggerTag(""),
@@ -45,6 +46,7 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   AliAnalysisTaskSE(taskName),
   fAOD(NULL),
   fJetTasks(NULL),
+  fJetContainers(NULL),
   fSelectedTrigger(0),
   fSelectedTriggerClasses(""),
   fFiredTriggerTag(""),
@@ -317,11 +319,69 @@ void AliAnalysisTaskJpsiJet::AddTaskEmcalJet(
   // Connect input
   AliAnalysisManager *mgr = AliAnalysisManager::GetAnalysisManager();
   jetTask->ConnectInput(0, mgr->GetCommonInputContainer());
+
+  // Add jet container
+  AliJetContainer *cont = new AliJetContainer(jetType, jetAlgo, recoScheme, radius, partCont, clusCont, tag);
+  cont->SetPercAreaCut(0.6);
+  if(jetType == AliJetContainer::kChargedJet)
+    cont->SetJetAcceptanceType(AliJetContainer::kTPCfid);
+  // else for neutral jet, EMCal/DCal/PHOS should be considered
+  fJetContainers->Add(cont);
 }
 
 void AliAnalysisTaskJpsiJet::InitJetFinders(){
-  if(!fJetTasks) fJetTasks = new TList;
+  if(!fJetTasks) fJetTasks = new TObjArray;
+  fJetTasks->SetOwner(kTRUE);
+  if(!fJetContainers) fJetContainers = new TObjArray;
+  fJetContainers->SetOwner(kTRUE);
+
+  AddTaskEmcalJet("usedefault", "", AliJetContainer::antikt_algorithm, 0.2, AliJetContainer::kChargedJet, 0.15, 0.3, 0.01, AliJetContainer::pt_scheme, "Jet", 1., kFALSE, kFALSE);
   AddTaskEmcalJet("usedefault", "", AliJetContainer::antikt_algorithm, 0.4, AliJetContainer::kChargedJet, 0.15, 0.3, 0.01, AliJetContainer::pt_scheme, "Jet", 1., kFALSE, kFALSE);
+}
+
+void AliAnalysisTaskJpsiJet::InitHistogramsForJetQA(){
+  // Check existence
+  if(!fHistosQA || fHistosQA->FindObject(histClass)){
+    AliWarning(Form("Histograms for QA : %s existed.", histClass));
+    return;
+  }
+
+  // Init histograms
+  TList* jetQA = new TList();
+  jetQA->SetName(histClass);
+  jetQA->SetOwner(kTRUE);
+  fHistosQA->Add(jetQA);
+
+  AliJetContainer* jets = NULL;
+  TIter next(fJetContainers);
+  while((jets = static_cast<AliJetContainer*>(next()))){
+    TList* qaHistos = new TList();
+    qaHistos->SetName(jets->GetName());
+    qaHistos->SetOwner(kTRUE);
+    jetQA->Add(qaHistos);
+    // THnSparse - pT, eta， phi
+    Int_t nBins[3]   = {2000, 200, 100};
+    Double_t xmin[3] = {0.,   -1., -2.};
+    Double_t xmax[3] = {100.,  1.,  8.};
+    THnSparse* hs = new THnSparse("jetPtEtaPhi", "THnSparse for jet kinetic variables (#p_{T}-#eta-#phi)", nBins, xmin, xmax);
+  }
+}
+
+void AliAnalysisTaskJpsiJet::FillHistogramsForJetQA(const char* histClass){
+  if(!fJetContainers) InitJetFinders();
+  
+  AliJetContainer* jets = NULL;
+  TIter next(fJetContainers);
+  while((jets = static_cast<AliJetContainer*>(next()))){
+    auto hs = (THnSparse*)(fHistosQA->FindObject(histClass)->FindObject(jets->GetName()));
+    for(auto jet : jets->all()){
+      Double_t x[3] = {0.};
+      x[0] = jet->Pt();
+      x[1] = jet->Eta();
+      x[2] = jet->Phi();
+      hs->Fill(x,1.0);
+    }
+  }
 }
 
 void AliAnalysisTaskJpsiJet::LocalInit(){

@@ -57,10 +57,12 @@ public:
 
   // Histograms
   void InitHistogramsForEventQA(const char* histClass);
+  void InitHistogramsForJetQA(const char* histClass);
   TH1* GetHist(const char* histClass, const char* histName);
   void FillHist(const char* histClass, const char* histName, Double_t value, Double_t weight = 1.0);
   void FillHist(const char* histClass, const char* histName, const char* value);
   void FillHistogramsForEventQA(const char* histClass);
+  void FillHistogramsForJetQA(const char* histClass);
 
   // Jet finder task
   // -- These sub-tasks are managed by this task, not by AliAnalysisManager.
@@ -112,7 +114,8 @@ enum EventStatus{ // for histogram event stats
 
 private:
   AliAODEvent       *fAOD; // Input AOD event
-  TList             *fJetTasks; // Jet finder tasks
+  TObjArray         *fJetTasks; // Jet finder tasks
+  TObjArray         *fJetContainers; // Jet container
   UInt_t             fSelectedTrigger; // Event offline trigger
   TString            fSelectedTriggerClasses; // Event fired trigger classes (separated by ';')
   TString            fFiredTriggerTag; // MB, EG1, EG2, DG1, DG2 
