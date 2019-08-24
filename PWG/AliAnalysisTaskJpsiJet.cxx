@@ -38,7 +38,7 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet():
   fRejectPileup(kFALSE),
   fIsPileup(kFALSE),
   fEventFilter(NULL),
-  fHistEventStat(NULL)
+  fHistos(NULL)
 {
   // Constructor
 }
@@ -54,7 +54,7 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   fRejectPileup(kFALSE),
   fIsPileup(kFALSE),
   fEventFilter(NULL),
-  fHistEventStat(NULL)
+  fHistos(NULL)
 {
   // IO
   DefineInput(0, TChain::Class());
@@ -68,13 +68,14 @@ AliAnalysisTaskJpsiJet::~AliAnalysisTaskJpsiJet(){
   if(fEventFilter) delete fEventFilter;
   // Histogram list from AliAnalysisTaskSE
   if(fHistosQA) delete fHistosQA;
+  if(fHistos) delete fHistos;
 }
 
 void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
-  fHistosQA = new TList();
-  fHistosQA->SetOwner(kTRUE);
+  fHistos = new THistManager("JpsiJetQA");
+  fHistosQA = fHistos->GetListOfHistograms();
 
-  fHistEventStat = new TH1D("EventStats","Event statistics;Status;N_{event}",int(kEventStatusN),-0.5,float(kEventStatusN)-0.5);
+  TH1* fHistEventStat = fHistos->CreateTH1("EventStats","Event statistics;Status;N_{event}",int(kEventStatusN),-0.5,float(kEventStatusN)-0.5);
   fHistEventStat->GetXaxis()->SetBinLabel(kAllInAOD + 1, "Before PS");
   fHistEventStat->GetXaxis()->SetBinLabel(kPhysSelected + 1, "After PS");
   fHistEventStat->GetXaxis()->SetBinLabel(kV0ANDtrigger + 1, "V0AND Trig. ");
@@ -84,7 +85,6 @@ void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
   fHistEventStat->GetXaxis()->SetBinLabel(kWithSinglePair + 1, "N_{pair}==1");
   fHistEventStat->GetXaxis()->SetBinLabel(kWithMultiPair + 1, "N_{pair}>1");
   fHistEventStat->GetXaxis()->SetBinLabel(kWithPairInJet + 1, "e^{+}e^{-} in jet");
-  fHistosQA->Add(fHistEventStat);
 
   InitHistogramsForEventQA("Event_ALL");
   InitHistogramsForEventQA("Event_beforeCuts");
@@ -103,7 +103,7 @@ void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
 void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
   fAOD = dynamic_cast<AliAODEvent*>(InputEvent());
 
-  fHistEventStat->Fill(kAllInAOD);
+  fHistos->FillTH1("EventStats", kAllInAOD);
 
   FillHistogramsForEventQA("Event_ALL");
 /*
@@ -132,17 +132,17 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
   }
   if(!isSelected || !isFired) return;
 
-  fHistEventStat->Fill(kPhysSelected);
+  fHistos->FillTH1("EventStats", kPhysSelected);
 
   FillHistogramsForEventQA("Event_beforeCuts");
 
   // Event cuts
   if(fEventFilter && !fEventFilter->IsSelected(fAOD)) return;
-  fHistEventStat->Fill(kFiltered);
+  fHistos->FillTH1("EventStats", kFiltered);
   // Pileup
   fIsPileup = fAOD->IsPileupFromSPD(3, 0.8, 3., 2., 5.);
   if(fRejectPileup && fIsPileup) return;
-  fHistEventStat->Fill(kAfterPileUp);
+  fHistos->FillTH1("EventStats", kAfterPileUp);
 
   FillHistogramsForEventQA("Event_afterCuts");
 
@@ -159,19 +159,8 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
 
 // Create event QA histograms in output list
 void AliAnalysisTaskJpsiJet::InitHistogramsForEventQA(const char* histClass){
-  // Check existence
-  if(!fHistosQA || fHistosQA->FindObject(histClass)){
-    AliWarning(Form("Histograms for QA : %s existed.", histClass));
-    return;
-  }
 
-  // Init histograms
-  TList* eventQA = new TList();
-  eventQA->SetName(histClass);
-  eventQA->SetOwner(kTRUE);
-  fHistosQA->Add(eventQA);
-
-  TH1* hTrigger = new TH1D("Trigger","Number of event by offline triggers;Nbits in AliVEvent;N_{events}",32,-0.5,31.5);
+  TH1* hTrigger = fHistos->CreateTH1(Form("%s/Trigger", histClass),"Number of event by offline triggers;Nbits in AliVEvent;N_{events}",32,-0.5,31.5);
   const char* labelOfflineTrigger[32] = {
     "MB/INT1", "INT7", "MUON", "HM", "EMC1", "INT5", "MUS", "MUSH7",
     "MUL7", "MUU7", "EMC7/8", "MUS7", "PHI1", "PHI7/8", "EMCEJE", "EMCEGA",
@@ -179,38 +168,9 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForEventQA(const char* histClass){
     "MULL8", "MUUL8", "MUUL0", "UserDef", "TRD", "MUCalo", "FastOnly", ""};
   for(int i = 0; i < 32; i++)
     hTrigger->GetXaxis()->SetBinLabel(i+1, labelOfflineTrigger[i]);
-  eventQA->Add(hTrigger);
 
-  TH1* hTriggerClass = new TH1D("TriggerClass","Number of event by fired trigger class;Trig. Descriptor;N_{events}",10,-0.5,9.5);
-  eventQA->Add(hTriggerClass);
+  TH1* hTriggerClass = fHistos->CreateTH1(Form("%s/TriggerClass", histClass),"Number of event by fired trigger class;Trig. Descriptor;N_{events}",10,-0.5,9.5);
 
-}
-
-// Locate histograms by names
-TH1* AliAnalysisTaskJpsiJet::GetHist(const char* histClass, const char* histName){
-  // Check existence
-  if(!fHistosQA) return NULL;
-  if(!fHistosQA->FindObject(histClass)) return NULL;
-  return (TH1*)(fHistosQA->FindObject(histClass)->FindObject(histName));
-}
-
-void AliAnalysisTaskJpsiJet::FillHist(const char* histClass, const char* histName, Double_t value, Double_t weight){
-  TH1* hist = GetHist(histClass, histName);
-  if(!hist){
-    AliWarning(Form("QA histograms : Can not find histogram %s/%s", histClass, histName));
-    return;
-  }
-  hist->Fill(value, weight);
-}
-
-// Fill string/label directly
-void AliAnalysisTaskJpsiJet::FillHist(const char* histClass, const char* histName, const char* value){
-  TH1* hist = GetHist(histClass, histName);
-  if(!hist){
-    AliWarning(Form("QA histograms : Can not find histogram %s/%s", histClass, histName));
-    return;
-  }
-  hist->Fill(value, 1.);
 }
 
 void AliAnalysisTaskJpsiJet::FillHistogramsForEventQA(const char* histClass){
@@ -218,7 +178,7 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForEventQA(const char* histClass){
   AliAODHeader* header = dynamic_cast<AliAODHeader*>(fAOD->GetHeader());
   UInt_t offlineTrigger = header->GetOfflineTrigger();
   for(Short_t i = 0; i < 32; i++){
-    if(offlineTrigger & BIT(i)) FillHist(histClass, "Trigger", i);
+    if(offlineTrigger & BIT(i)) fHistos->FillTH1(Form("%s/Trigger", histClass), i);
   }
 
   // Trigger Classes
@@ -228,7 +188,7 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForEventQA(const char* histClass){
     TString strClass = tcArray->At(i)->GetName();
     TObjArray* tmp = strClass.Tokenize("-");
     strClass = tmp->At(0)->GetName();
-    FillHist(histClass, "TriggerClass", strClass.Data());
+    fHistos->FillTH1(Form("%s/TriggerClass", histClass), strClass.Data());
     tmp->SetOwner(kTRUE);
     delete tmp;
   }
@@ -343,31 +303,16 @@ void AliAnalysisTaskJpsiJet::InitJetFinders(){
 }
 
 void AliAnalysisTaskJpsiJet::InitHistogramsForJetQA(const char* histClass){
-  // Check existence
-  if(!fHistosQA || fHistosQA->FindObject(histClass)){
-    AliWarning(Form("Histograms for QA : %s existed.", histClass));
-    return;
-  }
-
-  // Init histograms
-  TList* jetQA = new TList();
-  jetQA->SetName(histClass);
-  jetQA->SetOwner(kTRUE);
-  fHistosQA->Add(jetQA);
 
   AliJetContainer* jets = NULL;
   TIter next(fJetContainers);
   while((jets = static_cast<AliJetContainer*>(next()))){
-    TList* qaHistos = new TList();
-    qaHistos->SetName(jets->GetName());
-    qaHistos->SetOwner(kTRUE);
-    jetQA->Add(qaHistos);
+    TString histGroup = Form("%s/%s", histClass, jets->GetName());
     // THnSparse - pT, eta， phi
     Int_t nBins[3]   = {2000, 200, 100};
     Double_t xmin[3] = {0.,   -1., -2.};
     Double_t xmax[3] = {100.,  1.,  8.};
-    THnSparse* hs = new THnSparseD("jetPtEtaPhi", "THnSparse for jet kinetic variables (p_{T}-#eta-#phi)", 3, nBins, xmin, xmax);
-    qaHistos->Add(hs);
+    THnSparse* hs = fHistos->CreateTHnSparse(Form("%s/jetPtEtaPhi", histGroup.Data()), "THnSparse for jet kinetic variables (p_{T}-#eta-#phi)", 3, nBins, xmin, xmax);
   }
 }
 
@@ -379,20 +324,21 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForJetQA(const char* histClass){
   while((jets = static_cast<AliJetContainer*>(next()))){
     jets->NextEvent(fAOD);
     jets->SetArray(fAOD);
+    
+    TString histGroup = Form("%s/%s", histClass, jets->GetName());
 
-    auto hs = (THnSparse*)(fHistosQA->FindObject(histClass)->FindObject(jets->GetName())->FindObject("jetPtEtaPhi"));
     for(auto jet : jets->all()){
       // Jet cuts
       UInt_t rejectionReason = 0;
       if (!jets->AcceptJet(jet, rejectionReason)) {
-        AliDebug(Form("Jet was rejected for reason : %d", rejectionReason));
+        AliDebug(2,Form("Jet was rejected for reason : %d", rejectionReason));
         return;
       }
       Double_t x[3] = {0.};
       x[0] = jet->Pt();
       x[1] = jet->Eta();
       x[2] = jet->Phi();
-      hs->Fill(x,1.0);
+      fHistos->FillTHnSparse(Form("%s/jetPtEtaPhi", histGroup.Data()),x,1.0);
     }
   }
 }

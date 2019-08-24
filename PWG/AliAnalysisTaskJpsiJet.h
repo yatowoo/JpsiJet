@@ -31,6 +31,8 @@
  * More details: [Analysis Repo](https://github.com/yatowoo/JpsiJet) 
 **/
 
+#include "THistManager.h"
+
 #include "AliAODEvent.h"
 #include "AliAnalysisCuts.h"
 #include "AliEmcalJetTask.h"
@@ -58,9 +60,6 @@ public:
   // Histograms
   void InitHistogramsForEventQA(const char* histClass);
   void InitHistogramsForJetQA(const char* histClass);
-  TH1* GetHist(const char* histClass, const char* histName);
-  void FillHist(const char* histClass, const char* histName, Double_t value, Double_t weight = 1.0);
-  void FillHist(const char* histClass, const char* histName, const char* value);
   void FillHistogramsForEventQA(const char* histClass);
   void FillHistogramsForJetQA(const char* histClass);
 
@@ -124,7 +123,7 @@ private:
   AliAnalysisCuts   *fEventFilter;
 
 // Histograms
-  TH1               *fHistEventStat;
+  THistManager      *fHistos;
 
 private:
   ClassDef(AliAnalysisTaskJpsiJet, 0);
