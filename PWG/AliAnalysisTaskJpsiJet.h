@@ -35,11 +35,15 @@
 
 #include "AliAODEvent.h"
 #include "AliAnalysisCuts.h"
+#include "AliDielectron.h"
+#include "AliDielectronVarManager.h"
 #include "AliEmcalJetTask.h"
 
 #include "AliAnalysisTaskSE.h"
 
 class AliAnalysisCuts;
+class AliDielectron;
+class AliDielectronVarManager;
 
 class AliAnalysisTaskJpsiJet : public AliAnalysisTaskSE
 {
@@ -58,10 +62,16 @@ public:
   virtual void Terminate(Option_t *option="");
 
   // Histograms
+private:
   void InitHistogramsForEventQA(const char* histClass);
   void InitHistogramsForJetQA(const char* histClass);
   void FillHistogramsForEventQA(const char* histClass);
   void FillHistogramsForJetQA(const char* histClass);
+
+  // Dielectron framework
+private:
+  void InitDielectron();
+  void InitHistogramsForDielectron();
 
   // Jet finder task
   // -- These sub-tasks are managed by this task, not by AliAnalysisManager.
@@ -113,6 +123,7 @@ enum EventStatus{ // for histogram event stats
 
 private:
   AliAODEvent       *fAOD; // Input AOD event
+  AliDielectron     *fDielectron; // Dielectron framework
   TObjArray         *fJetTasks; // Jet finder tasks
   TObjArray         *fJetContainers; // Jet container
   UInt_t             fSelectedTrigger; // Event offline trigger
