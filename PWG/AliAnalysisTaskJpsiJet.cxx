@@ -102,6 +102,7 @@ void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
 
 void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
   fAOD = dynamic_cast<AliAODEvent*>(InputEvent());
+  fFiredTriggerTag = "";
 
   fHistos->FillTH1("EventStats", kAllInAOD);
 
@@ -114,6 +115,7 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
   AliAODHeader* header = dynamic_cast<AliAODHeader*>(fAOD->GetHeader());
   UInt_t offlineTrigger = header->GetOfflineTrigger();
   isSelected &= (fSelectedTrigger & offlineTrigger);
+  if(!isSelected) return;
   // Select trigger classes
   TString triggerClass = fAOD->GetFiredTriggerClasses();
   Bool_t isFired = kFALSE;
@@ -130,7 +132,7 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
     if(fFiredTriggerTag != "")
       fFiredTriggerTag.Remove(fFiredTriggerTag.Length()-1);
   }
-  if(!isSelected || !isFired) return;
+  if(!isFired) return;
 
   fHistos->FillTH1("EventStats", kPhysSelected);
 
@@ -171,6 +173,7 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForEventQA(const char* histClass){
 
   TH1* hTriggerClass = fHistos->CreateTH1(Form("%s/TriggerClass", histClass),"Number of event by fired trigger class;Trig. Descriptor;N_{events}",10,-0.5,9.5);
 
+  fHistos->CreateTH1(Form("%s/FiredTag", histClass),"Number of event by fired trigger tag;Trig. Tag;N_{events}",32,-0.5,31.5);
 }
 
 void AliAnalysisTaskJpsiJet::FillHistogramsForEventQA(const char* histClass){
@@ -194,6 +197,9 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForEventQA(const char* histClass){
   }
   tcArray->SetOwner(kTRUE);
   delete tcArray;
+
+  // Trigger Tag
+  fHistos->FillTH1(Form("%s/FiredTag", histClass), fFiredTriggerTag.Data());
 }
 
 // Copy from AliEmcalJetTask::AddTaskEmcalJet
