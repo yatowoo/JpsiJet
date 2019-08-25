@@ -248,7 +248,7 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
     jetFinder->Exec("");
   }
   FillHistogramsForJetQA("Jet");
-  
+
   FillHistogramsForTaggedJet();
 }
 
@@ -736,7 +736,10 @@ Bool_t AliAnalysisTaskJpsiJet::FillHistogramsForTaggedJet(){
   // Find pair in jet
   AliEmcalJet *taggedJet = NULL;
   for(auto jet : jets->all()){
-    if(jet->ContainsTrack(pairTrackID) >= 0){
+    // Map track ID in jet constituents.
+    // - AliEmcalJetTask::fgkConstIndexShift = 100000
+    // - More details in AliEmcalJetTask.cxx
+    if(jet->ContainsTrack(pairTrackID) >= 0 || jet->ContainsTrack(pairTrackID + 100000) >= 0){
       taggedJet = jet;
       break;
     }
