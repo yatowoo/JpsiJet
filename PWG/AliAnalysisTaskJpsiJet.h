@@ -61,7 +61,7 @@ public:
   virtual void NotifyRun() { ; }
   virtual void Terminate(Option_t *option="");
 
-  // Histograms
+  // QA Histograms
 private:
   void InitHistogramsForEventQA(const char* histClass);
   void InitHistogramsForJetQA(const char* histClass);
@@ -73,7 +73,13 @@ private:
   void InitDielectron();
   void InitHistogramsForDielectron();
   Bool_t FindDaughters(AliVTrack *trk);
+  Double_t GetPseudoProperDecayTime(AliDielectronPair* pair);
   void AddTrackFromPair(AliAODTrack *trkTemplate);
+
+  // FF analysis
+private:
+  void InitHistogramsForTaggedJet();
+  Bool_t FillHistogramsForTaggedJet();
 
   // Jet finder task
   // -- These sub-tasks are managed by this task, not by AliAnalysisManager.

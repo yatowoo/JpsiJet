@@ -119,6 +119,9 @@ void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
     jetFinder->CreateOutputObjects();
   InitHistogramsForJetQA("Jet");
 
+  // Init pair in jet analysis
+  InitHistogramsForTaggedJet();
+
   PostData(1, fHistosQA);
 }
 
@@ -245,6 +248,8 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
     jetFinder->Exec("");
   }
   FillHistogramsForJetQA("Jet");
+  
+  FillHistogramsForTaggedJet();
 }
 
 // Create event QA histograms in output list
@@ -677,6 +682,14 @@ Bool_t AliAnalysisTaskJpsiJet::FindDaughters(AliVTrack* trk){
   return kFALSE;
 }
 
+Double_t AliAnalysisTaskJpsiJet::GetPseudoProperDecayTime(AliDielectronPair* pair){
+  auto priv = fAOD->GetPrimaryVertex();
+  Double_t errPseudoProperTime2 = 0.;
+  AliKFParticle kfPair = pair->GetKFParticle();
+  Double_t lxy = kfPair.GetPseudoProperDecayTime(*priv, TDatabasePDG::Instance()->GetParticle(443)->Mass(), &errPseudoProperTime2 );
+  return lxy;
+}
+
 void AliAnalysisTaskJpsiJet::AddTrackFromPair(AliAODTrack* trkTemplate){
   AliAODTrack* trk = new ((*fTracksWithPair)[fTracksWithPair->GetEntriesFast()]) AliAODTrack(*trkTemplate);
   AliDielectronPair *pair = static_cast<AliDielectronPair*>(fPairs->UncheckedAt(0));
@@ -697,10 +710,51 @@ void AliAnalysisTaskJpsiJet::AddTrackFromPair(AliAODTrack* trkTemplate){
   trk->SetUniqueID(0);
 
   // DEBUG - Pseudo-proper decay length
-  auto aod = fAOD;
-  auto priv = fAOD->GetPrimaryVertex();
-  Double_t errPseudoProperTime2 = 0.;
-  AliKFParticle kfPair = pair->GetKFParticle();
-  Double_t lxy = kfPair.GetPseudoProperDecayTime(*priv, TDatabasePDG::Instance()->GetParticle(443)->Mass(), &errPseudoProperTime2 );
-  trk->SetTrackPhiEtaPtOnEMCal(pair->M(), lxy, 0.);
+  trk->SetTrackPhiEtaPtOnEMCal(pair->M(), GetPseudoProperDecayTime(pair), 0.);
+}
+
+void AliAnalysisTaskJpsiJet::InitHistogramsForTaggedJet(){
+  TString histGroup = "PairInJet";
+  // THnSparse - pT, M, Lxy, z, \DeltaR
+  TString histName = histGroup + "/PairVars";
+  Int_t nBins[5] =   {2000, 100, 150,  12,  10};
+  Double_t xmin[5] = {0.,   1., -0.3,  0.,  0.};
+  Double_t xmax[5] = {100., 5.,  0.3, 1.2, 1.0};
+  THnSparse *hs = fHistos->CreateTHnSparse(histName.Data(), "Dielectron pair in jet variables (p_{T}-M_{e^{+}e^{-}}-L_{xy}-z-#DeltaR);p^{pair}_{T} (GeV/c);M_{e^{+}e^{-}} (GeV/c^{2});L_{xy} (cm);#DeltaR;N_{pairs}", 5, nBins, xmin, xmax);
+}
+
+Bool_t AliAnalysisTaskJpsiJet::FillHistogramsForTaggedJet(){
+  // Tagged jet container
+  AliJetContainer *jets = (AliJetContainer*)(fJetContainers->At(fJetContainers->GetEntriesFast()-1));
+  if(!jets->GetNJets()) return kFALSE;
+
+  // Get dielectron pair and track
+  AliDielectronPair *pair = (AliDielectronPair*)(fPairs->At(0));
+  Int_t pairTrackID = fTracksWithPair->GetEntriesFast() - 1;
+  AliAODTrack *pairTrack = (AliAODTrack*)(fTracksWithPair->UncheckedAt(pairTrackID));
+  
+  // Find pair in jet
+  AliEmcalJet *taggedJet = NULL;
+  for(auto jet : jets->all()){
+    if(jet->ContainsTrack(pairTrackID) >= 0){
+      taggedJet = jet;
+      break;
+    }
+  }
+  if(!taggedJet) return kFALSE;
+  AliDebug(1, Form("Found pair (%.2f, %.2f, %.2f) in jet (%s)", pair->Pt(), pair->Eta(), TVector2::Phi_0_2pi(pair->Phi()), (taggedJet->toString()).Data()));
+
+  TString histGroup = "PairInJet";
+  // THnSparse - pT, M, Lxy, z, \DeltaR
+  TString histName = histGroup + "/PairVars";
+  Double_t x[5] = {0.};
+  x[0] = pair->Pt();
+  x[1] = pair->M();
+  x[2] = GetPseudoProperDecayTime(pair);
+  x[3] = (taggedJet->GetNumberOfTracks() == 1 ? 1.0 : pair->Pt() / taggedJet->Pt());
+  x[4] = 0.0;
+
+  fHistos->FillTHnSparse(histName.Data(), x, 1.0);
+
+  return kTRUE;
 }
