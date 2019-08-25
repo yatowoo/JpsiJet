@@ -383,7 +383,6 @@ void AliAnalysisTaskJpsiJet::AddTaskEmcalJet(
   if(jetType == AliJetContainer::kChargedJet)
     cont->SetJetAcceptanceType(AliJetContainer::kTPCfid);
   // else for neutral jet, EMCal/DCal/PHOS should be considered
-  AliDebug(1,Form("Create jet container : %s", cont->GetName()));
   fJetContainers->Add(cont);
 }
 
@@ -429,7 +428,7 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForJetQA(const char* histClass){
       UInt_t rejectionReason = 0;
       if (!jets->AcceptJet(jet, rejectionReason)) {
         AliDebug(2,Form("Jet was rejected for reason : %d, details : %s", rejectionReason, (jet->toString()).Data()));
-        return;
+        continue;
       }
       Double_t x[3] = {0.};
       x[0] = jet->Pt();
