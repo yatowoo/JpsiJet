@@ -229,9 +229,10 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
     }
     new ((*fTracksWithPair)[nTracks++]) AliAODTrack(*trk);
   }
+  AliDebug(1, Form("Find dielectron pairs : %d, daughters : %d", nCandidates, nDaughters));
   // Insert pair as AOD track
   AddTrackFromPair(trkTemplate);
-  AliDebug(2, Form("Find dielectron pairs : %d, daughters : %d", nCandidates, nDaughters));
+  AliDebug(1, Form("AOD tracks : %d, tracks with pair : %d", fAOD->GetNumberOfTracks(), fTracksWithPair->GetEntriesFast()));
   // Register in AOD event
   fAOD->AddObject(fTracksWithPair);
 
@@ -313,7 +314,7 @@ void AliAnalysisTaskJpsiJet::AddTaskEmcalJet(
     AliMCParticleContainer* mcpartCont = new AliMCParticleContainer(trackName);
     partCont = mcpartCont;
   }
-  else if (trackName == "tracks" || trackName == "Tracks") {
+  else if (trackName.Contains("tracks")) {
     AliTrackContainer* trackCont = new AliTrackContainer(trackName);
     partCont = trackCont;
   }
@@ -382,6 +383,7 @@ void AliAnalysisTaskJpsiJet::AddTaskEmcalJet(
   if(jetType == AliJetContainer::kChargedJet)
     cont->SetJetAcceptanceType(AliJetContainer::kTPCfid);
   // else for neutral jet, EMCal/DCal/PHOS should be considered
+  AliDebug(1,Form("Create jet container : %s", cont->GetName()));
   fJetContainers->Add(cont);
 }
 
@@ -421,11 +423,12 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForJetQA(const char* histClass){
     
     TString histGroup = Form("%s/%s", histClass, jets->GetName());
 
+    AliDebug(1, Form("%d jets found in %s", jets->GetNJets(), jets->GetName()));
     for(auto jet : jets->all()){
       // Jet cuts
       UInt_t rejectionReason = 0;
       if (!jets->AcceptJet(jet, rejectionReason)) {
-        AliDebug(2,Form("Jet was rejected for reason : %d", rejectionReason));
+        AliDebug(2,Form("Jet was rejected for reason : %d, details : %s", rejectionReason, (jet->toString()).Data()));
         return;
       }
       Double_t x[3] = {0.};
