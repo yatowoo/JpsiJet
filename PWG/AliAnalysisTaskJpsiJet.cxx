@@ -37,6 +37,9 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet():
   AliAnalysisTaskSE(),
   fAOD(NULL),
   fDielectron(NULL),
+  fPairs(NULL),
+  fDaughters(NULL),
+  fTracksWithPair(NULL),
   fJetTasks(NULL),
   fJetContainers(NULL),
   fSelectedTrigger(0),
@@ -54,6 +57,9 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   AliAnalysisTaskSE(taskName),
   fAOD(NULL),
   fDielectron(NULL),
+  fPairs(NULL),
+  fDaughters(NULL),
+  fTracksWithPair(NULL),
   fJetTasks(NULL),
   fJetContainers(NULL),
   fSelectedTrigger(0),
@@ -184,6 +190,50 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
   AliDielectronVarManager::SetEvent(fAOD);
   AliDielectronVarManager::Fill(fAOD, values);
   fDielectron->Process(fAOD);
+
+  // Build tracks with dielectron pair
+  Int_t nCandidates = fDielectron->GetPairArray(1)->GetEntriesFast();
+  if(nCandidates == 1)
+    fHistos->FillTH1("EventStats", kWithSinglePair);
+  else if(nCandidates > 1)
+    fHistos->FillTH1("EventStats", kWithMultiPair);
+  else
+    return;
+  // Pairs and daughters
+  fPairs->Clear("C");
+  fDaughters->Clear("C");
+  Int_t nD = 0;
+  const TObjArray *candidates = fDielectron->GetPairArray(1);
+  for (Int_t i = 0; i < nCandidates; i++)
+  {
+    AliDielectronPair *pair = (AliDielectronPair *)(candidates->UncheckedAt(i));
+    new ((*fPairs)[i]) AliDielectronPair(*pair);
+    const AliKFParticle &d1 = pair->GetKFFirstDaughter();
+    new ((*fDaughters)[nD++]) TLorentzVector(d1.GetPx(), d1.GetPy(), d1.GetPz(), d1.GetE());
+    const AliKFParticle &d2 = pair->GetKFSecondDaughter();
+    new ((*fDaughters)[nD++]) TLorentzVector(d2.GetPx(), d2.GetPy(), d2.GetPz(), d2.GetE());
+  }
+  // Fill tracks
+  fTracksWithPair->Clear("C");
+  TIter nextTrk(fAOD->GetTracks());
+  AliAODTrack* trk = NULL;
+  AliAODTrack* trkTemplate = NULL;
+  Int_t nDaughters = 0;
+  Int_t nTracks = 0;
+  while (( trk = static_cast<AliAODTrack*>(nextTrk()) )) {
+    if(FindDaughters(trk)){
+      nDaughters ++;
+      if(!trkTemplate || trkTemplate->Pt() < trk->Pt())
+        trkTemplate = trk;
+      continue;
+    }
+    new ((*fTracksWithPair)[nTracks++]) AliAODTrack(*trk);
+  }
+  // Insert pair as AOD track
+  AddTrackFromPair(trkTemplate);
+  AliDebug(2, Form("Find dielectron pairs : %d, daughters : %d", nCandidates, nDaughters));
+  // Register in AOD event
+  fAOD->AddObject(fTracksWithPair);
 
   // Run jet finder tasks
   AliEmcalJetTask* jetFinder = NULL;
@@ -343,6 +393,7 @@ void AliAnalysisTaskJpsiJet::InitJetFinders(){
 
   AddTaskEmcalJet("usedefault", "", AliJetContainer::antikt_algorithm, 0.2, AliJetContainer::kChargedJet, 0.15, 0.3, 0.01, AliJetContainer::pt_scheme, "Jet", 1., kFALSE, kFALSE);
   AddTaskEmcalJet("usedefault", "", AliJetContainer::antikt_algorithm, 0.4, AliJetContainer::kChargedJet, 0.15, 0.3, 0.01, AliJetContainer::pt_scheme, "Jet", 1., kFALSE, kFALSE);
+  AddTaskEmcalJet("tracksWithPair", "", AliJetContainer::antikt_algorithm, 0.4, AliJetContainer::kChargedJet, 0.15, 0.3, 0.01, AliJetContainer::pt_scheme, "JpsiJet", 1., kFALSE, kFALSE);
 }
 
 void AliAnalysisTaskJpsiJet::InitHistogramsForJetQA(const char* histClass){
@@ -402,6 +453,12 @@ void AliAnalysisTaskJpsiJet::Terminate(Option_t*){
 
 void AliAnalysisTaskJpsiJet::InitDielectron(){
   fDielectron = new AliDielectron("Diele","Dielectron with EMCal triggered");
+  fPairs = new TClonesArray("AliDielectronPair",10);
+  fPairs->SetName("dielectrons");
+  fDaughters = new TClonesArray("TLorentzVector",20);
+  fDaughters->SetName("daughters");
+  fTracksWithPair = new TClonesArray("AliAODTrack",500);
+  fTracksWithPair->SetName("tracksWithPair");
 
 /**
  *  Track cuts
@@ -603,4 +660,45 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForDielectron()
   //InvMass versus Proper time
   histos->UserHistogram("Pair", "InvMass_ProperTime", "InvMass vs. ProperTime;pseudoproper-decay-length[cm]; Inv. Mass [GeV]",
                         120, -0.3, 0.3, 100, 1.0, 5.0, AliDielectronVarManager::kPseudoProperTime, AliDielectronVarManager::kM);
+}
+
+Bool_t AliAnalysisTaskJpsiJet::FindDaughters(AliVTrack* trk){
+  static const Double_t ERR_LIMIT = 1e-6;
+  TIter nextEle(fDaughters);
+  TLorentzVector* vec = NULL;
+  while((vec = static_cast<TLorentzVector*>(nextEle()))){
+    if(TMath::Abs(vec->Pt() - trk->Pt()) < ERR_LIMIT &&
+       TMath::Abs(vec->Eta() - trk->Eta()) < ERR_LIMIT &&
+       TMath::Abs(TVector2::Phi_0_2pi(vec->Phi()) - trk->Phi()) < ERR_LIMIT )
+      return kTRUE;
+  }
+  return kFALSE;
+}
+
+void AliAnalysisTaskJpsiJet::AddTrackFromPair(AliAODTrack* trkTemplate){
+  AliAODTrack* trk = new ((*fTracksWithPair)[fTracksWithPair->GetEntriesFast()]) AliAODTrack(*trkTemplate);
+  AliDielectronPair *pair = static_cast<AliDielectronPair*>(fPairs->UncheckedAt(0));
+
+  trk->SetProdVertex(fAOD->GetPrimaryVertex());
+  //trk->SetStatus(AliVTrack::kEmbedded);
+
+  trk->SetPt(pair->Pt());
+  trk->SetPhi(TVector2::Phi_0_2pi(pair->Phi()));
+  trk->SetTheta(TMath::ACos(pair->Pz() / pair->P()));
+
+  // Remove EMCal
+  trk->ResetStatus(AliVTrack::kEMCALmatch);
+  trk->SetEMCALcluster(AliVTrack::kEMCALNoMatch);
+
+  // Reset reference
+  trk->ResetBit(kIsReferenced);
+  trk->SetUniqueID(0);
+
+  // DEBUG - Pseudo-proper decay length
+  auto aod = fAOD;
+  auto priv = fAOD->GetPrimaryVertex();
+  Double_t errPseudoProperTime2 = 0.;
+  AliKFParticle kfPair = pair->GetKFParticle();
+  Double_t lxy = kfPair.GetPseudoProperDecayTime(*priv, TDatabasePDG::Instance()->GetParticle(443)->Mass(), &errPseudoProperTime2 );
+  trk->SetTrackPhiEtaPtOnEMCal(pair->M(), lxy, 0.);
 }

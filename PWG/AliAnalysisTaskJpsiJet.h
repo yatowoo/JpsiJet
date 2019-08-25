@@ -72,6 +72,8 @@ private:
 private:
   void InitDielectron();
   void InitHistogramsForDielectron();
+  Bool_t FindDaughters(AliVTrack *trk);
+  void AddTrackFromPair(AliAODTrack *trkTemplate);
 
   // Jet finder task
   // -- These sub-tasks are managed by this task, not by AliAnalysisManager.
@@ -124,6 +126,9 @@ enum EventStatus{ // for histogram event stats
 private:
   AliAODEvent       *fAOD; // Input AOD event
   AliDielectron     *fDielectron; // Dielectron framework
+  TClonesArray      *fPairs; // Dielectron pair
+  TClonesArray      *fDaughters; // Dielectron tracks
+  TClonesArray      *fTracksWithPair; // Track array with daughters replaced by pair
   TObjArray         *fJetTasks; // Jet finder tasks
   TObjArray         *fJetContainers; // Jet container
   UInt_t             fSelectedTrigger; // Event offline trigger
