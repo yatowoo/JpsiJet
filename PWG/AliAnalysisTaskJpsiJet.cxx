@@ -88,6 +88,17 @@ AliAnalysisTaskJpsiJet::~AliAnalysisTaskJpsiJet(){
 }
 
 void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
+  // PID response
+  AliAnalysisManager *mgr = AliAnalysisManager::GetAnalysisManager();
+  AliInputEventHandler *handler = (AliInputEventHandler*)(mgr->GetInputEventHandler());
+  if(handler->GetPIDResponse()){
+    AliDielectronVarManager::SetPIDResponse(handler->GetPIDResponse());
+  }
+  else{
+    AliFatal("This task needs the PID response attached to the input event handler!");
+    return;
+  }
+  // Histograms
   fHistos = new THistManager("JpsiJetQA");
   fHistosQA = fHistos->GetListOfHistograms();
 
@@ -128,17 +139,6 @@ void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
 void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
   fAOD = dynamic_cast<AliAODEvent*>(InputEvent());
   fFiredTriggerTag = "";
-
-  // PID response
-  AliAnalysisManager *mgr = AliAnalysisManager::GetAnalysisManager();
-  AliInputEventHandler *handler = (AliInputEventHandler*)(mgr->GetInputEventHandler());
-  if(handler->GetPIDResponse()){
-    AliDielectronVarManager::SetPIDResponse(handler->GetPIDResponse());
-  }
-  else{
-    AliFatal("This task needs the PID response attached to the input event handler!");
-    return;
-  }
 
   fHistos->FillTH1("EventStats", kAllInAOD);
 
@@ -459,6 +459,7 @@ void AliAnalysisTaskJpsiJet::Terminate(Option_t*){
 }
 
 void AliAnalysisTaskJpsiJet::InitDielectron(){
+
   fDielectron = new AliDielectron("Diele","Dielectron with EMCal triggered");
   fPairs = new TClonesArray("AliDielectronPair",10);
   fPairs->SetName("dielectrons");
