@@ -711,12 +711,25 @@ void AliAnalysisTaskJpsiJet::AddTrackFromPair(AliAODTrack* trkTemplate){
 
 void AliAnalysisTaskJpsiJet::InitHistogramsForTaggedJet(){
   TString histGroup = "PairInJet";
-  // THnSparse - pT, M, Lxy, z, \DeltaR
+  // THnSparse - pT_pair, M, Lxy, z, \DeltaR, pT_jet
   TString histName = histGroup + "/PairVars";
-  Int_t nBins[6]   = { 200,  200, 100,  150,  12,  10};
-  Double_t xmin[6] = {  0.,   0.,  1., -0.3,  0.,  0.};
-  Double_t xmax[6] = {100., 100.,  5.,  0.3, 1.2, 1.0};
+  Int_t nBins[6]   = { 200, 100,  150,  12,  10, 200};
+  Double_t xmin[6] = {  0.,  1., -0.3,  0.,  0.,  0.};
+  Double_t xmax[6] = {100.,  5.,  0.3, 1.2,  1.,100.};
   THnSparse *hs = fHistos->CreateTHnSparse(histName.Data(), "Dielectron pair in jet variables (p_{T}^{pair}-M_{e^{+}e^{-}}-L_{xy}-z-#DeltaR-p_{T}^{jet});p^{pair}_{T} (GeV/c);M_{e^{+}e^{-}} (GeV/c^{2});L_{xy} (cm);z(p_{T}^{pair}/p_{T}^{jet});#DeltaR;N_{pairs};p_{T}^{jet} (GeV/c)", 6, nBins, xmin, xmax);
+
+  // Constituents
+  histName = histGroup + "/Ntrakcs_pT";
+  fHistos->CreateTH2(histName.Data(), "Jet constituents - number vs p_{T}^{jet};p_{T}^{jet} (GeV/c);N_{tracks}",
+      200, 0., 100., 100, 0, 100);
+  
+  // Fragmentation Function - Prompt and Non-prompt
+  // Pre-defined cuts: pT_jet > 15, pT_pair > 5, Mpair\in[2.92, 3.16]
+  // Prompt: |Lxy| < 0.01; Non-prompt: |Lxy| > 0.02
+  histName = histGroup + "/PromptFF";
+  fHistos->CreateTH1(histName.Data(), "z #equiv p_{T} of track in jet - Prompt J/#psi;z;N_{pairs}",12,0.,1.2);
+  histName = histGroup + "/NonPromptFF";
+  fHistos->CreateTH1(histName.Data(), "z #equiv p_{T} of track in jet - Non-Prompt J/#psi;z;N_{pairs}",12,0.,1.2);
 }
 
 Bool_t AliAnalysisTaskJpsiJet::FillHistogramsForTaggedJet(){
@@ -740,13 +753,15 @@ Bool_t AliAnalysisTaskJpsiJet::FillHistogramsForTaggedJet(){
       break;
     }
   }
-  if(!taggedJet) return kFALSE;
+  UInt_t rejectionReason = 0;
+  if(!taggedJet || !jets->AcceptJet(taggedJet, rejectionReason)) return kFALSE;
   AliDebug(1, Form("Found pair (%.2f, %.2f, %.2f) in jet (%s)", pair->Pt(), pair->Eta(), TVector2::Phi_0_2pi(pair->Phi()), (taggedJet->toString()).Data()));
 
+
   TString histGroup = "PairInJet";
-  // THnSparse - pT, M, Lxy, z, \DeltaR
+  // THnSparse - pT_pair, M, Lxy, z, \DeltaR, pT_jet
   TString histName = histGroup + "/PairVars";
-  Double_t x[5] = {0.};
+  Double_t x[6] = {0.};
   x[0] = pair->Pt();
   x[1] = pair->M();
   x[2] = GetPseudoProperDecayTime(pair);
@@ -755,6 +770,22 @@ Bool_t AliAnalysisTaskJpsiJet::FillHistogramsForTaggedJet(){
   x[5] = taggedJet->Pt();
 
   fHistos->FillTHnSparse(histName.Data(), x, 1.0);
+
+  // Constituents Info
+  histName = histGroup + "/Ntrakcs_pT";
+  fHistos->FillTH2(histName.Data(), taggedJet->Pt(), taggedJet->GetNumberOfTracks());
+
+  // FF of J/psi candidate
+  if(taggedJet->Pt() > 15. && 
+      pair->M() > 2.92 && pair->M() < 3.16){
+    if(TMath::Abs(x[2]) < 0.01){
+      histName = histGroup + "/PromptFF";
+      fHistos->FillTH1(histName.Data(), x[3]);
+    }else if(x[2] > 0.02){
+      histName = histGroup + "/NonPromptFF";
+      fHistos->FillTH1(histName.Data(), x[3]);
+    }
+  }
 
   return kTRUE;
 }

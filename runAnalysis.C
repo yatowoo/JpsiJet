@@ -167,7 +167,6 @@ void runAnalysis(
 
   // Task - JpsiJet
   if(doDevPWG){
-    AliLog::SetGlobalDebugLevel(1);
     gInterpreter->AddIncludePath("./PWG");
     gInterpreter->LoadMacro("AliAnalysisTaskJpsiJet.cxx++g");
     gInterpreter->ExecuteMacro("AddTaskJpsiJet_pp.C");
