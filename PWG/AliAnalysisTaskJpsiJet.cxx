@@ -118,9 +118,9 @@ void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
   InitHistogramsForEventQA("Event_afterCuts");
 
   // Init dielectron
+  InitHistogramsForDielectron();
   fDielectron->SetDontClearArrays();
   fDielectron->Init();
-  InitHistogramsForDielectron();
   fHistosQA->Add(const_cast<THashList*>(fDielectron->GetHistogramList()));
 
   // Init jet finder tasks
@@ -187,11 +187,6 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
   // Run dielectron task
   AliKFParticle::SetField(fAOD->GetMagneticField());
   AliDielectronPID::SetCorrVal(fAOD->GetRunNumber());
-  AliDielectronHistos *dieHistos = fDielectron->GetHistoManager();
-  Double_t values[AliDielectronVarManager::kNMaxValues] = {0};
-  AliDielectronVarManager::SetFillMap(dieHistos->GetUsedVars());
-  AliDielectronVarManager::SetEvent(fAOD);
-  AliDielectronVarManager::Fill(fAOD, values);
   fDielectron->Process(fAOD);
 
   // Build tracks with dielectron pair
@@ -718,10 +713,10 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForTaggedJet(){
   TString histGroup = "PairInJet";
   // THnSparse - pT, M, Lxy, z, \DeltaR
   TString histName = histGroup + "/PairVars";
-  Int_t nBins[5] =   {2000, 100, 150,  12,  10};
-  Double_t xmin[5] = {0.,   1., -0.3,  0.,  0.};
-  Double_t xmax[5] = {100., 5.,  0.3, 1.2, 1.0};
-  THnSparse *hs = fHistos->CreateTHnSparse(histName.Data(), "Dielectron pair in jet variables (p_{T}-M_{e^{+}e^{-}}-L_{xy}-z-#DeltaR);p^{pair}_{T} (GeV/c);M_{e^{+}e^{-}} (GeV/c^{2});L_{xy} (cm);#DeltaR;N_{pairs}", 5, nBins, xmin, xmax);
+  Int_t nBins[6]   = { 200,  200, 100,  150,  12,  10};
+  Double_t xmin[6] = {  0.,   0.,  1., -0.3,  0.,  0.};
+  Double_t xmax[6] = {100., 100.,  5.,  0.3, 1.2, 1.0};
+  THnSparse *hs = fHistos->CreateTHnSparse(histName.Data(), "Dielectron pair in jet variables (p_{T}^{pair}-M_{e^{+}e^{-}}-L_{xy}-z-#DeltaR-p_{T}^{jet});p^{pair}_{T} (GeV/c);M_{e^{+}e^{-}} (GeV/c^{2});L_{xy} (cm);z(p_{T}^{pair}/p_{T}^{jet});#DeltaR;N_{pairs};p_{T}^{jet} (GeV/c)", 6, nBins, xmin, xmax);
 }
 
 Bool_t AliAnalysisTaskJpsiJet::FillHistogramsForTaggedJet(){
@@ -757,6 +752,7 @@ Bool_t AliAnalysisTaskJpsiJet::FillHistogramsForTaggedJet(){
   x[2] = GetPseudoProperDecayTime(pair);
   x[3] = (taggedJet->GetNumberOfTracks() == 1 ? 1.0 : pair->Pt() / taggedJet->Pt());
   x[4] = 0.0;
+  x[5] = taggedJet->Pt();
 
   fHistos->FillTHnSparse(histName.Data(), x, 1.0);
 
