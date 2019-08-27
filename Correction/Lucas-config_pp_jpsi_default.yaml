@@ -1,0 +1,42 @@
+period: ""                                          # standard yaml file is located in:
+pass: ""                                            # AliPhysics/PWG/EMCAL/config/
+inputObjects:                                       # Define all of the input objects for the corrections
+    clusterContainers:                              # Configure clusters
+        defaultClusterContainer:                    # Name of a cluster input
+            branchName: "usedefault"                # Set the branch name. "usedefault" is supported
+        defaultClusterContainer_1:                  # Name of another cluster input which inherits from defaultClusterContainer
+            minE: 0.3                               # Cluster min E. Formerly clusterEMin
+        defaultClusterContainer_2:                  # Name of another cluster input which inherits from defaultClusterContainer
+            minE: 0.3                               # Cluster min E.
+            clusNonLinCorrEnergyCut: 0.3            # Cluster non-linearity min E. Formerly "minPt" in the non-linearity AddTask() 
+    trackContainers:                                # Configure tracks
+        defaultTrackContainer:                      # Name of a track input
+            branchName: "usedefault"                # Set the branch name. "usedefault" is supported.
+        defaultTrackContainer_1:                    # Name of another track input which inherits from defaultTrackContainer
+            minPt: 0.3                              # Track min pt.
+            trackFilterType: kNoTrackFilter         # Set the track filter type. Check the documentation for possible values
+CellEnergy:
+    enabled: true
+    createHistos: true
+    enableNewTempCalib: true
+CellBadChannel:
+    enabled: true
+    createHistos: true
+CellTimeCalib:
+    enabled: true
+    createHistos: true
+Clusterizer:
+    enabled: true
+    recalDistToBadChannels: true                    # True will recalculate the distance to bad channels
+    cellE: 0.1
+    seedE: 0.5
+ClusterExotics:
+    enabled: true
+    createHistos: true
+ClusterNonLinearity:
+    enabled: true
+    createHistos: true
+    nonLinFunct: kBeamTestCorrectedv4               # Sets the non-linearity function. Possible options are defined in the header of the cluster non-linearity correction component
+ClusterTrackMatcher:                                # Cluster-track matcher component
+    enabled: true 
+   #pt track cut in old version!
