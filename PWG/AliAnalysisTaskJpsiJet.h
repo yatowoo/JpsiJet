@@ -71,15 +71,15 @@ private:
   // Dielectron framework
 private:
   void InitDielectron();
-  void InitHistogramsForDielectron();
+  void InitHistogramsForDielectron(const char* histMgrName);
   Bool_t FindDaughters(AliVTrack *trk);
   Double_t GetPseudoProperDecayTime(AliDielectronPair* pair);
   void AddTrackFromPair(AliAODTrack *trkTemplate);
 
   // FF analysis
 private:
-  void InitHistogramsForTaggedJet();
-  Bool_t FillHistogramsForTaggedJet();
+  void InitHistogramsForTaggedJet(const char* histClass);
+  Bool_t FillHistogramsForTaggedJet(const char* histClass);
 
   // Jet finder task
   // -- These sub-tasks are managed by this task, not by AliAnalysisManager.
