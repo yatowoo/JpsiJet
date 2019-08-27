@@ -14,6 +14,7 @@ with open(CONFIG_FILE) as f:
 JOB_NAME = sys.argv[1]
 JOB_MODE = sys.argv[2]
 
+doDevPWG = int(CONFIG[JOB_NAME]["doDevPWG"])
 doMult = int(CONFIG[JOB_NAME]["doMult"])
 doEmcalCorrection = int(CONFIG[JOB_NAME]["doEmcalCorrection"])
 doJetQA = int(CONFIG[JOB_NAME]["doJetQA"])
@@ -23,6 +24,7 @@ doPIDQA = int(CONFIG[JOB_NAME]["doPIDQA"])
 doPhysAna = int(CONFIG[JOB_NAME]["doPhysAna"])
 
 cmd = "aliroot -b -l -q -x \'runAnalysis.C(" \
+    + repr(doDevPWG) + ',' \
     + repr(doMult) + ',' \
     + repr(doEmcalCorrection) + ',' \
     + repr(doJetQA) + ',' \

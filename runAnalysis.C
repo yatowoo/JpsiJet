@@ -34,8 +34,8 @@ AliAnalysisAlien* SetupGridHandler(
 
   alienHandler->AddIncludePath("-I. -I$ROOTSYS/include -I$ALICE_ROOT -I$ALICE_ROOT/include -I$ALICE_PHYSICS/include");
 
-  alienHandler->SetAdditionalLibs("AddTaskJPSIFilter.C AddTask_cjahnke_JPsi.C ConfigJpsi_cj_pp.C AddTaskJetQA.C YatoJpsiFilterTask.h YatoJpsiFilterTask.cxx");
-  alienHandler->SetAnalysisSource("YatoJpsiFilterTask.cxx");
+  alienHandler->SetAdditionalLibs("AddTaskJpsiJet_pp.C AliAnalysisTaskJpsiJet.cxx AliAnalysisTaskJpsiJet.h");
+  alienHandler->SetAnalysisSource("AliAnalysisTaskJpsiJet.cxx");
 
   alienHandler->SetAliPhysicsVersion("vAN-20190614_ROOT6-1");
 
