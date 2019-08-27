@@ -521,6 +521,10 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForDielectron(const char* histMgrName
 {
   //Setup histogram Manager
   AliDielectronHistos *histos = new AliDielectronHistos(histMgrName, "Histograms for dielectron");
+  if(!fDielectron){
+    AliWarning("AliDielectron was not initialized.");
+    InitDielectron();
+  }
   fDielectron->SetHistogramManager(histos);
 
   //Initialise histogram classes
