@@ -73,10 +73,6 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   // IO
   DefineInput(0, TChain::Class());
   DefineOutput(1, TList::Class());
-  // Dielectron task
-  InitDielectron();
-  // Jet task
-  InitJetFinders();
 }
 
 AliAnalysisTaskJpsiJet::~AliAnalysisTaskJpsiJet(){
@@ -116,18 +112,26 @@ void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
   InitHistogramsForEventQA("Event_ALL");
   InitHistogramsForEventQA("Event_beforeCuts");
   InitHistogramsForEventQA("Event_afterCuts");
+  
+  // Dielectron task
+  InitDielectron();
 
   // Init dielectron
   InitHistogramsForDielectron("Dielectron");
   fDielectron->SetDontClearArrays();
   fDielectron->Init();
   fHistosQA->Add(const_cast<THashList*>(fDielectron->GetHistogramList()));
-
+  
+  // Jet task
+  InitJetFinders();
   // Init jet finder tasks
   AliEmcalJetTask* jetFinder = NULL;
   TIter next(fJetTasks);
   while((jetFinder=(AliEmcalJetTask*)next()))
+  {
+    jetFinder->LocalInit();
     jetFinder->CreateOutputObjects();
+  }
   InitHistogramsForJetQA("Jet");
 
   // Init pair in jet analysis
@@ -441,10 +445,7 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForJetQA(const char* histClass){
 }
 
 void AliAnalysisTaskJpsiJet::LocalInit(){
-  AliEmcalJetTask* jetFinder = NULL;
-  TIter next(fJetTasks);
-  while((jetFinder=(AliEmcalJetTask*)next()))
-    jetFinder->LocalInit();
+  return;
 }
 
 void AliAnalysisTaskJpsiJet::Terminate(Option_t*){
