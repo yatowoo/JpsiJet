@@ -44,6 +44,7 @@
 class AliAnalysisCuts;
 class AliDielectron;
 class AliDielectronVarManager;
+class AliEmcalJet;
 
 class AliAnalysisTaskJpsiJet : public AliAnalysisTaskSE
 {
@@ -148,7 +149,7 @@ private:
   THistManager      *fHistos;
 
 private:
-  ClassDef(AliAnalysisTaskJpsiJet, 0);
+  ClassDef(AliAnalysisTaskJpsiJet, 1);
 };
 
 #endif /* ALIANALYSISTASK_JPSIJET_H */
