@@ -619,7 +619,7 @@
       "NrunsPerMaster": 200,
       "AliPhysics": "vAN-20190614_ROOT6-1" 
     },
-    "git_commit": "cfbaa87",
+    "git_commit": "367fe4e",
     "result":{
       "PID": 1596198877,
       "N_run": 0,
@@ -651,7 +651,7 @@
       "NrunsPerMaster": 200,
       "AliPhysics": "vAN-20190614_ROOT6-1" 
     },
-    "git_commit": "cfbaa87",
+    "git_commit": "367fe4e",
     "result":{
       "PID": 1596199506,
       "N_run": 0,

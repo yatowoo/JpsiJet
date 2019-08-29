@@ -10,7 +10,7 @@ AliAnalysisTaskJpsiJet* AddTaskJpsiJet_pp(){
   AliAnalysisTaskJpsiJet *task = new AliAnalysisTaskJpsiJet("JpsiJet_PP13TeV");
 
   task->SetTrigger(AliVEvent::kINT7 | AliVEvent::kEMCEGA);
-  task->SetTriggerClasses("EG1;EG2;DG1;DG2");
+  task->SetTriggerClasses("MB;INT7;EG1;EG2;DG1;DG2");
 
   //Event filter
   AliDielectronEventCuts *eventCuts = new AliDielectronEventCuts("eventCuts", "Vertex Track && |vtxZ|<10 && ncontrib>1");
