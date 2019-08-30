@@ -610,7 +610,7 @@
     "doPhysAna": false,
     "datasets": "16k_pass1",
     "data_dir": "2016/LHC16j4",
-    "work_dir": "JpsiJet_PWG_MC16k_16j4_190827",
+    "work_dir": "JpsiJet_PWG_MC16k_16j4_190829",
     "task_name": "JpsiJet",
     "alien_config":{
       "TTL": 43200,
@@ -619,16 +619,17 @@
       "NrunsPerMaster": 200,
       "AliPhysics": "vAN-20190614_ROOT6-1" 
     },
-    "git_commit": "367fe4e",
+    "git_commit": "5912d84",
     "result":{
-      "PID": 1596198877,
-      "N_run": 0,
-      "Total": 0,
-      "Done": 0,
-      "ERROR_V": 0,
-      "Expired": 0,
-      "ratio": 0.0,
-      "comment":"" 
+      "PID": 1598497180,
+      "N_run": 123,
+      "Total": 453,
+      "Done": 445,
+      "ERROR_E": 3,
+      "ERROR_IB": 3,
+      "ERROR_SV": 2,
+      "ratio": 92.23,
+      "comment":"MC Dielectron from HF" 
     }
   },
   "PWG_MC16k_Jpsi":{
@@ -642,7 +643,7 @@
     "doPhysAna": false,
     "datasets": "16k_pass1",
     "data_dir": "2017/LHC17h2h",
-    "work_dir": "JpsiJet_PWG_MC16k_17h2h_190827",
+    "work_dir": "JpsiJet_PWG_MC16k_17h2h_190829",
     "task_name": "JpsiJet",
     "alien_config":{
       "TTL": 43200,
@@ -651,16 +652,16 @@
       "NrunsPerMaster": 200,
       "AliPhysics": "vAN-20190614_ROOT6-1" 
     },
-    "git_commit": "367fe4e",
+    "git_commit": "5912d84",
     "result":{
-      "PID": 1596199506,
-      "N_run": 0,
-      "Total": 0,
-      "Done": 0,
-      "ERROR_V": 0,
-      "Expired": 0,
-      "ratio": 0.0,
-      "comment":"" 
+      "PID": 1598499084,
+      "N_run": 123,
+      "Total": 232,
+      "Done": 221,
+      "ERROR_IB": 7,
+      "WAITTING": 4,
+      "ratio": 95.26,
+      "comment":"MC Injected J/psi" 
     }
   },
   "PWG_16k":{
@@ -683,15 +684,18 @@
       "NrunsPerMaster": 200,
       "AliPhysics": "vAN-20190614_ROOT6-1" 
     },
-    "git_commit": "367fe4e",
+    "git_commit": "5912d84",
     "result":{
-      "PID": 1596199506,
-      "N_run": 0,
-      "Total": 0,
-      "Done": 0,
-      "ERROR_V": 0,
-      "Expired": 0,
-      "ratio": 0.0,
+      "PID": 1598499420,
+      "N_run": 123,
+      "Total": 1585,
+      "Done": 1542,
+      "ERROR_V": 8,
+      "ERROR_E": 22,
+      "ERROR_IB": 6,
+      "Expired": 4,
+      "WAITTING": 3,
+      "ratio": 97.29,
       "comment":"" 
     }
   }
