@@ -546,12 +546,12 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForDielectron(const char* histMgrName
   histos->UserHistogram(histClass, "VtxZ", "Vertex Z;Z[cm];#events", 1000, -50., 50., AliDielectronVarManager::kZvPrim);
   histos->UserHistogram(histClass, "VtxX", "Vertex X;X[cm];#events", 1000, -1.0, 1.0, AliDielectronVarManager::kXvPrim);
   histos->UserHistogram(histClass, "VtxY", "Vertex Y;Y[cm];#events", 2000, -1.0, 1.0, AliDielectronVarManager::kYvPrim);
-  histos->UserHistogram(histClass, "NVContrib", "Number of Vertex contributors", 1000, 0, 1000, AliDielectronVarManager::kNVtxContrib);
+  histos->UserHistogram(histClass, "NVContrib", "Number of Vertex contributors", 1001, -0.5, 1000.5, AliDielectronVarManager::kNVtxContrib);
   // Event track and SPD (tracklets) stats.
-  histos->UserHistogram(histClass, "kNTrk", "Number of tracks;kNTrk;Entries", 4000, 0., 4000., AliDielectronVarManager::kNTrk);
-  histos->UserHistogram(histClass, "kNaccTrcklts", "Number of accepted SPD tracklets in |eta|<1.6;kNaccTrcklts;Entries", 1000, 0., 1000., AliDielectronVarManager::kNaccTrcklts);
-  histos->UserHistogram(histClass, "kNaccTrcklts10Corr", "kNaccTrcklts10Corr;kNaccTrcklts10Corr;Entries", 500, 0., 500., AliDielectronVarManager::kNaccTrcklts10Corr);
-  histos->UserHistogram(histClass, "VtxZ_kNaccTrcklts10Corr", "VtxZ vs. kNaccTrcklts10Corr;VtxZ;kNaccTrcklts10Corr", 800, -40., 40., 500, 0., 500., AliDielectronVarManager::kZvPrim, AliDielectronVarManager::kNaccTrcklts10Corr);
+  histos->UserHistogram(histClass, "kNTrk", "Number of tracks;kNTrk;Entries", 4001, -0.5, 4000.5, AliDielectronVarManager::kNTrk);
+  histos->UserHistogram(histClass, "kNaccTrcklts", "Number of accepted SPD tracklets in |eta|<1.6;kNaccTrcklts;Entries", 1001, -0.5, 1000.5, AliDielectronVarManager::kNaccTrcklts);
+  histos->UserHistogram(histClass, "kNaccTrcklts10Corr", "kNaccTrcklts10Corr;kNaccTrcklts10Corr;Entries", 501, -0.5, 500.5, AliDielectronVarManager::kNaccTrcklts10Corr);
+  histos->UserHistogram(histClass, "VtxZ_kNaccTrcklts10Corr", "VtxZ vs. kNaccTrcklts10Corr;VtxZ;kNaccTrcklts10Corr", 800, -40., 40., 501, -0.5, 500.5, AliDielectronVarManager::kZvPrim, AliDielectronVarManager::kNaccTrcklts10Corr);
   //new multiplicity estimator: V0
   histos->UserHistogram(histClass, "kMultV0", "kMultV0;kMultV0;Entries", 1000, 0., 1000., AliDielectronVarManager::kMultV0);
   histos->UserHistogram(histClass, "kMultV0A", "kMultV0;kMultV0;Entries", 1000, 0., 1000., AliDielectronVarManager::kMultV0A);
@@ -566,8 +566,8 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForDielectron(const char* histMgrName
   histos->UserHistogram(histClass, "VtxZ_kMultV0", "VtxZ vs. kMultV0;VtxZ;kMultV0", 300, -15., 15., 1000, 0., 1000., AliDielectronVarManager::kZvPrim, AliDielectronVarManager::kMultV0);
 
   // Dielectron info.
-  histos->UserHistogram(histClass, "Nelectrons", "Number of tracks/electron selected by AliDielectron after cuts;N_{e};#events", 50, 0, 50, AliDielectronVarManager::kTracks);
-  histos->UserHistogram(histClass, "Npairs", "Number of Ev1PM pair candidates after all cuts;J/#psi candidates;#events", 20, 0, 20, AliDielectronVarManager::kPairs);
+  histos->UserHistogram(histClass, "Nelectrons", "Number of tracks/electron selected by AliDielectron after cuts;N_{e};#events", 50, -0.5, 49.5, AliDielectronVarManager::kTracks);
+  histos->UserHistogram(histClass, "Npairs", "Number of Ev1PM pair candidates after all cuts;J/#psi candidates;#events", 20, -0.5, 19.5, AliDielectronVarManager::kPairs);
   /*
 	  Histogram for Track
 	*/
@@ -578,8 +578,8 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForDielectron(const char* histMgrName
   histos->UserHistogram("Track", "dXY", "dXY;dXY [cm];#tracks", 1000, -50, 50, AliDielectronVarManager::kImpactParXY, kTRUE);
   histos->UserHistogram("Track", "dZ", "dZ;dZ [cm];#tracks", 1000, -50., 50., AliDielectronVarManager::kImpactParZ, kTRUE);
   // Tracking quality
-  histos->UserHistogram("Track", "ITS_FirstCls", "ITS First Cluster;Layer No. of ITS 1st cluster;#Entries", 6, 0., 6., AliDielectronVarManager::kITSLayerFirstCls, kTRUE);
-  histos->UserHistogram("Track", "TPCnCls", "Number of Clusters TPC;TPC number clusteres;#tracks", 160, 0, 160, AliDielectronVarManager::kNclsTPC, kTRUE);
+  histos->UserHistogram("Track", "ITS_FirstCls", "ITS First Cluster;Layer No. of ITS 1st cluster;#Entries", 6, 0.5, 6.5, AliDielectronVarManager::kITSLayerFirstCls, kTRUE);
+  histos->UserHistogram("Track", "TPCnCls", "Number of Clusters TPC;TPC number clusteres;#tracks", 161, -0.5, 160.5, AliDielectronVarManager::kNclsTPC, kTRUE);
   histos->UserHistogram("Track", "TPCchi2Cl", "Chi-2/Clusters TPC;Chi2/ncls number clusteres;#tracks", 100, 0, 10, AliDielectronVarManager::kTPCchi2Cl, kTRUE);
   // PID - TPC
   histos->UserHistogram("Track", "dEdx_P", "dEdx vs PinTPC;P [GeV];TPC signal (a.u.);#tracks",
@@ -721,7 +721,7 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForTaggedJet(const char *histClass){
   // Constituents
   histName = Form("%s/Ntracks_pT",histClass);
   fHistos->CreateTH2(histName.Data(), "Jet constituents - number vs p_{T}^{jet};p_{T}^{jet} (GeV/c);N_{tracks}",
-      200, 0., 100., 100, 0, 100);
+      200, 0., 100., 100, -0.5, 99.5);
   
   // Fragmentation Function - Prompt and Non-prompt
   // Pre-defined cuts: pT_jet > 15, pT_pair > 5, Mpair\in[2.92, 3.16]

@@ -22,6 +22,8 @@ JpsiJet_validation.sh
 JpsiJet_validation_merge.sh
 YatoJpsiFilterTask.cxx
 YatoJpsiFilterTask.h
+AliAnalysisTaskJpsiJet.cxx
+AliAnalysisTaskJpsiJet.h
 stderr
 # ACLiC
 *_cxx_ACLiC_linkdef.h
@@ -29,6 +31,7 @@ stderr
 # Physics Analysis
 output
 output_mc
+data
 
 ### C ###
 # Prerequisites
