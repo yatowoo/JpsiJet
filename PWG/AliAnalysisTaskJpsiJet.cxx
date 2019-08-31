@@ -606,24 +606,24 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForDielectron(const char* histMgrName
   histos->UserHistogram("Track", "EMCalE", "EmcalE;Cluster Energy [GeV];#Clusters",
                         200, 0., 40., AliDielectronVarManager::kEMCALE, kTRUE);
   histos->UserHistogram("Track", "EMCalE_Pt", "Cluster energy vs. pT; EMCal_E;pT;#tracks",
-                        200, 0., 40., 800, 0., 40, AliDielectronVarManager::kEMCALE, AliDielectronVarManager::kPt, kTRUE);
+                        800, 0., 40, 200, 0., 40.,  AliDielectronVarManager::kPt, AliDielectronVarManager::kEMCALE, kTRUE);
   //Ecluster versus Phi to separate EMCal and DCal
   histos->UserHistogram("Track", "EMCalE_Phi", "Cluster energy vs. #phi; EMCal_E;Phi;#tracks",
-                        200, 0., 40., 200, 0., TMath::TwoPi(), AliDielectronVarManager::kEMCALE, AliDielectronVarManager::kPhi, kTRUE);
+                        200, 0., TMath::TwoPi(), 200, 0., 40., AliDielectronVarManager::kPhi, AliDielectronVarManager::kEMCALE, kTRUE);
   histos->UserHistogram("Track", "EMCalE_Eta", "Cluster energy vs. #eta; EMCal_E;Eta;#tracks",
-                        200, 0., 40., 200, -1.0, 1.0, AliDielectronVarManager::kEMCALE, AliDielectronVarManager::kEta, kTRUE);
+                        200, -1.0, 1.0, 200, 0., 40., AliDielectronVarManager::kEta, AliDielectronVarManager::kEMCALE, kTRUE);
   // PID - EMCal
   // E/p ratio
   histos->UserHistogram("Track", "EoverP", "EMCal E/p ratio;E/p;#Clusters",
                         200, 0., 2., AliDielectronVarManager::kEMCALEoverP, kTRUE);
-  histos->UserHistogram("Track", "EoverP_pt", "E/p ratio vs Pt;Pt (GeV/c);E/p;#tracks",
+  histos->UserHistogram("Track", "EoverP_Pt", "E/p ratio vs Pt;Pt (GeV/c);E/p;#tracks",
                         200, 0., 40., 200, 0., 2., AliDielectronVarManager::kPt, AliDielectronVarManager::kEMCALEoverP, kTRUE);
   histos->UserHistogram("Track", "EoverP_Phi", "E/p ratio vs #phi;Phi;E/p;#tracks",
                         200, 0., TMath::TwoPi(), 200, 0., 2., AliDielectronVarManager::kPhi, AliDielectronVarManager::kEMCALEoverP, kTRUE);
   histos->UserHistogram("Track", "EoverP_Eta", "E/p ratio vs #eta;Eta;E/p;#tracks",
                         200, -1.0, 1.0, 200, 0., 2., AliDielectronVarManager::kEta, AliDielectronVarManager::kEMCALEoverP, kTRUE);
   // EMCal nSigma electron
-  histos->UserHistogram("Track", "EMCALnSigmaE_pt", "n#sigma_{e} vs Pt;Pt (GeV/c);n#sigma_{e};#tracks",
+  histos->UserHistogram("Track", "EMCALnSigmaE_Pt", "n#sigma_{e} vs Pt;Pt (GeV/c);n#sigma_{e};#tracks",
                         200, 0., 40., 200, -12, 12, AliDielectronVarManager::kPt, AliDielectronVarManager::kEMCALnSigmaEle, kTRUE);
   histos->UserHistogram("Track", "EMCALnSigmaE_Phi", "n#sigma_{e} vs #phi;Phi;n#sigma_{e};#tracks",
                         200, 0., TMath::TwoPi(), 200, -12, 12, AliDielectronVarManager::kPhi, AliDielectronVarManager::kEMCALnSigmaEle, kTRUE);
@@ -637,7 +637,7 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForDielectron(const char* histMgrName
   histos->UserHistogram("Track", "TPCnSigmaEle_EoverP", "n#sigma_{e}(TPC) vs E/p;E/p;n#sigma_{e}(TPC);#tracks",
                         200, 0., 2., 200, -12., 12., AliDielectronVarManager::kEMCALEoverP, AliDielectronVarManager::kTPCnSigmaEle, kTRUE);
   histos->UserHistogram("Track", "dEdx_EMCALnSigmaE", "dEdx vs n#sigma_{e}(EMCAL);n#sigma_{e}(EMCAL);TPC signal (a.u.);#tracks",
-                        200, -12., 12., 800, 20., 200., AliDielectronVarManager::kEMCALEoverP, AliDielectronVarManager::kTPCsignal, kTRUE);
+                        200, -12., 12., 800, 20., 200., AliDielectronVarManager::kEMCALnSigmaEle, AliDielectronVarManager::kTPCsignal, kTRUE);
   histos->UserHistogram("Track", "nSigmaTPC_EMCal", "n#sigma_{e}(TPC vs EMCAL);n#sigma_{e}(EMCAL);n#sigma_{e}(TPC);#tracks",
                         200, -5., 5., 200, -12., 12., AliDielectronVarManager::kEMCALnSigmaEle, AliDielectronVarManager::kTPCnSigmaEle, kTRUE);
 
@@ -716,7 +716,7 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForTaggedJet(const char *histClass){
   Int_t nBins[6]   = { 200, 100,  150,  12,  10, 200};
   Double_t xmin[6] = {  0.,  1., -0.3,  0.,  0.,  0.};
   Double_t xmax[6] = {100.,  5.,  0.3, 1.2,  1.,100.};
-  THnSparse *hs = fHistos->CreateTHnSparse(histName.Data(), "Dielectron pair in jet variables (p_{T}^{pair}-M_{e^{+}e^{-}}-L_{xy}-z-#DeltaR-p_{T}^{jet});p^{pair}_{T} (GeV/c);M_{e^{+}e^{-}} (GeV/c^{2});L_{xy} (cm);z(p_{T}^{pair}/p_{T}^{jet});#DeltaR;N_{pairs};p_{T}^{jet} (GeV/c)", 6, nBins, xmin, xmax);
+  THnSparse *hs = fHistos->CreateTHnSparse(histName.Data(), "Dielectron pair in jet variables (p_{T}^{pair}-M_{e^{+}e^{-}}-L_{xy}-z-#DeltaR-p_{T}^{jet});p^{pair}_{T} (GeV/c);M_{e^{+}e^{-}} (GeV/c^{2});L_{xy} (cm);z(p_{T}^{pair}/p_{T}^{jet});#DeltaR;p_{T}^{jet} (GeV/c)", 6, nBins, xmin, xmax);
 
   // Constituents
   histName = Form("%s/Ntracks_pT",histClass);
