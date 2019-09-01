@@ -48,6 +48,7 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet():
   fFiredTriggerTag(""),
   fRejectPileup(kFALSE),
   fIsPileup(kFALSE),
+  fIsTriggerQA(kFALSE),
   fEventFilter(NULL),
   fHistos(NULL)
 {
@@ -68,6 +69,7 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   fFiredTriggerTag(""),
   fRejectPileup(kFALSE),
   fIsPileup(kFALSE),
+  fIsTriggerQA(kFALSE),
   fEventFilter(NULL),
   fHistos(NULL)
 {
@@ -118,7 +120,15 @@ void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
   InitHistogramsForEventQA("Event_beforeCuts");
   InitHistogramsForEventQA("Event_afterCuts");
 
-  InitHistogramsForClusterQA("Cluster");
+  if(!fIsTriggerQA)
+    InitHistogramsForClusterQA("Cluster");
+  else{
+    InitHistogramsForClusterQA("Cluster_INT7");
+    InitHistogramsForClusterQA("Cluster_EG1");
+    InitHistogramsForClusterQA("Cluster_EG2");
+    InitHistogramsForClusterQA("Cluster_DG1");
+    InitHistogramsForClusterQA("Cluster_DG2");
+  }
 
   // Init dielectron
   InitHistogramsForDielectron("Dielectron");
@@ -188,7 +198,20 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
   FillHistogramsForEventQA("Event_afterCuts");
   
   // QA
-  FillHistogramsForClusterQA("Cluster");
+  if(!fIsTriggerQA)
+    FillHistogramsForClusterQA("Cluster");
+  else{
+    if(fFiredTriggerTag.Contains("INT7"))
+      FillHistogramsForClusterQA("Cluster_INT7");
+    if(fFiredTriggerTag.Contains("EG1"))
+      FillHistogramsForClusterQA("Cluster_EG1");
+    if(fFiredTriggerTag.Contains("EG2"))
+      FillHistogramsForClusterQA("Cluster_EG2");
+    if(fFiredTriggerTag.Contains("DG1"))
+      FillHistogramsForClusterQA("Cluster_DG1");
+    if(fFiredTriggerTag.Contains("DG2"))
+      FillHistogramsForClusterQA("Cluster_DG2");
+  }
 
   // Run dielectron task
   AliKFParticle::SetField(fAOD->GetMagneticField());
@@ -314,7 +337,7 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForClusterQA(const char* histClass){
   fHistos->CreateTHnSparse(Form("%s/ShapeVars", histClass), "Cluster shower shape params (E-M02-M20-Dispersion);E (GeV);M02;M20;Dispersion;", 4, nBinsShape, xminShape, xmaxShape);
 
   // Cell QA
-  // E vs Cell ID (0-16888 for EMCal)
+  // E vs Cell ID (0-18000 for EMCal)
   fHistos->CreateTH2(Form("%s/CellEnergy", histClass), "Cluster Cell Energy;CellID;E_{cell}", 18001, -0.5, 18000.5, 500, 0., 100.);
   // Time vs Cell ID
   fHistos->CreateTH2(Form("%s/CellTime", histClass), "Cluster Cell Time;CellID;T_{cell} (#mus)", 18001, -0.5, 18000.5, 200, -0.5, 1.5);

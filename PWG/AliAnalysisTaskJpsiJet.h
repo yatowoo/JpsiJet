@@ -63,6 +63,9 @@ public:
   virtual void Terminate(Option_t *option="");
 
   // QA Histograms
+public:
+  void   SetTriggerQA(Bool_t enableTriggerQA = kTRUE){ fIsTriggerQA = enableTriggerQA;}
+  Bool_t GetTriggerQA(){return fIsTriggerQA;}
 private:
   void InitHistogramsForEventQA(const char* histClass);
   void InitHistogramsForClusterQA(const char* histClass);
@@ -145,6 +148,7 @@ private:
   TString            fFiredTriggerTag; // MB, EG1, EG2, DG1, DG2 
   Bool_t             fRejectPileup;
   Bool_t             fIsPileup;
+  Bool_t             fIsTriggerQA; // Add QA histograms by trigger classes
   AliAnalysisCuts   *fEventFilter;
 
 // Histograms
