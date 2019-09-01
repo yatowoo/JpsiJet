@@ -581,8 +581,13 @@ void AliAnalysisTaskJpsiJet::InitDielectron(){
 /**
  *  Pair cuts
 **/
-  // EMCal cuts
-  Double_t EMCal_E_Threshold = 5.0;
+  // EMCal gamma/electron energy threshold
+  Double_t EMCal_E_Threshold = 5.0; // GeV, ADC setting
+  if(fSelectedTriggerClasses == "EG1" || fSelectedTriggerClasses == "DG1")
+    EMCal_E_Threshold = 10.0;
+  if(fSelectedTriggerClasses == "EG2" || fSelectedTriggerClasses == "DG2")
+    EMCal_E_Threshold = 5.0;
+
   //Invariant mass and rapidity selection
   AliDielectronVarCuts *pairCut = new AliDielectronVarCuts("jpsiCuts", "1<M<5 + |Y|<.9");
   pairCut->AddCut(AliDielectronVarManager::kM, 1.0, 5.0);

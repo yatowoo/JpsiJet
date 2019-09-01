@@ -15,10 +15,13 @@ AliAnalysisTaskJpsiJet* AddTaskJpsiJet_pp(int trigIndex = int(kALL)){
   AliAnalysisManager* mgr = AliAnalysisManager::GetAnalysisManager();
 
   // Analysis Task
-  AliAnalysisTaskJpsiJet *task = new AliAnalysisTaskJpsiJet("JpsiJet_PP13TeV");
+  TString trigClass = TRIGGER_CLASS[trigIndex];
+  TString taskName = Form("JpsiJet_PP13TeV_%s", trigClass.Data());
+  if(trigIndex == kALL) taskName = "JpsiJet_PP13TeV_ALL";
+
+  AliAnalysisTaskJpsiJet *task = new AliAnalysisTaskJpsiJet(taskName.Data());
 
   task->SetTrigger(AliVEvent::kINT7 | AliVEvent::kEMCEGA);
-  TString trigClass = TRIGGER_CLASS[trigIndex];
   task->SetTriggerClasses(trigClass.Data());
   if(trigClass.Contains(";"))
     task->SetTriggerQA(kTRUE); // Multi-triggers in single task
@@ -39,7 +42,7 @@ AliAnalysisTaskJpsiJet* AddTaskJpsiJet_pp(int trigIndex = int(kALL)){
   TString containerName = mgr->GetCommonFileName();
 	containerName += ":JpsiJetAnalysis";
 
-  trigClass.ReplaceAll(";","-");
+  if(trigIndex == kALL) trigClass = "ALL";
   AliAnalysisDataContainer* cHistos = mgr->CreateContainer(Form("QAhistos_%s", trigClass.Data()), TList::Class(), AliAnalysisManager::kOutputContainer, containerName.Data());
 
   mgr->ConnectInput(task,0,mgr->GetCommonInputContainer());

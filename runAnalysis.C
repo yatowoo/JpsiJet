@@ -169,7 +169,8 @@ void runAnalysis(
   if(doDevPWG){
     gInterpreter->AddIncludePath("./PWG");
     gInterpreter->LoadMacro("AliAnalysisTaskJpsiJet.cxx++g");
-    gInterpreter->ExecuteMacro("AddTaskJpsiJet_pp.C(1)");
+    gInterpreter->ExecuteMacro("AddTaskJpsiJet_pp.C(0)");
+    gInterpreter->Execute("AddTaskJpsiJet_pp","1");
     gInterpreter->Execute("AddTaskJpsiJet_pp","2");
     gInterpreter->Execute("AddTaskJpsiJet_pp","3");
     gInterpreter->Execute("AddTaskJpsiJet_pp","4");
