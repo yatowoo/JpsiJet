@@ -65,8 +65,10 @@ public:
   // QA Histograms
 private:
   void InitHistogramsForEventQA(const char* histClass);
+  void InitHistogramsForClusterQA(const char* histClass);
   void InitHistogramsForJetQA(const char* histClass);
   void FillHistogramsForEventQA(const char* histClass);
+  void FillHistogramsForClusterQA(const char* histClass);
   void FillHistogramsForJetQA(const char* histClass);
 
   // Dielectron framework
