@@ -14,6 +14,8 @@ class AliAnalysisTaskEmcal;
 
 #include "Datasets/DQ_pp_AOD.C"
 
+Bool_t isMC = kFALSE;
+
 AliAnalysisAlien* SetupGridHandler(
     TString mode = "local",
     TString datasets = "16l_pass1",
@@ -42,7 +44,7 @@ AliAnalysisAlien* SetupGridHandler(
   alienHandler->SetAPIVersion("V1.1x");
 
   // MC production
-  if(data_dir.Length() > 11){
+  if(isMC){
     alienHandler->SetGridDataDir("/alice/sim/"+data_dir);
     alienHandler->SetDataPattern("*/AOD/*AOD.root");
     alienHandler->SetRunPrefix("");
@@ -101,7 +103,7 @@ void runAnalysis(
     Bool_t doPIDQA = kFALSE,
     Bool_t doPhysAna = kFALSE,
     TString mode = "local",
-    TString datasets = "16l_pass1",
+    TString datasets = "16k_pass1",
     TString data_dir = "2016/LHC16l",
     TString work_dir = "test",
     TString task_name = "JpsiJet"
@@ -113,6 +115,9 @@ void runAnalysis(
   
   // Analysis Manager
   AliAnalysisManager *mgr = new AliAnalysisManager("JpsiJetTask");
+    // DATA or MC input
+  if(data_dir.Length() > 11 || doDevPWG)
+    isMC = kTRUE;
     // Input handler
   AliAODInputHandler *aodH = new AliAODInputHandler();
   mgr->SetInputEventHandler(aodH);
@@ -122,7 +127,7 @@ void runAnalysis(
   mgr->SetOutputEventHandler(aodOutputH);
 
   // Task - Physics Selection
-  if(data_dir.Length() == 11 && !doDevPWG) // Exp. data
+  if(!isMC && !doDevPWG) // Exp. data
     gInterpreter->ExecuteMacro("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C");
 
   // Task - Centrality / Multiplicity
@@ -169,12 +174,16 @@ void runAnalysis(
   if(doDevPWG){
     gInterpreter->AddIncludePath("./PWG");
     gInterpreter->LoadMacro("AliAnalysisTaskJpsiJet.cxx++g");
-    gInterpreter->ExecuteMacro("AddTaskJpsiJet_pp.C(0)");
-    gInterpreter->Execute("AddTaskJpsiJet_pp","1");
-    gInterpreter->Execute("AddTaskJpsiJet_pp","2");
-    gInterpreter->Execute("AddTaskJpsiJet_pp","3");
-    gInterpreter->Execute("AddTaskJpsiJet_pp","4");
-    gInterpreter->Execute("AddTaskJpsiJet_pp","5");
+    if(isMC)
+      gInterpreter->ExecuteMacro("AddTaskJpsiJet_pp.C(6)");
+    else{
+      gInterpreter->ExecuteMacro("AddTaskJpsiJet_pp.C(0)");
+      gInterpreter->Execute("AddTaskJpsiJet_pp","1");
+      gInterpreter->Execute("AddTaskJpsiJet_pp","2");
+      gInterpreter->Execute("AddTaskJpsiJet_pp","3");
+      gInterpreter->Execute("AddTaskJpsiJet_pp","4");
+      gInterpreter->Execute("AddTaskJpsiJet_pp","5");
+    }
   }
 
   // Start analysis

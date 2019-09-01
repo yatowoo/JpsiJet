@@ -106,6 +106,11 @@ public:
     const Bool_t bFillGhosts = kFALSE);
   void InitJetFinders();
 
+  // MC correction
+public:
+  void   SetMC(Bool_t isMC = kTRUE){fIsMC = isMC;}
+  Bool_t IsMC(){return fIsMC;}
+  
   // Event selection
 public:
   void     SetTrigger(UInt_t trigger){fSelectedTrigger = trigger;}
@@ -149,6 +154,7 @@ private:
   Bool_t             fRejectPileup;
   Bool_t             fIsPileup;
   Bool_t             fIsTriggerQA; // Add QA histograms by trigger classes
+  Bool_t             fIsMC;  // Input MC production
   AliAnalysisCuts   *fEventFilter;
 
 // Histograms

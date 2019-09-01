@@ -49,6 +49,7 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet():
   fRejectPileup(kFALSE),
   fIsPileup(kFALSE),
   fIsTriggerQA(kFALSE),
+  fIsMC(kFALSE),
   fEventFilter(NULL),
   fHistos(NULL)
 {
@@ -70,6 +71,7 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   fRejectPileup(kFALSE),
   fIsPileup(kFALSE),
   fIsTriggerQA(kFALSE),
+  fIsMC(kFALSE),
   fEventFilter(NULL),
   fHistos(NULL)
 {
