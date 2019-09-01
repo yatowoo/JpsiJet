@@ -2,7 +2,15 @@
 
 #include "AliAnalysisTaskJpsiJet.h"
 
-AliAnalysisTaskJpsiJet* AddTaskJpsiJet_pp(){
+// Trigger Index : 0/ALL, 1/INT7, 2/EG1, 3/EG2, 4/DG1, 5/DG2
+enum TriggerIndex{
+  kALL, kINT7, kEG1, kEG2, kDG1, kDG2, kNTrigIndex
+};
+const char* TRIGGER_CLASS[kNTrigIndex] = {
+  "INT7;EG1;EG2;DG1;DG2",
+  "INT7", "EG1", "EG2", "DG1", "DG2"};
+
+AliAnalysisTaskJpsiJet* AddTaskJpsiJet_pp(int trigIndex = int(kALL)){
   // Analysis Manager
   AliAnalysisManager* mgr = AliAnalysisManager::GetAnalysisManager();
 
@@ -10,8 +18,10 @@ AliAnalysisTaskJpsiJet* AddTaskJpsiJet_pp(){
   AliAnalysisTaskJpsiJet *task = new AliAnalysisTaskJpsiJet("JpsiJet_PP13TeV");
 
   task->SetTrigger(AliVEvent::kINT7 | AliVEvent::kEMCEGA);
-  task->SetTriggerClasses("MB;INT7;EG1;EG2;DG1;DG2");
-  task->SetTriggerQA(kTRUE);
+  TString trigClass = TRIGGER_CLASS[trigIndex];
+  task->SetTriggerClasses(trigClass.Data());
+  if(trigClass.Contains(";"))
+    task->SetTriggerQA(kTRUE); // Multi-triggers in single task
 
   //Event filter
   AliDielectronEventCuts *eventCuts = new AliDielectronEventCuts("eventCuts", "Vertex Track && |vtxZ|<10 && ncontrib>1");
@@ -29,7 +39,8 @@ AliAnalysisTaskJpsiJet* AddTaskJpsiJet_pp(){
   TString containerName = mgr->GetCommonFileName();
 	containerName += ":JpsiJetAnalysis";
 
-  AliAnalysisDataContainer* cHistos = mgr->CreateContainer("QA_histos", TList::Class(), AliAnalysisManager::kOutputContainer, containerName.Data());
+  trigClass.ReplaceAll(";","-");
+  AliAnalysisDataContainer* cHistos = mgr->CreateContainer(Form("QAhistos_%s", trigClass.Data()), TList::Class(), AliAnalysisManager::kOutputContainer, containerName.Data());
 
   mgr->ConnectInput(task,0,mgr->GetCommonInputContainer());
   mgr->ConnectOutput(task,1, cHistos);

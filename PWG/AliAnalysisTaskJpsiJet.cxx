@@ -76,6 +76,8 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   // IO
   DefineInput(0, TChain::Class());
   DefineOutput(1, TList::Class());
+
+  AliInfo(Form("Init task : %s", taskName));
   // Dielectron task
   InitDielectron();
   // Jet task
