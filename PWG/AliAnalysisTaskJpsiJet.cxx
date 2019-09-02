@@ -921,10 +921,29 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForMC(){
   }
 
   // Event
-  const char* histClass = "Event";
-  fHistosMC->CreateTH1(Form("%s/NParticles", histClass), "MC particles - ALL produced", 2001, -0.5, 2000.5);
-  fHistosMC->CreateTH1(Form("%s/NPhysPrim", histClass), "MC particles - Physical Primary with |#eta|<1.0", 2001, -0.5, 2000.5);
+  TString histGroup = "Event";
+  fHistosMC->CreateTH1(Form("%s/NParticles", histGroup.Data()), "MC particles - ALL produced", 5001, -0.5, 5000.5);
+  fHistosMC->CreateTH1(Form("%s/NPhysPrim", histGroup.Data()), "MC particles - Physical Primary with |#eta|<1.0", 501, -0.5, 500.5);
+  fHistosMC->CreateTH2(
+      Form("%s/NPhysPrim_Ntracks", histGroup.Data()),
+      "MC particles vs Detector tracks;N_{trakcs};N_{MC particle};",
+      501, -0.5, 500.5,
+      501, -0.5, 500.5);
 
+  // Electron
+  histGroup = "Electron";
+    // eleVars - pT, eta， phi, E
+  Int_t nBins[4]   = {500, 400,  80,  500};
+  Double_t xmin[4] = { 0., -2., -1.,   0.};
+  Double_t xmax[4] = {100., 2.,  7., 100.};
+  fHistosMC->CreateTHnSparse(Form("%s/eleVars", histGroup.Data()), "Electron kinetic variables (p_{T}-#eta-#phi-E);p_{T} (GeV/c);#eta;#phi;E (GeV)", 4, nBins, xmin, xmax);
+    // PID check - Pure, Wrong, Miss
+
+  // Jpsi
+  histGroup = "Jpsi";
+    // jpsiVars - pT, eta， phi, E
+  fHistosMC->CreateTHnSparse(Form("%s/jpsiVars", histGroup.Data()), "J/#psi kinetic variables (p_{T}-Y-#phi-E);p_{T} (GeV/c);Rapidity;#phi;E (GeV)", 4, nBins, xmin, xmax);
+    // Signal check - Prompt/Jpsi2ee, Nonprompt/B2Jpsi2ee, Background
 }
 
 Bool_t AliAnalysisTaskJpsiJet::RunParticleLevelAnalysis(){
@@ -932,7 +951,48 @@ Bool_t AliAnalysisTaskJpsiJet::RunParticleLevelAnalysis(){
   auto mcHeader = dynamic_cast<AliAODMCHeader*>(fAOD->FindListObject(AliAODMCHeader::StdBranchName()));
   auto mcParticles = dynamic_cast<TClonesArray*>(fAOD->FindListObject(AliAODMCParticle::StdBranchName()));
 
+  // PDG Code
+  static const Int_t PDG_PROTON = 2212;
+  static const Int_t PDG_ELECTRON = 11;
+  static const Int_t PDG_GAMMA = 22;
+  static const Int_t PDG_PION = 211;
+  static const Int_t PDG_KAON = 321;
+  static const Int_t PDG_JPSI = 443;
+
   fHistosMC->FillTH1("Event/NParticles", mcParticles->GetEntriesFast());
 
+  // Loop on MC particles
+  Int_t nPhysPrim = 0;
+  AliAODMCParticle* mcp = NULL;
+  TIter nextParticle(mcParticles);
+  while((mcp = static_cast<AliAODMCParticle*>(nextParticle()))){
+    Int_t pdg = TMath::Abs(mcp->GetPdgCode());
+    if(mcp->IsPhysicalPrimary() && TMath::Abs(mcp->Eta()) < 1.0){
+      nPhysPrim++;
+      if(pdg == PDG_ELECTRON) FillHistogramsForParticle("Electron/eleVars", mcp);
+    }
+    if(pdg == PDG_JPSI){
+        Double_t x[4] = {0.};
+        x[0] = mcp->Pt();
+        x[1] = mcp->Y();
+        x[2] = mcp->Phi();
+        x[3] = mcp->E();
+        fHistosMC->FillTHnSparse("Jpsi/jpsiVars", x, 1.0);
+    }// Jpsi
+  }// End - MC particles
+
+  fHistosMC->FillTH1("Event/NPhysPrim", nPhysPrim);
+  fHistosMC->FillTH2("Event/NPhysPrim_Ntracks", fAOD->GetNumberOfTracks(), nPhysPrim);
+
   return kTRUE;
+}
+
+void AliAnalysisTaskJpsiJet::FillHistogramsForParticle(const char* histName, AliVParticle* par){
+  Double_t x[4] = {0.};
+  x[0] = par->Pt();
+  x[1] = par->Eta();
+  x[2] = par->Phi();
+  x[3] = par->E();
+
+  fHistosMC->FillTHnSparse(histName, x, 1.0);
 }

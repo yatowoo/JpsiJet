@@ -33,6 +33,7 @@
 
 #include "THistManager.h"
 
+#include "AliVParticle.h"
 #include "AliAODEvent.h"
 #include "AliAnalysisCuts.h"
 #include "AliDielectron.h"
@@ -113,6 +114,7 @@ public:
   Bool_t IsMC(){return fIsMC;}
   void   InitHistogramsForMC();
   Bool_t RunParticleLevelAnalysis();
+  void   FillHistogramsForParticle(const char* histName, AliVParticle* par);
   
   // Event selection
 public:
