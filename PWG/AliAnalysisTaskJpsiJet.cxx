@@ -939,11 +939,11 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForMC(){
   fHistosMC->CreateTHnSparse(Form("%s/eleVars", histGroup.Data()), "Electron kinetic variables (p_{T}-#eta-#phi-E);p_{T} (GeV/c);#eta;#phi;E (GeV)", 4, nBins, xmin, xmax);
     // PID check - Pure, Wrong, Miss
   fHistosMC->CreateTH1(
-      Form("%s/PurePID", histGroup.Data()),
+      Form("%s/PID_pure", histGroup.Data()),
       "Electron PID - Pure;p_{T,ele} (GeV/c);N_{pure};",
       500, 0., 100.);
   fHistosMC->CreateTH1(
-      Form("%s/WrongPID", histGroup.Data()),
+      Form("%s/PID_wrong", histGroup.Data()),
       "Electron PID - Wrong;p_{T,ele} (GeV/c);N_{pure};",
       500, 0., 100.);
 
@@ -952,6 +952,16 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForMC(){
     // jpsiVars - pT, eta， phi, E
   fHistosMC->CreateTHnSparse(Form("%s/jpsiVars", histGroup.Data()), "J/#psi kinetic variables (p_{T}-Y-#phi-E);p_{T} (GeV/c);Rapidity;#phi;E (GeV)", 4, nBins, xmin, xmax);
     // Signal check - Prompt/Jpsi2ee, Nonprompt/B2Jpsi2ee, Background
+  fHistosMC->CreateTH2(
+      Form("%s/Reco_sig", histGroup.Data()),
+      "J/#psi Reconstruction - Signal;p_{T,J/#psi} (GeV/c);M_{e^{+}e^{-}} (GeV/c^{2});N_{pair};",
+      500, 0., 100.,
+      100, 1., 5.);
+  fHistosMC->CreateTH2(
+      Form("%s/Reco_bkg", histGroup.Data()),
+      "J/#psi Reconstruction - Background;p_{T,pair} (GeV/c);M_{e^{+}e^{-}} (GeV/c^2);N_{pair};",
+      500, 0., 100.,
+      100, 1., 5.);
 }
 
 Bool_t AliAnalysisTaskJpsiJet::RunParticleLevelAnalysis(){
@@ -997,6 +1007,10 @@ Bool_t AliAnalysisTaskJpsiJet::RunParticleLevelAnalysis(){
   FillHistogramsForElectronPID(fDielectron->GetTrackArray(0));
   FillHistogramsForElectronPID(fDielectron->GetTrackArray(1));
 
+    // J/psi Acceptance X Efficiency
+  if(fDielectron->HasCandidates())
+    FillHistogramsForJpsiMC();
+
   return kTRUE;
 }
 
@@ -1028,8 +1042,51 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForElectronPID(const TObjArray* eleAr
     }
     Int_t pdg = TMath::Abs(mcp->GetPdgCode());
     if(pdg == PDG_ELECTRON)
-      fHistosMC->FillTH1("Electron/PurePID", mcp->Pt());
+      fHistosMC->FillTH1("Electron/PID_pure", mcp->Pt());
     else
-      fHistosMC->FillTH1("Electron/WrongPID", mcp->Pt());
+      fHistosMC->FillTH1("Electron/PID_wrong", mcp->Pt());
   }
+}
+
+// J/psi reconstruction vs MC truth
+void AliAnalysisTaskJpsiJet::FillHistogramsForJpsiMC(){
+  auto mcParticles = dynamic_cast<TClonesArray*>(fAOD->FindListObject(AliAODMCParticle::StdBranchName()));
+
+  static const Int_t PDG_JPSI = 443;
+
+  AliDielectronPair* pair = NULL;
+  TIter nextPair(fDielectron->GetPairArray(1));
+  while( (pair = static_cast<AliDielectronPair*>(nextPair()) ) ){
+    Bool_t isJpsiSignal = kFALSE;
+    AliVParticle* d1 = pair->GetFirstDaughterP();
+    AliVParticle* d2 = pair->GetSecondDaughterP();
+
+    if(!d1 || !d2){
+      AliWarning("Can not found daughters of AliDielectronPair");
+      continue;
+    }
+
+    if(CheckDielectronDaughter(d1) && CheckDielectronDaughter(d2))
+      fHistosMC->FillTH2("Jpsi/Reco_sig", pair->Pt(), pair->M());
+    else
+      fHistosMC->FillTH1("Jpsi/Reco_bkg", pair->Pt(), pair->M());
+  }// End - Loop dielectron pairs
+}
+
+Bool_t AliAnalysisTaskJpsiJet::CheckDielectronDaughter(AliVParticle *par)
+{
+  auto mcParticles = dynamic_cast<TClonesArray*>(fAOD->FindListObject(AliAODMCParticle::StdBranchName()));
+
+  static const Int_t PDG_JPSI = 443;
+
+  Int_t mcID = TMath::Abs(par->GetLabel());
+  auto mcp = static_cast<AliAODMCParticle *>(mcParticles->At(mcID));
+  Int_t motherID = mcp->GetMother();
+  if (motherID == -1) return kFALSE;
+
+  auto mcMother = static_cast<AliAODMCParticle *>(mcParticles->At(motherID));
+  Int_t pdg = TMath::Abs(mcMother->GetPdgCode());
+  if (pdg != PDG_JPSI) return kFALSE;
+  
+  return kTRUE;
 }

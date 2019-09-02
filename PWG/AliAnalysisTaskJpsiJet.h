@@ -116,6 +116,8 @@ public:
   Bool_t RunParticleLevelAnalysis();
   void   FillHistogramsForParticle(const char* histName, AliVParticle* par);
   void   FillHistogramsForElectronPID(const TObjArray* eleArray);
+  void   FillHistogramsForJpsiMC();
+  Bool_t CheckDielectronDaughter(AliVParticle* par);
 
   // Event selection
 public:
