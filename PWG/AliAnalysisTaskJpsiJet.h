@@ -110,6 +110,8 @@ public:
 public:
   void   SetMC(Bool_t isMC = kTRUE){fIsMC = isMC;}
   Bool_t IsMC(){return fIsMC;}
+  void   InitHistogramsForMC();
+  void   ProcessMC();
   
   // Event selection
 public:
@@ -159,6 +161,7 @@ private:
 
 // Histograms
   THistManager      *fHistos;
+  THistManager      *fHistosMC;
 
 private:
   ClassDef(AliAnalysisTaskJpsiJet, 1);

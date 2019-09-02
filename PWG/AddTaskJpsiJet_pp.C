@@ -49,5 +49,10 @@ AliAnalysisTaskJpsiJet* AddTaskJpsiJet_pp(int trigIndex = int(kALL)){
   mgr->ConnectInput(task,0,mgr->GetCommonInputContainer());
   mgr->ConnectOutput(task,1, cHistos);
 
+  if(trigIndex == kMC){
+    cHistos = mgr->CreateContainer("MChistos", TList::Class(), AliAnalysisManager::kOutputContainer, containerName.Data());
+    mgr->ConnectOutput(task, 2, cHistos);
+  }
+
   return task;
 }

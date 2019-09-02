@@ -78,7 +78,8 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   // IO
   DefineInput(0, TChain::Class());
   DefineOutput(1, TList::Class());
-
+  DefineOutput(2, TList::Class());
+  
   AliInfo(Form("Init task : %s", taskName));
 }
 
@@ -147,6 +148,13 @@ void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
   InitHistogramsForTaggedJet("PairInJet");
 
   PostData(1, fHistosQA);
+
+  if(fIsMC){
+    fHistosMC = new THistManager("JpsiJetMC");
+    InitHistogramsForMC();
+    TList* mcHistos = fHistosMC->GetListOfHistograms();
+    PostData(2, mcHistos);
+  }
 }
 
 void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
@@ -263,6 +271,9 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
   AliDebug(1, Form("AOD tracks : %d, tracks with pair : %d", fAOD->GetNumberOfTracks(), fTracksWithPair->GetEntriesFast()));
   // Register in AOD event
   fAOD->AddObject(fTracksWithPair);
+
+  // Process MC truth
+  if(fIsMC && fHistosMC) ProcessMC();
 
   // Run jet finder tasks
   AliEmcalJetTask* jetFinder = NULL;
@@ -893,4 +904,26 @@ Bool_t AliAnalysisTaskJpsiJet::FillHistogramsForTaggedJet(const char* histClass)
   }
 
   return kTRUE;
+}
+
+// MC truth
+void AliAnalysisTaskJpsiJet::InitHistogramsForMC(){
+  if(!fHistosMC || !fIsMC){
+    AliWarning("MC input not initialized");
+    return;
+  }
+
+  // Event
+  const char* histClass = "Event";
+  fHistosMC->CreateTH1(Form("%s/NParticles", histClass), "MC particles - ALL produced", 2001, -0.5, 2000.5);
+  fHistosMC->CreateTH1(Form("%s/NPhysPrim", histClass), "MC particles - Physical Primary with |#eta|<1.0", 2001, -0.5, 2000.5);
+
+}
+
+void AliAnalysisTaskJpsiJet::ProcessMC(){
+  // MC info.
+  auto mcHeader = dynamic_cast<AliAODMCHeader*>(fAOD->FindListObject(AliAODMCHeader::StdBranchName()));
+  auto mcParticles = dynamic_cast<TClonesArray*>(fAOD->FindListObject(AliAODMCParticle::StdBranchName()));
+
+  fHistosMC->FillTH1("Event/NParticles", mcParticles->GetEntriesFast());
 }
