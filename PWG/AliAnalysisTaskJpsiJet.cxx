@@ -160,9 +160,10 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
   fHistos->FillTH1("EventStats", kAllInAOD);
 
   FillHistogramsForEventQA("Event_ALL");
-/*
- *  Event Physics Selection  
-**/
+
+  //
+  // Event Selection
+  //
   UInt_t isSelected = AliVEvent::kAny;
   // Select trigger
   AliAODHeader* header = dynamic_cast<AliAODHeader*>(fAOD->GetHeader());
@@ -195,7 +196,7 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
   if(fEventFilter && !fEventFilter->IsSelected(fAOD)) return;
   fHistos->FillTH1("EventStats", kFiltered);
   // Pileup
-  fIsPileup = fAOD->IsPileupFromSPD(3, 0.8, 3., 2., 5.);
+  fIsPileup = fAOD->IsPileupFromSPDInMultBins();
   if(fRejectPileup && fIsPileup) return;
   fHistos->FillTH1("EventStats", kAfterPileUp);
 
