@@ -42,7 +42,7 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet():
   fDaughters(NULL),
   fTracksWithPair(NULL),
   fJetTasks(NULL),
-  fJetContainers(NULL),
+  fJets(NULL),
   fSelectedTrigger(0),
   fSelectedTriggerClasses(""),
   fFiredTriggerTag(""),
@@ -64,7 +64,7 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   fDaughters(NULL),
   fTracksWithPair(NULL),
   fJetTasks(NULL),
-  fJetContainers(NULL),
+  fJets(NULL),
   fSelectedTrigger(0),
   fSelectedTriggerClasses(""),
   fFiredTriggerTag(""),
@@ -79,7 +79,7 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   DefineInput(0, TChain::Class());
   DefineOutput(1, TList::Class());
   DefineOutput(2, TList::Class());
-  
+
   AliInfo(Form("Init task : %s", taskName));
 }
 
@@ -89,6 +89,7 @@ AliAnalysisTaskJpsiJet::~AliAnalysisTaskJpsiJet(){
   // Histogram list from AliAnalysisTaskSE
   if(fHistosQA) delete fHistosQA;
   if(fHistos) delete fHistos;
+  if(fHistosMC) delete fHistosMC;
 }
 
 void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
@@ -222,6 +223,14 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
       FillHistogramsForClusterQA("Cluster_DG2");
   }
 
+  // Process Data
+  RunDetectoreLevelAnalysis();
+
+  // Process MC truth
+  if(fIsMC && fHistosMC) RunParticleLevelAnalysis();
+}
+
+Bool_t AliAnalysisTaskJpsiJet::RunDetectoreLevelAnalysis(){
   // Run dielectron task
   AliKFParticle::SetField(fAOD->GetMagneticField());
   AliDielectronPID::SetCorrVal(fAOD->GetRunNumber());
@@ -234,7 +243,7 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
   else if(nCandidates > 1)
     fHistos->FillTH1("EventStats", kWithMultiPair);
   else
-    return;
+    return kFALSE;
   // Pairs and daughters
   fPairs->Clear("C");
   fDaughters->Clear("C");
@@ -271,10 +280,7 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
   AliDebug(1, Form("AOD tracks : %d, tracks with pair : %d", fAOD->GetNumberOfTracks(), fTracksWithPair->GetEntriesFast()));
   // Register in AOD event
   fAOD->AddObject(fTracksWithPair);
-
-  // Process MC truth
-  if(fIsMC && fHistosMC) ProcessMC();
-
+  
   // Run jet finder tasks
   AliEmcalJetTask* jetFinder = NULL;
   TIter next(fJetTasks);
@@ -287,6 +293,8 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
 
   if(FillHistogramsForTaggedJet("PairInJet"))
     fHistos->FillTH1("EventStats",kWithPairInJet);
+  
+  return kTRUE;
 }
 
 // Create event QA histograms in output list
@@ -480,16 +488,15 @@ void AliAnalysisTaskJpsiJet::AddTaskEmcalJet(
   if(jetType == AliJetContainer::kChargedJet)
     cont->SetJetAcceptanceType(AliJetContainer::kTPCfid);
   // else for neutral jet, EMCal/DCal/PHOS should be considered
-  fJetContainers->Add(cont);
+  fJets->Add(cont);
 }
 
 void AliAnalysisTaskJpsiJet::InitJetFinders(){
   if(!fJetTasks) fJetTasks = new TObjArray;
   fJetTasks->SetOwner(kTRUE);
-  if(!fJetContainers) fJetContainers = new TObjArray;
-  fJetContainers->SetOwner(kTRUE);
+  if(!fJets) fJets = new TObjArray;
+  fJets->SetOwner(kTRUE);
 
-  AddTaskEmcalJet("usedefault", "", AliJetContainer::antikt_algorithm, 0.2, AliJetContainer::kChargedJet, 0.15, 0.3, 0.01, AliJetContainer::pt_scheme, "Jet", 1., kFALSE, kFALSE);
   AddTaskEmcalJet("usedefault", "", AliJetContainer::antikt_algorithm, 0.4, AliJetContainer::kChargedJet, 0.15, 0.3, 0.01, AliJetContainer::pt_scheme, "Jet", 1., kFALSE, kFALSE);
   AddTaskEmcalJet("tracksWithPair", "", AliJetContainer::antikt_algorithm, 0.4, AliJetContainer::kChargedJet, 0.15, 0.3, 0.01, AliJetContainer::pt_scheme, "JpsiJet", 1., kFALSE, kFALSE);
 
@@ -501,7 +508,7 @@ void AliAnalysisTaskJpsiJet::InitJetFinders(){
 void AliAnalysisTaskJpsiJet::InitHistogramsForJetQA(const char* histClass){
 
   AliJetContainer* jets = NULL;
-  TIter next(fJetContainers);
+  TIter next(fJets);
   while((jets = static_cast<AliJetContainer*>(next()))){
     TString histGroup = Form("%s/%s", histClass, jets->GetName());
     // THnSparse - pT, eta， phi
@@ -513,10 +520,10 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForJetQA(const char* histClass){
 }
 
 void AliAnalysisTaskJpsiJet::FillHistogramsForJetQA(const char* histClass){
-  if(!fJetContainers) InitJetFinders();
+  if(!fJets) InitJetFinders();
   
   AliJetContainer* jets = NULL;
-  TIter next(fJetContainers);
+  TIter next(fJets);
   while((jets = static_cast<AliJetContainer*>(next()))){
     jets->NextEvent(fAOD);
     jets->SetArray(fAOD);
@@ -847,7 +854,7 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForTaggedJet(const char *histClass){
 Bool_t AliAnalysisTaskJpsiJet::FillHistogramsForTaggedJet(const char* histClass){
   // Tagged jet container
   AliJetContainer* jets = NULL;
-  TIter next(fJetContainers);
+  TIter next(fJets);
   while((jets = static_cast<AliJetContainer*>(next()))){
     TString jetName = jets->GetName();
     if(jetName.BeginsWith("JpsiJet_")) break;
@@ -920,10 +927,12 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForMC(){
 
 }
 
-void AliAnalysisTaskJpsiJet::ProcessMC(){
+Bool_t AliAnalysisTaskJpsiJet::RunParticleLevelAnalysis(){
   // MC info.
   auto mcHeader = dynamic_cast<AliAODMCHeader*>(fAOD->FindListObject(AliAODMCHeader::StdBranchName()));
   auto mcParticles = dynamic_cast<TClonesArray*>(fAOD->FindListObject(AliAODMCParticle::StdBranchName()));
 
   fHistosMC->FillTH1("Event/NParticles", mcParticles->GetEntriesFast());
+
+  return kTRUE;
 }

@@ -81,6 +81,7 @@ private:
   Bool_t FindDaughters(AliVTrack *trk);
   Double_t GetPseudoProperDecayTime(AliDielectronPair* pair);
   void AddTrackFromPair(AliAODTrack *trkTemplate);
+  Bool_t RunDetectoreLevelAnalysis();
 
   // FF analysis
 private:
@@ -111,7 +112,7 @@ public:
   void   SetMC(Bool_t isMC = kTRUE){fIsMC = isMC;}
   Bool_t IsMC(){return fIsMC;}
   void   InitHistogramsForMC();
-  void   ProcessMC();
+  Bool_t RunParticleLevelAnalysis();
   
   // Event selection
 public:
@@ -149,7 +150,7 @@ private:
   TClonesArray      *fDaughters; // Dielectron tracks
   TClonesArray      *fTracksWithPair; // Track array with daughters replaced by pair
   TObjArray         *fJetTasks; // Jet finder tasks
-  TObjArray         *fJetContainers; // Jet container
+  TObjArray         *fJets; // Jet containers
   UInt_t             fSelectedTrigger; // Event offline trigger
   TString            fSelectedTriggerClasses; // Event fired trigger classes (separated by ';')
   TString            fFiredTriggerTag; // MB, EG1, EG2, DG1, DG2 
