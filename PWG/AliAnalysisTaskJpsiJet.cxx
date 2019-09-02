@@ -80,10 +80,6 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   DefineOutput(1, TList::Class());
 
   AliInfo(Form("Init task : %s", taskName));
-  // Dielectron task
-  InitDielectron();
-  // Jet task
-  InitJetFinders();
 }
 
 AliAnalysisTaskJpsiJet::~AliAnalysisTaskJpsiJet(){
@@ -485,6 +481,10 @@ void AliAnalysisTaskJpsiJet::InitJetFinders(){
   AddTaskEmcalJet("usedefault", "", AliJetContainer::antikt_algorithm, 0.2, AliJetContainer::kChargedJet, 0.15, 0.3, 0.01, AliJetContainer::pt_scheme, "Jet", 1., kFALSE, kFALSE);
   AddTaskEmcalJet("usedefault", "", AliJetContainer::antikt_algorithm, 0.4, AliJetContainer::kChargedJet, 0.15, 0.3, 0.01, AliJetContainer::pt_scheme, "Jet", 1., kFALSE, kFALSE);
   AddTaskEmcalJet("tracksWithPair", "", AliJetContainer::antikt_algorithm, 0.4, AliJetContainer::kChargedJet, 0.15, 0.3, 0.01, AliJetContainer::pt_scheme, "JpsiJet", 1., kFALSE, kFALSE);
+
+  if(fIsMC){
+    AddTaskEmcalJet("mcparticles", "", AliJetContainer::antikt_algorithm, 0.4, AliJetContainer::kChargedJet, 0.15, 0.3, 0.01, AliJetContainer::pt_scheme, "JetMC", 1., kFALSE, kFALSE);
+  }
 }
 
 void AliAnalysisTaskJpsiJet::InitHistogramsForJetQA(const char* histClass){
@@ -530,6 +530,12 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForJetQA(const char* histClass){
 }
 
 void AliAnalysisTaskJpsiJet::LocalInit(){
+  // Dielectron task
+  InitDielectron();
+  // Jet task
+  InitJetFinders();
+
+  // Init call as AliAnalysisManager
   AliEmcalJetTask* jetFinder = NULL;
   TIter next(fJetTasks);
   while((jetFinder=(AliEmcalJetTask*)next()))
@@ -537,6 +543,7 @@ void AliAnalysisTaskJpsiJet::LocalInit(){
 }
 
 void AliAnalysisTaskJpsiJet::Terminate(Option_t*){
+  // Terminate call as AliAnalysisManager
   AliEmcalJetTask* jetFinder = NULL;
   TIter next(fJetTasks);
   while((jetFinder=(AliEmcalJetTask*)next()))
@@ -828,7 +835,12 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForTaggedJet(const char *histClass){
 
 Bool_t AliAnalysisTaskJpsiJet::FillHistogramsForTaggedJet(const char* histClass){
   // Tagged jet container
-  AliJetContainer *jets = (AliJetContainer*)(fJetContainers->At(fJetContainers->GetEntriesFast()-1));
+  AliJetContainer* jets = NULL;
+  TIter next(fJetContainers);
+  while((jets = static_cast<AliJetContainer*>(next()))){
+    TString jetName = jets->GetName();
+    if(jetName.BeginsWith("JpsiJet_")) break;
+  }
   if(!jets->GetNJets()) return kFALSE;
 
   // Get dielectron pair and track
