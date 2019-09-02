@@ -115,7 +115,8 @@ public:
   void   InitHistogramsForMC();
   Bool_t RunParticleLevelAnalysis();
   void   FillHistogramsForParticle(const char* histName, AliVParticle* par);
-  
+  void   FillHistogramsForElectronPID(const TObjArray* eleArray);
+
   // Event selection
 public:
   void     SetTrigger(UInt_t trigger){fSelectedTrigger = trigger;}

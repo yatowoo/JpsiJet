@@ -938,6 +938,14 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForMC(){
   Double_t xmax[4] = {100., 2.,  7., 100.};
   fHistosMC->CreateTHnSparse(Form("%s/eleVars", histGroup.Data()), "Electron kinetic variables (p_{T}-#eta-#phi-E);p_{T} (GeV/c);#eta;#phi;E (GeV)", 4, nBins, xmin, xmax);
     // PID check - Pure, Wrong, Miss
+  fHistosMC->CreateTH1(
+      Form("%s/PurePID", histGroup.Data()),
+      "Electron PID - Pure;p_{T,ele} (GeV/c);N_{pure};",
+      500, 0., 100.);
+  fHistosMC->CreateTH1(
+      Form("%s/WrongPID", histGroup.Data()),
+      "Electron PID - Wrong;p_{T,ele} (GeV/c);N_{pure};",
+      500, 0., 100.);
 
   // Jpsi
   histGroup = "Jpsi";
@@ -984,6 +992,11 @@ Bool_t AliAnalysisTaskJpsiJet::RunParticleLevelAnalysis(){
   fHistosMC->FillTH1("Event/NPhysPrim", nPhysPrim);
   fHistosMC->FillTH2("Event/NPhysPrim_Ntracks", fAOD->GetNumberOfTracks(), nPhysPrim);
 
+  // Particle vs Detector
+    // Electron PID
+  FillHistogramsForElectronPID(fDielectron->GetTrackArray(0));
+  FillHistogramsForElectronPID(fDielectron->GetTrackArray(1));
+
   return kTRUE;
 }
 
@@ -995,4 +1008,28 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForParticle(const char* histName, Ali
   x[3] = par->E();
 
   fHistosMC->FillTHnSparse(histName, x, 1.0);
+}
+
+void AliAnalysisTaskJpsiJet::FillHistogramsForElectronPID(const TObjArray* eleArray){
+
+  auto mcParticles = dynamic_cast<TClonesArray*>(fAOD->FindListObject(AliAODMCParticle::StdBranchName()));
+
+  static const Int_t PDG_ELECTRON = 11;
+
+  AliAODTrack* eleTrk = NULL;
+  TIter nextEle(eleArray);
+  while((eleTrk = static_cast<AliAODTrack*>(nextEle()))){
+    Int_t mcID = TMath::Abs(eleTrk->GetLabel());
+    auto mcp = static_cast<AliAODMCParticle*>(mcParticles->At(mcID));
+    if(!mcp){
+      AliWarning("Can not found MC particle");
+      eleTrk->Print();
+      continue;
+    }
+    Int_t pdg = TMath::Abs(mcp->GetPdgCode());
+    if(pdg == PDG_ELECTRON)
+      fHistosMC->FillTH1("Electron/PurePID", mcp->Pt());
+    else
+      fHistosMC->FillTH1("Electron/WrongPID", mcp->Pt());
+  }
 }
