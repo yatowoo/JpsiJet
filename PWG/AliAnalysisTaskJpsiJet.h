@@ -112,8 +112,11 @@ public:
 public:
   void   SetMC(Bool_t isMC = kTRUE){fIsMC = isMC;}
   Bool_t IsMC(){return fIsMC;}
+private:
   void   InitHistogramsForMC();
+  void   InitHistogramsForJpsiMC(const char* histClass);
   Bool_t RunParticleLevelAnalysis();
+  void   SetJpsiGeneratorType();
   void   FillHistogramsForParticle(const char* histName, AliVParticle* par);
   void   FillHistogramsForElectronPID(const TObjArray* eleArray);
   void   FillHistogramsForJpsiMC();
@@ -175,6 +178,7 @@ private:
   Bool_t             fIsMC;  // Input MC production
   TClonesArray      *fMCParticles; // AOD event object in MC
   AliAODMCHeader    *fMCHeader;    // AOD event object in MC
+  TString            fMCGenType;   // Generator type - Prompt/Jpsi2ee, Bdecay/B2Jpsi2ee
   AliAnalysisCuts   *fEventFilter;
 
 // Histograms

@@ -16,14 +16,22 @@
 #include "TChain.h"
 #include "THnSparse.h"
 
+#include "AliAnalysisManager.h"
+
 #include "AliAODEvent.h"
 #include "AliAODCaloCluster.h"
-#include "AliAnalysisManager.h"
+
+#include "AliAODMCParticle.h"
+#include "AliAODMCHeader.h"
+#include "AliGenEventHeader.h"
+
 #include "AliDielectronVarCuts.h"
 #include "AliDielectronTrackCuts.h"
 #include "AliDielectronPairLegCuts.h"
 
 #include "AliAnalysisTaskJpsiJet.h"
+
+class AliGenEventHeader;
 
 class AliDielectronVarCuts;
 class AliDielectronTrackCuts;
@@ -52,6 +60,7 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet():
   fIsMC(kFALSE),
   fMCParticles(NULL),
   fMCHeader(NULL),
+  fMCGenType(""),
   fEventFilter(NULL),
   fHistos(NULL)
 {
@@ -76,6 +85,7 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   fIsMC(kFALSE),
   fMCParticles(NULL),
   fMCHeader(NULL),
+  fMCGenType(""),
   fEventFilter(NULL),
   fHistos(NULL)
 {
@@ -917,7 +927,9 @@ Bool_t AliAnalysisTaskJpsiJet::FillHistogramsForTaggedJet(const char* histClass)
   return kTRUE;
 }
 
-// MC truth
+/**
+ *  MC truth
+**/
 void AliAnalysisTaskJpsiJet::InitHistogramsForMC(){
   if(!fHistosMC || !fIsMC){
     AliWarning("MC input not initialized");
@@ -952,26 +964,42 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForMC(){
       500, 0., 100.);
 
   // Jpsi
-  histGroup = "Jpsi";
-    // jpsiVars - pT, eta， phi, E
-  fHistosMC->CreateTHnSparse(Form("%s/jpsiVars", histGroup.Data()), "J/#psi kinetic variables (p_{T}-Y-#phi-E);p_{T} (GeV/c);Rapidity;#phi;E (GeV)", 4, nBins, xmin, xmax);
-    // Signal check - Prompt/Jpsi2ee, Nonprompt/B2Jpsi2ee, Background
-  fHistosMC->CreateTH2(
-      Form("%s/Reco_sig", histGroup.Data()),
-      "J/#psi Reconstruction - Signal;p_{T,J/#psi} (GeV/c);M_{e^{+}e^{-}} (GeV/c^{2});N_{pair};",
-      500, 0., 100.,
-      100, 1., 5.);
-  fHistosMC->CreateTH2(
-      Form("%s/Reco_bkg", histGroup.Data()),
-      "J/#psi Reconstruction - Background;p_{T,pair} (GeV/c);M_{e^{+}e^{-}} (GeV/c^2);N_{pair};",
-      500, 0., 100.,
-      100, 1., 5.);
+  InitHistogramsForJpsiMC("JpsiPrompt");
+  InitHistogramsForJpsiMC("JpsiBdecay");
+}
+
+void AliAnalysisTaskJpsiJet::InitHistogramsForJpsiMC(const char* histClass){
+  // jpsiVars - pT, rapidity, phi, E
+  Int_t nBins[4]   = {500, 400,  80,  500};
+  Double_t xmin[4] = { 0., -2., -1.,   0.};
+  Double_t xmax[4] = {100., 2.,  7., 100.};
+  fHistosMC->CreateTHnSparse(Form("%s/jpsiVars", histClass), "J/#psi kinetic variables (p_{T}-Y-#phi-E);p_{T} (GeV/c);Rapidity;#phi;E (GeV)", 4, nBins, xmin, xmax);
+  
+  // Signal check - pairVars : pT, M, Lxy
+  Int_t nBinsDet[3]   = {500, 100,  120};
+  Double_t xminDet[3] = { 0.,  1., -0.3};
+  Double_t xmaxDet[3] = {100., 5.,  0.3};
+  fHistosMC->CreateTHnSparse(
+      Form("%s/Reco_sig", histClass),
+      "J/#psi Reconstruction - Signal;p_{T,J/#psi} (GeV/c);M_{e^{+}e^{-}} (GeV/c^{2});L_{xy} (cm);N_{pair};",
+      3, nBinsDet, xminDet, xmaxDet);
+  fHistosMC->CreateTHnSparse(
+      Form("%s/Reco_bkg", histClass),
+      "J/#psi Reconstruction - Background;p_{T,pair} (GeV/c);M_{e^{+}e^{-}} (GeV/c^2);L_{xy} (cm);N_{pair};",
+      3, nBinsDet, xminDet, xmaxDet);
 }
 
 Bool_t AliAnalysisTaskJpsiJet::RunParticleLevelAnalysis(){
   // MC info.
   fMCHeader = dynamic_cast<AliAODMCHeader*>(fAOD->FindListObject(AliAODMCHeader::StdBranchName()));
   fMCParticles = dynamic_cast<TClonesArray*>(fAOD->FindListObject(AliAODMCParticle::StdBranchName()));
+
+  if(!fMCHeader || !fMCParticles){
+    AliFatal("Fail to retrieve MC objects");
+    return kFALSE;
+  }
+
+  SetJpsiGeneratorType();
 
   fHistosMC->FillTH1("Event/NParticles", fMCParticles->GetEntriesFast());
 
@@ -991,7 +1019,7 @@ Bool_t AliAnalysisTaskJpsiJet::RunParticleLevelAnalysis(){
         x[1] = mcp->Y();
         x[2] = mcp->Phi();
         x[3] = mcp->E();
-        fHistosMC->FillTHnSparse("Jpsi/jpsiVars", x, 1.0);
+        fHistosMC->FillTHnSparse(Form("%s/jpsiVars", fMCGenType.Data()), x, 1.0);
     }// Jpsi
   }// End - MC particles
 
@@ -1008,6 +1036,22 @@ Bool_t AliAnalysisTaskJpsiJet::RunParticleLevelAnalysis(){
     FillHistogramsForJpsiMC();
 
   return kTRUE;
+}
+
+// Set J/psi generator type from MC header
+void AliAnalysisTaskJpsiJet::SetJpsiGeneratorType(){
+  // Generator type - Prompt/Jpsi2ee, Bdecay/B2Jpsi2ee
+  TString genType = fMCHeader->GetCocktailHeader(1)->GetName();
+  if(genType.Contains("Jpsi2ee")){
+    fMCGenType = "JpsiPrompt";
+  }
+  else if(genType.Contains("B2Jpsi2ee")){
+    fMCGenType = "JpsiBdecay";
+  }else
+  {
+    AliWarning("Unknown generator type for J/psi MC");
+    return;
+  }
 }
 
 void AliAnalysisTaskJpsiJet::FillHistogramsForParticle(const char* histName, AliVParticle* par){
@@ -1055,16 +1099,21 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForJpsiMC(){
       continue;
     }
 
+    // For real signal, both daughters should come from J/psi decay.
+    Double_t x[3] = {0.};
+    x[0] = pair->Pt();
+    x[1] = pair->M();
+    x[2] = GetPseudoProperDecayTime(pair);
     if(CheckDielectronDaughter(d1) && CheckDielectronDaughter(d2))
-      fHistosMC->FillTH2("Jpsi/Reco_sig", pair->Pt(), pair->M());
+      fHistosMC->FillTHnSparse(Form("%s/Reco_sig", fMCGenType.Data()), x, 1.0);
     else
-      fHistosMC->FillTH1("Jpsi/Reco_bkg", pair->Pt(), pair->M());
+      fHistosMC->FillTHnSparse(Form("%s/Reco_bkg", fMCGenType.Data()), x, 1.0);
   }// End - Loop dielectron pairs
 }
 
+// Found mother of dielectron daughter
 Bool_t AliAnalysisTaskJpsiJet::CheckDielectronDaughter(AliVParticle *par)
 {
-
   Int_t mcID = TMath::Abs(par->GetLabel());
   auto mcp = static_cast<AliAODMCParticle *>(fMCParticles->At(mcID));
   Int_t motherID = mcp->GetMother();
