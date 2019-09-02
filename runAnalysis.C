@@ -39,7 +39,7 @@ AliAnalysisAlien* SetupGridHandler(
   alienHandler->SetAdditionalLibs("AddTaskJpsiJet_pp.C AliAnalysisTaskJpsiJet.cxx AliAnalysisTaskJpsiJet.h");
   alienHandler->SetAnalysisSource("AliAnalysisTaskJpsiJet.cxx");
 
-  alienHandler->SetAliPhysicsVersion("vAN-20190614_ROOT6-1");
+  alienHandler->SetAliPhysicsVersion("vAN-20190821_ROOT6-1");
 
   alienHandler->SetAPIVersion("V1.1x");
 
@@ -116,7 +116,7 @@ void runAnalysis(
   // Analysis Manager
   AliAnalysisManager *mgr = new AliAnalysisManager("JpsiJetTask");
     // DATA or MC input
-  if(data_dir.Length() > 11 || doDevPWG)
+  if(data_dir.Length() > 11)
     isMC = kTRUE;
     // Input handler
   AliAODInputHandler *aodH = new AliAODInputHandler();
