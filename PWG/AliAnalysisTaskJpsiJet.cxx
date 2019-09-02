@@ -50,6 +50,8 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet():
   fIsPileup(kFALSE),
   fIsTriggerQA(kFALSE),
   fIsMC(kFALSE),
+  fMCParticles(NULL),
+  fMCHeader(NULL),
   fEventFilter(NULL),
   fHistos(NULL)
 {
@@ -72,6 +74,8 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   fIsPileup(kFALSE),
   fIsTriggerQA(kFALSE),
   fIsMC(kFALSE),
+  fMCParticles(NULL),
+  fMCHeader(NULL),
   fEventFilter(NULL),
   fHistos(NULL)
 {
@@ -966,23 +970,15 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForMC(){
 
 Bool_t AliAnalysisTaskJpsiJet::RunParticleLevelAnalysis(){
   // MC info.
-  auto mcHeader = dynamic_cast<AliAODMCHeader*>(fAOD->FindListObject(AliAODMCHeader::StdBranchName()));
-  auto mcParticles = dynamic_cast<TClonesArray*>(fAOD->FindListObject(AliAODMCParticle::StdBranchName()));
+  fMCHeader = dynamic_cast<AliAODMCHeader*>(fAOD->FindListObject(AliAODMCHeader::StdBranchName()));
+  fMCParticles = dynamic_cast<TClonesArray*>(fAOD->FindListObject(AliAODMCParticle::StdBranchName()));
 
-  // PDG Code
-  static const Int_t PDG_PROTON = 2212;
-  static const Int_t PDG_ELECTRON = 11;
-  static const Int_t PDG_GAMMA = 22;
-  static const Int_t PDG_PION = 211;
-  static const Int_t PDG_KAON = 321;
-  static const Int_t PDG_JPSI = 443;
-
-  fHistosMC->FillTH1("Event/NParticles", mcParticles->GetEntriesFast());
+  fHistosMC->FillTH1("Event/NParticles", fMCParticles->GetEntriesFast());
 
   // Loop on MC particles
   Int_t nPhysPrim = 0;
   AliAODMCParticle* mcp = NULL;
-  TIter nextParticle(mcParticles);
+  TIter nextParticle(fMCParticles);
   while((mcp = static_cast<AliAODMCParticle*>(nextParticle()))){
     Int_t pdg = TMath::Abs(mcp->GetPdgCode());
     if(mcp->IsPhysicalPrimary() && TMath::Abs(mcp->Eta()) < 1.0){
@@ -1026,15 +1022,11 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForParticle(const char* histName, Ali
 
 void AliAnalysisTaskJpsiJet::FillHistogramsForElectronPID(const TObjArray* eleArray){
 
-  auto mcParticles = dynamic_cast<TClonesArray*>(fAOD->FindListObject(AliAODMCParticle::StdBranchName()));
-
-  static const Int_t PDG_ELECTRON = 11;
-
   AliAODTrack* eleTrk = NULL;
   TIter nextEle(eleArray);
   while((eleTrk = static_cast<AliAODTrack*>(nextEle()))){
     Int_t mcID = TMath::Abs(eleTrk->GetLabel());
-    auto mcp = static_cast<AliAODMCParticle*>(mcParticles->At(mcID));
+    auto mcp = static_cast<AliAODMCParticle*>(fMCParticles->At(mcID));
     if(!mcp){
       AliWarning("Can not found MC particle");
       eleTrk->Print();
@@ -1050,14 +1042,11 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForElectronPID(const TObjArray* eleAr
 
 // J/psi reconstruction vs MC truth
 void AliAnalysisTaskJpsiJet::FillHistogramsForJpsiMC(){
-  auto mcParticles = dynamic_cast<TClonesArray*>(fAOD->FindListObject(AliAODMCParticle::StdBranchName()));
-
-  static const Int_t PDG_JPSI = 443;
 
   AliDielectronPair* pair = NULL;
   TIter nextPair(fDielectron->GetPairArray(1));
   while( (pair = static_cast<AliDielectronPair*>(nextPair()) ) ){
-    Bool_t isJpsiSignal = kFALSE;
+
     AliVParticle* d1 = pair->GetFirstDaughterP();
     AliVParticle* d2 = pair->GetSecondDaughterP();
 
@@ -1075,16 +1064,13 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForJpsiMC(){
 
 Bool_t AliAnalysisTaskJpsiJet::CheckDielectronDaughter(AliVParticle *par)
 {
-  auto mcParticles = dynamic_cast<TClonesArray*>(fAOD->FindListObject(AliAODMCParticle::StdBranchName()));
-
-  static const Int_t PDG_JPSI = 443;
 
   Int_t mcID = TMath::Abs(par->GetLabel());
-  auto mcp = static_cast<AliAODMCParticle *>(mcParticles->At(mcID));
+  auto mcp = static_cast<AliAODMCParticle *>(fMCParticles->At(mcID));
   Int_t motherID = mcp->GetMother();
   if (motherID == -1) return kFALSE;
 
-  auto mcMother = static_cast<AliAODMCParticle *>(mcParticles->At(motherID));
+  auto mcMother = static_cast<AliAODMCParticle *>(fMCParticles->At(motherID));
   Int_t pdg = TMath::Abs(mcMother->GetPdgCode());
   if (pdg != PDG_JPSI) return kFALSE;
   

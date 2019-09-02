@@ -149,6 +149,16 @@ enum EventStatus{ // for histogram event stats
 };
 
 private:
+enum PdgCode{
+  PDG_PROTON = 2212,
+  PDG_ELECTRON = 11,
+  PDG_GAMMA = 22,
+  PDG_PION = 211,
+  PDG_KAON = 321,
+  PDG_JPSI = 443
+};
+
+private:
   AliAODEvent       *fAOD; // Input AOD event
   AliDielectron     *fDielectron; // Dielectron framework
   TClonesArray      *fPairs; // Dielectron pair
@@ -163,6 +173,8 @@ private:
   Bool_t             fIsPileup;
   Bool_t             fIsTriggerQA; // Add QA histograms by trigger classes
   Bool_t             fIsMC;  // Input MC production
+  TClonesArray      *fMCParticles; // AOD event object in MC
+  AliAODMCHeader    *fMCHeader;    // AOD event object in MC
   AliAnalysisCuts   *fEventFilter;
 
 // Histograms
