@@ -964,7 +964,14 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForMC(){
       Form("%s/PID_wrong", histGroup.Data()),
       "Electron PID - Wrong;p_{T,ele} (GeV/c);N_{pure};",
       500, 0., 100.);
-
+  fHistosMC->CreateTH1(
+      Form("%s/EMCal_all", histGroup.Data()),
+      "Electron on EMCal/DCal (MC);p_{T,ele} (GeV/c);N_{ele,EMC};",
+      500, 0., 100.);
+  fHistosMC->CreateTH1(
+      Form("%s/EMCal_det", histGroup.Data()),
+      "Electron on EMCal/DCal (Detector);p_{T,ele} (GeV/c);N_{ele,EMC};",
+      500, 0., 100.);
   // Jpsi
   InitHistogramsForJpsiMC("JpsiPrompt");
   InitHistogramsForJpsiMC("JpsiBdecay");
@@ -991,6 +998,30 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForJpsiMC(const char* histClass){
       3, nBinsDet, xminDet, xmaxDet);
 }
 
+Bool_t AliAnalysisTaskJpsiJet::ApplyEmcalCut(AliVParticle* par, Bool_t isMCTruth = kTRUE){
+  // Kinetic variables
+  Double_t eta = TMath::Abs(par->Eta());
+  Double_t phi = par->Phi();
+  Double_t E = par->E();
+  if(!isMCTruth){
+    Int_t clsID = ((AliAODTrack*)par)->GetEMCALcluster();
+    if(clsID > -1)
+      E = fAOD->GetCaloCluster(clsID)->E();
+  }
+  // EMCal
+  Bool_t isEMCal = kTRUE;
+  if(eta > 0.7) isEMCal = kFALSE;
+  if(phi < 1.396 || phi > 3.264) isEMCal = kFALSE;
+  // DCal
+  Bool_t isDCal = kTRUE;
+  if(eta < 0.22 || eta > 0.7) isDCal = kFALSE;
+  if(phi < 4.377 || phi > 5.707) isDCal = kFALSE;
+  // Energy threshold
+  Bool_t isTriggered = (E > 5.0);
+  
+  return (isTriggered && (isEMCal || isDCal));
+}
+
 Bool_t AliAnalysisTaskJpsiJet::RunParticleLevelAnalysis(){
   // MC info.
   fMCHeader = dynamic_cast<AliAODMCHeader*>(fAOD->FindListObject(AliAODMCHeader::StdBranchName()));
@@ -1013,7 +1044,11 @@ Bool_t AliAnalysisTaskJpsiJet::RunParticleLevelAnalysis(){
     Int_t pdg = TMath::Abs(mcp->GetPdgCode());
     if(mcp->IsPhysicalPrimary() && TMath::Abs(mcp->Eta()) < 1.0){
       nPhysPrim++;
-      if(pdg == PDG_ELECTRON) FillHistogramsForParticle("Electron/eleVars", mcp);
+      if(pdg == PDG_ELECTRON){
+        FillHistogramsForParticle("Electron/eleVars", mcp);
+        if(ApplyEmcalCut(mcp))
+          fHistosMC->FillTH1("Electron/EMCal_all", mcp->Pt());
+      }// Electron - MC
     }
     if(pdg == PDG_JPSI){
         Double_t x[4] = {0.};
@@ -1071,6 +1106,8 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForElectronPID(const TObjArray* eleAr
   AliAODTrack* eleTrk = NULL;
   TIter nextEle(eleArray);
   while((eleTrk = static_cast<AliAODTrack*>(nextEle()))){
+    if(ApplyEmcalCut(eleTrk, kFALSE))
+      fHistosMC->FillTH1("Electron/EMCal_det", eleTrk->Pt());
     Int_t mcID = TMath::Abs(eleTrk->GetLabel());
     auto mcp = static_cast<AliAODMCParticle*>(fMCParticles->At(mcID));
     if(!mcp){

@@ -104,7 +104,7 @@ void runAnalysis(
     Bool_t doPhysAna = kFALSE,
     TString mode = "local",
     TString datasets = "16k_pass1",
-    TString data_dir = "2016/LHC16l",
+    TString data_dir = "2017/LHC17h2h",
     TString work_dir = "test",
     TString task_name = "JpsiJet"
 ){

@@ -115,6 +115,7 @@ public:
 private:
   void   InitHistogramsForMC();
   void   InitHistogramsForJpsiMC(const char* histClass);
+  Bool_t ApplyEmcalCut(AliVParticle* par, Bool_t isMCTruth);
   Bool_t RunParticleLevelAnalysis();
   void   SetJpsiGeneratorType();
   void   FillHistogramsForParticle(const char* histName, AliVParticle* par);
