@@ -62,7 +62,8 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet():
   fMCHeader(NULL),
   fMCGenType(""),
   fEventFilter(NULL),
-  fHistos(NULL)
+  fHistos(NULL),
+  fHistosMC(NULL)
 {
   // Constructor
 }
@@ -87,7 +88,8 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   fMCHeader(NULL),
   fMCGenType(""),
   fEventFilter(NULL),
-  fHistos(NULL)
+  fHistos(NULL),
+  fHistosMC(NULL)
 {
   // IO
   DefineInput(0, TChain::Class());

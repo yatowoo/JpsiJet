@@ -186,7 +186,7 @@ private:
   THistManager      *fHistosMC;
 
 private:
-  ClassDef(AliAnalysisTaskJpsiJet, 1);
+  ClassDef(AliAnalysisTaskJpsiJet, 2);
 };
 
 #endif /* ALIANALYSISTASK_JPSIJET_H */
