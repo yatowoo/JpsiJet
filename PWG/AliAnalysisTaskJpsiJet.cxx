@@ -1176,26 +1176,42 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForJpsiMC(){
     x[0] = pair->Pt();
     x[1] = pair->M();
     x[2] = GetPseudoProperDecayTime(pair);
-    if(CheckDielectronDaughter(d1) && CheckDielectronDaughter(d2))
+    Int_t mother1 = CheckDielectronDaughter(d1);
+    Int_t mother2 = CheckDielectronDaughter(d2); 
+    if( mother1 == mother2 && mother1 > -1)
       fHistosMC->FillTHnSparse(Form("%s/Reco_sig", fMCGenType.Data()), x, 1.0);
     else
       fHistosMC->FillTHnSparse(Form("%s/Reco_bkg", fMCGenType.Data()), x, 1.0);
+
+    // J/psi in Jet - Particle Level
+    auto jpsi = static_cast<AliAODMCParticle *>(fMCParticles->At(mother1));
+    auto mcD1 = static_cast<AliAODMCParticle *>(fMCParticles->At(TMath::Abs(d1->GetLabel())));
+    auto mcD2 = static_cast<AliAODMCParticle *>(fMCParticles->At(TMath::Abs(d2->GetLabel())));
+    jpsi->SetPhysicalPrimary(kTRUE);
+    mcD1->SetPhysicalPrimary(kFALSE);
+    mcD1->SetPhysicalPrimary(kFALSE);
+
+    if(RunJetFinder("JpsiJetMC"))
+      FillHistogramsForJetMC("JpsiJetMC");
+
+    jpsi->SetPhysicalPrimary(kFALSE);
   }// End - Loop dielectron pairs
 }
 
 // Found mother of dielectron daughter
-Bool_t AliAnalysisTaskJpsiJet::CheckDielectronDaughter(AliVParticle *par)
+// Return MC label, if mother is J/psi, else return -1
+Int_t AliAnalysisTaskJpsiJet::CheckDielectronDaughter(AliVParticle *par)
 {
   Int_t mcID = TMath::Abs(par->GetLabel());
   auto mcp = static_cast<AliAODMCParticle *>(fMCParticles->At(mcID));
   Int_t motherID = mcp->GetMother();
-  if (motherID == -1) return kFALSE;
+  if (motherID == -1) return -1;
 
   auto mcMother = static_cast<AliAODMCParticle *>(fMCParticles->At(motherID));
   Int_t pdg = TMath::Abs(mcMother->GetPdgCode());
-  if (pdg != PDG_JPSI) return kFALSE;
+  if (pdg != PDG_JPSI) return -1;
   
-  return kTRUE;
+  return motherID;
 }
 
 void AliAnalysisTaskJpsiJet::InitHistogramsForJetMC(){
