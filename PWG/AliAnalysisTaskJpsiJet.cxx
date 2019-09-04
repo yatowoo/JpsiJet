@@ -1056,6 +1056,8 @@ Bool_t AliAnalysisTaskJpsiJet::RunParticleLevelAnalysis(){
         x[1] = mcp->Y();
         x[2] = mcp->Phi();
         x[3] = mcp->E();
+        // Re-check J/psi generator type
+        if(mcp->GetMother() > -1) fMCGenType = "JpsiBdecay";
         fHistosMC->FillTHnSparse(Form("%s/jpsiVars", fMCGenType.Data()), x, 1.0);
     }// Jpsi
   }// End - MC particles
