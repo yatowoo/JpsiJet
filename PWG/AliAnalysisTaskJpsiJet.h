@@ -70,10 +70,10 @@ public:
 private:
   void InitHistogramsForEventQA(const char* histClass);
   void InitHistogramsForClusterQA(const char* histClass);
-  void InitHistogramsForJetQA(const char* histClass);
+  void InitHistogramsForJetQA();
   void FillHistogramsForEventQA(const char* histClass);
   void FillHistogramsForClusterQA(const char* histClass);
-  void FillHistogramsForJetQA(const char* histClass);
+  void FillHistogramsForJetQA(const char* jetTag);
 
   // Dielectron framework
 private:
@@ -107,6 +107,7 @@ public:
     const Bool_t lockTask = kTRUE,
     const Bool_t bFillGhosts = kFALSE);
   void InitJetFinders();
+  Bool_t RunJetFinder(const char* jetTag);
 
   // MC correction
 public:
@@ -115,12 +116,15 @@ public:
 private:
   void   InitHistogramsForMC();
   void   InitHistogramsForJpsiMC(const char* histClass);
+  void   InitHistogramsForJetMC();
   Bool_t ApplyEmcalCut(AliVParticle* par, Bool_t isMCTruth);
   Bool_t RunParticleLevelAnalysis();
   void   SetJpsiGeneratorType();
   void   FillHistogramsForParticle(const char* histName, AliVParticle* par);
   void   FillHistogramsForElectronPID(const TObjArray* eleArray);
   void   FillHistogramsForJpsiMC();
+  Double_t GetJetMCPt(AliEmcalJet* jet);
+  void   FillHistogramsForJetMC(const char* jetTag);
   Bool_t CheckDielectronDaughter(AliVParticle* par);
 
   // Event selection

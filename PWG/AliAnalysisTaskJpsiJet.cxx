@@ -159,7 +159,7 @@ void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
   TIter next(fJetTasks);
   while((jetFinder=(AliEmcalJetTask*)next()))
     jetFinder->CreateOutputObjects();
-  InitHistogramsForJetQA("Jet");
+  InitHistogramsForJetQA();
 
   // Init pair in jet analysis
   InitHistogramsForTaggedJet("PairInJet");
@@ -247,6 +247,10 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
 }
 
 Bool_t AliAnalysisTaskJpsiJet::RunDetectoreLevelAnalysis(){
+  // Run jet finder tasks
+  if(RunJetFinder("Jet"))
+    FillHistogramsForJetQA("Jet");
+
   // Run dielectron task
   AliKFParticle::SetField(fAOD->GetMagneticField());
   AliDielectronPID::SetCorrVal(fAOD->GetRunNumber());
@@ -297,15 +301,9 @@ Bool_t AliAnalysisTaskJpsiJet::RunDetectoreLevelAnalysis(){
   // Register in AOD event
   fAOD->AddObject(fTracksWithPair);
   
-  // Run jet finder tasks
-  AliEmcalJetTask* jetFinder = NULL;
-  TIter next(fJetTasks);
-  while((jetFinder=(AliEmcalJetTask*)next())){
-    jetFinder->Reset();
-    jetFinder->SetActive(kTRUE);
-    jetFinder->Exec("");
-  }
-  FillHistogramsForJetQA("Jet");
+  // Run jet finder tasks on J/psi embedded track array
+  if(RunJetFinder("JpsiJet"))
+    FillHistogramsForJetQA("JpsiJet");
 
   if(FillHistogramsForTaggedJet("PairInJet"))
     fHistos->FillTH1("EventStats",kWithPairInJet);
@@ -518,49 +516,73 @@ void AliAnalysisTaskJpsiJet::InitJetFinders(){
 
   if(fIsMC){
     AddTaskEmcalJet("mcparticles", "", AliJetContainer::antikt_algorithm, 0.4, AliJetContainer::kChargedJet, 0.15, 0.3, 0.01, AliJetContainer::pt_scheme, "JetMC", 1., kFALSE, kFALSE);
+    AddTaskEmcalJet("mcparticles", "", AliJetContainer::antikt_algorithm, 0.4, AliJetContainer::kChargedJet, 0.15, 0.3, 0.01, AliJetContainer::pt_scheme, "JpsiJetMC", 1., kFALSE, kFALSE);
   }
 }
 
-void AliAnalysisTaskJpsiJet::InitHistogramsForJetQA(const char* histClass){
+Bool_t AliAnalysisTaskJpsiJet::RunJetFinder(const char* jetTag){
+  AliEmcalJetTask* jetFinder = NULL;
+  TIter next(fJetTasks);
+  while((jetFinder=(AliEmcalJetTask*)next())){
+    TString jetName = jetFinder->GetName();
+    // Find jet task by name
+    if(jetName.BeginsWith(Form("%s_", jetTag))){
+      // Prosess as AliAnalysisManager::StartAnalysis
+      jetFinder->Reset();
+      jetFinder->SetActive(kTRUE);
+      jetFinder->Exec("");
+      return kTRUE;
+    }
+  }
+  return kFALSE;
+}
+
+void AliAnalysisTaskJpsiJet::InitHistogramsForJetQA(){
 
   AliJetContainer* jets = NULL;
   TIter next(fJets);
   while((jets = static_cast<AliJetContainer*>(next()))){
-    TString histGroup = Form("%s/%s", histClass, jets->GetName());
+    TString jetName = jets->GetName();
+    // Skip MC jets
+    if(jetName.Contains("mcparticles")) continue;
     // THnSparse - pT, eta， phi
     Int_t nBins[3]   = {2000, 200, 100};
     Double_t xmin[3] = {0.,   -1., -2.};
     Double_t xmax[3] = {100.,  1.,  8.};
-    THnSparse* hs = fHistos->CreateTHnSparse(Form("%s/jetPtEtaPhi", histGroup.Data()), "THnSparse for jet kinetic variables (p_{T}-#eta-#phi)", 3, nBins, xmin, xmax);
+    fHistos->CreateTHnSparse(Form("%s/jetVars", jets->GetName()), "Jet kinetic variables (p_{T}-#eta-#phi);p_{T} (GeV/c);#eta;#phi;", 3, nBins, xmin, xmax);
   }
 }
 
-void AliAnalysisTaskJpsiJet::FillHistogramsForJetQA(const char* histClass){
-  if(!fJets) InitJetFinders();
+void AliAnalysisTaskJpsiJet::FillHistogramsForJetQA(const char* jetTag){
   
   AliJetContainer* jets = NULL;
   TIter next(fJets);
   while((jets = static_cast<AliJetContainer*>(next()))){
+    TString jetName = jets->GetName();
+    if (!jetName.BeginsWith(Form("%s_", jetTag)))
+      continue;
+
+    // Found jet with tag
     jets->NextEvent(fAOD);
     jets->SetArray(fAOD);
-    
-    TString histGroup = Form("%s/%s", histClass, jets->GetName());
 
     AliDebug(1, Form("%d jets found in %s", jets->GetNJets(), jets->GetName()));
-    for(auto jet : jets->all()){
+    for (auto jet : jets->all())
+    {
       // Jet cuts
       UInt_t rejectionReason = 0;
-      if (!jets->AcceptJet(jet, rejectionReason)) {
-        AliDebug(2,Form("Jet was rejected for reason : %d, details : %s", rejectionReason, (jet->toString()).Data()));
+      if (!jets->AcceptJet(jet, rejectionReason))
+      {
+        AliDebug(2, Form("Jet was rejected for reason : %d, details : %s", rejectionReason, (jet->toString()).Data()));
         continue;
       }
       Double_t x[3] = {0.};
       x[0] = jet->Pt();
       x[1] = jet->Eta();
       x[2] = jet->Phi();
-      fHistos->FillTHnSparse(Form("%s/jetPtEtaPhi", histGroup.Data()),x,1.0);
-    }
-  }
+      fHistos->FillTHnSparse(Form("%s/jetVars", jets->GetName()), x, 1.0);
+    } // End - Loop jets
+  }// End - Loop jet containers
 }
 
 void AliAnalysisTaskJpsiJet::LocalInit(){
@@ -975,6 +997,9 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForMC(){
   // Jpsi
   InitHistogramsForJpsiMC("JpsiPrompt");
   InitHistogramsForJpsiMC("JpsiBdecay");
+
+  // Jet
+  InitHistogramsForJetMC();
 }
 
 void AliAnalysisTaskJpsiJet::InitHistogramsForJpsiMC(const char* histClass){
@@ -1065,15 +1090,21 @@ Bool_t AliAnalysisTaskJpsiJet::RunParticleLevelAnalysis(){
   fHistosMC->FillTH1("Event/NPhysPrim", nPhysPrim);
   fHistosMC->FillTH2("Event/NPhysPrim_Ntracks", fAOD->GetNumberOfTracks(), nPhysPrim);
 
+  // Jet
+  FillHistogramsForJetMC("Jet");
+  if(RunJetFinder("JetMC"))
+    FillHistogramsForJetMC("JetMC");
+
   // Particle vs Detector
     // Electron PID
   FillHistogramsForElectronPID(fDielectron->GetTrackArray(0));
   FillHistogramsForElectronPID(fDielectron->GetTrackArray(1));
 
     // J/psi Acceptance X Efficiency
-  if(fDielectron->HasCandidates())
+  if(fDielectron->HasCandidates()){
+    FillHistogramsForJetMC("JpsiJet");
     FillHistogramsForJpsiMC();
-
+  }
   return kTRUE;
 }
 
@@ -1165,4 +1196,70 @@ Bool_t AliAnalysisTaskJpsiJet::CheckDielectronDaughter(AliVParticle *par)
   if (pdg != PDG_JPSI) return kFALSE;
   
   return kTRUE;
+}
+
+void AliAnalysisTaskJpsiJet::InitHistogramsForJetMC(){
+  AliJetContainer* jets = NULL;
+  TIter next(fJets);
+  while((jets = static_cast<AliJetContainer*>(next()))){
+    TString jetName = jets->GetName();
+    // THnSparse - pT, eta， phi, MCPt
+    Int_t nBins[4]   = {2000, 200, 100, 2000};
+    Double_t xmin[4] = {0.,   -1., -2.,   0.};
+    Double_t xmax[4] = {100.,  1.,  8., 100.};
+    THnSparse* hs = fHistosMC->CreateTHnSparse(Form("%s/jetVars", jetName.Data()), "Jet kinetic variables (p_{T}-#eta-#phi-p_{T,MC});p_{T,reco} (GeV/c);#eta;#phi;p_{T,true} (GeV/c)", 4, nBins, xmin, xmax);
+
+    // Detector response matrix
+    fHistosMC->CreateTH2(
+      Form("%s/detResponse", jetName.Data()),
+      "Detector response matrix for jets;p_{T,reco} (GeV/c);p_{T,true} *(GeV/c)",
+      100, 0., 100.,
+      100, 0., 100.);
+  }
+}
+
+// Calculate jet MC pT by constituents
+Double_t AliAnalysisTaskJpsiJet::GetJetMCPt(AliEmcalJet* jet){
+  Double_t mcPt = 0.;
+  for(int i = 0; i < jet->GetNumberOfTracks(); i++){
+    Int_t mcID = jet->Track(i)->GetLabel();
+    if(mcID < 0) continue;
+    auto mcp = (AliVParticle*)(fMCParticles->UncheckedAt(mcID));
+    mcPt += mcp->Pt();
+  }
+  jet->SetMCPt(mcPt);
+  return mcPt;
+}
+
+void AliAnalysisTaskJpsiJet::FillHistogramsForJetMC(const char* jetTag){
+  
+  AliJetContainer* jets = NULL;
+  TIter next(fJets);
+  while((jets = static_cast<AliJetContainer*>(next()))){
+    TString jetName = jets->GetName();
+    if (!jetName.BeginsWith(Form("%s_", jetTag)))
+      continue;
+
+    // Found jet with tag
+    jets->NextEvent(fAOD);
+    jets->SetArray(fAOD);
+
+    AliDebug(1, Form("%d jets found in %s", jets->GetNJets(), jets->GetName()));
+    for(auto jet : jets->all()){
+      // Jet cuts
+      UInt_t rejectionReason = 0;
+      if (!jets->AcceptJet(jet, rejectionReason)) {
+        AliDebug(2,Form("Jet was rejected for reason : %d, details : %s", rejectionReason, (jet->toString()).Data()));
+        continue;
+      }
+      Double_t x[4] = {0.};
+      x[0] = jet->Pt();
+      x[1] = jet->Eta();
+      x[2] = jet->Phi();
+      x[3] = GetJetMCPt(jet);
+      fHistosMC->FillTHnSparse(Form("%s/jetVars", jetName.Data()),x,1.0);
+
+      fHistosMC->FillTH2(Form("%s/detResponse", jetName.Data()), jet->Pt(), jet->MCPt());
+    }
+  }
 }
