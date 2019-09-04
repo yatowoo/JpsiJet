@@ -724,10 +724,9 @@
       "PID": 1602071003,
       "N_run": 123,
       "Total": 232,
-      "Done": 221,
-      "ERROR_IB": 7,
-      "WAITTING": 4,
-      "ratio": 95.26,
+      "Done": 222,
+      "ERROR_V": 10,
+      "ratio": 95.69,
       "comment":"Test MC truth for ePID & J/psi reco." 
     }
   }
