@@ -1180,21 +1180,32 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForJpsiMC(){
     Int_t mother2 = CheckDielectronDaughter(d2); 
     if( mother1 == mother2 && mother1 > -1)
       fHistosMC->FillTHnSparse(Form("%s/Reco_sig", fMCGenType.Data()), x, 1.0);
-    else
+    else{
       fHistosMC->FillTHnSparse(Form("%s/Reco_bkg", fMCGenType.Data()), x, 1.0);
+      continue;
+    }
 
     // J/psi in Jet - Particle Level
     auto jpsi = static_cast<AliAODMCParticle *>(fMCParticles->At(mother1));
     auto mcD1 = static_cast<AliAODMCParticle *>(fMCParticles->At(TMath::Abs(d1->GetLabel())));
     auto mcD2 = static_cast<AliAODMCParticle *>(fMCParticles->At(TMath::Abs(d2->GetLabel())));
+      // Remove daughters and add J/psi for jet finder
+      // See: AliMCParticleContainer::AcceptMCParticle
     jpsi->SetPhysicalPrimary(kTRUE);
+    Bool_t mcD1_status = mcD1->IsPhysicalPrimary();
+    Bool_t mcD2_status = mcD2->IsPhysicalPrimary();
     mcD1->SetPhysicalPrimary(kFALSE);
-    mcD1->SetPhysicalPrimary(kFALSE);
+    mcD2->SetPhysicalPrimary(kFALSE);
 
-    if(RunJetFinder("JpsiJetMC"))
+    if(RunJetFinder("JpsiJetMC")){
       FillHistogramsForJetMC("JpsiJetMC");
+      // DEBUG
+      //FillHistogramsForTaggedJetMC(jpsi);
+    }
 
     jpsi->SetPhysicalPrimary(kFALSE);
+    mcD1->SetPhysicalPrimary(mcD1_status);
+    mcD2->SetPhysicalPrimary(mcD2_status);
   }// End - Loop dielectron pairs
 }
 
@@ -1278,4 +1289,33 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForJetMC(const char* jetTag){
       fHistosMC->FillTH2(Form("%s/detResponse", jetName.Data()), jet->Pt(), jet->MCPt());
     }
   }
+}
+
+Bool_t AliAnalysisTaskJpsiJet::FillHistogramsForTaggedJetMC(AliAODMCParticle* jpsi){
+  AliJetContainer* jets = NULL;
+  TIter next(fJets);
+  while((jets = static_cast<AliJetContainer*>(next()))){
+    TString jetName = jets->GetName();
+    if (jetName.BeginsWith("JpsiJetMC_"))
+      break;
+  }
+  // DEBUG
+  AliInfo("Debug with J/psi tagged jet in particle level");
+  AliEmcalJet* taggedJet = NULL;
+  for(auto jet : jets->all()){
+    for(int iTrk = 0; iTrk < jet->GetNumberOfTracks(); iTrk++){
+      if(jet->Track(iTrk) == jpsi){
+        taggedJet = jet;
+        break;
+      }
+    }
+    if(taggedJet) break;
+  }
+  if(!taggedJet) return kFALSE;
+
+  // DEBUG
+  taggedJet->Print();
+  jpsi->Print();
+
+  return kTRUE;
 }

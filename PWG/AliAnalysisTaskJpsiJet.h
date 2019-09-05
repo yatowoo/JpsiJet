@@ -126,6 +126,7 @@ private:
   Double_t GetJetMCPt(AliEmcalJet* jet);
   void   FillHistogramsForJetMC(const char* jetTag);
   Int_t  CheckDielectronDaughter(AliVParticle* par);
+  Bool_t FillHistogramsForTaggedJetMC(AliAODMCParticle* jpsi);
 
   // Event selection
 public:
@@ -191,7 +192,7 @@ private:
   THistManager      *fHistosMC;
 
 private:
-  ClassDef(AliAnalysisTaskJpsiJet, 2);
+  ClassDef(AliAnalysisTaskJpsiJet, 3);
 };
 
 #endif /* ALIANALYSISTASK_JPSIJET_H */
