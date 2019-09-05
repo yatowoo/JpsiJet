@@ -153,9 +153,13 @@ void runAnalysis(
   if(doJetQA)
     gInterpreter->ExecuteMacro("AddTaskJetQA.C");
 
-  // Task - PID QA
+  // Task - PID
   if(doDevPWG || doJpsiQA || doJpsiFilter || doPIDQA)
-    gInterpreter->ExecuteMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C");
+    if(!isMC)
+      gInterpreter->ExecuteMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C");
+    else{
+      gInterpreter->ExecuteMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C(1,0,1,\"pass1\")");
+    }
   if(doPIDQA)
     gInterpreter->ExecuteMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDqa.C");
 
