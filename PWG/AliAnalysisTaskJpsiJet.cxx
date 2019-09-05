@@ -1156,6 +1156,27 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForElectronPID(const TObjArray* eleAr
   }
 }
 
+// Add J/psi particle for jet finder
+// Charge() is retrieved by PDG code, and it can not be modified from AliAODMCParticle. To avoid RejectionReason::kChargeCut, build new AliAODMCParticle as electron from AliMCParticle.
+AliAODMCParticle* AliAnalysisTaskJpsiJet::AddParticleFromJpsi(AliAODMCParticle* jpsi){
+  
+  auto part = new TParticle(
+    PDG_ELECTRON, 0, -1, -1, -1, -1,
+    jpsi->Px(), jpsi->Py(), jpsi->Pz(), jpsi->E(),
+    jpsi->Xv(), jpsi->Yv(), jpsi->Zv(), jpsi->T());
+
+  auto mcPart = new AliMCParticle(part);
+  
+  Int_t jpsiAsEleID = fMCParticles->GetEntries();
+  auto jpsiAsEle = new ((*fMCParticles)[jpsiAsEleID]) AliAODMCParticle(mcPart, jpsiAsEleID, jpsi->GetFlag());
+
+  jpsiAsEle->SetPhysicalPrimary(kTRUE);
+
+  delete part;
+  delete mcPart;
+  return jpsiAsEle;
+}
+
 // J/psi reconstruction vs MC truth
 void AliAnalysisTaskJpsiJet::FillHistogramsForJpsiMC(){
 
@@ -1191,7 +1212,7 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForJpsiMC(){
     auto mcD2 = static_cast<AliAODMCParticle *>(fMCParticles->At(TMath::Abs(d2->GetLabel())));
       // Remove daughters and add J/psi for jet finder
       // See: AliMCParticleContainer::AcceptMCParticle
-    jpsi->SetPhysicalPrimary(kTRUE);
+    auto* jpsiAsEle = AddParticleFromJpsi(jpsi);
     Bool_t mcD1_status = mcD1->IsPhysicalPrimary();
     Bool_t mcD2_status = mcD2->IsPhysicalPrimary();
     mcD1->SetPhysicalPrimary(kFALSE);
@@ -1200,10 +1221,10 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForJpsiMC(){
     if(RunJetFinder("JpsiJetMC")){
       FillHistogramsForJetMC("JpsiJetMC");
       // DEBUG
-      //FillHistogramsForTaggedJetMC(jpsi);
+      FillHistogramsForTaggedJetMC(jpsiAsEle);
     }
 
-    jpsi->SetPhysicalPrimary(kFALSE);
+    fMCParticles->Remove(jpsiAsEle);
     mcD1->SetPhysicalPrimary(mcD1_status);
     mcD2->SetPhysicalPrimary(mcD2_status);
   }// End - Loop dielectron pairs
@@ -1301,15 +1322,17 @@ Bool_t AliAnalysisTaskJpsiJet::FillHistogramsForTaggedJetMC(AliAODMCParticle* jp
   }
   // DEBUG
   AliInfo("Debug with J/psi tagged jet in particle level");
+  auto partCont = (AliMCParticleContainer*)(jets->GetParticleContainer());
+  UInt_t reject = 0;
+  if(!partCont->AcceptMCParticle(jpsi, reject))
+    AliInfo(Form("J/psi MC particle was rejected by container : %d", reject));
+  // DEBUG
   AliEmcalJet* taggedJet = NULL;
   for(auto jet : jets->all()){
-    for(int iTrk = 0; iTrk < jet->GetNumberOfTracks(); iTrk++){
-      if(jet->Track(iTrk) == jpsi){
-        taggedJet = jet;
-        break;
-      }
+    if(jet->HasParticleConstituent(jpsi)){
+      taggedJet = jet;
+      break;
     }
-    if(taggedJet) break;
   }
   if(!taggedJet) return kFALSE;
 
