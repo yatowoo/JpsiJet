@@ -127,7 +127,7 @@ void runAnalysis(
   mgr->SetOutputEventHandler(aodOutputH);
 
   // Task - Physics Selection
-  if(!isMC && !doDevPWG) // Exp. data
+  if(!isMC) // Exp. data
     gInterpreter->ExecuteMacro("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C");
 
   // Task - Centrality / Multiplicity
