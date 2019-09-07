@@ -793,5 +793,69 @@
       "ratio": 95.69,
       "comment":"Run analysis for QM 2019" 
     }
+  },
+  "QM_17k":{
+    "doDevPWG": true,
+    "doMult": false,
+    "doEmcalCorrection": true,
+    "doJetQA": false,
+    "doJpsiQA": false,
+    "doJpsiFilter": false,
+    "doPIDQA": false,
+    "doPhysAna": false,
+    "datasets": "17k_pass1",
+    "data_dir": "2017/LHC17k",
+    "work_dir": "JpsiJet_QM_17k_190907",
+    "task_name": "JpsiJet",
+    "alien_config":{
+      "TTL": 43200,
+      "MaxInput": 20,
+      "MaxMergeStages": 2,
+      "NrunsPerMaster": 200,
+      "AliPhysics": "vAN-20190821_ROOT6-1" 
+    },
+    "git_commit": "AnaTask_v2",
+    "result":{
+      "PID": 1605435297,
+      "N_files": 14216,
+      "N_run": 93,
+      "Total": 728,
+      "Done": 222,
+      "ERROR_V": 10,
+      "ratio": 95.69,
+      "comment":"Run analysis for QM 2019" 
+    }
+  },
+  "QM_17l":{
+    "doDevPWG": true,
+    "doMult": false,
+    "doEmcalCorrection": true,
+    "doJetQA": false,
+    "doJpsiQA": false,
+    "doJpsiFilter": false,
+    "doPIDQA": false,
+    "doPhysAna": false,
+    "datasets": "17l_pass1",
+    "data_dir": "2017/LHC17l",
+    "work_dir": "JpsiJet_QM_17l_190907",
+    "task_name": "JpsiJet",
+    "alien_config":{
+      "TTL": 43200,
+      "MaxInput": 20,
+      "MaxMergeStages": 2,
+      "NrunsPerMaster": 200,
+      "AliPhysics": "vAN-20190821_ROOT6-1" 
+    },
+    "git_commit": "AnaTask_v2",
+    "result":{
+      "PID": 1605439893,
+      "N_files": 13949,
+      "N_run": 105,
+      "Total": 728,
+      "Done": 222,
+      "ERROR_V": 10,
+      "ratio": 95.69,
+      "comment":"Run analysis for QM 2019" 
+    }
   }
 }
