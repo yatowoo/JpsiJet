@@ -32,7 +32,7 @@ TPaveText* yatoPaveText(){
 }
 
 // Input mass range for estimation of signal & background
-int SelectSignalRegion(TH1* InvMass, Double_t mlow, Double_t mup, Double_t width = 0.04){
+int SelectSignalRegion(TH1* InvMass, Double_t mlow = 2.92, Double_t mup = 3.16, Double_t width = 0.04){
   /*
   * Draw signal region
   */
@@ -149,12 +149,13 @@ int SelectSignalRegion(TH1* InvMass, Double_t mlow, Double_t mup, Double_t width
   return 0;
 }
 
-int ExtractSignal(TH1* invmass, Double_t mlow = 1.5, Double_t mup = 4.5){
+int ExtractSignal(TH1* invmass, Double_t mlow = 1.5, Double_t mup = 4.5,
+  Int_t index = 0){
   // Crystalball Function = Gaus + X^n
     // Parameters : \alpha = break point, n, \sigma = width, \mu = peak
     // Unit : Y = Ncount/0.04, X=GeV/c^2
   if(!jpsi)
-    jpsi = new TF1("fJpsi", "[0]*ROOT::Math::crystalball_function(x,[1],[2],[3],[4])", mlow, mup);
+    jpsi = new TF1(Form("fJpsi_%d",index), "[0]*ROOT::Math::crystalball_function(x,[1],[2],[3],[4])", mlow, mup);
   jpsi->SetLineColor(kBlack);
   jpsi->SetLineWidth(2);
   jpsi->SetLineStyle(2);
@@ -162,7 +163,7 @@ int ExtractSignal(TH1* invmass, Double_t mlow = 1.5, Double_t mup = 4.5){
 
   // Backgroud Function - Pol2
   if(!bkg)
-    bkg = new TF1("fBkg", "[0]+[1]*x+[2]*x^2", mlow, mup);
+    bkg = new TF1(Form("fBkg_%d",index), "[0]+[1]*x+[2]*x^2", mlow, mup);
   bkg->SetLineColor(kGreen);
   bkg->SetLineWidth(2);
   bkg->SetLineStyle(2);
@@ -170,7 +171,7 @@ int ExtractSignal(TH1* invmass, Double_t mlow = 1.5, Double_t mup = 4.5){
 
   // Total function for fitting
   if(!total)
-  total = new TF1("fTot","fJpsi+fBkg", mlow, mup);
+  total = new TF1(Form("fTot_%d",index),Form("fJpsi_%d+fBkg_%d",index, index), mlow, mup);
   total->SetParNames("A", "#alpha", "n", "#sigma", "#mu",
     "a0", "a1", "a2");
   total->SetLineColor(kRed);
@@ -198,14 +199,15 @@ int ExtractSignal(TH1* invmass, Double_t mlow = 1.5, Double_t mup = 4.5){
   if(invmass == NULL) return 1;
 
   // Fit & draw
-  invmass->SetTitle("Invariant mass spectrum of e^{+}e^{-} pairs");
+  //invmass->SetTitle("Invariant mass spectrum of e^{+}e^{-} pairs");
   invmass->SetLineColor(kBlue);
   invmass->SetMarkerColor(kBlue);
   invmass->SetMarkerStyle(20);
     // Fit with bin integration and return fit result
   TFitResultPtr fitResult = invmass->Fit(total, "IS", "", mlow, mup);
     // TODO: Should repeat for N times?
-  if(fitResult->Status())
+  int nFit = 0;
+  while(fitResult->Status() && (++nFit < 3))
     fitResult = invmass->Fit(total, "IS", "", mlow, mup);
     // Draw marker & error bar (with empty bins)
   invmass->Draw("PE0");
@@ -248,4 +250,25 @@ int ExtractSignal(TH1* invmass, Double_t mlow = 1.5, Double_t mup = 4.5){
   lgd->Draw("same");
 
   return 0;
+}
+
+void ExtractPtSpectrum(TH2* invmass_pt){
+  const Double_t PT_BINING[12] = {5., 7., 9., 11., 13., 15., 17., 19., 21., 25., 30., 50};
+  const Int_t PT_NBINS = 12;
+
+  auto c = new TCanvas("cJpsi","Jpsi pT spectrum", 800, 600);
+  for(Int_t i = 1; i < PT_NBINS; i++){
+    invmass_pt->GetXaxis()->SetRangeUser(PT_BINING[i-1], PT_BINING[i]);
+    TString tag = Form("%.1f < p_{T} < %.1f (GeV/c)", PT_BINING[i-1], PT_BINING[i]);
+    cout << "[-] INFO - Fitting J/psi invariant mass in " << tag << endl;
+    auto hM = invmass_pt->ProjectionY();
+    hM->SetName(Form("hJpsiM_%d", i));
+    hM->SetTitle(tag.Data());
+    c->Clear();
+    hM->Draw();
+    ExtractSignal(hM, 2.0, 4.0, i);
+    //SelectSignalRegion(hM);
+    gPad->SaveAs(Form("Jpsi-MPt-%d.pdf", i));
+  }
+  c->SaveAs("JpsiSignalPt.root");
 }
