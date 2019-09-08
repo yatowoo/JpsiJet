@@ -756,9 +756,8 @@
       "N_files": 12757,
       "N_run": 51,
       "Total": 728,
-      "Done": 222,
-      "ERROR_V": 10,
-      "ratio": 95.69,
+      "Done": 717,
+      "ratio": 98.49,
       "comment":"Run analysis for QM 2019" 
     }
   },
@@ -788,9 +787,8 @@
       "N_files": 29069,
       "N_run": 123,
       "Total": 1585,
-      "Done": 222,
-      "ERROR_V": 10,
-      "ratio": 95.69,
+      "Done": 1541,
+      "ratio": 97.22, 
       "comment":"Run analysis for QM 2019" 
     }
   },
