@@ -62,6 +62,10 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet():
   fMCHeader(NULL),
   fMCGenType(""),
   fEventFilter(NULL),
+  fJpsiPair(NULL),
+  fTaggedJet(NULL),
+  fJpsiMC(NULL),
+  fTaggedJetMC(NULL),
   fHistos(NULL),
   fHistosMC(NULL)
 {
@@ -88,6 +92,10 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   fMCHeader(NULL),
   fMCGenType(""),
   fEventFilter(NULL),
+  fJpsiPair(NULL),
+  fTaggedJet(NULL),
+  fJpsiMC(NULL),
+  fTaggedJetMC(NULL),
   fHistos(NULL),
   fHistosMC(NULL)
 {
@@ -238,6 +246,12 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
     if(fFiredTriggerTag.Contains("DG2"))
       FillHistogramsForClusterQA("Cluster_DG2");
   }
+
+  // Reset data members
+  fJpsiPair = NULL;
+  fTaggedJet = NULL;
+  fJpsiMC = NULL;
+  fTaggedJetMC = NULL;
 
   // Process Data
   RunDetectoreLevelAnalysis();
@@ -907,10 +921,7 @@ Bool_t AliAnalysisTaskJpsiJet::FillHistogramsForTaggedJet(const char* histClass)
   // Find pair in jet
   AliEmcalJet *taggedJet = NULL;
   for(auto jet : jets->all()){
-    // Map track ID in jet constituents.
-    // - AliEmcalJetTask::fgkConstIndexShift = 100000
-    // - More details in AliEmcalJetTask.cxx
-    if(jet->ContainsTrack(pairTrackID) >= 0 || jet->ContainsTrack(pairTrackID + 100000) >= 0){
+    if(jet->HasParticleConstituent(pairTrack)){
       taggedJet = jet;
       break;
     }
@@ -919,6 +930,8 @@ Bool_t AliAnalysisTaskJpsiJet::FillHistogramsForTaggedJet(const char* histClass)
   if(!taggedJet || !jets->AcceptJet(taggedJet, rejectionReason)) return kFALSE;
   AliDebug(1, Form("Found pair (%.2f, %.2f, %.2f) in jet (%s)", pair->Pt(), pair->Eta(), TVector2::Phi_0_2pi(pair->Phi()), (taggedJet->toString()).Data()));
 
+  // DEBUG: Register the tagged jet on detector level
+  fTaggedJet = taggedJet;
 
   // THnSparse - pT_pair, M, Lxy, z, \DeltaR, pT_jet
   TString histName = Form("%s/PairVars",histClass);
@@ -1021,6 +1034,22 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForJpsiMC(const char* histClass){
       Form("%s/Reco_bkg", histClass),
       "J/#psi Reconstruction - Background;p_{T,pair} (GeV/c);M_{e^{+}e^{-}} (GeV/c^2);L_{xy} (cm);N_{pair};",
       3, nBinsDet, xminDet, xmaxDet);
+  // Tagged jet
+  fHistosMC->CreateTH2(Form("%s/Jet_PtNtracks",histClass),
+  "Jet constituents - number vs p_{T}^{jet};p_{T,jet}^{gen} (GeV/c);N_{tracks};",
+      200, 0., 100., 100, -0.5, 99.5);
+  fHistosMC->CreateTH2(Form("%s/Jet_PtZ",histClass),
+  "p_{T}^{jet} vs fragmentation function;z;p_{T,jet}^{gen} (GeV/c);",
+      11, 0., 1.1, 200, 0., 100.);
+  // Detector response with tagged jet
+    // z_det, z_gen, pT-det, pT-gen
+  Int_t nBinsDetZ[4]   = {11,   11,  100,  100};
+  Double_t xminDetZ[4] = { 0.,  0.,   0.,   0.};
+  Double_t xmaxDetZ[4] = {1.1, 1.1, 100., 100.};
+  fHistosMC->CreateTHnSparse(
+      Form("%s/Jet_DetResponse", histClass),
+      "Detector response matrix - Fragmentation Function with J/#psi tagged jet p_{T};z_{det};z_{gen};p_{T,jet}^{det} (GeV/c);p_{T,jet}^{gen} (GeV/c);",
+      4, nBinsDetZ, xminDetZ, xmaxDetZ);
 }
 
 Bool_t AliAnalysisTaskJpsiJet::ApplyEmcalCut(AliVParticle* par, Bool_t isMCTruth = kTRUE){
@@ -1198,7 +1227,7 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForJpsiMC(){
     x[1] = pair->M();
     x[2] = GetPseudoProperDecayTime(pair);
     Int_t mother1 = CheckDielectronDaughter(d1);
-    Int_t mother2 = CheckDielectronDaughter(d2); 
+    Int_t mother2 = CheckDielectronDaughter(d2);
     if( mother1 == mother2 && mother1 > -1)
       fHistosMC->FillTHnSparse(Form("%s/Reco_sig", fMCGenType.Data()), x, 1.0);
     else{
@@ -1221,6 +1250,8 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForJpsiMC(){
     if(RunJetFinder("JpsiJetMC")){
       FillHistogramsForJetMC("JpsiJetMC");
       // DEBUG
+      fJpsiPair = pair;
+      fJpsiMC = jpsi;
       FillHistogramsForTaggedJetMC(jpsiAsEle);
     }
 
@@ -1313,6 +1344,7 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForJetMC(const char* jetTag){
 }
 
 Bool_t AliAnalysisTaskJpsiJet::FillHistogramsForTaggedJetMC(AliAODMCParticle* jpsi){
+  // Retrive jet container on particle level
   AliJetContainer* jets = NULL;
   TIter next(fJets);
   while((jets = static_cast<AliJetContainer*>(next()))){
@@ -1320,13 +1352,7 @@ Bool_t AliAnalysisTaskJpsiJet::FillHistogramsForTaggedJetMC(AliAODMCParticle* jp
     if (jetName.BeginsWith("JpsiJetMC_"))
       break;
   }
-  // DEBUG
-  AliInfo("Debug with J/psi tagged jet in particle level");
-  auto partCont = (AliMCParticleContainer*)(jets->GetParticleContainer());
-  UInt_t reject = 0;
-  if(!partCont->AcceptMCParticle(jpsi, reject))
-    AliInfo(Form("J/psi MC particle was rejected by container : %d", reject));
-  // DEBUG
+  // Find tagged jet
   AliEmcalJet* taggedJet = NULL;
   for(auto jet : jets->all()){
     if(jet->HasParticleConstituent(jpsi)){
@@ -1334,11 +1360,30 @@ Bool_t AliAnalysisTaskJpsiJet::FillHistogramsForTaggedJetMC(AliAODMCParticle* jp
       break;
     }
   }
+  UInt_t rejectionReason = 0;
   if(!taggedJet) return kFALSE;
+  if(!jets->AcceptJet(taggedJet, rejectionReason)){
+    AliDebug(1, Form("J/psi tagged jet was reject by %d", rejectionReason));
+    return kFALSE;
+  }
+  fTaggedJetMC = taggedJet;
 
-  // DEBUG
-  taggedJet->Print();
-  jpsi->Print();
+  Int_t nTracks = taggedJet->GetNumberOfTracks();
+  Double_t z = jpsi->Pt() / taggedJet->Pt();
+  if(nTracks == 1) z = 1.0;
+  fHistosMC->FillTH2(Form("%s/Jet_PtNtracks", fMCGenType.Data()), taggedJet->Pt(), nTracks);
+  fHistosMC->FillTH2(Form("%s/Jet_PtZ", fMCGenType.Data()), z, taggedJet->Pt());
+
+  // Detector response
+  if(!fTaggedJet) return kTRUE;
+  Double_t x[4] = {0.};
+  // z-det
+  x[0] = fJpsiPair->Pt() / fTaggedJet->Pt();
+  if(fTaggedJet->GetNumberOfTracks() == 1) x[0] = 1.0;
+  x[1] = z;  // z-gen
+  x[2] = fTaggedJet->Pt(); // jet pT-det
+  x[3] = fTaggedJetMC->Pt(); // jet pT-gen
+  fHistosMC->FillTHnSparse(Form("%s/Jet_DetResponse", fMCGenType.Data()), x, 1.0);
 
   return kTRUE;
 }

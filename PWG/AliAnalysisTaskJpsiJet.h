@@ -188,12 +188,18 @@ private:
   TString            fMCGenType;   // Generator type - Prompt/Jpsi2ee, Bdecay/B2Jpsi2ee
   AliAnalysisCuts   *fEventFilter;
 
+// J/psi tagged jet
+  AliVParticle      *fJpsiPair;
+  AliEmcalJet       *fTaggedJet;
+  AliVParticle      *fJpsiMC;
+  AliEmcalJet       *fTaggedJetMC;
+
 // Histograms
   THistManager      *fHistos;
   THistManager      *fHistosMC;
 
 private:
-  ClassDef(AliAnalysisTaskJpsiJet, 3);
+  ClassDef(AliAnalysisTaskJpsiJet, 4);
 };
 
 #endif /* ALIANALYSISTASK_JPSIJET_H */
