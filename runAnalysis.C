@@ -51,7 +51,7 @@ AliAnalysisAlien* SetupGridHandler(
   }
   else{
     alienHandler->SetGridDataDir("/alice/data/"+data_dir);
-    alienHandler->SetDataPattern("*/pass1/AOD*/*AOD.root");
+    alienHandler->SetDataPattern("*/pass1*/AOD*/*AOD.root");
     alienHandler->SetRunPrefix("000");
   }
 
