@@ -104,7 +104,7 @@ void runAnalysis(
     Bool_t doPhysAna = kFALSE,
     TString mode = "local",
     TString datasets = "16k_pass1",
-    TString data_dir = "2016/LHC16l",
+    TString data_dir = "2017/LHC17h2h",
     TString work_dir = "test",
     TString task_name = "JpsiJet"
 ){
@@ -153,9 +153,13 @@ void runAnalysis(
   if(doJetQA)
     gInterpreter->ExecuteMacro("AddTaskJetQA.C");
 
-  // Task - PID QA
+  // Task - PID
   if(doDevPWG || doJpsiQA || doJpsiFilter || doPIDQA)
-    gInterpreter->ExecuteMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C");
+    if(!isMC)
+      gInterpreter->ExecuteMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C");
+    else{
+      gInterpreter->ExecuteMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C(1,0,1,\"pass1\")");
+    }
   if(doPIDQA)
     gInterpreter->ExecuteMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDqa.C");
 
