@@ -72,7 +72,8 @@ AliAnalysisAlien* SetupGridHandler(
   alienHandler->SetJDLName(task_name + ".jdl");
   alienHandler->SetOutputToRunNo(kTRUE);
   alienHandler->SetKeepLogs(kTRUE);
-
+  
+  alienHandler->SetMaxMergeFiles(50); // DEBUG: memory leak during merge stage
   alienHandler->SetMergeAOD(kTRUE);
   alienHandler->SetMaxMergeStages(2);
   if(mode == "final")
