@@ -51,7 +51,7 @@ AliAnalysisAlien* SetupGridHandler(
   }
   else{
     alienHandler->SetGridDataDir("/alice/data/"+data_dir);
-    alienHandler->SetDataPattern("*/pass1/AOD/*AOD.root");
+    alienHandler->SetDataPattern("*/pass1*/AOD*/*AOD.root");
     alienHandler->SetRunPrefix("000");
   }
 
@@ -72,7 +72,8 @@ AliAnalysisAlien* SetupGridHandler(
   alienHandler->SetJDLName(task_name + ".jdl");
   alienHandler->SetOutputToRunNo(kTRUE);
   alienHandler->SetKeepLogs(kTRUE);
-
+  
+  alienHandler->SetMaxMergeFiles(50); // DEBUG: memory leak during merge stage
   alienHandler->SetMergeAOD(kTRUE);
   alienHandler->SetMaxMergeStages(2);
   if(mode == "final")
@@ -127,7 +128,7 @@ void runAnalysis(
   mgr->SetOutputEventHandler(aodOutputH);
 
   // Task - Physics Selection
-  if(!isMC && !doDevPWG) // Exp. data
+  if(!isMC) // Exp. data
     gInterpreter->ExecuteMacro("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C");
 
   // Task - Centrality / Multiplicity
