@@ -77,8 +77,8 @@ qaName = outputs.GetListOfKeys().At(0).GetName()
 def GetDetectorResponse_FF(drm, tag):
   drm.GetAxis(0).SetRangeUser(0., 1.)
   drm.GetAxis(1).SetRangeUser(0., 1.)
-  drm.GetAxis(2).SetRangeUser(0., 60.)
-  drm.GetAxis(3).SetRangeUser(0., 60.)
+  drm.GetAxis(2).SetRangeUser(20., 60.)
+  drm.GetAxis(3).SetRangeUser(20., 60.)
   zMatrix = drm.Projection(1,0)
   zMatrix.SetTitle("Detector response matrix - J/#psi in Jet (z) ("+tag+")")
   return zMatrix
