@@ -568,26 +568,27 @@
       "comment":"MC used as ANA-850" 
     }
   },
-  "MC_16k_Jpsi":{
-    "doMult": true,
-    "doEmcalCorrection": true,
-    "doJetQA": true,
-    "doJpsiQA": true,
-    "doJpsiFilter": true,
-    "doPIDQA": true,
+  "MC_grid":{
+    "doDevPWG": true,
+    "doMult": false,
+    "doEmcalCorrection": false,
+    "doJetQA": false,
+    "doJpsiQA": false,
+    "doJpsiFilter": false,
+    "doPIDQA": false,
     "doPhysAna": false,
     "datasets": "16k_pass1",
     "data_dir": "2017/LHC17h2h",
-    "work_dir": "JpsiJet_MC16k_Jpsi_17h2h_190818",
-    "task_name": "JpsiJet",
+    "work_dir": "JpsiJet_MC16k_17h2h_190910",
+    "task_name": "JpsiJetMC",
     "alien_config":{
       "TTL": 43200,
       "MaxInput": 20,
       "MaxMergeStages": 2,
       "NrunsPerMaster": 200,
-      "AliPhysics": "vAN-20190614_ROOT6-1" 
+      "AliPhysics": "vAN-20190821_ROOT6-1" 
     },
-    "git_commit": "7938b17",
+    "git_commit": "AnaTask_v4",
     "result":{
       "PID": 0,
       "N_run": 151,
@@ -950,6 +951,38 @@
       "ERROR_V": 10,
       "ratio": 95.69,
       "comment":"Run analysis for QM 2019" 
+    }
+  },
+  "MC_HFjets":{
+    "doDevPWG": true,
+    "doMult": false,
+    "doEmcalCorrection": false,
+    "doJetQA": false,
+    "doJpsiQA": false,
+    "doJpsiFilter": false,
+    "doPIDQA": false,
+    "doPhysAna": false,
+    "datasets": "16k_pass1",
+    "data_dir": "2018/LHC18i4b2/6",
+    "work_dir": "JpsiJet_MC16k_HFjets_ptHardBin6_21-28_190911",
+    "task_name": "JpsiJetMC",
+    "alien_config":{
+      "TTL": 43200,
+      "MaxInput": 20,
+      "MaxMergeStages": 2,
+      "NrunsPerMaster": 200,
+      "AliPhysics": "vAN-20190821_ROOT6-1" 
+    },
+    "git_commit": "AnaTask_v4",
+    "result":{
+      "PID": 1609597870,
+      "N_run": 123,
+      "Total": 126,
+      "Done": 441,
+      "ERROR_V": 4,
+      "Expired": 8,
+      "ratio": 97.3,
+      "comment":"MC used for HF jets with ccbar and electron in acceptance" 
     }
   }
 }

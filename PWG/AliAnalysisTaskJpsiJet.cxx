@@ -1139,6 +1139,11 @@ Bool_t AliAnalysisTaskJpsiJet::RunParticleLevelAnalysis(){
 
 // Set J/psi generator type from MC header
 void AliAnalysisTaskJpsiJet::SetJpsiGeneratorType(){
+  // MC from HFjets - JIRA/ALIROOT-7974 
+  if(fMCHeader->GetCocktailHeaders()->GetSize() == 1){
+    fMCGenType = "JpsiPrompt";
+    return;
+  }
   // Generator type - Prompt/Jpsi2ee, Bdecay/B2Jpsi2ee
   TString genType = fMCHeader->GetCocktailHeader(1)->GetName();
   if(genType.Contains("Jpsi2ee")){
