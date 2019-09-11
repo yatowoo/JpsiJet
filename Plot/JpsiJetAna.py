@@ -70,7 +70,57 @@ def DrawQA(qa, tag):
 # END - Drawing QA plots
 
 qaName = outputs.GetListOfKeys().At(0).GetName()
-DrawQA(outputs.Get(qaName), qaName.split('_')[1])
+#DrawQA(outputs.Get(qaName), qaName.split('_')[1])
+
+# Detectro response matrix - 4 dim.
+## THnSparse: z_det, z_gen, jetPt_det, jetPt_gen
+def GetDetectorResponse_FF(drm, tag):
+  drm.GetAxis(0).SetRangeUser(0., 1.)
+  drm.GetAxis(1).SetRangeUser(0., 1.)
+  drm.GetAxis(2).SetRangeUser(0., 60.)
+  drm.GetAxis(3).SetRangeUser(0., 60.)
+  zMatrix = drm.Projection(1,0)
+  zMatrix.SetTitle("Detector response matrix - J/#psi in Jet (z) ("+tag+")")
+  return zMatrix
+def GetDetectorResponse_JetPt(drm, tag):
+  drm.GetAxis(2).SetRangeUser(0., 60.)
+  drm.GetAxis(3).SetRangeUser(0., 60.)
+  ptMatrix = drm.Projection(3,2)
+  ptMatrix.SetTitle("Detector response matrix - J/#psi tagged jet p_{T} ("+tag+")")
+  return ptMatrix
+# MChistos
+def DrawMC_DetectorResponse(mc):
+  # Canvas
+  c = ROOT.TCanvas("cMC","Detector Response", 1600, 600)
+  c.Divide(2)
+  c.SetTicks()
+  c.Draw()
+  # Histos
+  drmPrompt = mc.FindObject("JpsiPrompt").FindObject("Jet_DetResponse")
+  drmBdecay = mc.FindObject("JpsiBdecay").FindObject("Jet_DetResponse")
+  # jet pT
+  ptPrompt = GetDetectorResponse_JetPt(drmPrompt, "Prompt")
+  ptBdecay = GetDetectorResponse_JetPt(drmBdecay, "Non-prompt")
+  c.cd(1)
+  ptPrompt.Draw("COLZ")
+  ROOT.gPad.SetLogz()
+  c.cd(2)
+  ptBdecay.Draw("COLZ")
+  ROOT.gPad.SetLogz()
+  c.SaveAs("DetRes-jetPt.root")
+  c.SaveAs("DetRes-jetPt.pdf")
+  # z - Fragmentation Function
+  zPrompt = GetDetectorResponse_FF(drmPrompt, "Prompt")
+  zBdecay = GetDetectorResponse_FF(drmBdecay, "Non-prompt")
+  c.cd(1)
+  zPrompt.Draw("COLZ")
+  ROOT.gPad.SetLogz()
+  c.cd(2)
+  zBdecay.Draw("COLZ")
+  ROOT.gPad.SetLogz()
+  c.SaveAs("DetRes-FF.root")
+  c.SaveAs("DetRes-FF.pdf")
+  c.Clear()
 
 def DrawMC(mc):
   print("[-] INFO - Processing MC plots")
@@ -217,6 +267,7 @@ fIsMC = False
 mc = outputs.Get("MChistos")
 if(mc):
   fIsMC = True
-  DrawMC(mc)
+  #DrawMC(mc)
+  DrawMC_DetectorResponse(mc)
 
 f.Close()
