@@ -33,6 +33,7 @@ if(outputs == None):
 
 # Global Settings and Variables
 ROOT.gStyle.SetOptStat(0)
+ROOT.gStyle.SetPalette()
 
 JPSI_MASS_LOWER = 2.92
 JPSI_MASS_UPPER = 3.16
@@ -40,6 +41,30 @@ JPSI_MASS_UPPER = 3.16
 def DrawQA(qa, tag):
   print("[-] INFO - Processing QA plots for " + tag)
   qa.SetOwner(True)
+  # Canvas
+  c = ROOT.TCanvas("cDet","Plots on Detector Level", 800, 600)
+  c.cd()
+  # Pair tagged jets
+    # N constituents
+  pairJet = qa.FindObject("PairInJet")
+  pairJet.SetOwner(True)
+  Ntrk = pairJet.FindObject("Ntracks_pT") # TH2D
+  Ntrk.GetYaxis().SetRangeUser(0, 25)
+  Ntrk.Draw("COLZ")
+    ## Profile
+  pfx = Ntrk.ProfileX()
+  pfx.SetLineColor(ROOT.kRed)
+  pfx.SetMarkerStyle(20)
+  pfx.Draw("same")
+    ## Legend
+  lgd = ROOT.TLegend(0.2, 0.65, 0.4, 0.8)
+  lgd.AddEntry(pfx,"<N_{tracks}>")
+  lgd.SetBorderSize(0)
+  lgd.Draw("same")
+    ## Save
+  c.SaveAs("Jet-Ntrk.pdf")
+  c.SaveAs("Jet-Ntrk.root")
+  # Free
   qa.Delete("C")
   return
 # END - Drawing QA plots
