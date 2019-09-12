@@ -978,10 +978,8 @@
       "PID": 1609597870,
       "N_run": 123,
       "Total": 126,
-      "Done": 441,
-      "ERROR_V": 4,
-      "Expired": 8,
-      "ratio": 97.3,
+      "Done": 119,
+      "ratio": 94.4,
       "comment":"MC used for HF jets with ccbar and electron in acceptance" 
     }
   }
