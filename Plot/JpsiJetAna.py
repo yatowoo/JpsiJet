@@ -18,6 +18,7 @@
 ######
 
 import ROOT
+from ana_util import HistNorm
 import sys, os, json
 
 resultFile = "AnalysisResults.root"
@@ -37,6 +38,8 @@ ROOT.gStyle.SetPalette()
 
 JPSI_MASS_LOWER = 2.92
 JPSI_MASS_UPPER = 3.16
+JPSI_LXY_PROMPT = 0.01
+JPSI_LXY_BDECAY = 0.02
 
 def DrawQA(qa, tag):
   print("[-] INFO - Processing QA plots for " + tag)
@@ -69,8 +72,59 @@ def DrawQA(qa, tag):
   return
 # END - Drawing QA plots
 
+def DrawQA_JetPt(qa):
+  # Event norm.
+  ev = qa.FindObject("EventStats")
+  nEv = ev.GetBinContent(6)
+  nEvPair = ev.GetBinContent(7) + ev.GetBinContent(8)
+  nEvTagged = ev.GetBinContent(9)
+  # Inclusive jet
+  hsIncl = qa.FindObject("Jet_AKTChargedR040_tracks_pT0150_pt_scheme").FindObject("jetVars")
+  incl = hsIncl.Projection(0)
+  incl.SetName("hJetInclusive")
+  incl.SetTitle("Jet pT spectra")
+  incl.Rebin(10) # 0.05 -> 0.5 GeV/c
+  # Jet with pair, Re-clustering with pair in jet
+  #hsPair = qa.FindObject("JpsiJet_AKTChargedR040_tracksWithPair_pT0150_pt_scheme")
+  # J/psi tagged jet
+  hsTagged = qa.FindObject("PairInJet").FindObject("PairVars")
+  hsTagged.GetAxis(0).SetRangeUser(10,50)
+  hsTagged.GetAxis(1).SetRangeUser(JPSI_MASS_LOWER,JPSI_MASS_UPPER)
+  hsTagged.GetAxis(2).SetRangeUser(-JPSI_LXY_PROMPT,JPSI_LXY_PROMPT)
+  tagPrompt = hsTagged.Projection(5)
+  tagPrompt.SetName("hTaggedJetPrompt")
+  hsTagged.GetAxis(2).SetRangeUser(JPSI_LXY_BDECAY,1.0)
+  tagBdecay = hsTagged.Projection(5)
+  tagBdecay.SetName("hTaggedJetBdecay")
+  # Sideband
+  # Drawing
+  c = ROOT.TCanvas("cQA","Jet spectra", 800, 600)
+  c.Draw()
+  c.SetLogy(True)
+  incl.SetLineColor(ROOT.kBlack)
+  incl.SetMarkerColor(ROOT.kBlack)
+  incl.SetMarkerStyle(20)
+  incl.Draw("EP")
+  tagPrompt.SetLineColor(ROOT.kRed)
+  tagPrompt.SetMarkerColor(ROOT.kRed)
+  tagPrompt.SetMarkerStyle(21)
+  tagPrompt.Draw("same EP")
+  tagBdecay.SetLineColor(ROOT.kBlue)
+  tagBdecay.SetMarkerColor(ROOT.kBlue)
+  tagBdecay.SetMarkerStyle(22)
+  tagBdecay.Draw("same EP")
+  ## Legend
+  lgd = ROOT.TLegend(0.6, 0.64, 0.85, 0.85)
+  lgd.AddEntry(incl, "Inclusive jets")
+  lgd.AddEntry(tagPrompt, "Prompt tagged jets")
+  lgd.AddEntry(tagBdecay, "Non-prompt tagged jets")
+  lgd.Draw("same")
+  c.SaveAs("MC-JetPt.pdf")
+  c.SaveAs("MC-JetPt.root")
+
 qaName = outputs.GetListOfKeys().At(0).GetName()
 #DrawQA(outputs.Get(qaName), qaName.split('_')[1])
+DrawQA_JetPt(outputs.Get(qaName))
 
 # Detectro response matrix - 4 dim.
 ## THnSparse: z_det, z_gen, jetPt_det, jetPt_gen
@@ -268,6 +322,6 @@ mc = outputs.Get("MChistos")
 if(mc):
   fIsMC = True
   #DrawMC(mc)
-  DrawMC_DetectorResponse(mc)
+  #DrawMC_DetectorResponse(mc)
 
 f.Close()
