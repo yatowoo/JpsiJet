@@ -43,6 +43,8 @@ function list_subjob_outputs(){
   done
 }
 
+alias rmsub='rmdir $(ls -F | grep /)'
+
 function clean_workdir(){
   # List runs
   for run in $(ls $1/OutputAOD/ | grep 2);
