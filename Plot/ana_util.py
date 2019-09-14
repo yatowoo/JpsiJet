@@ -9,14 +9,11 @@ import sys, os, time, math, json, logging
 def HistNorm(hist, NEv = 0):
   if(NEv == 0):
     NEv = hist.GetEntries()
-  factor = NEv * hist.GetBinWidth(1)
-  logging.info('Histogram normalization factor : ' + repr(factor))
-  fcn = ROOT.TF1("fNorm", "[0]", -1e6, 1e6)
-  fcn.SetParameter(0, factor)
-  hist.Divide(fcn)
   for i in range(1, hist.GetNbinsX() + 1):
-    hist.SetBinError(i, hist.GetBinError(i) / math.sqrt(factor))
-  fcn.Delete()
+    factor = NEv * hist.GetBinWidth(i)
+    err = hist.GetBinError(i)
+    hist.SetBinContent(i, hist.GetBinContent(i) / factor)
+    hist.SetBinError(i,  err / factor)
   return hist
 
 if __name__ == '__main__':
