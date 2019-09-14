@@ -29,6 +29,8 @@ parser.add_argument('-f', '--file',help='Analysis results of AliAnalysisTaskJpsi
 parser.add_argument('-o', '--output',help='Output file path', default='JpsiJetAna.root')
 parser.add_argument('-p', '--print',help='Print in PDF file', default='JpsiJetAna.pdf')
 parser.add_argument('--mc',help='MC flag for DrawMC methods', default=False, action='store_true')
+parser.add_argument('--calo',help='QA for EMCal cluster energy', default=False, action='store_true')
+parser.add_argument('--all',help='Run all QA processing', default=False, action='store_true')
 args = parser.parse_args()
 
 # Input - analysis results from ALICE tasks
@@ -47,7 +49,7 @@ padQA.cd()
 pTxt.Draw()
   # Open PDF file and draw cover
 padQA.Print(args.print + '(', "Title:JpsiJet")
-pTxt.Delete("C")
+pTxt.Delete()
 # End - Cover
 
 # Global Settings and Variables
@@ -58,6 +60,9 @@ JPSI_MASS_LOWER = 2.92
 JPSI_MASS_UPPER = 3.16
 JPSI_LXY_PROMPT = 0.01
 JPSI_LXY_BDECAY = 0.02
+
+TRIGGER_CLASSES = ['INT7', 'EG1', 'EG2', 'DG1', 'DG2']
+TRIGGER_TAG = ['MB', 'EG1', 'EG2', 'DG1', 'DG2']
 
 def DrawQA_PairInJet(qa, tag):
   print("[-] INFO - Processing QA plots for " + tag)
@@ -144,9 +149,65 @@ def DrawQA_JetPt(qa):
   c.SaveAs("MC-JetPt.pdf")
   c.SaveAs("MC-JetPt.root")
 
-qaName = outputs.GetListOfKeys().At(0).GetName()
-#DrawQA(outputs.Get(qaName), qaName.split('_')[1])
-#DrawQA_JetPt(outputs.Get(qaName))
+def DrawQA_Calo(qa):
+  CaloQA = {}
+  for trig in TRIGGER_CLASSES:
+    CaloQA[trig] = {}
+    CaloQA[trig]['NEvent'] = 0
+    CaloQA[trig]['E'] = None
+    CaloQA[trig]['RF'] = None
+  # Event numbers
+  evQA = qa.FindObject('Event_afterCuts') # TList
+  evQA.SetOwner(True)
+  hTrig = evQA.FindObject('FiredTag') # TH1D
+  for i in range(1, hTrig.GetNbinsX() + 1):
+    tag = hTrig.GetXaxis().GetBinLabel(i)
+    if(tag == ''):
+      break
+    for trig in tag.split('_'):
+      CaloQA[trig]['NEvent'] += hTrig.GetBinContent(i)
+  # End - read with fired tags
+  padQA.SetWindowSize(1600, 600)
+  padQA.Divide(2)
+  for trig in TRIGGER_CLASSES:
+    calo = qa.FindObject('Cluster_' + trig) # TList
+    calo.SetOwner(True)
+    caloE = calo.FindObject('ClsVars').Projection(0)
+    caloE.SetName('hClusterE_' + trig)
+    HistNorm(caloE, CaloQA[trig]['NEvent'])
+    caloE.GetXaxis().SetRangeUser(0, 40)
+    caloE.GetYaxis().SetRangeUser(1e-8, 100.)
+    padQA.cd(1)
+    caloE.Draw("same PE")
+    gPad.SetLogy()
+    if(CaloQA['INT7']['E']):
+      caloRF = caloE.Clone('hClusterRF_' + trig)
+      caloRF.GetXaxis().SetRangeUser(0, 40)
+      caloRF.GetYaxis().SetRangeUser(0.1, 1e4)
+      caloRF.Divide(CaloQA['INT7']['E'])
+      padQA.cd(2)
+      caloRF.Draw("same PE")
+      gPad.SetLogy()
+      CaloQA[trig]['RF'] = caloRF
+    CaloQA[trig]['E'] = caloE
+    calo.Delete()
+  # End - trigger loop
+  padQA.Print(args.print,'Title:ClusterQA')
+  padQA.SaveAs('../output/QM19/ClusterQA.root') # Debug
+
+# Calo cluster QA
+
+
+if(args.all):
+  qaName = outputs.GetListOfKeys().At(0).GetName()
+  #DrawQA(outputs.Get(qaName), qaName.split('_')[1])
+  #DrawQA_JetPt(outputs.Get(qaName))
+elif(args.calo):
+  qaName = "QAhistos_ALL"
+  qa = outputs.Get(qaName)
+  qa.SetOwner(True)
+  DrawQA_Calo(qa)
+  qa.Delete()
 
 # Detectro response matrix - 4 dim.
 ## THnSparse: z_det, z_gen, jetPt_det, jetPt_gen
@@ -345,6 +406,7 @@ if(args.mc):
   DrawMC_DetectorResponse(mc)
 
 # Close files
+padQA.Clear()
 padQA.Print(args.print + ')', "Title:End")
 fin.Close()
 fout.Write()
