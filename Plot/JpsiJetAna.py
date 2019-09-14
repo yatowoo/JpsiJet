@@ -18,19 +18,37 @@
 ######
 
 import ROOT
+from ROOT import TFile, TCanvas, TLegend, gPad, TPaveText
+from ROOT import TH1, TH2
 from ana_util import HistNorm
-import sys, os, json
+import sys, os, json, argparse
 
-resultFile = "AnalysisResults.root"
-if(len(sys.argv) > 1):
-  resultFile = sys.argv[1]
+# Command-line Arguments
+parser = argparse.ArgumentParser(description='Post-processing script for AliAnalysisTaskJpsiJet')
+parser.add_argument('-f', '--file',help='Analysis results of AliAnalysisTaskJpsiJet', default="AnalysisResults.root")
+parser.add_argument('-o', '--output',help='Output file path', default='JpsiJetAna.root')
+parser.add_argument('-p', '--print',help='Print in PDF file', default='JpsiJetAna.pdf')
+parser.add_argument('--mc',help='MC flag for DrawMC methods', default=False, action='store_true')
+args = parser.parse_args()
 
-# Outputs from AliAnalysisTaskJpsiJet
-f = ROOT.TFile(resultFile)
-outputs = f.Get("JpsiJetAnalysis")
+# Input - analysis results from ALICE tasks
+fin = TFile(args.file)
+outputs = fin.Get("JpsiJetAnalysis")
 if(outputs == None):
-  print("[X] ERROR - Outputs not found.")
+  print("[X] ERROR - JpsiJetAnalysis not found.")
   exit(1)
+# Output - ROOT file and PDF
+fout = TFile(args.output, "RECREATE")
+padQA = TCanvas("cAna", "JpsiJet Analysis",800,600)
+# Cover
+pTxt = TPaveText(0.4,0.45,0.6,0.55, "brNDC")
+pTxt.AddText("Jpsi in jets analysis")
+padQA.cd()
+pTxt.Draw()
+  # Open PDF file and draw cover
+padQA.Print(args.print + '(', "Title:JpsiJet")
+pTxt.Delete("C")
+# End - Cover
 
 # Global Settings and Variables
 ROOT.gStyle.SetOptStat(0)
@@ -41,7 +59,7 @@ JPSI_MASS_UPPER = 3.16
 JPSI_LXY_PROMPT = 0.01
 JPSI_LXY_BDECAY = 0.02
 
-def DrawQA(qa, tag):
+def DrawQA_PairInJet(qa, tag):
   print("[-] INFO - Processing QA plots for " + tag)
   qa.SetOwner(True)
   # Canvas
@@ -128,7 +146,7 @@ def DrawQA_JetPt(qa):
 
 qaName = outputs.GetListOfKeys().At(0).GetName()
 #DrawQA(outputs.Get(qaName), qaName.split('_')[1])
-DrawQA_JetPt(outputs.Get(qaName))
+#DrawQA_JetPt(outputs.Get(qaName))
 
 # Detectro response matrix - 4 dim.
 ## THnSparse: z_det, z_gen, jetPt_det, jetPt_gen
@@ -321,11 +339,13 @@ def DrawMC(mc):
   return
 # END - Drawing MC plots
 
-fIsMC = False
-mc = outputs.Get("MChistos")
-if(mc):
-  fIsMC = True
-  #DrawMC(mc)
-  #DrawMC_DetectorResponse(mc)
+if(args.mc):
+  mc = outputs.Get("MChistos")
+  DrawMC(mc)
+  DrawMC_DetectorResponse(mc)
 
-f.Close()
+# Close files
+padQA.Print(args.print + ')', "Title:End")
+fin.Close()
+fout.Write()
+fout.Close()
