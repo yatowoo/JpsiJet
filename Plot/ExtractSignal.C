@@ -8,6 +8,9 @@ TF1* jpsi = NULL;
 TF1* bkg = NULL;
 TF1* total = NULL;
 
+TH1* hM = NULL; // Invariant mass spectrum
+TH2* hMPt = NULL; // Mee vs pT
+
 TLegend* yatoLegend(){
   // NDC x1, y1, x2, y2, bottom-right
   auto yLgd= new TLegend(0.13,0.60,0.49, 0.88, "", "brNDC");
@@ -31,6 +34,15 @@ TPaveText* yatoPaveText(){
   return pTxt;
 }
 
+Int_t HistCount(Double_t xlow, Double_t xup){
+  Int_t xBinLow = hM->FindBin(xlow);
+  Int_t xBinHigh = hM->FindBin(xup);
+  if(hM->GetBinCenter(xBinHigh) > xup) // xup on the edge of bin
+    xBinHigh -= 1;
+  Double_t errData = 0.0;
+  return hM->IntegralAndError(xBinLow, xBinHigh, errData);
+}
+
 Int_t DrawSideband(Double_t mlow, Double_t mup, const char* tag = "Sideband"){
   // Fill area
   TF1* fRegion = new TF1(
@@ -41,20 +53,20 @@ Int_t DrawSideband(Double_t mlow, Double_t mup, const char* tag = "Sideband"){
   gr->SetFillColor(kGreen);
   gr->SetFillStyle(3004);
   gr->Draw("same B");
-  return total->Integral(mlow, mup);
+  return HistCount(mlow, mup);
 }
 // Input mass range for estimation of signal & background
-int SelectSignalRegion(TH1* InvMass, Double_t mlow = 2.92, Double_t mup = 3.16, Double_t width = 0.04){
+int SelectSignalRegion(Double_t mlow = 2.92, Double_t mup = 3.16, Double_t width = 0.04){
   /*
   * Draw signal region
   */
-  if(!InvMass){
+  if(!hM){
     cout << "[X] ERROR - Histogram in NULL" << endl;
     return 1;
   }
   // Lines
-  Double_t ymin = InvMass->GetMinimum();
-  Double_t ymax = InvMass->GetMaximum();
+  Double_t ymin = hM->GetMinimum();
+  Double_t ymax = hM->GetMaximum();
   TLine* yLine = new TLine(mlow, ymin, mlow, ymax);
   yLine->SetLineColor(kRed);
   yLine->SetLineStyle(3);
@@ -71,16 +83,14 @@ int SelectSignalRegion(TH1* InvMass, Double_t mlow = 2.92, Double_t mup = 3.16, 
   gr->SetFillStyle(3004);
   gr->Draw("same B");
   // Fill sideband
-  Int_t nSBLeft = DrawSideband(mlow-1.0, mup-1.0, "SBLeft") / width;
-  Int_t nSBRight = DrawSideband(mlow+1.0, mup+1.0, "SBRight") / width;
-  
+  Int_t nSBLeft = DrawSideband(mlow-1.0, mup-1.0, "SBLeft");
+  Int_t nSBRight = DrawSideband(mlow+1.0, mup+1.0, "SBRight");
+
   /*
   * Count data points
   */
-  Int_t xBinLow = InvMass->FindBin(mlow);
-  Int_t xBinHigh = InvMass->FindBin(mup) - 1;
-  Double_t errData = 0.0;
-  Double_t Ndata = InvMass->IntegralAndError(xBinLow, xBinHigh, errData);
+  Double_t Ndata = HistCount(mlow, mup);
+  Double_t errData = TMath::Sqrt(Ndata);
 
 
   /*
@@ -162,7 +172,7 @@ int SelectSignalRegion(TH1* InvMass, Double_t mlow = 2.92, Double_t mup = 3.16, 
     // Chi2
   entry = pTxt->AddText(
     Form("#chi^{2} / NDF = %.1f / %d", total->GetChisquare(), total->GetNDF()));
-    // Sideband factor = N_bkg (fitting) / N_sideband (fitting)
+    // Sideband factor = N_bkg (fitting) / N_sideband (count)
   entry = pTxt->AddText(
     Form("SB factor = %.2f #pm %.2f", sbFactor, errSbFactor));
   pTxt->Draw("same");
@@ -170,8 +180,10 @@ int SelectSignalRegion(TH1* InvMass, Double_t mlow = 2.92, Double_t mup = 3.16, 
   return 0;
 }
 
-int ExtractSignal(TH1* invmass, Double_t mlow = 1.5, Double_t mup = 4.5,
+int ExtractSignal(Double_t mlow = 1.5, Double_t mup = 4.5,
   Int_t index = 0){
+  // Check input histogram
+  if(hM == NULL) return 1;
   // Crystalball Function = Gaus + X^n
     // Parameters : \alpha = break point, n, \sigma = width, \mu = peak
     // Unit : Y = Ncount/0.04, X=GeV/c^2
@@ -197,7 +209,7 @@ int ExtractSignal(TH1* invmass, Double_t mlow = 1.5, Double_t mup = 4.5,
   total->SetNpx(1000);
     // Jpsi parameter
   const Double_t MASS_JPSI = 3.096; // GeV/c^2
-  Double_t pseudo_peak = invmass->GetBinContent(invmass->FindBin(MASS_JPSI)); // Signal pseudo-peak
+  Double_t pseudo_peak = hM->GetBinContent(hM->FindBin(MASS_JPSI)); // Signal pseudo-peak
   total->SetParameter("A", pseudo_peak);
   total->SetParLimits(0, 0., 3 * pseudo_peak);
   total->SetParameter("#alpha", 0.3);
@@ -213,32 +225,29 @@ int ExtractSignal(TH1* invmass, Double_t mlow = 1.5, Double_t mup = 4.5,
   total->SetParameter("a1", -100);
   total->SetParameter("a2", 12.);
 
-  // Check input histogram
-  if(invmass == NULL) return 1;
-
   // Fit & draw
-  //invmass->SetTitle("Invariant mass spectrum of e^{+}e^{-} pairs");
-  invmass->SetLineColor(kBlue);
-  invmass->SetMarkerColor(kBlue);
-  invmass->SetMarkerStyle(20);
+  //hM->SetTitle("Invariant mass spectrum of e^{+}e^{-} pairs");
+  hM->SetLineColor(kBlue);
+  hM->SetMarkerColor(kBlue);
+  hM->SetMarkerStyle(20);
     // Fit with bin integration and return fit result
-  TFitResultPtr fitResult = invmass->Fit(total, "IS", "", mlow, mup);
+  TFitResultPtr fitResult = hM->Fit(total, "IS", "", mlow, mup);
     // TODO: Should repeat for N times?
   int nFit = 0;
   while(fitResult->Status() && (++nFit < 3))
-    fitResult = invmass->Fit(total, "IS", "", mlow, mup);
+    fitResult = hM->Fit(total, "IS", "", mlow, mup);
     // Draw marker & error bar (with empty bins)
-  invmass->Draw("PE0");
+  hM->Draw("PE0");
 
   // Canvas configuration
   if(gPad){
-    invmass->GetXaxis()->SetRangeUser(1.5,4.5);
-    invmass->GetXaxis()->SetTitle("M_{e^{+}e^{-}} (GeV/c^{2})");
+    hM->GetXaxis()->SetRangeUser(1.5,4.5);
+    hM->GetXaxis()->SetTitle("M_{e^{+}e^{-}} (GeV/c^{2})");
     // Y axis -> 2 * HIST max
-    invmass->GetYaxis()->SetRangeUser(0.1, 
-      2 * invmass->GetBinContent(invmass->GetMaximumBin()));
-    invmass->GetYaxis()->SetTitle(
-      Form("N_{pairs} / %.3f GeV/c^{2}", invmass->GetBinWidth(1)));
+    hM->GetYaxis()->SetRangeUser(0.1, 
+      2 * hM->GetBinContent(hM->GetMaximumBin()));
+    hM->GetYaxis()->SetTitle(
+      Form("N_{pairs} / %.3f GeV/c^{2}", hM->GetBinWidth(1)));
       // Show fit parameters
     gStyle->SetOptFit(0000);
     gStyle->SetOptStat(0);
@@ -261,7 +270,7 @@ int ExtractSignal(TH1* invmass, Double_t mlow = 1.5, Double_t mup = 4.5,
 
   // Setup for legend
   auto lgd = yatoLegend();
-  lgd->AddEntry(invmass, "e^{+}e^{-} signal");
+  lgd->AddEntry(hM, "e^{+}e^{-} signal");
   lgd->AddEntry(total,"Total fit");
   lgd->AddEntry(bkg,"Background fit (pol2)");
   lgd->AddEntry(jpsi,"Signal fit (Crystal-Ball)");
@@ -273,20 +282,27 @@ int ExtractSignal(TH1* invmass, Double_t mlow = 1.5, Double_t mup = 4.5,
 void ExtractPtSpectrum(TH2* invmass_pt){
   const Double_t PT_BINING[12] = {5., 7., 9., 11., 13., 15., 17., 19., 21., 25., 30., 50};
   const Int_t PT_NBINS = 12;
-
+  gPad->Print("Jpsi-MPt.pdf(","EmbedFonts");
   auto c = new TCanvas("cJpsi","Jpsi pT spectrum", 800, 600);
   for(Int_t i = 1; i < PT_NBINS; i++){
     invmass_pt->GetXaxis()->SetRangeUser(PT_BINING[i-1], PT_BINING[i]);
     TString tag = Form("%.1f < p_{T} < %.1f (GeV/c)", PT_BINING[i-1], PT_BINING[i]);
     cout << "[-] INFO - Fitting J/psi invariant mass in " << tag << endl;
-    auto hM = invmass_pt->ProjectionY();
+    hM = invmass_pt->ProjectionY();
     hM->SetName(Form("hJpsiM_%d", i));
     hM->SetTitle(tag.Data());
     c->Clear();
     hM->Draw();
-    ExtractSignal(hM, 2.0, 4.0, i);
+    ExtractSignal(2.0, 4.0, i);
     //SelectSignalRegion(hM);
-    gPad->SaveAs(Form("Jpsi-MPt-%d.pdf", i));
+    gPad->SaveAs("Jpsi-MPt.pdf",Form("Title:Pt=%.0f-%.0f", PT_BINING[i-1], PT_BINING[i]));
   }
+  gPad->Print("Jpsi-MPt.pdf)","EmbedFonts");
   c->SaveAs("JpsiSignalPt.root");
+}
+
+void ProcessInvMass(TH1* invMass){
+  hM = invMass;
+  ExtractSignal();
+  SelectSignalRegion();
 }
