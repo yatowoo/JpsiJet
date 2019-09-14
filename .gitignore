@@ -10,21 +10,15 @@ AddTaskJPSIFilter.C
 AddTaskJetQA.C
 AddTaskJpsiQA.C
 AddTask_cjahnke_JPsi.C
+AddTaskJpsiJet_pp.C
 ConfigJpsi_cj_pp.C
-JpsiJet.C
-JpsiJet.jdl
-JpsiJet.sh
-JpsiJet_merge.C
-JpsiJet_merge.jdl
-JpsiJet_merge.sh
-JpsiJet_merge_final.jdl
-JpsiJet_validation.sh
-JpsiJet_validation_merge.sh
 YatoJpsiFilterTask.cxx
 YatoJpsiFilterTask.h
 AliAnalysisTaskJpsiJet.cxx
 AliAnalysisTaskJpsiJet.h
 stderr
+stdout
+JpsiJet*
 # ACLiC
 *_cxx_ACLiC_linkdef.h
 *_cxx_ACLiC_map.in
