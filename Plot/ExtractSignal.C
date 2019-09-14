@@ -4,6 +4,10 @@
 
 #define DEBUG
 
+const double JPSI_MASS_LOWER = 2.92;
+const double JPSI_MASS_UPPER = 3.16;
+const double JPSI_SIDEBAND_OFFSET = 1.0;
+
 TF1* jpsi = NULL;
 TF1* bkg = NULL;
 TF1* total = NULL;
@@ -36,7 +40,7 @@ TPaveText* yatoPaveText(){
 }
 
 
-TPaveText* DrawCuts(Double_t pTcut = 10.0, Double_t Ycut = 0.9){
+TPaveText* DrawCuts(Double_t pTcutLow = 10.0, Double_t pTcutHigh = 30.0, Double_t Ycut = 0.9){
   // NDC x1, y1, x2, y2, bottom-right
   auto pTxt = new TPaveText(0.2, 0.45, 0.45, 0.65, "brNDC");
   pTxt->SetName("yTxtCuts");
@@ -47,7 +51,7 @@ TPaveText* DrawCuts(Double_t pTcut = 10.0, Double_t Ycut = 0.9){
   pTxt->SetFillColor(0);
   // Entries
   pTxt->AddText(Form("|y_{e^{+}e^{-}}| < %.1f", Ycut));
-  pTxt->AddText(Form("p_{T,e^{+}e^{-}} > %.1f GeV/c", pTcut));
+  pTxt->AddText(Form("%.1f < p_{T,e^{+}e^{-}} < %.1f GeV/c", pTcutLow, pTcutHigh));
   pTxt->Draw("same");
   return pTxt;
 }
@@ -74,7 +78,8 @@ Int_t DrawSideband(Double_t mlow, Double_t mup, const char* tag = "Sideband"){
   return HistCount(mlow, mup);
 }
 // Input mass range for estimation of signal & background
-int SelectSignalRegion(Double_t mlow = 2.92, Double_t mup = 3.16, Double_t width = 0.04){
+// - return factor of sideband substraction
+Double_t SelectSignalRegion(Double_t mlow = 2.92, Double_t mup = 3.16, Double_t width = 0.04){
   /*
   * Draw signal region
   */
@@ -195,7 +200,7 @@ int SelectSignalRegion(Double_t mlow = 2.92, Double_t mup = 3.16, Double_t width
     Form("SB factor = %.2f #pm %.2f", sbFactor, errSbFactor));
   pTxt->Draw("same");
 
-  return 0;
+  return sbFactor;
 }
 
 int ExtractSignal(Double_t mlow = 1.5, Double_t mup = 4.5,
