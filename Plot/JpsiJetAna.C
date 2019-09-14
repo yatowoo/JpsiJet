@@ -6,6 +6,7 @@
   const double JPSI_LXY_PROMPT = 0.01;
   const double JPSI_LXY_BDECAY = 0.01;
 
+  auto f = new TFile("JpsiJetAna.root","RECREATE");
   auto c = new TCanvas("cAna","J/psi in jets", 1600, 600);
   c->Divide(2);
   c->Draw();
@@ -54,7 +55,12 @@
       // J/psi mass region
   hs->GetAxis(1)->SetRangeUser(JPSI_MASS_LOWER, JPSI_MASS_UPPER);
   auto hJetPrompt = (TH1D*)(hs->Projection(5)->Clone("hJetPrompt"));
+  hJetPrompt->SetTitle("Prompt J/psi tagged jet p_{T} spectra");
+  hJetPrompt->GetXaxis()->SetTitle("p_{T,jet} (GeV/c)");
+  hJetPrompt->GetYaxis()->SetTitle("N_{pairs} / (5 GeV/c)");
   auto hZPrompt = (TH1D*)(hs->Projection(3)->Clone("hZPrompt"));
+  hZPrompt->SetTitle("Prompt J/psi tagged jet - fragmentation function");
+  hZPrompt->GetYaxis()->SetTitle("N_{pairs} / 0.1");
       // Sideband
   auto hJetPromptSB = (TH1D*)(hJetPrompt->Clone("hJetPromptSB"));
   auto hZPromptSB = (TH1D*)(hZPrompt->Clone("hZPromptSB"));
@@ -75,14 +81,17 @@
   c->Clear();
   c->Divide(2);
   c->cd(1);
+  hJetPrompt->Rebin(5); // 1 -> 5 GeV
   hJetPrompt->SetMarkerStyle(20);
   hJetPrompt->SetMarkerColor(kRed);
   hJetPrompt->SetLineColor(kRed);
   hJetPrompt->Draw("PE");
+  hJetPromptSB->Rebin(5); // 1 -> 5 GeV
   hJetPromptSB->SetMarkerStyle(20);
   hJetPromptSB->SetMarkerColor(kGreen);
   hJetPromptSB->SetLineColor(kGreen);
   hJetPromptSB->Draw("same PE");
+  hJetPromptAfter->Rebin(5); // 1 -> 5 GeV
   hJetPromptAfter->SetMarkerStyle(20);
   hJetPromptAfter->SetMarkerColor(kBlue);
   hJetPromptAfter->SetLineColor(kBlue);
@@ -102,9 +111,68 @@
   hZPromptAfter->Draw("same PE");
   c->Print("JpsiJet.pdf","Title:PromptJetZ");
     // Non-prompt - Lxy > 0.01
-
+  hs->GetAxis(2)->SetRangeUser(JPSI_LXY_BDECAY, 0.3);
+      // J/psi mass region
+  hs->GetAxis(1)->SetRangeUser(JPSI_MASS_LOWER, JPSI_MASS_UPPER);
+  auto hJetBdecay = (TH1D*)(hs->Projection(5)->Clone("hJetBdecay"));
+  hJetBdecay->SetTitle("Non-Prompt J/psi tagged jet p_{T} spectra");
+  hJetBdecay->GetXaxis()->SetTitle("p_{T,jet} (GeV/c)");
+  hJetBdecay->GetYaxis()->SetTitle("N_{pairs} / (5 GeV/c)");
+  auto hZBdecay = (TH1D*)(hs->Projection(3)->Clone("hZBdecay"));
+  hZBdecay->SetTitle("Non-prompt J/psi tagged jet - fragmentation function");
+  hZBdecay->GetYaxis()->SetTitle("N_{pairs} / 0.1");
+      // Sideband
+  auto hJetBdecaySB = (TH1D*)(hJetBdecay->Clone("hJetBdecaySB"));
+  auto hZBdecaySB = (TH1D*)(hZBdecay->Clone("hZBdecaySB"));
+  hJetBdecaySB->Reset();
+  hZBdecaySB->Reset();
+  hs->GetAxis(1)->SetRangeUser(JPSI_MASS_LOWER - JPSI_SIDEBAND_OFFSET, JPSI_MASS_UPPER - JPSI_SIDEBAND_OFFSET);
+  hJetBdecaySB->Add(hs->Projection(5), sidebandFactor);
+  hZBdecaySB->Add(hs->Projection(3), sidebandFactor);
+  hs->GetAxis(1)->SetRangeUser(JPSI_MASS_LOWER + JPSI_SIDEBAND_OFFSET, JPSI_MASS_UPPER + JPSI_SIDEBAND_OFFSET);
+  hJetBdecaySB->Add(hs->Projection(5), sidebandFactor);
+  hZBdecaySB->Add(hs->Projection(3), sidebandFactor);
+      // Substracted
+  auto hJetBdecayAfter = (TH1D*)(hJetBdecay->Clone("hJetBdecayAfter"));
+  hJetBdecayAfter->Add(hJetBdecaySB, -1.0);
+  auto hZBdecayAfter = (TH1D*)(hZBdecay->Clone("hZBdecayAfter"));
+  hZBdecayAfter->Add(hZBdecaySB, -1.0);
+      // Drawing
+  c->Clear();
+  c->Divide(2);
+  c->cd(1);
+  hJetBdecay->Rebin(5); // 1 -> 5 GeV
+  hJetBdecay->SetMarkerStyle(20);
+  hJetBdecay->SetMarkerColor(kRed);
+  hJetBdecay->SetLineColor(kRed);
+  hJetBdecay->Draw("PE");
+  hJetBdecaySB->Rebin(5); // 1 -> 5 GeV
+  hJetBdecaySB->SetMarkerStyle(20);
+  hJetBdecaySB->SetMarkerColor(kGreen);
+  hJetBdecaySB->SetLineColor(kGreen);
+  hJetBdecaySB->Draw("same PE");
+  hJetBdecayAfter->Rebin(5); // 1 -> 5 GeV
+  hJetBdecayAfter->SetMarkerStyle(20);
+  hJetBdecayAfter->SetMarkerColor(kBlue);
+  hJetBdecayAfter->SetLineColor(kBlue);
+  hJetBdecayAfter->Draw("same PE");
+  c->cd(2);
+  hZBdecay->SetMarkerStyle(20);
+  hZBdecay->SetMarkerColor(kRed);
+  hZBdecay->SetLineColor(kRed);
+  hZBdecay->Draw("PE");
+  hZBdecaySB->SetMarkerStyle(20);
+  hZBdecaySB->SetMarkerColor(kGreen);
+  hZBdecaySB->SetLineColor(kGreen);
+  hZBdecaySB->Draw("same PE");
+  hZBdecayAfter->SetMarkerStyle(20);
+  hZBdecayAfter->SetMarkerColor(kBlue);
+  hZBdecayAfter->SetLineColor(kBlue);
+  hZBdecayAfter->Draw("same PE");
+  c->Print("JpsiJet.pdf","Title:BdecayJetZ");
   // FF z
   c->Clear();
   c->Print("JpsiJet.pdf)","Title:End");
-  delete outputs;
+  f->Write();
+  f->Close();
 }
