@@ -31,6 +31,18 @@ TPaveText* yatoPaveText(){
   return pTxt;
 }
 
+Int_t DrawSideband(Double_t mlow, Double_t mup, const char* tag = "Sideband"){
+  // Fill area
+  TF1* fRegion = new TF1(
+    Form("f%s", tag),
+    total->GetName(), mlow, mup);
+  TGraph* gr = new TGraph(fRegion);
+  gr->SetName(Form("gr%s",tag));
+  gr->SetFillColor(kGreen);
+  gr->SetFillStyle(3004);
+  gr->Draw("same B");
+  return total->Integral(mlow, mup);
+}
 // Input mass range for estimation of signal & background
 int SelectSignalRegion(TH1* InvMass, Double_t mlow = 2.92, Double_t mup = 3.16, Double_t width = 0.04){
   /*
@@ -58,7 +70,9 @@ int SelectSignalRegion(TH1* InvMass, Double_t mlow = 2.92, Double_t mup = 3.16, 
   gr->SetFillColor(kRed);
   gr->SetFillStyle(3004);
   gr->Draw("same B");
-
+  // Fill sideband
+  Int_t nSBLeft = DrawSideband(mlow-1.0, mup-1.0, "SBLeft") / width;
+  Int_t nSBRight = DrawSideband(mlow+1.0, mup+1.0, "SBRight") / width;
   
   /*
   * Count data points
@@ -113,6 +127,10 @@ int SelectSignalRegion(TH1* InvMass, Double_t mlow = 2.92, Double_t mup = 3.16, 
   cout << "--> Signal:     " << Njpsi << " +/- " << errJpsi << endl;
   cout << "--> Background: " << Nbkg << " +/- " << errBkg << endl;
 
+  // Sideband normalization
+  Double_t NSideband = nSBLeft + nSBRight;
+  Double_t sbFactor = Nbkg / (nSBLeft + nSBRight);
+  Double_t errSbFactor = sbFactor * TMath::Sqrt(TMath::Power(errBkg / Nbkg, 2.0) + 1/NSideband);
 
   /*
   * Build result pave on canvas
@@ -144,6 +162,9 @@ int SelectSignalRegion(TH1* InvMass, Double_t mlow = 2.92, Double_t mup = 3.16, 
     // Chi2
   entry = pTxt->AddText(
     Form("#chi^{2} / NDF = %.1f / %d", total->GetChisquare(), total->GetNDF()));
+    // Sideband factor = N_bkg (fitting) / N_sideband (fitting)
+  entry = pTxt->AddText(
+    Form("SB factor = %.2f #pm %.2f", sbFactor, errSbFactor));
   pTxt->Draw("same");
 
   return 0;
@@ -154,23 +175,20 @@ int ExtractSignal(TH1* invmass, Double_t mlow = 1.5, Double_t mup = 4.5,
   // Crystalball Function = Gaus + X^n
     // Parameters : \alpha = break point, n, \sigma = width, \mu = peak
     // Unit : Y = Ncount/0.04, X=GeV/c^2
-  if(!jpsi)
-    jpsi = new TF1(Form("fJpsi_%d",index), "[0]*ROOT::Math::crystalball_function(x,[1],[2],[3],[4])", mlow, mup);
+  jpsi = new TF1(Form("fJpsi_%d",index), "[0]*ROOT::Math::crystalball_function(x,[1],[2],[3],[4])", mlow, mup);
   jpsi->SetLineColor(kBlack);
   jpsi->SetLineWidth(2);
   jpsi->SetLineStyle(2);
   jpsi->SetNpx(1000);
 
   // Backgroud Function - Pol2
-  if(!bkg)
-    bkg = new TF1(Form("fBkg_%d",index), "[0]+[1]*x+[2]*x^2", mlow, mup);
+  bkg = new TF1(Form("fBkg_%d",index), "[0]+[1]*x+[2]*x^2", mlow, mup);
   bkg->SetLineColor(kGreen);
   bkg->SetLineWidth(2);
   bkg->SetLineStyle(2);
   bkg->SetNpx(1000);
 
   // Total function for fitting
-  if(!total)
   total = new TF1(Form("fTot_%d",index),Form("fJpsi_%d+fBkg_%d",index, index), mlow, mup);
   total->SetParNames("A", "#alpha", "n", "#sigma", "#mu",
     "a0", "a1", "a2");
