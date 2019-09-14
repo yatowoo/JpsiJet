@@ -13,15 +13,16 @@ TH2* hMPt = NULL; // Mee vs pT
 
 TLegend* yatoLegend(){
   // NDC x1, y1, x2, y2, bottom-right
-  auto yLgd= new TLegend(0.13,0.60,0.49, 0.88, "", "brNDC");
+  auto yLgd= new TLegend(0.13,0.68,0.49, 0.88, "", "brNDC");
   yLgd->SetName("yLgd");
   yLgd->SetBorderSize(0);
   yLgd->SetTextAlign(12);
   yLgd->SetTextFont(42);
-  yLgd->SetTextSize(0.04);
+  yLgd->SetTextSize(0.03);
   return yLgd;
 }
 
+// Pave for fitting result
 TPaveText* yatoPaveText(){
   // NDC x1, y1, x2, y2, bottom-right
   auto pTxt = new TPaveText(0.62, 0.39, 0.87, 0.88, "brNDC");
@@ -29,8 +30,25 @@ TPaveText* yatoPaveText(){
   pTxt->SetBorderSize(0);
   pTxt->SetTextAlign(12);
   pTxt->SetTextFont(42);
-  pTxt->SetTextSize(0.04);
+  pTxt->SetTextSize(0.03);
   pTxt->SetFillColor(0);
+  return pTxt;
+}
+
+
+TPaveText* DrawCuts(Double_t pTcut = 10.0, Double_t Ycut = 0.9){
+  // NDC x1, y1, x2, y2, bottom-right
+  auto pTxt = new TPaveText(0.2, 0.45, 0.45, 0.65, "brNDC");
+  pTxt->SetName("yTxtCuts");
+  pTxt->SetBorderSize(0);
+  pTxt->SetTextAlign(12);
+  pTxt->SetTextFont(42);
+  pTxt->SetTextSize(0.03);
+  pTxt->SetFillColor(0);
+  // Entries
+  pTxt->AddText(Form("|y_{e^{+}e^{-}}| < %.1f", Ycut));
+  pTxt->AddText(Form("p_{T,e^{+}e^{-}} > %.1f GeV/c", pTcut));
+  pTxt->Draw("same");
   return pTxt;
 }
 
