@@ -18,6 +18,7 @@
 ######
 
 import ROOT
+from ana_util import HistNorm
 import sys, os, json
 
 resultFile = "AnalysisResults.root"
@@ -33,19 +34,151 @@ if(outputs == None):
 
 # Global Settings and Variables
 ROOT.gStyle.SetOptStat(0)
+ROOT.gStyle.SetPalette()
 
 JPSI_MASS_LOWER = 2.92
 JPSI_MASS_UPPER = 3.16
+JPSI_LXY_PROMPT = 0.01
+JPSI_LXY_BDECAY = 0.02
 
 def DrawQA(qa, tag):
   print("[-] INFO - Processing QA plots for " + tag)
   qa.SetOwner(True)
+  # Canvas
+  c = ROOT.TCanvas("cDet","Plots on Detector Level", 800, 600)
+  c.cd()
+  # Pair tagged jets
+    # N constituents
+  pairJet = qa.FindObject("PairInJet")
+  pairJet.SetOwner(True)
+  Ntrk = pairJet.FindObject("Ntracks_pT") # TH2D
+  Ntrk.GetYaxis().SetRangeUser(0, 25)
+  Ntrk.Draw("COLZ")
+    ## Profile
+  pfx = Ntrk.ProfileX()
+  pfx.SetLineColor(ROOT.kRed)
+  pfx.SetMarkerStyle(20)
+  pfx.Draw("same")
+    ## Legend
+  lgd = ROOT.TLegend(0.2, 0.65, 0.4, 0.8)
+  lgd.AddEntry(pfx,"<N_{tracks}>")
+  lgd.SetBorderSize(0)
+  lgd.Draw("same")
+    ## Save
+  c.SaveAs("Jet-Ntrk.pdf")
+  c.SaveAs("Jet-Ntrk.root")
+  # Free
   qa.Delete("C")
   return
 # END - Drawing QA plots
 
+def DrawQA_JetPt(qa):
+  # Event norm.
+  ev = qa.FindObject("EventStats")
+  nEv = ev.GetBinContent(6)
+  nEvPair = ev.GetBinContent(7) + ev.GetBinContent(8)
+  nEvTagged = ev.GetBinContent(9)
+  # Inclusive jet
+  hsIncl = qa.FindObject("Jet_AKTChargedR040_tracks_pT0150_pt_scheme").FindObject("jetVars")
+  incl = hsIncl.Projection(0)
+  incl.SetName("hJetInclusive")
+  incl.SetTitle("Jet pT spectra")
+  incl.GetYaxis().SetTitle("1/N_{ev} dN/dp_{T}")
+  incl.Rebin(10) # 0.05 -> 0.5 GeV/c
+  # Jet with pair, Re-clustering with pair in jet
+  #hsPair = qa.FindObject("JpsiJet_AKTChargedR040_tracksWithPair_pT0150_pt_scheme")
+  # J/psi tagged jet
+  hsTagged = qa.FindObject("PairInJet").FindObject("PairVars")
+  hsTagged.GetAxis(0).SetRangeUser(10,50)
+  hsTagged.GetAxis(1).SetRangeUser(JPSI_MASS_LOWER,JPSI_MASS_UPPER)
+  hsTagged.GetAxis(2).SetRangeUser(-JPSI_LXY_PROMPT,JPSI_LXY_PROMPT)
+  tagPrompt = hsTagged.Projection(5)
+  tagPrompt.SetName("hTaggedJetPrompt")
+  hsTagged.GetAxis(2).SetRangeUser(JPSI_LXY_BDECAY,1.0)
+  tagBdecay = hsTagged.Projection(5)
+  tagBdecay.SetName("hTaggedJetBdecay")
+  # Sideband
+  # Drawing
+  c = ROOT.TCanvas("cQA","Jet spectra", 800, 600)
+  c.Draw()
+  c.SetLogy(True)
+  HistNorm(incl, nEv)
+  incl.SetLineColor(ROOT.kBlack)
+  incl.SetMarkerColor(ROOT.kBlack)
+  incl.SetMarkerStyle(20)
+  incl.Draw("EP")
+  HistNorm(tagPrompt, nEv)
+  tagPrompt.SetLineColor(ROOT.kRed)
+  tagPrompt.SetMarkerColor(ROOT.kRed)
+  tagPrompt.SetMarkerStyle(21)
+  tagPrompt.Draw("same EP")
+  HistNorm(tagBdecay, nEv)
+  tagBdecay.SetLineColor(ROOT.kBlue)
+  tagBdecay.SetMarkerColor(ROOT.kBlue)
+  tagBdecay.SetMarkerStyle(22)
+  tagBdecay.Draw("same EP")
+  ## Legend
+  lgd = ROOT.TLegend(0.6, 0.64, 0.85, 0.79)
+  lgd.AddEntry(incl, "Inclusive jets")
+  lgd.AddEntry(tagPrompt, "Tagged jets (Prompt)")
+  lgd.AddEntry(tagBdecay, "Tagged jets (Non-prompt)")
+  lgd.Draw("same")
+  c.SaveAs("MC-JetPt.pdf")
+  c.SaveAs("MC-JetPt.root")
+
 qaName = outputs.GetListOfKeys().At(0).GetName()
-DrawQA(outputs.Get(qaName), qaName.split('_')[1])
+#DrawQA(outputs.Get(qaName), qaName.split('_')[1])
+DrawQA_JetPt(outputs.Get(qaName))
+
+# Detectro response matrix - 4 dim.
+## THnSparse: z_det, z_gen, jetPt_det, jetPt_gen
+def GetDetectorResponse_FF(drm, tag):
+  drm.GetAxis(0).SetRangeUser(0., 1.)
+  drm.GetAxis(1).SetRangeUser(0., 1.)
+  drm.GetAxis(2).SetRangeUser(20., 60.)
+  drm.GetAxis(3).SetRangeUser(20., 60.)
+  zMatrix = drm.Projection(1,0)
+  zMatrix.SetTitle("Detector response matrix - J/#psi in Jet (z) ("+tag+")")
+  return zMatrix
+def GetDetectorResponse_JetPt(drm, tag):
+  drm.GetAxis(2).SetRangeUser(0., 60.)
+  drm.GetAxis(3).SetRangeUser(0., 60.)
+  ptMatrix = drm.Projection(3,2)
+  ptMatrix.SetTitle("Detector response matrix - J/#psi tagged jet p_{T} ("+tag+")")
+  return ptMatrix
+# MChistos
+def DrawMC_DetectorResponse(mc):
+  # Canvas
+  c = ROOT.TCanvas("cMC","Detector Response", 1600, 600)
+  c.Divide(2)
+  c.SetTicks()
+  c.Draw()
+  # Histos
+  drmPrompt = mc.FindObject("JpsiPrompt").FindObject("Jet_DetResponse")
+  drmBdecay = mc.FindObject("JpsiBdecay").FindObject("Jet_DetResponse")
+  # jet pT
+  ptPrompt = GetDetectorResponse_JetPt(drmPrompt, "Prompt")
+  ptBdecay = GetDetectorResponse_JetPt(drmBdecay, "Non-prompt")
+  c.cd(1)
+  ptPrompt.Draw("COLZ")
+  ROOT.gPad.SetLogz()
+  c.cd(2)
+  ptBdecay.Draw("COLZ")
+  ROOT.gPad.SetLogz()
+  c.SaveAs("DetRes-jetPt.root")
+  c.SaveAs("DetRes-jetPt.pdf")
+  # z - Fragmentation Function
+  zPrompt = GetDetectorResponse_FF(drmPrompt, "Prompt")
+  zBdecay = GetDetectorResponse_FF(drmBdecay, "Non-prompt")
+  c.cd(1)
+  zPrompt.Draw("COLZ")
+  ROOT.gPad.SetLogz()
+  c.cd(2)
+  zBdecay.Draw("COLZ")
+  ROOT.gPad.SetLogz()
+  c.SaveAs("DetRes-FF.root")
+  c.SaveAs("DetRes-FF.pdf")
+  c.Clear()
 
 def DrawMC(mc):
   print("[-] INFO - Processing MC plots")
@@ -192,6 +325,7 @@ fIsMC = False
 mc = outputs.Get("MChistos")
 if(mc):
   fIsMC = True
-  DrawMC(mc)
+  #DrawMC(mc)
+  #DrawMC_DetectorResponse(mc)
 
 f.Close()
