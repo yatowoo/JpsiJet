@@ -175,6 +175,13 @@ def DrawQA_Calo(qa):
   # End - read with fired tags
   padQA.SetWindowSize(1600, 600)
   padQA.Divide(2)
+  lgdE = TLegend(0.5, 0.7, 0.8, 0.85, "", "brNDC")
+  lgdE.SetBorderSize(0)
+  lgdE.SetNColumns(2)
+  lgdRF = TLegend(0.5, 0.15, 0.8, 0.3, "", "brNDC")
+  lgdRF.SetBorderSize(0)
+  lgdRF.SetNColumns(2)
+  COLOR = SelectColor() # Reset
   for trig in TRIGGER_CLASSES:
     # Cluster energy
     calo = qa.FindObject('Cluster_' + trig) # TList
@@ -192,32 +199,42 @@ def DrawQA_Calo(qa):
     caloE.SetMarkerColor(colorHist)
     caloE.SetMarkerStyle(kRound)
     caloE.Draw("same PE")
+    lgdE.AddEntry(caloE, trig)
     gPad.SetLogy()
     # Rejection factor
     if(CaloQA['INT7']['E']):
       caloRF = caloE.Clone('hClusterRF_' + trig)
       caloRF.SetTitle('Rejection factor of EMCal by ratio of cluster energy')
       caloRF.GetXaxis().SetRangeUser(0, 40)
-      caloRF.GetYaxis().SetRangeUser(0.1, 1e5)
+      caloRF.GetYaxis().SetRangeUser(1e-2, 1e4)
       caloRF.GetYaxis().SetTitle('R_{trig}')
       caloRF.Divide(CaloQA['INT7']['E'])
       padQA.cd(2)
       caloRF.Draw("same PE")
       gPad.SetLogy()
       CaloQA[trig]['RF'] = caloRF
+      lgdRF.AddEntry(caloRF, trig + '/MB')
     CaloQA[trig]['E'] = caloE
     calo.Delete()
   # End - trigger loop
-  # RF - EG1/EG2, DG1/DG2
-  caloRF = CaloQA['EG1']['E'].Clone('hClusterRF_EG12')
-  caloRF.Divide(CaloQA['EG2']['E'])
-  caloRF.SetMarkerStyle(kRoundHollow)
+  padQA.cd(1)
+  lgdE.Draw("same")
+  # RF - EG1/EG2
+  caloRF_NEW = CaloQA['EG1']['E'].Clone('hClusterRF_EG12')
+  caloRF_NEW.SetTitle('Rejection factor EMCal/DCal by ratio of cluster energy')
+  caloRF_NEW.Divide(CaloQA['EG2']['E'])
+  caloRF_NEW.SetMarkerStyle(kRoundHollow)
   padQA.cd(2)
-  caloRF.Draw("same PE")
+  caloRF_NEW.Draw("same PE")
+  lgdRF.AddEntry(caloRF_NEW, 'EG1/EG2')
+  # RF -DG1/DG2
   caloRF = CaloQA['DG1']['E'].Clone('hClusterRF_DG12')
+  caloRF.SetTitle('Rejection factor EMCal/DCal by ratio of cluster energy')
   caloRF.Divide(CaloQA['DG2']['E'])
-  caloRF.SetMarkerStyle(kRoundHollow)
+  caloRF.SetMarkerStyle(kCrossHollow)
   caloRF.Draw("same PE")
+  lgdRF.AddEntry(caloRF, 'DG1/DG2')
+  lgdRF.Draw("same")
   # Output
   padQA.Print(args.print,'Title:ClusterQA')
   padQA.SaveAs(os.path.dirname(args.output) + '/ClusterQA.root') # Debug
