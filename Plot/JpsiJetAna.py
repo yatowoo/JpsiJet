@@ -17,10 +17,6 @@
 ##    - Output directory
 ######
 
-import ROOT
-from ROOT import TFile, TCanvas, TLegend, gPad, TPaveText
-from ROOT import TH1, TH2
-from ana_util import HistNorm
 import sys, os, json, argparse
 
 # Command-line Arguments
@@ -32,6 +28,12 @@ parser.add_argument('--mc',help='MC flag for DrawMC methods', default=False, act
 parser.add_argument('--calo',help='QA for EMCal cluster energy', default=False, action='store_true')
 parser.add_argument('--all',help='Run all QA processing', default=False, action='store_true')
 args = parser.parse_args()
+
+# ROOT libs
+import ROOT
+from ROOT import TFile, TCanvas, TLegend, gPad, TPaveText
+from ROOT import TH1, TH2
+from ana_util import *
 
 # Input - analysis results from ALICE tasks
 fin = TFile(args.file)
@@ -55,6 +57,9 @@ pTxt.Delete()
 # Global Settings and Variables
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetPalette()
+
+COLOR = SelectColor()
+MARKER = SelectMarker()
 
 JPSI_MASS_LOWER = 2.92
 JPSI_MASS_UPPER = 3.16
@@ -149,6 +154,7 @@ def DrawQA_JetPt(qa):
   c.SaveAs("MC-JetPt.pdf")
   c.SaveAs("MC-JetPt.root")
 
+# Input: QAhistos_ALL with Cluster_INT7|EG1|EG2|DG1|DG2
 def DrawQA_Calo(qa):
   CaloQA = {}
   for trig in TRIGGER_CLASSES:
@@ -170,20 +176,30 @@ def DrawQA_Calo(qa):
   padQA.SetWindowSize(1600, 600)
   padQA.Divide(2)
   for trig in TRIGGER_CLASSES:
+    # Cluster energy
     calo = qa.FindObject('Cluster_' + trig) # TList
     calo.SetOwner(True)
     caloE = calo.FindObject('ClsVars').Projection(0)
     caloE.SetName('hClusterE_' + trig)
     HistNorm(caloE, CaloQA[trig]['NEvent'])
+    caloE.SetTitle('EMCal/DCal cluster energy distribution')
     caloE.GetXaxis().SetRangeUser(0, 40)
     caloE.GetYaxis().SetRangeUser(1e-8, 100.)
+    caloE.GetYaxis().SetTitle('#frac{1}{N_{ev}} #frac{dN_{cls}}{dE}')
     padQA.cd(1)
+    colorHist = next(COLOR)
+    caloE.SetLineColor(colorHist)
+    caloE.SetMarkerColor(colorHist)
+    caloE.SetMarkerStyle(kRound)
     caloE.Draw("same PE")
     gPad.SetLogy()
+    # Rejection factor
     if(CaloQA['INT7']['E']):
       caloRF = caloE.Clone('hClusterRF_' + trig)
+      caloRF.SetTitle('Rejection factor of EMCal by ratio of cluster energy')
       caloRF.GetXaxis().SetRangeUser(0, 40)
-      caloRF.GetYaxis().SetRangeUser(0.1, 1e4)
+      caloRF.GetYaxis().SetRangeUser(0.1, 1e5)
+      caloRF.GetYaxis().SetTitle('R_{trig}')
       caloRF.Divide(CaloQA['INT7']['E'])
       padQA.cd(2)
       caloRF.Draw("same PE")
@@ -192,10 +208,20 @@ def DrawQA_Calo(qa):
     CaloQA[trig]['E'] = caloE
     calo.Delete()
   # End - trigger loop
+  # RF - EG1/EG2, DG1/DG2
+  caloRF = CaloQA['EG1']['E'].Clone('hClusterRF_EG12')
+  caloRF.Divide(CaloQA['EG2']['E'])
+  caloRF.SetMarkerStyle(kRoundHollow)
+  padQA.cd(2)
+  caloRF.Draw("same PE")
+  caloRF = CaloQA['DG1']['E'].Clone('hClusterRF_DG12')
+  caloRF.Divide(CaloQA['DG2']['E'])
+  caloRF.SetMarkerStyle(kRoundHollow)
+  caloRF.Draw("same PE")
+  # Output
   padQA.Print(args.print,'Title:ClusterQA')
-  padQA.SaveAs('../output/QM19/ClusterQA.root') # Debug
-
-# Calo cluster QA
+  padQA.SaveAs(os.path.dirname(args.output) + '/ClusterQA.root') # Debug
+# End - Calo cluster QA
 
 
 if(args.all):
