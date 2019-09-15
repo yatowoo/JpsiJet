@@ -32,7 +32,7 @@ args = parser.parse_args()
 # ROOT libs
 import ROOT
 from ROOT import TFile, TCanvas, TLegend, gPad, TPaveText
-from ROOT import TH1, TH2
+from ROOT import TH1, TH2, TF1
 from ana_util import *
 
 # Input - analysis results from ALICE tasks
@@ -154,7 +154,20 @@ def DrawQA_JetPt(qa):
   c.SaveAs("MC-JetPt.pdf")
   c.SaveAs("MC-JetPt.root")
 
+# Return legend entry with range and result
+def FitRF(caloRF, tag = 'RF', Emin = 11.0, Emax = 40.0):
+  fcn = TF1('fNorm' + tag, '[0]', 0., 100)
+  fcn.SetLineColor(caloRF.GetLineColor())
+  fcn.SetLineStyle(6)
+  fcn.SetLineWidth(2)
+  caloRF.Fit(fcn, "ISQ", "", Emin, Emax)
+  fcn.Draw("same")
+  factor = fcn.GetParameter(0)
+  error = fcn.GetParError(0)
+  return '%.1f < E < %.1f GeV, R_{trig}= %.1f #pm %.1f' % (Emin, Emax, factor, error)
 # Input: QAhistos_ALL with Cluster_INT7|EG1|EG2|DG1|DG2
+# Step: Normalization, Re-bining?, Ratio, Fitting
+# Plot: Custer energy & RF, legend, text 
 def DrawQA_Calo(qa):
   CaloQA = {}
   for trig in TRIGGER_CLASSES:
@@ -162,6 +175,7 @@ def DrawQA_Calo(qa):
     CaloQA[trig]['NEvent'] = 0
     CaloQA[trig]['E'] = None
     CaloQA[trig]['RF'] = None
+    CaloQA[trig]['Eth'] = 11.0 if trig.count('1') else 6.0 
   # Event numbers
   evQA = qa.FindObject('Event_afterCuts') # TList
   evQA.SetOwner(True)
@@ -178,9 +192,10 @@ def DrawQA_Calo(qa):
   lgdE = TLegend(0.5, 0.7, 0.8, 0.85, "", "brNDC")
   lgdE.SetBorderSize(0)
   lgdE.SetNColumns(2)
-  lgdRF = TLegend(0.5, 0.15, 0.8, 0.3, "", "brNDC")
+  lgdRF = TLegend(0.5, 0.12, 0.88, 0.45, "", "brNDC")
+  lgdRF.SetTextSize(0.02)
   lgdRF.SetBorderSize(0)
-  lgdRF.SetNColumns(2)
+  lgdRF.SetNColumns(1)
   COLOR = SelectColor() # Reset
   for trig in TRIGGER_CLASSES:
     # Cluster energy
@@ -213,7 +228,7 @@ def DrawQA_Calo(qa):
       caloRF.Draw("same PE")
       gPad.SetLogy()
       CaloQA[trig]['RF'] = caloRF
-      lgdRF.AddEntry(caloRF, trig + '/MB')
+      lgdRF.AddEntry(caloRF, trig + '/MB: ' + FitRF(caloRF, trig, CaloQA[trig]['Eth']))
     CaloQA[trig]['E'] = caloE
     calo.Delete()
   # End - trigger loop
@@ -226,14 +241,14 @@ def DrawQA_Calo(qa):
   caloRF_NEW.SetMarkerStyle(kRoundHollow)
   padQA.cd(2)
   caloRF_NEW.Draw("same PE")
-  lgdRF.AddEntry(caloRF_NEW, 'EG1/EG2')
+  lgdRF.AddEntry(caloRF_NEW, 'EG1/EG2: ' + FitRF(caloRF_NEW, 'EG12'))
   # RF -DG1/DG2
   caloRF = CaloQA['DG1']['E'].Clone('hClusterRF_DG12')
   caloRF.SetTitle('Rejection factor EMCal/DCal by ratio of cluster energy')
   caloRF.Divide(CaloQA['DG2']['E'])
   caloRF.SetMarkerStyle(kCrossHollow)
   caloRF.Draw("same PE")
-  lgdRF.AddEntry(caloRF, 'DG1/DG2')
+  lgdRF.AddEntry(caloRF, 'DG1/DG2: ' + FitRF(caloRF, 'DG12'))
   lgdRF.Draw("same")
   # Output
   padQA.Print(args.print,'Title:ClusterQA')
