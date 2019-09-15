@@ -48,7 +48,7 @@ if(args.mc):
 else:
   padQA = TCanvas("cAna", "Jpsi in jets analysis",800,600)
 # Cover
-pTxt = TPaveText(0.4,0.45,0.6,0.55, "brNDC")
+pTxt = TPaveText(0.25,0.45,0.75,0.55, "brNDC")
 pTxt.AddText(padQA.GetTitle())
 padQA.cd()
 pTxt.Draw()
@@ -284,12 +284,14 @@ def GetDetectorResponse_FF(drm, tag):
   drm.GetAxis(2).SetRangeUser(JET_PT_LOWER, JET_PT_UPPER)
   drm.GetAxis(3).SetRangeUser(JET_PT_LOWER, JET_PT_UPPER)
   zMatrix = drm.Projection(1,0)
+  zMatrix.SetName("hResponseFF_" + tag)
   zMatrix.SetTitle("Detector response matrix - J/#psi in Jet (z) ("+tag+")")
   return zMatrix
 def GetDetectorResponse_JetPt(drm, tag):
   drm.GetAxis(2).SetRangeUser(0., JET_PT_UPPER)
   drm.GetAxis(3).SetRangeUser(0., JET_PT_UPPER)
   ptMatrix = drm.Projection(3,2)
+  ptMatrix.SetName("hResponseJetPt_" + tag)
   ptMatrix.SetTitle("Detector response matrix - J/#psi tagged jet p_{T} ("+tag+")")
   return ptMatrix
 # MChistos
@@ -301,11 +303,11 @@ def DrawMC_DetectorResponse(mc):
   padQA.SetTicks()
   padQA.Draw()
   # Histos
-  drmPrompt = mc.FindObject("JpsiPrompt").FindObject("Jet_DetResponse")
-  drmBdecay = mc.FindObject("JpsiBdecay").FindObject("Jet_DetResponse")
+  drmPrompt = mc.FindObject("JpsiPrompt").FindObject("Jet_DetResponse").Clone("hsDrmPrompt")
+  drmBdecay = mc.FindObject("JpsiBdecay").FindObject("Jet_DetResponse").Clone("hsDrmBdecay")
   # jet pT
   ptPrompt = GetDetectorResponse_JetPt(drmPrompt, "Prompt")
-  ptBdecay = GetDetectorResponse_JetPt(drmBdecay, "Non-prompt")
+  ptBdecay = GetDetectorResponse_JetPt(drmBdecay, "Bdecay")
   padQA.cd(1)
   ptPrompt.Draw("COLZ")
   gPad.SetLogz()
@@ -315,7 +317,7 @@ def DrawMC_DetectorResponse(mc):
   padQA.Print(args.print, "Title:Response_JetPt")
   # z - Fragmentation Function
   zPrompt = GetDetectorResponse_FF(drmPrompt, "Prompt")
-  zBdecay = GetDetectorResponse_FF(drmBdecay, "Non-prompt")
+  zBdecay = GetDetectorResponse_FF(drmBdecay, "Bdecay")
   padQA.cd(1)
   zPrompt.Draw("COLZ")
   ROOT.gPad.SetLogz()
@@ -341,9 +343,7 @@ def DrawMC(mc):
   eleAllTPC = mcEle.FindObject("eleVars").Projection(0)
   eleAllTPC.SetName("hEleAllTPC")
   elePureTPC = mcEle.FindObject("PID_pure")
-  elePureTPC.SetName("hElePureTPC")
   eleWrongTPC = mcEle.FindObject("PID_wrong")
-  eleWrongTPC.SetName("hEleWrongTPC")
   eleTPC = elePureTPC.Clone("hEleDetTPC")
   eleTPC.Add(eleWrongTPC)
   eleEffTPC = elePureTPC.Clone("hEleEffTPC")
@@ -354,16 +354,18 @@ def DrawMC(mc):
   eleEffTPC.SetLineWidth(2)
   #eleEffTPC.Rebin(5) # Bin width : 0.2 -> 1.0
   eleEffTPC.Draw()
+  eleEffTPC.Write()
     # EMCal
   eleAllEMC = mcEle.FindObject("EMCal_all")
   eleDetEMC = mcEle.FindObject("EMCal_det")
-  eleEffEMC = eleDetEMC.Clone("hEleEffTPC")
+  eleEffEMC = eleDetEMC.Clone("hEleEffEMC")
   eleEffEMC.Divide(eleAllEMC)
   eleEffEMC.SetLineColor(ROOT.kRed)
   eleEffEMC.SetLineWidth(2)
   #eleEffEMC.Rebin(5) # Bin width : 0.2 -> 1.0
   eleEffEMC.GetXaxis().SetRangeUser(5.0, 45)
   eleEffEMC.Draw("same")
+  eleEffEMC.Write()
     # Legend
   lgd = ROOT.TLegend(0.6, 0.7, 0.85, 0.85)
   lgd.AddEntry(eleEffTPC, "TPC")
@@ -381,6 +383,7 @@ def DrawMC(mc):
   elePurityTPC.SetLineWidth(2)
   padQA.Clear()
   elePurityTPC.Draw()
+  elePurityTPC.Write()
   padQA.Print(args.print, "Title:Electron_Purity")
   ###
   # J/psi reconstruction
@@ -391,15 +394,19 @@ def DrawMC(mc):
   jpsiPromptGen = jpsiPrompt.FindObject("jpsiVars")
   jpsiPromptGen.GetAxis(1).SetRangeUser(JPSI_Y_LOWER, JPSI_Y_UPPER)
   jpsiPromptAll = jpsiPromptGen.Projection(0)
+  jpsiPromptAll.SetName('hJpsiPromptAll')
     # THnSparse - pT, Mee, Lxy
   jpsiPromptReco = jpsiPrompt.FindObject("Reco_sig")
   jpsiPromptReco.GetAxis(1).SetRangeUser(JPSI_MASS_LOWER, JPSI_MASS_UPPER)
   jpsiPromptPt = jpsiPromptReco.Projection(0)
+  jpsiPromptPt.SetName('hJpsiPromptReco')
   jpsiLxyPrompt = jpsiPromptReco.Projection(2)
+  jpsiLxyPrompt.SetName('hJpsiLxyPrompt')
     # Prompt background
   jpsiPromptBkg = jpsiPrompt.FindObject("Reco_bkg")
   jpsiPromptBkg.GetAxis(1).SetRangeUser(JPSI_MASS_LOWER, JPSI_MASS_UPPER)
   jpsiLxyBkg = jpsiPromptBkg.Projection(2)
+  jpsiLxyBkg.SetName('hJpsiLxyBkg')
     # Prompt Eff.
   jpsiPromptEff = jpsiPromptPt.Clone("hJpsiEffPrompt")
   jpsiPromptEff.Divide(jpsiPromptAll)
@@ -409,6 +416,7 @@ def DrawMC(mc):
   jpsiPromptEff.GetXaxis().SetRangeUser(0., 20.)
   jpsiPromptEff.GetYaxis().SetTitle("A #times #varepsilon")
   jpsiPromptEff.Draw()
+  jpsiPromptEff.Write()
     # Non-prompt / B-decay
   jpsiBdecay = mc.FindObject("JpsiBdecay")
   jpsiBdecay.SetOwner(True)
@@ -416,11 +424,14 @@ def DrawMC(mc):
   jpsiBdecayGen = jpsiBdecay.FindObject("jpsiVars")
   jpsiBdecayGen.GetAxis(1).SetRangeUser(JPSI_Y_LOWER, JPSI_Y_UPPER)
   jpsiBdecayAll = jpsiBdecayGen.Projection(0)
+  jpsiBdecayAll.SetName('hJpsiBdecayAll')
     # THnSparse - pT, Mee, Lxy
   jpsiBdecayReco = jpsiBdecay.FindObject("Reco_sig")
   jpsiBdecayReco.GetAxis(1).SetRangeUser(JPSI_MASS_LOWER, JPSI_MASS_UPPER)
   jpsiBdecayPt = jpsiBdecayReco.Projection(0)
+  jpsiBdecayPt.SetName('hJpsiBdecayReco')
   jpsiLxyBdecay = jpsiBdecayReco.Projection(2)
+  jpsiLxyBdecay.SetName('hJpsiLxyBdecay')
     # Non-prompt background
   jpsiBdecayBkg = jpsiBdecay.FindObject("Reco_bkg")
   jpsiBdecayBkg.GetAxis(1).SetRangeUser(JPSI_MASS_LOWER, JPSI_MASS_UPPER)
@@ -430,6 +441,7 @@ def DrawMC(mc):
   jpsiBdecayEff.SetLineColor(ROOT.kRed)
   jpsiBdecayEff.SetLineWidth(2)
   jpsiBdecayEff.Draw("same")
+  jpsiBdecayEff.Write()
     # Legend
   if(lgd):
     lgd.Delete("C")
@@ -450,6 +462,7 @@ def DrawMC(mc):
   jpsiLxyBkg.SetLineColor(ROOT.kGreen)
   padQA.Clear()
   jpsiLxyAll.Draw()
+  jpsiLxyAll.Write()
   jpsiLxyPrompt.Draw("same")
   jpsiLxyBdecay.Draw("same")
   jpsiLxyBkg.Draw("same")
