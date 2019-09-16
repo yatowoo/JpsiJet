@@ -51,5 +51,16 @@ def SelectMarker(MARKER_INDEX = 0):
 COLOR = SelectColor()
 MARKER = SelectMarker()
 
+def PrintCover(pad, file, title = ''):
+  pTxt = ROOT.TPaveText(0.25,0.4,0.75,0.6, "brNDC")
+  if(title == ''):
+    pTxt.AddText(pad.GetTitle())
+  else:
+    pTxt.AddText(title)
+  pad.cd()
+  pad.Draw()
+  pTxt.Draw()
+  pad.Print(file + '(', 'Title:Cover')
+
 if __name__ == '__main__':
   print("Utility lib for post-processing with ROOT")

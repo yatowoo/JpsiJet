@@ -17,6 +17,10 @@ raw = TFile('../JpsiJetAna.root')
 # MC outputs
 mc = TFile('../output/QM19/JpsiJetMC.root')
 
+printFile = '../output/QM19/UnfoldFF.pdf'
+out = TFile('../output/QM19/UnfoldFF.root')
+ana_util.PrintCover(padFF, printFile, 'Jpsi in jets analysis - Unfolding', )
+
 def DrawFF(hist, name):
   hist.SetName(name)
   hist.Scale(1./hist.Integral('width'))
@@ -54,11 +58,21 @@ def UnfoldFF(rawFF, detResponse, tag):
     hist = DrawFF(bayes.Hreco(0), 'hBayes' + repr(nIter) + '_' + tag)
     lgd.AddEntry(hist, 'Bayes (N=%d)' % nIter)
   lgd.Draw('same')
-  padFF.SaveAs('UnfoldFF_' + tag + '.root')
-  padFF.SaveAs('UnfoldFF_' + tag + '.pdf')
+  padFF.Print(printFile, 'Title:'+tag)
+
+detMix = mc.hResponseFF_Prompt.Clone('hDetMix')
+detMix.Add(mc.hResponseFF_Bdecay)
+detMix.SetTitle('Detector response matrix - z (Combined)')
 
 UnfoldFF(raw.hZPromptAfter, mc.hResponseFF_Prompt, 'Prompt')
 UnfoldFF(raw.hZBdecayAfter, mc.hResponseFF_Bdecay, 'Bdecay')
+UnfoldFF(raw.hZPromptAfter, detMix, 'PromptMix')
+UnfoldFF(raw.hZBdecayAfter, detMix, 'BdecayMix')
+
+padFF.Clear()
+padFF.Print(printFile + ')', 'Title:End')
+out.Write()
+out.Close()
 
 
 
