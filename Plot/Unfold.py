@@ -5,7 +5,7 @@ import ROOT
 from ROOT import TFile, TCanvas, TLegend
 from ROOT import RooUnfold, RooUnfoldBayes, RooUnfoldSvd, RooUnfoldResponse
 import ana_util
-from ana_util import ResponseNorm, SelectColor, SelectMarker
+from ana_util import ResponseNorm, SelectColor, SelectMarker, PrintCover
 
 # Drawing
 padFF = TCanvas('cFF','Unfolding', 1600, 600)
@@ -19,7 +19,7 @@ mc = TFile('../output/QM19/JpsiJetMC.root')
 
 printFile = '../output/QM19/UnfoldFF.pdf'
 out = TFile('../output/QM19/UnfoldFF.root')
-ana_util.PrintCover(padFF, printFile, 'Jpsi in jets analysis - Unfolding', )
+PrintCover(padFF, printFile, 'Jpsi in jets analysis - Unfolding', )
 
 def DrawFF(hist, name):
   hist.SetName(name)
@@ -70,7 +70,7 @@ UnfoldFF(raw.hZPromptAfter, detMix, 'PromptMix')
 UnfoldFF(raw.hZBdecayAfter, detMix, 'BdecayMix')
 
 padFF.Clear()
-padFF.Print(printFile + ')', 'Title:End')
+PrintCover(padFF, printFile, '', isBack=True)
 out.Write()
 out.Close()
 

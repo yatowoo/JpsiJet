@@ -53,8 +53,7 @@ pTxt.AddText(padQA.GetTitle())
 padQA.cd()
 pTxt.Draw()
   # Open PDF file and draw cover
-padQA.Print(args.print + '(', "Title:JpsiJet")
-pTxt.Delete()
+PrintCover(padQA, args.print)
 # End - Cover
 
 # Global Settings and Variables
@@ -196,6 +195,7 @@ def DrawQA_Calo(qa):
     for trig in tag.split('_'):
       CaloQA[trig]['NEvent'] += hTrig.GetBinContent(i)
   # End - read with fired tags
+  padQA.Clear()
   padQA.SetWindowSize(1600, 600)
   padQA.Divide(2)
   lgdE = TLegend(0.5, 0.7, 0.8, 0.85, "", "brNDC")
@@ -236,6 +236,7 @@ def DrawQA_Calo(qa):
       padQA.cd(2)
       caloRF.Draw("same PE")
       gPad.SetLogy()
+      caloRF.Write()
       CaloQA[trig]['RF'] = caloRF
       lgdRF.AddEntry(caloRF, trig + '/MB: ' + FitRF(caloRF, trig, CaloQA[trig]['Eth']))
     CaloQA[trig]['E'] = caloE
@@ -250,6 +251,7 @@ def DrawQA_Calo(qa):
   caloRF_NEW.SetMarkerStyle(kRoundHollow)
   padQA.cd(2)
   caloRF_NEW.Draw("same PE")
+  caloRF_NEW.Write()
   lgdRF.AddEntry(caloRF_NEW, 'EG1/EG2: ' + FitRF(caloRF_NEW, 'EG12'))
   # RF -DG1/DG2
   caloRF = CaloQA['DG1']['E'].Clone('hClusterRF_DG12')
@@ -257,11 +259,12 @@ def DrawQA_Calo(qa):
   caloRF.Divide(CaloQA['DG2']['E'])
   caloRF.SetMarkerStyle(kCrossHollow)
   caloRF.Draw("same PE")
+  caloRF.Write()
   lgdRF.AddEntry(caloRF, 'DG1/DG2: ' + FitRF(caloRF, 'DG12'))
   lgdRF.Draw("same")
   # Output
   padQA.Print(args.print,'Title:ClusterQA')
-  padQA.SaveAs(os.path.dirname(args.output) + '/ClusterQA.root') # Debug
+  padQA.Write("cQA_Cluster")
 # End - Calo cluster QA
 
 
@@ -489,7 +492,7 @@ if(args.mc):
 
 # Close files
 padQA.Clear()
-padQA.Print(args.print + ')', "Title:End")
+PrintCover(padQA, args.print, '', isBack=True)
 fin.Close()
 fout.Write()
 fout.Close()
