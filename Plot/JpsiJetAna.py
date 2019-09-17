@@ -18,6 +18,7 @@
 ######
 
 import sys, os, json, argparse
+from array import array
 
 # Command-line Arguments
 parser = argparse.ArgumentParser(description='Post-processing script for AliAnalysisTaskJpsiJet')
@@ -73,6 +74,14 @@ JPSI_Y_LOWER = -0.9
 JPSI_Y_UPPER = 0.9
 JET_PT_LOWER = 20.0
 JET_PT_UPPER = 50.0
+
+# J/psi pT bins : 0 - 50, binw = 0.2, 0.5, 1, 2, 5
+BINNING_JPSI_PT = [0.2*x for x in range(0,25,1)]
+BINNING_JPSI_PT += [ 0.1*x for x in range(50,100,5)]
+BINNING_JPSI_PT += list(range(10, 15, 1))
+BINNING_JPSI_PT += list(range(15, 25, 2))
+BINNING_JPSI_PT += list(range(25, 55, 5))
+BINNING_JPSI_PT = array('d', BINNING_JPSI_PT) # Convert to double*
 
 TRIGGER_CLASSES = ['INT7', 'EG1', 'EG2', 'DG1', 'DG2']
 TRIGGER_TAG = ['MB', 'EG1', 'EG2', 'DG1', 'DG2']
@@ -396,8 +405,7 @@ def DrawMC(mc):
     # THnSparse - pT, Y, phi, E
   jpsiPromptGen = jpsiPrompt.FindObject("jpsiVars")
   jpsiPromptGen.GetAxis(1).SetRangeUser(JPSI_Y_LOWER, JPSI_Y_UPPER)
-  jpsiPromptAll = jpsiPromptGen.Projection(0)
-  jpsiPromptAll.SetName('hJpsiPromptAll')
+  jpsiPromptAll = jpsiPromptGen.Projection(0).Rebin(len(BINNING_JPSI_PT)-1, "hJpsiPromptAll", BINNING_JPSI_PT)
     # THnSparse - pT, Mee, Lxy
   jpsiPromptReco = jpsiPrompt.FindObject("Reco_sig")
   jpsiPromptReco.GetAxis(1).SetRangeUser(JPSI_MASS_LOWER, JPSI_MASS_UPPER)
@@ -411,14 +419,21 @@ def DrawMC(mc):
   jpsiLxyBkg = jpsiPromptBkg.Projection(2)
   jpsiLxyBkg.SetName('hJpsiLxyBkg')
     # Prompt Eff.
-  jpsiPromptEff = jpsiPromptPt.Clone("hJpsiEffPrompt")
+  jpsiPromptEff = jpsiPromptPt.Rebin(len(BINNING_JPSI_PT)-1, "hJpsiEffPrompt", BINNING_JPSI_PT)
+  jpsiPromptEff.Sumw2()
+  jpsiPromptAll.Sumw2()
   jpsiPromptEff.Divide(jpsiPromptAll)
   jpsiPromptEff.SetLineWidth(2)
+  jpsiPromptEff.SetLineColor(kBlue)
+  jpsiPromptEff.SetMarkerStyle(kRound)
+  jpsiPromptEff.SetMarkerColor(kBlue)
   jpsiPromptEff.SetTitle("J/#psi Reconstruction - Acceptance and Efficiency")
   padQA.Clear()
-  jpsiPromptEff.GetXaxis().SetRangeUser(0., 20.)
+  jpsiPromptEff.GetXaxis().SetRangeUser(0., 50.)
+  jpsiPromptEff.GetYaxis().SetRangeUser(5e-4, 0.3)
   jpsiPromptEff.GetYaxis().SetTitle("A #times #varepsilon")
-  jpsiPromptEff.Draw()
+  jpsiPromptEff.Draw("PE")
+  padQA.SetLogy(True)
   jpsiPromptEff.Write()
     # Non-prompt / B-decay
   jpsiBdecay = mc.FindObject("JpsiBdecay")
@@ -426,8 +441,7 @@ def DrawMC(mc):
     # THnSparse - pT, Y, phi, E
   jpsiBdecayGen = jpsiBdecay.FindObject("jpsiVars")
   jpsiBdecayGen.GetAxis(1).SetRangeUser(JPSI_Y_LOWER, JPSI_Y_UPPER)
-  jpsiBdecayAll = jpsiBdecayGen.Projection(0)
-  jpsiBdecayAll.SetName('hJpsiBdecayAll')
+  jpsiBdecayAll = jpsiBdecayGen.Projection(0).Rebin(len(BINNING_JPSI_PT)-1, "hJpsiBdecayAll", BINNING_JPSI_PT)
     # THnSparse - pT, Mee, Lxy
   jpsiBdecayReco = jpsiBdecay.FindObject("Reco_sig")
   jpsiBdecayReco.GetAxis(1).SetRangeUser(JPSI_MASS_LOWER, JPSI_MASS_UPPER)
@@ -439,20 +453,30 @@ def DrawMC(mc):
   jpsiBdecayBkg = jpsiBdecay.FindObject("Reco_bkg")
   jpsiBdecayBkg.GetAxis(1).SetRangeUser(JPSI_MASS_LOWER, JPSI_MASS_UPPER)
   jpsiLxyBkg.Add(jpsiBdecayBkg.Projection(2))
-  jpsiBdecayEff = jpsiBdecayPt.Clone("hJpsiEffBdecay")
+  jpsiBdecayEff = jpsiBdecayPt.Rebin(len(BINNING_JPSI_PT)-1, "hJpsiEffBdecay", BINNING_JPSI_PT)
+  jpsiBdecayEff.Sumw2()
+  jpsiBdecayAll.Sumw2()
   jpsiBdecayEff.Divide(jpsiBdecayAll)
-  jpsiBdecayEff.SetLineColor(ROOT.kRed)
+  jpsiBdecayEff.SetLineColor(kRed)
   jpsiBdecayEff.SetLineWidth(2)
-  jpsiBdecayEff.Draw("same")
+  jpsiBdecayEff.SetMarkerColor(kRed)
+  jpsiBdecayEff.SetMarkerStyle(kRound)
+  jpsiBdecayEff.Draw("same PE")
   jpsiBdecayEff.Write()
     # Legend
   if(lgd):
     lgd.Delete("C")
-  lgd = ROOT.TLegend(0.2, 0.5, 0.4, 0.65)
+  lgd = ROOT.TLegend(0.6, 0.2, 0.85, 0.35)
   lgd.AddEntry(jpsiPromptEff, "Prompt")
   lgd.AddEntry(jpsiBdecayEff, "Non-prompt")
   lgd.Draw("same")
+    # Text
+  pTxt = ROOT.TPaveText(0.55, 0.4, 0.85, 0.55, "brNDC")
+  pTxt.AddText("J/#psi #rightarrow e^{+}e^{-}, " + "|y_{J/#psi}| < %.1f" % JPSI_Y_UPPER)
+  pTxt.AddText("reco. with EMCal/DCal")
+  pTxt.Draw("same")
   padQA.Print(args.print, "Title:Jpsi_Eff")
+  padQA.Write("cJpsiEff")
   ##
   ## Plotting : J/psi Lxy
   jpsiLxyAll = jpsiLxyPrompt.Clone("hJpsiLxyAll")
