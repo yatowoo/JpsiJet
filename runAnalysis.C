@@ -51,7 +51,11 @@ AliAnalysisAlien* SetupGridHandler(
   }
   else{
     alienHandler->SetGridDataDir("/alice/data/"+data_dir);
-    alienHandler->SetDataPattern("*/pass1*/AOD*/*AOD.root");
+    if(datasets.Contains("18m")){
+      alienHandler->SetDataPattern("*/pass1_withTRDtracking/AOD*/*AOD.root");}
+    else{
+      alienHandler->SetDataPattern("*/pass1/AOD*/*AOD.root");
+    }
     alienHandler->SetRunPrefix("000");
   }
 
