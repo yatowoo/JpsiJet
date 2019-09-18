@@ -539,6 +539,7 @@ Bool_t AliAnalysisTaskJpsiJet::RunJetFinder(const char* jetTag){
   TIter next(fJetTasks);
   while((jetFinder=(AliEmcalJetTask*)next())){
     TString jetName = jetFinder->GetName();
+    if(fAOD->FindListObject(jetName)) return kTRUE;
     // Find jet task by name
     if(jetName.BeginsWith(Form("%s_", jetTag))){
       // Prosess as AliAnalysisManager::StartAnalysis
