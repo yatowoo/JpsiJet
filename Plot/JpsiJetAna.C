@@ -7,7 +7,7 @@
   const double JPSI_LXY_BDECAY = 0.01;
 
   auto hs = PairVars;
-  auto f = new TFile("JpsiJetAna.root","RECREATE");
+  auto f = new TFile("output/QM19/JpsiJetAna_16Low.root","RECREATE");
   auto c = new TCanvas("cAna","J/psi in jets", 1600, 600);
   c->Divide(2);
   c->Draw();
