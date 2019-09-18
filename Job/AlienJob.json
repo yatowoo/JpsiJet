@@ -1,10 +1,11 @@
 {
   "DATA":{
-    "doMult": true,
-    "doEmcalCorrection": true,
-    "doJetQA": true,
-    "doJpsiQA": true,
-    "doJpsiFilter": true,
+    "doDevPWG": true,
+    "doMult": false,
+    "doEmcalCorrection": false,
+    "doJetQA": false,
+    "doJpsiQA": false,
+    "doJpsiFilter": false,
     "doPIDQA": false,
     "doPhysAna": false,
     "datasets": "16l_pass1",

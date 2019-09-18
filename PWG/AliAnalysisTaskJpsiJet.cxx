@@ -535,11 +535,13 @@ void AliAnalysisTaskJpsiJet::InitJetFinders(){
 }
 
 Bool_t AliAnalysisTaskJpsiJet::RunJetFinder(const char* jetTag){
+  // HOTFIX : To be more elegant
+  //  a flag for ALL task in data, which should be always added.
+  if(!fIsTriggerQA && !fIsMC) return kTRUE;
   AliEmcalJetTask* jetFinder = NULL;
   TIter next(fJetTasks);
   while((jetFinder=(AliEmcalJetTask*)next())){
     TString jetName = jetFinder->GetName();
-    if(fAOD->FindListObject(jetName)) return kTRUE;
     // Find jet task by name
     if(jetName.BeginsWith(Form("%s_", jetTag))){
       // Prosess as AliAnalysisManager::StartAnalysis
