@@ -1,5 +1,5 @@
 
-  const double JPSI_PT_LOWER = 10.0;
+  const double JPSI_PT_LOWER = 5.0;
   const double JPSI_PT_UPPER = 50.0;
   const double JET_PT_LOWER = 20.0;
   const double JET_PT_UPPER = 50.0;
@@ -7,7 +7,7 @@
   const double JPSI_LXY_BDECAY = 0.01;
 
   auto hs = PairVars;
-  auto f = new TFile("output/QM19/JpsiJetAna_16Low_jet20.root","RECREATE");
+  auto f = new TFile("JpsiJetAna_16Low_jet20.root","RECREATE");
   auto c = new TCanvas("cAna","J/psi in jets", 1600, 600);
   c->Divide(2);
   c->Draw();
@@ -16,7 +16,7 @@
   //auto outputs = (TList*)(_file0->Get("JpsiJetAnalysis/QAhistos_ALL"));
   //outputs->SetOwner(kTRUE);
 
-  gROOT->ProcessLine(".L Plot/ExtractSignal.C");
+  gROOT->ProcessLine(".L ExtractSignal.C");
   // Dielectron pT
   hs->GetAxis(0)->SetRangeUser(JPSI_PT_LOWER, JPSI_PT_UPPER);
   // Jet pT
