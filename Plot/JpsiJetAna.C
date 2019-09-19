@@ -1,13 +1,13 @@
 
-  const double JPSI_PT_LOWER = 5.0;
+  const double JPSI_PT_LOWER = 10.0;
   const double JPSI_PT_UPPER = 50.0;
-  const double JET_PT_LOWER = 15.0;
+  const double JET_PT_LOWER = 20.0;
   const double JET_PT_UPPER = 50.0;
   const double JPSI_LXY_PROMPT = 0.01;
   const double JPSI_LXY_BDECAY = 0.01;
 
   auto hs = PairVars;
-  auto f = new TFile("output/QM19/JpsiJetAna_16Low.root","RECREATE");
+  auto f = new TFile("output/QM19/JpsiJetAna_16Low_jet20.root","RECREATE");
   auto c = new TCanvas("cAna","J/psi in jets", 1600, 600);
   c->Divide(2);
   c->Draw();
@@ -64,7 +64,7 @@
   lgdLxy->AddEntry(hLxyRegionB, Form("L_{xy}  > %.3f (Non-prompt)", JPSI_LXY_BDECAY));
   lgdLxy->Draw("same");
   c->Print("JpsiJet.pdf","Title:InvMass");
-  c->SaveAs("JpsiMLxy.root");
+  c->Write("cJpsiMLxy");
   // End - invariant mass spectrum
   
   // Tagged jets

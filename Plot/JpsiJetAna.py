@@ -72,7 +72,7 @@ JPSI_PT_LOWER = 10.0
 JPSI_PT_UPPER = 50.0
 JPSI_Y_LOWER = -0.9
 JPSI_Y_UPPER = 0.9
-JET_PT_LOWER = 15.0
+JET_PT_LOWER = 20.0
 JET_PT_UPPER = 50.0
 
 # J/psi pT bins : 0 - 50, binw = 0.2, 0.5, 1, 2, 5
