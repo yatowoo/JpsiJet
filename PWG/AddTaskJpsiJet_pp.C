@@ -20,13 +20,22 @@ AliAnalysisTaskJpsiJet* AddTaskJpsiJet_pp(int trigIndex = int(kALL)){
   // Analysis Task
   AliAnalysisTaskJpsiJet *task = new AliAnalysisTaskJpsiJet(Form("JpsiJet_PP13TeV_%s", TRIGGER_TAG[trigIndex]));
 
-  task->SetTrigger(AliVEvent::kINT7 | AliVEvent::kEMCEGA);
+  switch(trigIndex){
+    case kALL:
+      task->SetTrigger(AliVEvent::kINT7 | AliVEvent::kEMCEGA);
+      task->SetTriggerQA(kTRUE); // Multi-triggers in single task
+      break;
+    case kINT7: 
+      task->SetTrigger(AliVEvent::kINT7);break;
+    case kMC:
+      task->SetTrigger(AliVEvent::kAny);
+      task->SetMC(kTRUE);
+      break;
+    default:
+      task->SetTrigger(AliVEvent::kEMCEGA);break;
+  }
   TString trigClass = TRIGGER_CLASS[trigIndex];
   task->SetTriggerClasses(trigClass.Data());
-  if(trigClass.Contains(";"))
-    task->SetTriggerQA(kTRUE); // Multi-triggers in single task
-
-  if(trigIndex == kMC) task->SetMC(kTRUE);
 
   //Event filter
   AliDielectronEventCuts *eventCuts = new AliDielectronEventCuts("eventCuts", "Vertex Track && |vtxZ|<10 && ncontrib>1");
