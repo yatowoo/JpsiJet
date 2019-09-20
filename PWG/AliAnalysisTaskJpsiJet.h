@@ -86,6 +86,7 @@ private:
 
   // FF analysis
 private:
+  Bool_t FindTrackInJet(AliEmcalJet* jet, AliVParticle* p, Int_t trackID);
   void InitHistogramsForTaggedJet(const char* histClass);
   Bool_t FillHistogramsForTaggedJet(const char* histClass);
 
@@ -199,7 +200,7 @@ private:
   THistManager      *fHistosMC;
 
 private:
-  ClassDef(AliAnalysisTaskJpsiJet, 4);
+  ClassDef(AliAnalysisTaskJpsiJet, 5);
 };
 
 #endif /* ALIANALYSISTASK_JPSIJET_H */

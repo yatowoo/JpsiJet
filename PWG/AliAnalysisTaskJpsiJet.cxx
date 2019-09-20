@@ -884,6 +884,30 @@ void AliAnalysisTaskJpsiJet::AddTrackFromPair(AliAODTrack* trkTemplate){
   trk->SetTrackPhiEtaPtOnEMCal(pair->M(), GetPseudoProperDecayTime(pair), 0.);
 }
 
+Bool_t AliAnalysisTaskJpsiJet::FindTrackInJet(AliEmcalJet* jet, AliVParticle* p, Int_t trackID){
+  // Find track in jet with track ID
+  // AliEmcalJetTask::fgkConstIndexShift = 100000
+  // track_ID_for_jet_finder = track_index_in_array + fgkConstIndexShift * index_of_track_container
+  // - More details in AliEmcalJetTask.cxx
+  Int_t fgkConstIndexShift = 100000;
+  
+  // Get index of track container
+  Int_t iCont = jet->TrackAt(0) / fgkConstIndexShift;
+  // Get track index for jet finder
+  Int_t trackLongID = trackID + iCont * fgkConstIndexShift; 
+  // Get track index in jet
+  Int_t trackJetID = jet->ContainsTrack(trackLongID);
+  if(trackJetID == -1) return kFALSE;
+  // Cross-check
+  Double_t TRACK_TOLERANCE = 1e-3;
+  AliVParticle* pJ = jet->Track(trackJetID);
+  if(TMath::Abs(pJ->Pt() - p->Pt()) > TRACK_TOLERANCE) return kFALSE;
+  if(TMath::Abs(pJ->Phi() - p->Phi()) > TRACK_TOLERANCE) return kFALSE;
+  if(TMath::Abs(pJ->Theta() - p->Theta()) > TRACK_TOLERANCE) return kFALSE;
+  
+  return kTRUE;
+}
+
 void AliAnalysisTaskJpsiJet::InitHistogramsForTaggedJet(const char *histClass){
   // THnSparse - pT_pair, M, Lxy, z, \DeltaR, pT_jet
   TString histName = Form("%s/PairVars",histClass);
@@ -924,7 +948,14 @@ Bool_t AliAnalysisTaskJpsiJet::FillHistogramsForTaggedJet(const char* histClass)
   // Find pair in jet
   AliEmcalJet *taggedJet = NULL;
   for(auto jet : jets->all()){
-    if(jet->HasParticleConstituent(pairTrack)){
+    if(FindTrackInJet(jet, pairTrack, pairTrackID)){
+      // DEBUG
+      if(jet->Pt() < pairTrack->Pt() - 0.01){
+        jet->Print();
+        pairTrack->Print();
+        AliWarning("J/psi candidate can not be found in this jet.");
+      }
+      // END - DEBUG
       taggedJet = jet;
       break;
     }
@@ -1363,7 +1394,7 @@ Bool_t AliAnalysisTaskJpsiJet::FillHistogramsForTaggedJetMC(AliAODMCParticle* jp
   // Find tagged jet
   AliEmcalJet* taggedJet = NULL;
   for(auto jet : jets->all()){
-    if(jet->HasParticleConstituent(jpsi)){
+    if(FindTrackInJet(jet, jpsi, fMCParticles->IndexOf(jpsi))){
       taggedJet = jet;
       break;
     }
