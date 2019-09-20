@@ -67,12 +67,12 @@ MARKER = SelectMarker()
 JPSI_MASS_LOWER = 2.92
 JPSI_MASS_UPPER = 3.16
 JPSI_LXY_PROMPT = 0.01
-JPSI_LXY_BDECAY = 0.02
-JPSI_PT_LOWER = 5.0
+JPSI_LXY_BDECAY = 0.01
+JPSI_PT_LOWER = 10.0
 JPSI_PT_UPPER = 50.0
 JPSI_Y_LOWER = -0.9
 JPSI_Y_UPPER = 0.9
-JET_PT_LOWER = 20.0
+JET_PT_LOWER = 15.0
 JET_PT_UPPER = 50.0
 
 # J/psi pT bins : 0 - 50, binw = 0.2, 0.5, 1, 2, 5
@@ -300,8 +300,8 @@ def GetDetectorResponse_FF(drm, tag):
   zMatrix.SetTitle("Detector response matrix - J/#psi in Jet (z) ("+tag+")")
   return zMatrix
 def GetDetectorResponse_JetPt(drm, tag):
-  drm.GetAxis(2).SetRangeUser(0., JET_PT_UPPER)
-  drm.GetAxis(3).SetRangeUser(0., JET_PT_UPPER)
+  drm.GetAxis(2).SetRangeUser(JET_PT_LOWER, JET_PT_UPPER)
+  drm.GetAxis(3).SetRangeUser(JET_PT_LOWER, JET_PT_UPPER)
   ptMatrix = drm.Projection(3,2)
   ptMatrix.SetName("hResponseJetPt_" + tag)
   ptMatrix.SetTitle("Detector response matrix - J/#psi tagged jet p_{T} ("+tag+")")

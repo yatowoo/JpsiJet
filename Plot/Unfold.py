@@ -1,6 +1,17 @@
 #!/usr/bin/env python3
 # Test for RooUnfold
 
+import argparse
+
+# Command-line Arguments
+parser = argparse.ArgumentParser(description='Post-processing script for AliAnalysisTaskJpsiJet')
+parser.add_argument('--raw',help='Outputs contains raw Z (from JpsiJetAna)', default="../JpsiJetAna.root")
+parser.add_argument('--mc',help='Outputs contains raw Z (from JpsiJetAna --mc)', default="../JpsiJetMC.root")
+parser.add_argument('-o', '--output',help='Output file path', default='UnfoldFF.root')
+parser.add_argument('-p', '--print',help='Output file path', default='UnfoldFF.pdf')
+args = parser.parse_args()
+
+# ROOT libs
 import ROOT
 from ROOT import TFile, TCanvas, TLegend
 from ROOT import RooUnfold, RooUnfoldBayes, RooUnfoldSvd, RooUnfoldResponse
@@ -13,12 +24,12 @@ padFF.Divide(2)
 padFF.Draw()
 
 # Data outputs
-raw = TFile('../JpsiJetAna.root')
+raw = TFile(args.raw)
 # MC outputs
-mc = TFile('../output/QM19/JpsiJetMC.root')
+mc = TFile(args.mc)
 
-printFile = '../output/QM19/UnfoldFF.pdf'
-out = TFile('../output/QM19/UnfoldFF.root')
+printFile = args.print
+out = TFile(args.output, 'RECREATE')
 PrintCover(padFF, printFile, 'Jpsi in jets analysis - Unfolding', )
 
 def DrawFF(hist, name):
@@ -56,9 +67,12 @@ def UnfoldFF(rawFF, detResponse, tag):
   for nIter in range(4,5):
     bayes.SetIterations(nIter)
     hist = DrawFF(bayes.Hreco(0), 'hBayes' + repr(nIter) + '_' + tag)
+    for ix in range(1,hist.GetNbinsX()):
+      hist.SetBinError(ix, rawFF.GetBinError(ix))
     lgd.AddEntry(hist, 'Bayes (N=%d)' % nIter)
   lgd.Draw('same')
   padFF.Print(printFile, 'Title:'+tag)
+  padFF.Write('c' + tag)
 
 detMix = mc.hResponseFF_Prompt.Clone('hDetMix')
 detMix.Add(mc.hResponseFF_Bdecay)
