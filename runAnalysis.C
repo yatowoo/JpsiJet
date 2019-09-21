@@ -181,17 +181,15 @@ void runAnalysis(
 
   // Task - JpsiJet
   if(doDevPWG){
-    gInterpreter->AddIncludePath("./PWG");
-    gInterpreter->LoadMacro("AliAnalysisTaskJpsiJet.cxx++g");
     if(isMC)
-      gInterpreter->ExecuteMacro("AddTaskJpsiJet_pp.C(6)");
+      gInterpreter->ExecuteMacro("$ALICE_PHYSICS/PWGDQ/dielectron/macrosJPSI/AddTaskJpsiJet_pp.C(kMC)");
     else{
-      gInterpreter->ExecuteMacro("AddTaskJpsiJet_pp.C(0)");
-      gInterpreter->Execute("AddTaskJpsiJet_pp","1");
-      gInterpreter->Execute("AddTaskJpsiJet_pp","2");
-      gInterpreter->Execute("AddTaskJpsiJet_pp","3");
-      gInterpreter->Execute("AddTaskJpsiJet_pp","4");
-      gInterpreter->Execute("AddTaskJpsiJet_pp","5");
+      gInterpreter->ExecuteMacro("$ALICE_PHYSICS/PWGDQ/dielectron/macrosJPSI/AddTaskJpsiJet_pp.C(kALL,kTRUE)");
+      gInterpreter->Execute("AddTaskJpsiJet_pp","kINT7,kFALSE");
+      gInterpreter->Execute("AddTaskJpsiJet_pp","kEG1,kFALSE");
+      gInterpreter->Execute("AddTaskJpsiJet_pp","kEG2,kFALSE");
+      gInterpreter->Execute("AddTaskJpsiJet_pp","kDG1,kFALSE");
+      gInterpreter->Execute("AddTaskJpsiJet_pp","kDG2,kFALSE"); 
     }
   }
 

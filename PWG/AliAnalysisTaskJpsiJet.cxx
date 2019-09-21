@@ -36,6 +36,8 @@ class AliGenEventHeader;
 class AliDielectronVarCuts;
 class AliDielectronTrackCuts;
 class AliDielectronPairLegCuts;
+class AliJetContainer;
+
 class AliAnalysisTaskJpsiJet;
 
 using namespace std;
@@ -58,6 +60,7 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet():
   fIsPileup(kFALSE),
   fIsTriggerQA(kFALSE),
   fIsCellQA(kFALSE),
+  fIsJetFinder(kTRUE),
   fIsMC(kFALSE),
   fMCParticles(NULL),
   fMCHeader(NULL),
@@ -89,6 +92,7 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   fIsPileup(kFALSE),
   fIsTriggerQA(kFALSE),
   fIsCellQA(kFALSE),
+  fIsJetFinder(kTRUE),
   fIsMC(kFALSE),
   fMCParticles(NULL),
   fMCHeader(NULL),
@@ -151,7 +155,7 @@ void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
   if(!fIsTriggerQA)
     InitHistogramsForClusterQA("Cluster");
   else{
-    InitHistogramsForClusterQA("Cluster_INT7");
+    InitHistogramsForClusterQA("Cluster_MB");
     InitHistogramsForClusterQA("Cluster_EG1");
     InitHistogramsForClusterQA("Cluster_EG2");
     InitHistogramsForClusterQA("Cluster_DG1");
@@ -238,15 +242,17 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
     FillHistogramsForClusterQA("Cluster");
   else{
     if(offlineTrigger & AliVEvent::kINT7)
-      FillHistogramsForClusterQA("Cluster_INT7");
-    if(fFiredTriggerTag.Contains("EG1"))
-      FillHistogramsForClusterQA("Cluster_EG1");
-    if(fFiredTriggerTag.Contains("EG2"))
-      FillHistogramsForClusterQA("Cluster_EG2");
-    if(fFiredTriggerTag.Contains("DG1"))
-      FillHistogramsForClusterQA("Cluster_DG1");
-    if(fFiredTriggerTag.Contains("DG2"))
-      FillHistogramsForClusterQA("Cluster_DG2");
+      FillHistogramsForClusterQA("Cluster_MB");
+    if(offlineTrigger & AliVEvent::kEMCEGA){
+      if(fFiredTriggerTag.Contains("EG1"))
+        FillHistogramsForClusterQA("Cluster_EG1");
+      if(fFiredTriggerTag.Contains("EG2"))
+        FillHistogramsForClusterQA("Cluster_EG2");
+      if(fFiredTriggerTag.Contains("DG1"))
+        FillHistogramsForClusterQA("Cluster_DG1");
+      if(fFiredTriggerTag.Contains("DG2"))
+        FillHistogramsForClusterQA("Cluster_DG2");
+    }
   }
 
   // Reset data members
@@ -538,9 +544,7 @@ void AliAnalysisTaskJpsiJet::InitJetFinders(){
 }
 
 Bool_t AliAnalysisTaskJpsiJet::RunJetFinder(const char* jetTag){
-  // HOTFIX : To be more elegant
-  //  a flag for ALL task in data, which should be always added.
-  if(!fIsTriggerQA && !fIsMC) return kTRUE;
+  if(!fIsJetFinder) return kTRUE;
   AliEmcalJetTask* jetFinder = NULL;
   TIter next(fJetTasks);
   while((jetFinder=(AliEmcalJetTask*)next())){
