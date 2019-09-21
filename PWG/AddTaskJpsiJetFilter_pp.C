@@ -2,13 +2,13 @@ AliAnalysisTaskJpsiJetFilter* AddTaskJpsiJetFilter_pp(Bool_t storeLS = kFALSE, B
   //get the current analysis manager
   AliAnalysisManager *mgr = AliAnalysisManager::GetAnalysisManager();
   if (!mgr) {
-    AliFatal("No analysis manager found.");
+    Error("AliAnalysisTaskJpsiJetFilter", "No analysis manager found.");
     exit(1);
   }
   
   //check for output aod handler
   if (!mgr->GetOutputEventHandler()||mgr->GetOutputEventHandler()->IsA()!=AliAODHandler::Class()) {
-    AliFatal("No AOD output handler available. Not adding the task!");
+    Error("AliAnalysisTaskJpsiJetFilter", "No AOD output handler available. Not adding the task!");
     exit(1);
   }
 
@@ -17,7 +17,7 @@ AliAnalysisTaskJpsiJetFilter* AddTaskJpsiJetFilter_pp(Bool_t storeLS = kFALSE, B
   //Do we run on AOD?
   Bool_t isAOD=mgr->GetInputEventHandler()->IsA()==AliAODInputHandler::Class();
   if(!isAOD || hasMC){
-    AliFatal("This task ONLY supports AOD event");
+    Error("AliAnalysisTaskJpsiJetFilter", "This task ONLY supports AOD event");
     exit(1);
   }
 
