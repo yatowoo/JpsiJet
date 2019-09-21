@@ -77,8 +77,7 @@ private:
   
   TClonesArray* fPairs;  // J/psi candidates - AliDielectronPair
   TClonesArray* fDaughters; // Daughters of e+e- pairs
-  TClonesArray* fJets02; // Jet found with R=0.2 - AliEmcalJet
-  TClonesArray* fJets04; // Jet found with R=0.4 - AliEmcalJet
+  TClonesArray* fJets; // Jet found with R=0.4 - AliEmcalJet
 
 private:
   void FillJets(AliAODEvent* aodEv, TClonesArray* jetArray, TString jetName);
@@ -107,16 +106,11 @@ public:
   void SetStoreRotatedPairs(Bool_t storeTR) { fStoreRotatedPairs = storeTR; }
   void SetStoreEventsWithSingleTracks(Bool_t storeSingleTrk) { fStoreEventsWithSingleTracks = storeSingleTrk; }
   void SetCreateNanoAODs(Bool_t storeTrackRef) { fCreateNanoAOD = storeTrackRef; }
-  void SetStoreHeader(Bool_t storeHeader) { fStoreHeader = storeHeader; }
-  void SetStoreEventplanes(Bool_t storeEventplanes) {fStoreEventplanes = storeEventplanes;}
 
   void SetEventFilter(AliAnalysisCuts * const filter) {fEventFilter=filter;}
 
 private:
   enum {kAllEvents=0, kSelectedEvents, kV0andEvents, kFilteredEvents, kPileupEvents, kNbinsEvent};
-
-  void SetHeaderData(AliAODHeader* hin, AliAODHeader* hout, Double_t values[AliDielectronVarManager::kNMaxValues]);
-
 
   AliDielectron *fDielectron;             // J/psi framework object
 
@@ -136,15 +130,10 @@ private:
   Bool_t fStoreRotatedPairs;    // flag to store rotation
   Bool_t fStoreEventsWithSingleTracks;    // flag to store events with a least one reconstructed track
   Bool_t fCreateNanoAOD;        // flag to create nanoAODs
-  Bool_t fStoreHeader;          // flag to store header for all events
-  Bool_t fStoreEventplanes;     // flag to store eventplane information in a seperated tree
-  Bool_t AddMetadataToUserInfo(); // Function to add ProdInfo to Nano AOD Tree
-  Bool_t Notify(); // Function to add ProdInfo to Nano AOD Tree
 
   AliAnalysisCuts *fEventFilter;     // event filter
-  TList *fQnList; //! List for the storage of the output of the QnFramework needed for event-plane analysis since 2016
 
-  ClassDef(AliAnalysisTaskJpsiJetFilter, 1);
+  ClassDef(AliAnalysisTaskJpsiJetFilter, 2);
 
 };
 #endif // #ifndef ALIANALYSISTASK_JPSIJET_FILTER_H

@@ -25,8 +25,7 @@ AliAnalysisTaskJpsiJetFilter::AliAnalysisTaskJpsiJetFilter() :
   fAODTZERO(0x0),
   fPairs(0x0),
   fDaughters(0x0),
-  fJets02(0x0),
-  fJets04(0x0),
+  fJets(0x0),
   fDielectron(0),
   fSelectPhysics(kTRUE),
   fTriggerMask(AliVEvent::kMB),
@@ -40,10 +39,7 @@ AliAnalysisTaskJpsiJetFilter::AliAnalysisTaskJpsiJetFilter() :
   fStoreRotatedPairs(kFALSE),
   fStoreEventsWithSingleTracks(kFALSE),
   fCreateNanoAOD(kFALSE),
-  fStoreHeader(kFALSE),
-  fStoreEventplanes(kFALSE),
-  fEventFilter(0x0),
-  fQnList(0x0)
+  fEventFilter(0x0)
 {}
 
 AliAnalysisTaskJpsiJetFilter::AliAnalysisTaskJpsiJetFilter(const char* name) : 
@@ -62,8 +58,7 @@ AliAnalysisTaskJpsiJetFilter::AliAnalysisTaskJpsiJetFilter(const char* name) :
   fAODTZERO(0x0),
   fPairs(0x0),
   fDaughters(0x0),
-  fJets02(0x0),
-  fJets04(0x0),
+  fJets(0x0),
   fDielectron(0),
   fSelectPhysics(kTRUE),
   fTriggerMask(AliVEvent::kMB),
@@ -77,10 +72,7 @@ AliAnalysisTaskJpsiJetFilter::AliAnalysisTaskJpsiJetFilter(const char* name) :
   fStoreRotatedPairs(kFALSE),
   fStoreEventsWithSingleTracks(kFALSE),
   fCreateNanoAOD(kFALSE),
-  fStoreHeader(kFALSE),
-  fStoreEventplanes(kFALSE),
-  fEventFilter(0x0),
-  fQnList(0x0)
+  fEventFilter(0x0)
 {
   DefineInput(0,TChain::Class());
   DefineOutput(1, THashList::Class());
@@ -98,8 +90,6 @@ AliAnalysisTaskJpsiJetFilter::~AliAnalysisTaskJpsiJetFilter()
     delete fTriggerAnalysis;
   if(fEventFilter)
     delete fEventFilter;
-  if(fQnList)
-    delete fQnList;
   if(fExtAOD) delete fExtAOD;
   if(fSPD) delete fSPD;
   if(fEMCALTrigger) delete fEMCALTrigger;
@@ -117,44 +107,10 @@ AliAnalysisTaskJpsiJetFilter::~AliAnalysisTaskJpsiJetFilter()
     fDaughters->Clear("C");
     delete fDaughters;
   }
-  if(fJets02){
-    fJets02->Clear("C");
-    delete fJets02;
+  if(fJets){
+    fJets->Clear("C");
+    delete fJets;
   }
-  if(fJets04){
-    fJets04->Clear("C");
-    delete fJets04;
-  }
-}
-
-Bool_t AliAnalysisTaskJpsiJetFilter::Notify()
-{
-  AddMetadataToUserInfo();
-  return kTRUE;
-}
-
-Bool_t AliAnalysisTaskJpsiJetFilter::AddMetadataToUserInfo()
-{
-  static Bool_t copyFirst = kFALSE;
-  if (!copyFirst) {
-    AliAnalysisManager *mgr = AliAnalysisManager::GetAnalysisManager();
-    if (!mgr) {
-      AliError("AliAnalysisTaskJpsiJetFilter::AddMetadataToUserInfo() : No analysis manager !");
-      return kFALSE;
-    }
-    TTree *aodTree = mgr->GetTree()->GetTree();
-    if (!aodTree) return kFALSE;
-    TNamed *alirootVersion = (TNamed*)aodTree->GetUserInfo()->FindObject("alirootVersion");
-    if (!alirootVersion) return kFALSE;
-    AliAODHandler *aodHandler = dynamic_cast<AliAODHandler*>(mgr->GetOutputEventHandler());
-    if (!aodHandler) return kFALSE;
-    AliAODExtension *extDielectron = aodHandler->GetFilteredAOD("AliAOD.Dielectron.root");
-    TTree *nanoaodTree = extDielectron->GetTree();
-    if (!nanoaodTree) return kFALSE;
-    nanoaodTree->GetUserInfo()->Add(new TNamed(*alirootVersion));
-    copyFirst = kTRUE;
-  }
-  return kTRUE;
 }
 
 void AliAnalysisTaskJpsiJetFilter::UserCreateOutputObjects()
@@ -225,12 +181,9 @@ void AliAnalysisTaskJpsiJetFilter::UserCreateOutputObjects()
   fPairs = new TClonesArray("AliDielectronPair",10);
   fPairs->SetName("dielectrons");
   fExtAOD->AddBranch("TClonesArray", &fPairs);
-  fJets02 = new TClonesArray("AliEmcalJet", 100);
-  fJets02->SetName("jets02");
-  fExtAOD->AddBranch("TClonesArray", &fJets02);
-  fJets04 = new TClonesArray("AliEmcalJet", 100);
-  fJets04->SetName("jets04");
-  fExtAOD->AddBranch("TClonesArray", &fJets04);
+  fJets = new TClonesArray("AliEmcalJet", 100);
+  fJets->SetName("jets");
+  fExtAOD->AddBranch("TClonesArray", &fJets);
 
   fExtAOD->GetAOD()->GetStdContent();
 
@@ -328,28 +281,15 @@ void AliAnalysisTaskJpsiJetFilter::UserExec(Option_t*){
   AliDielectronHistos *h = fDielectron->GetHistoManager();
 
   Double_t values[AliDielectronVarManager::kNMaxValues] = {0};
-  Double_t valuesMC[AliDielectronVarManager::kNMaxValues] = {0};
   if (h)
     AliDielectronVarManager::SetFillMap(h->GetUsedVars());
   else
     AliDielectronVarManager::SetFillMap(0x0);
   AliDielectronVarManager::SetEvent(InputEvent());
   AliDielectronVarManager::Fill(InputEvent(), values);
-  AliDielectronVarManager::Fill(InputEvent(), valuesMC);
 
-  Bool_t hasMC = fDielectron->GetHasMC();
-  if (hasMC)
-  {
-    if (AliDielectronMC::Instance()->ConnectMCEvent())
-      AliDielectronVarManager::Fill(AliDielectronMC::Instance()->GetMCEvent(), valuesMC);
-  }
-
-  if (h)
-  {
-    if (h->GetHistogramList()->FindObject("Event_noCuts"))
-      h->FillClass("Event_noCuts", AliDielectronVarManager::kNMaxValues, values);
-    if (hasMC && h->GetHistogramList()->FindObject("MCEvent_noCuts"))
-      h->FillClass("Event_noCuts", AliDielectronVarManager::kNMaxValues, valuesMC);
+  if (h && h->GetHistogramList()->FindObject("Event_noCuts")){
+    h->FillClass("Event_noCuts", AliDielectronVarManager::kNMaxValues, values);
   }
 
   //event filter
@@ -516,7 +456,7 @@ void AliAnalysisTaskJpsiJetFilter::UserExec(Option_t*){
 
 
     // Fill jets
-    FillJets(aodEv, fJets04, "Jet_AKTChargedR040_tracks_pT0150_pt_scheme");
+    FillJets(aodEv, fJets, "Jet_AKTChargedR040_tracks_pT0150_pt_scheme");
 
     // Write output
     fExtAOD->SelectEvent();
@@ -526,13 +466,6 @@ void AliAnalysisTaskJpsiJetFilter::UserExec(Option_t*){
     delete tmp;
     delete tmpSPD;
     delete tmpTPC;
-  }
-
-  
-  // Clear pair arrays -- from fDielectron->ClearArrays();
-  for (Int_t i=0;i<11;++i){
-    TObjArray* pairArr = (TObjArray *)((*(fDielectron->GetPairArraysPointer()))->UncheckedAt(i));
-    if (pairArr) pairArr->Delete();
   }
 
   PostData(1, const_cast<THashList *>(fDielectron->GetHistogramList()));

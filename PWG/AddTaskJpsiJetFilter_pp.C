@@ -2,7 +2,7 @@ AliAnalysisTaskJpsiJetFilter* AddTaskJpsiJetFilter_pp(Bool_t storeLS = kFALSE, B
   //get the current analysis manager
   AliAnalysisManager *mgr = AliAnalysisManager::GetAnalysisManager();
   if (!mgr) {
-    AliFatal("AddTaskJPSIFilter", "No analysis manager found.");
+    AliFatal("No analysis manager found.");
     exit(1);
   }
   
