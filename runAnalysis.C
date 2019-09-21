@@ -104,12 +104,12 @@ void runAnalysis(
     Bool_t doEmcalCorrection = kFALSE,
     Bool_t doJetQA = kFALSE,
     Bool_t doJpsiQA = kFALSE,
-    Bool_t doJpsiFilter = kFALSE,
+    Bool_t doJpsiFilter = kTRUE,
     Bool_t doPIDQA = kFALSE,
     Bool_t doPhysAna = kFALSE,
     TString mode = "local",
     TString datasets = "16k_pass1",
-    TString data_dir = "2017/LHC17h2h",
+    TString data_dir = "2016/LHC16k",
     TString work_dir = "test",
     TString task_name = "JpsiJet"
 ){
@@ -168,13 +168,6 @@ void runAnalysis(
   if(doPIDQA)
     gInterpreter->ExecuteMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDqa.C");
 
-  // Task - J/psi Filter
-  if(doJpsiFilter){
-    gInterpreter->LoadMacro("YatoJpsiFilterTask.cxx++g");
-    gInterpreter->ExecuteMacro(Form("AddTaskJPSIFilter.C(%d)",int(doPhysAna)));
-    aodOutputH->SetOutputFileName("AliAOD.root");
-    mgr->RegisterExtraFile("AliAOD.Dielectron.root");
-  }
   // Task - J/psi QA
   if(doJpsiQA)
     gInterpreter->ExecuteMacro(Form("AddTaskJpsiQA.C(%d,\"%s\")", doJpsiFilter,datasets.Data()));
@@ -194,7 +187,14 @@ void runAnalysis(
       gInterpreter->Execute("AddTaskJpsiJet_pp","kDG2,kFALSE"); 
     }
   }
-
+  // Task - J/psi Filter
+  if(doJpsiFilter){
+    gInterpreter->AddIncludePath("./PWG");
+    gInterpreter->LoadMacro("AliAnalysisTaskJpsiJetFilter.cxx++g");
+    gInterpreter->ExecuteMacro("AddTaskJpsiJetFilter_pp.C");
+    aodOutputH->SetOutputFileName("AliAOD.root");
+    mgr->RegisterExtraFile("AliAOD.Dielectron.root");
+  }
   // Start analysis
   if(!mgr->InitAnalysis()) return;
   mgr->PrintStatus();
