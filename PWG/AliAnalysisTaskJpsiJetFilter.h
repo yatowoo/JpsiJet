@@ -60,6 +60,9 @@ public:
    Bool_t RejectPileup(){return fRejectPileup;}
    void SetRejectPileup(Bool_t p = kTRUE){fRejectPileup = p;}
 
+  void InitDielectron();
+  void InitHistogramsForDielectron(const char* histMgrName);
+
 private:
   Bool_t fIsToMerge; // Option for AliAODExtension
   Bool_t fIsToReplace; // Option for e+e- Pair-Track replacing

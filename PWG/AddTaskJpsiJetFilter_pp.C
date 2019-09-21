@@ -43,11 +43,9 @@ AliAnalysisTaskJpsiJetFilter* AddTaskJpsiJetFilter_pp(Bool_t storeLS = kFALSE, B
   eventCuts->SetMinVtxContributors(1);
   eventCuts->SetVertexZ(-10., 10.);
   task->SetEventFilter(eventCuts);
-  // Add AliDielectron
-    // kEMCEGA + EMCal_loose
-  AliDielectron* jpsi = reinterpret_cast<AliDielectron *>(gInterpreter->ExecuteMacro(Form("ConfigJpsi_cj_pp.C(%d,%d,2)", 3, 1)));
-  jpsi->SetHasMC(kFALSE);
-  task->SetDielectron(jpsi);
+  // Add AliDielectron - if not set, apply internal config
+  task->InitDielectron();
+  task->InitHistogramsForDielectron("DieFilterHistos");
 
   mgr->AddTask(task);
 
