@@ -67,6 +67,8 @@ public:
 public:
   void   SetTriggerQA(Bool_t enableTriggerQA = kTRUE){ fIsTriggerQA = enableTriggerQA;}
   Bool_t GetTriggerQA(){return fIsTriggerQA;}
+  void   SetCellQA(Bool_t enableCellQA = kTRUE){ fIsCellQA = enableCellQA;}
+  Bool_t GetCellQA(){return fIsCellQA;}
 private:
   void InitHistogramsForEventQA(const char* histClass);
   void InitHistogramsForClusterQA(const char* histClass);
@@ -183,6 +185,7 @@ private:
   Bool_t             fRejectPileup;
   Bool_t             fIsPileup;
   Bool_t             fIsTriggerQA; // Add QA histograms by trigger classes
+  Bool_t             fIsCellQA; // Add QA histograms by Cell ID
   Bool_t             fIsMC;  // Input MC production
   TClonesArray      *fMCParticles; // AOD event object in MC
   AliAODMCHeader    *fMCHeader;    // AOD event object in MC

@@ -57,6 +57,7 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet():
   fRejectPileup(kFALSE),
   fIsPileup(kFALSE),
   fIsTriggerQA(kFALSE),
+  fIsCellQA(kFALSE),
   fIsMC(kFALSE),
   fMCParticles(NULL),
   fMCHeader(NULL),
@@ -87,6 +88,7 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   fRejectPileup(kFALSE),
   fIsPileup(kFALSE),
   fIsTriggerQA(kFALSE),
+  fIsCellQA(kFALSE),
   fIsMC(kFALSE),
   fMCParticles(NULL),
   fMCHeader(NULL),
@@ -235,7 +237,7 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
   if(!fIsTriggerQA)
     FillHistogramsForClusterQA("Cluster");
   else{
-    if(fFiredTriggerTag.Contains("INT7"))
+    if(offlineTrigger & AliVEvent::kINT7)
       FillHistogramsForClusterQA("Cluster_INT7");
     if(fFiredTriggerTag.Contains("EG1"))
       FillHistogramsForClusterQA("Cluster_EG1");
@@ -371,29 +373,26 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForEventQA(const char* histClass){
 
 // Cluster QA - EMCal ONLY
 void AliAnalysisTaskJpsiJet::InitHistogramsForClusterQA(const char* histClass){
-  // E, x, y, z, Ncell
-  Int_t nBins[5]   = { 500,   100,   100,   100,   101};
-  Double_t xmin[5] = {0.,   -500., -500., -500.,  -0.5};
-  Double_t xmax[5] = {100.,  500.,  500.,  500., 100.5};
-  fHistos->CreateTHnSparse(Form("%s/ClsVars", histClass), "Cluster kinetic variables (E-x-y-z-Ncells);E (GeV);Position X (cm);Position Y (cm);Position Z (cm);N_{cells};", 5, nBins, xmin, xmax);
-  // N mathced tracks
-  fHistos->CreateTH1(Form("%s/Ntracks", histClass), "Number of matched tracks;N_{trk};N_{cls}", 10, -0.5, 9.5);
-  // Shower shape - E, M02, M20, Dispersion
-  Int_t nBinsShape[4]   = { 500, 200, 1000, 1000};
-  Double_t xminShape[4] = {  0.,  0.,   0.,   0.};
-  Double_t xmaxShape[4] = {100., 20.,  10.,  10.};
-  fHistos->CreateTHnSparse(Form("%s/ShapeVars", histClass), "Cluster shower shape params (E-M02-M20-Dispersion);E (GeV);M02;M20;Dispersion;", 4, nBinsShape, xminShape, xmaxShape);
+  // Cluster energy, and with Ncell, Nmatched tracks, dispersion
+  fHistos->CreateTH1(Form("%s/E", histClass), "Cluster energy distribution;Energy (GeV);N_{cls};", 500, 0., 100.);
+  fHistos->CreateTH2(Form("%s/E_Ncell", histClass), "Cluster cell number vs energy;Energy (GeV);N_{cell};", 500, 0., 100., 101, -0.5, 100.5);
+  fHistos->CreateTH2(Form("%s/E_Ntrk", histClass), "Cluster matched tracks vs energy;Energy (GeV);N_{trk};", 500, 0., 100., 21, -0.5, 20.5);
+  // Shower shape parameters - Dispersion, M02, M20
+  fHistos->CreateTH2(Form("%s/E_Dispersion", histClass), "Cluster dispersion vs energy;Energy (GeV);Dispersion;", 500, 0., 100., 1000, 0., 10.);
+  fHistos->CreateTH2(Form("%s/M02_M20", histClass), "Cluster shape parameter - M02 vs M20;M02;M20;", 200, 0., 20., 500, 0., 5.);
 
   // Cell QA
-  // E vs Cell ID (0-18000 for EMCal)
-  fHistos->CreateTH2(Form("%s/CellEnergy", histClass), "Cluster Cell Energy;CellID;E_{cell}", 18001, -0.5, 18000.5, 500, 0., 100.);
-  // Time vs Cell ID
-  fHistos->CreateTH2(Form("%s/CellTime", histClass), "Cluster Cell Time;CellID;T_{cell} (#mus)", 18001, -0.5, 18000.5, 200, -0.5, 1.5);
+    // NOTICE: Large memory would be allocated here
+  if(fIsCellQA){
+    // E vs Cell ID (0-18000 for EMCal)
+    fHistos->CreateTH2(Form("%s/CellEnergy", histClass), "Cluster Cell Energy;CellID;E_{cell}", 18001, -0.5, 18000.5, 100, 0., 20.);
+    // Time vs Cell ID
+    fHistos->CreateTH2(Form("%s/CellTime", histClass), "Cluster Cell Time;CellID;T_{cell} (#mus);", 18001, -0.5, 18000.5, 300, -1.5, 1.5);
+  }
 }
 
 void AliAnalysisTaskJpsiJet::FillHistogramsForClusterQA(const char* histClass){
   // Loop EMCal clusters
-  auto cells = fAOD->GetEMCALCells();
   for(int iCls = 0; iCls < fAOD->GetNumberOfCaloClusters(); iCls++){
     auto cls = (AliAODCaloCluster*)(fAOD->GetCaloCluster(iCls));
     if(!cls->IsEMCAL()) continue;
@@ -405,19 +404,23 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForClusterQA(const char* histClass){
     Double_t m20         = cls->GetM20();
     Double_t dispersion  = cls->GetDispersion();
 
-    Double_t clsVars[5] = {energy, pos[0], pos[1], pos[2], nCell};
-    fHistos->FillTHnSparse(Form("%s/ClsVars", histClass), clsVars);
-    fHistos->FillTH1(Form("%s/Ntracks", histClass), nTracks);
-    Double_t shapeVars[4] = {energy, m02, m20, dispersion};
-    fHistos->FillTHnSparse(Form("%s/ShapeVars", histClass), shapeVars);
-    // Loop cells
-    for(int iCell = 0; iCell < nCell; iCell++){
-      Double_t cellID    = cls->GetCellAbsId(iCell);
-      Double_t cellE  = cells->GetCellAmplitude(cellID);
-      Double_t cellT  = cells->GetCellTime(cellID);
+    fHistos->FillTH1(Form("%s/E", histClass), energy);
+    fHistos->FillTH2(Form("%s/E_Ncell", histClass), energy, nCell);
+    fHistos->FillTH2(Form("%s/E_Ntrk", histClass), energy, nTracks);
+    fHistos->FillTH2(Form("%s/E_Dispersion", histClass), energy, dispersion);
+    fHistos->FillTH2(Form("%s/M02_M20", histClass), m02, m20);
 
-      fHistos->FillTH1(Form("%s/CellEnergy", histClass), cellID, cellE);
-      fHistos->FillTH1(Form("%s/CellTime", histClass), cellID, cellT * 1e6);
+    // Cell QA - Loop cells
+    if(fIsCellQA){
+      auto cells = fAOD->GetEMCALCells();
+      for(int iCell = 0; iCell < nCell; iCell++){
+        Double_t cellID    = cls->GetCellAbsId(iCell);
+        Double_t cellE  = cells->GetCellAmplitude(cellID);
+        Double_t cellT  = cells->GetCellTime(cellID);
+
+        fHistos->FillTH1(Form("%s/CellEnergy", histClass), cellID, cellE);
+        fHistos->FillTH1(Form("%s/CellTime", histClass), cellID, cellT * 1e6);
+      }
     }// End - Loop cells
   }// End - Loop clusters
 }
