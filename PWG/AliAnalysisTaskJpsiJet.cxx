@@ -887,25 +887,33 @@ void AliAnalysisTaskJpsiJet::AddTrackFromPair(AliAODTrack* trkTemplate){
 Bool_t AliAnalysisTaskJpsiJet::FindTrackInJet(AliEmcalJet* jet, AliVParticle* p, Int_t trackID){
   // Find track in jet with track ID
   // AliEmcalJetTask::fgkConstIndexShift = 100000
-  // track_ID_for_jet_finder = track_index_in_array + fgkConstIndexShift * index_of_track_container
+  // track_long_ID_for_jet_finder = track_index_in_array + fgkConstIndexShift * index_of_track_container
   // - More details in AliEmcalJetTask.cxx
   Int_t fgkConstIndexShift = 100000;
-  
+
   // Get index of track container
   Int_t iCont = jet->TrackAt(0) / fgkConstIndexShift;
   // Get track index for jet finder
-  Int_t trackLongID = trackID + iCont * fgkConstIndexShift; 
+  Int_t trackLongID = trackID + iCont * fgkConstIndexShift;
   // Get track index in jet
   Int_t trackJetID = jet->ContainsTrack(trackLongID);
   if(trackJetID == -1) return kFALSE;
   // Cross-check
-  Double_t TRACK_TOLERANCE = 1e-3;
+  const Double_t TRACK_TOLERANCE = 1e-3;
   AliVParticle* pJ = jet->Track(trackJetID);
-  if(TMath::Abs(pJ->Pt() - p->Pt()) > TRACK_TOLERANCE) return kFALSE;
-  if(TMath::Abs(pJ->Phi() - p->Phi()) > TRACK_TOLERANCE) return kFALSE;
-  if(TMath::Abs(pJ->Theta() - p->Theta()) > TRACK_TOLERANCE) return kFALSE;
-  
-  return kTRUE;
+  Bool_t passCrossCheck = kTRUE;
+  if(TMath::Abs(pJ->Pt() - p->Pt()) > TRACK_TOLERANCE)
+    passCrossCheck = kFALSE;
+  if(TMath::Abs(pJ->Phi() - p->Phi()) > TRACK_TOLERANCE)
+    passCrossCheck = kFALSE;
+  if(TMath::Abs(pJ->Theta() - p->Theta()) > TRACK_TOLERANCE)
+    passCrossCheck = kFALSE;
+  if(!passCrossCheck){
+    AliWarning(Form("Difference between tracks in more than %.1e", TRACK_TOLERANCE))
+    pJ->Print();
+    AliWarning(Form("Track pT:%.3f/%.3f, phi:%.3f/%.3f, theta:%.3f/%.3f", pJ->Pt(), p->Pt(), pJ->Phi(), p->Phi(), pJ->Theta(), p->Theta()))
+  }
+  return passCrossCheck;
 }
 
 void AliAnalysisTaskJpsiJet::InitHistogramsForTaggedJet(const char *histClass){
@@ -949,13 +957,6 @@ Bool_t AliAnalysisTaskJpsiJet::FillHistogramsForTaggedJet(const char* histClass)
   AliEmcalJet *taggedJet = NULL;
   for(auto jet : jets->all()){
     if(FindTrackInJet(jet, pairTrack, pairTrackID)){
-      // DEBUG
-      if(jet->Pt() < pairTrack->Pt() - 0.01){
-        jet->Print();
-        pairTrack->Print();
-        AliWarning("J/psi candidate can not be found in this jet.");
-      }
-      // END - DEBUG
       taggedJet = jet;
       break;
     }
