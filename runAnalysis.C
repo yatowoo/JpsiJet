@@ -181,10 +181,12 @@ void runAnalysis(
 
   // Task - JpsiJet
   if(doDevPWG){
+    gInterpreter->AddIncludePath("./PWG");
+    gInterpreter->LoadMacro("AliAnalysisTaskJpsiJet.cxx++g");
     if(isMC)
-      gInterpreter->ExecuteMacro("$ALICE_PHYSICS/PWGDQ/dielectron/macrosJPSI/AddTaskJpsiJet_pp.C(kMC)");
+      gInterpreter->ExecuteMacro("AddTaskJpsiJet_pp.C(kMC)");
     else{
-      gInterpreter->ExecuteMacro("$ALICE_PHYSICS/PWGDQ/dielectron/macrosJPSI/AddTaskJpsiJet_pp.C(kALL,kTRUE)");
+      gInterpreter->ExecuteMacro("AddTaskJpsiJet_pp.C(kALL,kTRUE)");
       gInterpreter->Execute("AddTaskJpsiJet_pp","kINT7,kFALSE");
       gInterpreter->Execute("AddTaskJpsiJet_pp","kEG1,kFALSE");
       gInterpreter->Execute("AddTaskJpsiJet_pp","kEG2,kFALSE");
