@@ -1,9 +1,16 @@
 #!/usr/bin/env python3
 
-import json
+import sys, os, time, json
 import argparse
-import sys
-import os
+
+# Command-line arguments
+parser = argparse.ArgumentParser(description='AliEn job running script for ALICE analysis tasks')
+parser.add_argument('period',help='ALICE run period')
+parser.add_argument('mode',help='Analysis mode : local, test, full, merge')
+parser.add_argument('--tag',help='Job tags for masterjob and work dir', default='QM')
+parser.add_argument('--date',help='Job date stamp (YYMMDD)', default='190920')
+parser.add_argument('--mc',help='MC flag for DrawMC methods', default=False, action='store_true')
+args = parser.parse_args()
 
 period = {}
 period['16'] = 'ghijklop'
@@ -22,39 +29,41 @@ mc['16p'] = '17h2k'
 mc['17'] = '18b1a'
 mc['18'] = '19c6'
 
-data = sys.argv[1]
-year  = data[0:2]
-JOB_MODE = sys.argv[2]
-MC = (len(sys.argv) > 3)
+year  = args.period[0:2]
 
-datasets = data + '_pass1'
-if(MC):
+datasets = args.period + '_pass1'
+if(args.mc):
   if(year == '16'):
-    data_dir = '2017/LHC' + mc[data]
-    work_dir = 'JpsiJetMC_QM' + data + '_' + mc[data] + '_190917'
+    mcProd = mc[args.period]
+    data_dir = '2017/LHC' + mcProd
   elif(year == '17'):
+    mcProd = mc[year]
     data_dir = '2018/LHC18b1a'
-    work_dir = 'JpsiJetMC_QM' + data + '_' + mc[year] + '_190917'
   elif(year == '18'):
+    mcProd = mc[year]
     data_dir = '2019/LHC19c6'
-    work_dir = 'JpsiJetMC_QM' + data + '_' + mc[year] + '_190917'
-  task_name = 'JpsiJetMC_' + data
+  task_name = 'JpsiJetMC_' + args.tag + args.period
+  work_dir = task_name + '_' + mcProd + '_' + args.date
 else:
-  data_dir = "20" + year + "/LHC" + data
-  work_dir = "JpsiJet_QM_" + data + "_190914"
-  task_name = "JpsiJet_" + data
+  data_dir = "20" + year + "/LHC" + args.period
+  task_name = "JpsiJet_" + args.tag + args.period
+  work_dir = task_name + '_' + args.date 
+
+# Job infomation
+print("\n\n======Processing "+work_dir+"======")
+print('>>> Task\t: ' + task_name)
+print('>>> Mode\t: ' + args.mode)
+print('>>> Datasets\t: ' + datasets)
+print('>>> Data dir.\t: ' + data_dir)
+print('>>> Work dir.\t: ' + work_dir)
 
 cmd = "aliroot -b -l -q -x \'runAnalysis.C(1, 0, 1, 0, 0, 0, 0, 0," \
-    + '"' + JOB_MODE + '",' \
-    + '"' + datasets + '",' \
-    + '"' + data_dir + '",' \
-    + '"' + work_dir + '",' \
+    + '"' + args.mode + '",' \
+    + '"' + datasets  + '",' \
+    + '"' + data_dir  + '",' \
+    + '"' + work_dir  + '",' \
     + '"' + task_name + '"' \
     + ")\'"
-print("\n\n======Processing "+data+"======")
-if(MC):
-  logfile = 'runQM_MC' + data + '_' + JOB_MODE + '.log'
-else:
-  logfile = 'runQM_' + data + '_' + JOB_MODE + '.log'
+logfile = 'run' + work_dir + '_' + args.mode + '.log'
 os.system(cmd + '| tee ' + logfile)
-print("\n======End of "+data+"======\n\n")
+print("\n======End of "+work_dir+"======\n\n")
