@@ -909,9 +909,9 @@ Bool_t AliAnalysisTaskJpsiJet::FindTrackInJet(AliEmcalJet* jet, AliVParticle* p,
   if(TMath::Abs(pJ->Theta() - p->Theta()) > TRACK_TOLERANCE)
     passCrossCheck = kFALSE;
   if(!passCrossCheck){
-    AliWarning(Form("Difference between tracks in more than %.1e", TRACK_TOLERANCE))
+    AliWarning(Form("Difference between tracks in more than %.1e", TRACK_TOLERANCE));
     pJ->Print();
-    AliWarning(Form("Track pT:%.3f/%.3f, phi:%.3f/%.3f, theta:%.3f/%.3f", pJ->Pt(), p->Pt(), pJ->Phi(), p->Phi(), pJ->Theta(), p->Theta()))
+    AliWarning(Form("Track pT:%.3f/%.3f, phi:%.3f/%.3f, theta:%.3f/%.3f", pJ->Pt(), p->Pt(), pJ->Phi(), p->Phi(), pJ->Theta(), p->Theta()));
   }
   return passCrossCheck;
 }
