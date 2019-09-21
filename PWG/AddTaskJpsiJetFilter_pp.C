@@ -1,74 +1,52 @@
-#ifndef __CINT__
-#include "AliDielectron.h"
-class AliDielectron;
-#include "AliDielectronVarManager.h"
-class AliDielectronVarManager;
-#include "AliDielectronVarCuts.h"
-class AliDielectronVarCuts;
-#include "AliDielectronTrackCuts.h"
-class AliDielectronTrackCuts;
-#include "AliDielectronEventCuts.h"
-class AliDielectronEventCuts;
-#include "AliAnalysisTaskJpsiJetFilter.h"
-class AliAnalysisTaskJpsiJetFilter;
-#endif
-
-AliAnalysisTaskJpsiJetFilter* AddTaskJpsiJetFilter_pp(Bool_t doPhysAna = kFALSE, Bool_t storeLS = kFALSE, Bool_t hasMC_aod = kFALSE, Bool_t storeTR = kFALSE){
+AliAnalysisTaskJpsiJetFilter* AddTaskJpsiJetFilter_pp(Bool_t storeLS = kFALSE, Bool_t storeTR = kFALSE){
   //get the current analysis manager
   AliAnalysisManager *mgr = AliAnalysisManager::GetAnalysisManager();
   if (!mgr) {
-    Error("AddTaskJPSIFilter", "No analysis manager found.");
-    return 0;
+    AliFatal("AddTaskJPSIFilter", "No analysis manager found.");
+    exit(1);
   }
   
   //check for output aod handler
   if (!mgr->GetOutputEventHandler()||mgr->GetOutputEventHandler()->IsA()!=AliAODHandler::Class()) {
-    Warning("AddTaskJPSIFilter","No AOD output handler available. Not adding the task!");
-    return 0;
+    AliFatal("No AOD output handler available. Not adding the task!");
+    exit(1);
   }
 
   //Do we have an MC handler?
-  Bool_t hasMC=(AliAnalysisManager::GetAnalysisManager()->GetMCtruthEventHandler()!=0x0)||hasMC_aod;
-  
+  Bool_t hasMC=(AliAnalysisManager::GetAnalysisManager()->GetMCtruthEventHandler()!=0x0);
   //Do we run on AOD?
   Bool_t isAOD=mgr->GetInputEventHandler()->IsA()==AliAODInputHandler::Class();
-
-  
-  if(isAOD) {
-    //add options to AliAODHandler to duplicate input event
-    AliAODHandler *aodHandler = (AliAODHandler*)mgr->GetOutputEventHandler();
-    aodHandler->SetCreateNonStandardAOD();
-    aodHandler->SetNeedsHeaderReplication();
-    aodHandler->SetNeedsTOFHeaderReplication();
-    aodHandler->SetNeedsVZEROReplication();
-    if(hasMC) aodHandler->SetNeedsMCParticlesBranchReplication();
+  if(!isAOD || hasMC){
+    AliFatal("This task ONLY supports AOD event");
+    exit(1);
   }
+
+  //add options to AliAODHandler to duplicate input event
+  AliAODHandler *aodHandler = (AliAODHandler*)mgr->GetOutputEventHandler();
+  aodHandler->SetCreateNonStandardAOD();
+  aodHandler->SetNeedsHeaderReplication();
+  aodHandler->SetNeedsTOFHeaderReplication();
+  aodHandler->SetNeedsVZEROReplication();
   
   //Create task and add it to the analysis manager
   AliAnalysisTaskJpsiJetFilter *task=new AliAnalysisTaskJpsiJetFilter("jpsi2ee_EMCalFilter");
   task->SetTriggerMask(AliVEvent::kEMCEGA); 
-  if (!hasMC) task->UsePhysicsSelection();
-  if(storeLS) task->SetStoreLikeSignCandidates(storeLS);
-  task->SetStoreRotatedPairs(storeTR);  
+  task->UsePhysicsSelection();
   task->SetRejectPileup(kTRUE);
   task->SetToMerge(kTRUE);
+  task->SetStoreLikeSignCandidates(storeLS);
+  task->SetStoreRotatedPairs(storeTR);
   //Add event filter
   AliDielectronEventCuts *eventCuts = new AliDielectronEventCuts("eventCuts", "Vertex Track && |vtxZ|<10 && ncontrib>0");
-  if (isAOD)
-    eventCuts->SetVertexType(AliDielectronEventCuts::kVtxAny);
+  eventCuts->SetVertexType(AliDielectronEventCuts::kVtxAny);
   eventCuts->SetRequireVertex();
   eventCuts->SetMinVtxContributors(1);
   eventCuts->SetVertexZ(-10., 10.);
   task->SetEventFilter(eventCuts);
   // Add AliDielectron
     // kEMCEGA + EMCal_loose
-  Int_t trigger_index = 3; // EMCal_loose
-  if(doPhysAna){
-    trigger_index = 0; // EMCal_strict
-    task->SetToReplace(kTRUE); // Replace daughter tracks with pair
-  }
-  AliDielectron* jpsi = reinterpret_cast<AliDielectron *>(gInterpreter->ExecuteMacro(Form("ConfigJpsi_cj_pp.C(%d,%d,2)", trigger_index, isAOD)));
-  jpsi->SetHasMC(hasMC);
+  AliDielectron* jpsi = reinterpret_cast<AliDielectron *>(gInterpreter->ExecuteMacro(Form("ConfigJpsi_cj_pp.C(%d,%d,2)", 3, 1)));
+  jpsi->SetHasMC(kFALSE);
   task->SetDielectron(jpsi);
 
   mgr->AddTask(task);
