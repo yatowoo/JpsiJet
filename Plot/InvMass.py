@@ -124,12 +124,12 @@ class InvMass:
     self.fBkg.SetParameter(1, self.fTot.GetParameter("a1"))
     self.fBkg.SetParameter(2, self.fTot.GetParameter("a2"))
   def SignalExtraction(self):
-    fitResult = self.hM.Fit(self.fTot, "IS", "", self.gFitL, self.gFitH)
+    fitResult = self.hM.Fit(self.fTot, "ISN", "", self.gFitL, self.gFitH)
     self.hM.Draw("PE0")
-    self.fTot.Draw("same")
     self.UpdateParameters()
     self.fSig.Draw("same")
     self.fBkg.Draw("same")
+    self.fTot.Draw("same")
     self.DrawLegend()
   def TotalMC(self, x, par):
     bkg = par[1] + par[2] * x[0] + par[3] * math.pow(x[0], 2.0)
