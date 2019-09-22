@@ -36,11 +36,31 @@ class InvMass:
   gFitH  = 4.2  # Fitting region, higher edge
   gHistL = 1.5  # Drawing region, lower edge
   gHistH = 4.5  # Drawing region, higher edge
+  lgd    = None # Drawing legend for fitting results
+  def DrawLegend(self):
+    self.lgd = ROOT.TLegend(0.13, 0.68, 0.49, 0.88, "", "brNDC")
+    self.lgd.SetName("lgdInvMass")
+    self.lgd.SetBorderSize(0)
+    self.lgd.SetTextAlign(12)
+    self.lgd.SetTextFont(42)
+    self.lgd.SetTextSize(0.03)
+    self.lgd.AddEntry(self.hM, "e^{+}e^{-} signal")
+    self.lgd.AddEntry(self.fTot,"Total fit")
+    self.lgd.AddEntry(self.fBkg,"Background fit (pol2)")
+    self.lgd.AddEntry(self.fSig,"Signal fit (Crystal-Ball)")
+    self.lgd.Draw("same")
   def SetStyleForAll(self):
+    # ROOT Style
+    ROOT.gStyle.SetOptFit(0000)
+    ROOT.gStyle.SetOptStat(0)
     # Data - Histogram
     self.hM.SetLineColor(DATA_COLOR)
     self.hM.SetMarkerColor(DATA_COLOR)
     self.hM.SetMarkerStyle(DATA_STYLE)
+    self.hM.SetXTitle("M_{e^{+}e^{-}} (GeV/c^{2})")
+    self.hM.GetXaxis().SetRangeUser(self.gHistL, self.gHistH)
+    self.hM.SetYTitle("N_{pairs}")
+    self.hM.GetYaxis().SetRangeUser(0.1, 2 * self.hM.GetBinContent(self.hM.GetMaximumBin()))
     # Signal
     self.fTot.SetLineColor(TOTAL_COLOR)
     self.fTot.SetLineWidth(TOTAL_LINE_WIDTH)
@@ -89,12 +109,11 @@ class InvMass:
   def SignalExtraction(self):
     fitResult = self.hM.Fit(self.fTot, "IS", "", self.gFitL, self.gFitH)
     self.hM.Draw("PE0")
-    ROOT.gStyle.SetOptFit(0000)
-    ROOT.gStyle.SetOptStat(0)
     self.fTot.Draw("same")
     self.UpdateParameters()
     self.fSig.Draw("same")
     self.fBkg.Draw("same")
+    self.DrawLegend()
   def __init__(self, hInvMass, mlow = 1.5, mup = 4.5, signalMC = None):
     self.gFitL = mlow
     self.gFitH = mup
