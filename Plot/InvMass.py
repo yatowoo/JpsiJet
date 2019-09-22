@@ -3,6 +3,7 @@
 # Class for invariant mass spectrum processing
 
 import math
+from array import array
 import ROOT
 from ROOT import TH1, TH1D, TF1
 import ana_util
@@ -59,13 +60,17 @@ class InvMass:
       covSig = covTot.GetSub(0, 4, 0, 4)
       covBkg = covTot.GetSub(5, 7, 5, 7)
       self.fSig.SetParErrors(self.fTot.GetParErrors())
-      self.fBkg.SetParErrors(self.fTot.GetParErrors()[5:])
+      dp = self.fTot.GetParErrors()
+      dp.SetSize(8)
+      self.fBkg.SetParErrors(array('d',list(dp)[5:]))
     else:
       covTot = ROOT.TMatrixDSym(0,3, fitter.GetCovarianceMatrix())
       covSig = covTot.GetSub(0, 0, 0, 0)
       covBkg = covTot.GetSub(1, 3, 1, 3)
       self.fSig.SetParErrors(self.fTot.GetParErrors())
-      self.fBkg.SetParErrors(list(self.fTot.GetParErrors())[1:])
+      dp = self.fTot.GetParErrors()
+      dp.SetSize(4)
+      self.fBkg.SetParErrors(array('d',list(dp)[1:]))
     NSig = self.fSig.Integral(mlow, mup) / width
     ESig = self.fSig.IntegralError(mlow, mup, self.fSig.GetParameters(), covSig.GetMatrixArray()) / width
     NBkg = self.fBkg.Integral(mlow, mup) / width
