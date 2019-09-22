@@ -1,0 +1,110 @@
+#!/usr/bin/env python3
+
+# Class for invariant mass spectrum processing
+
+import ROOT
+from ROOT import TH1, TH1D, TF1
+import ana_util
+from ana_util import *
+
+# Default parameters for constants and style
+# Variables
+N_FITTING             = 3     # Max times for re-fitting
+# Drawing style
+DATA_COLOR            = kBlue
+DATA_STYLE            = kRound
+TOTAL_COLOR           = kRed
+TOTAL_LINE            = 1     # Normal
+TOTAL_LINE_WIDTH      = 3
+SIGNAL_COLOR          = kBlack
+SIGNAL_LINE           = 2     # Dash-line
+SIGNAL_LINE_WIDTH     = 2
+BACKGROUND_COLOR      = kGreen
+BACKGROUND_LINE       = 2
+BACKGROUND_LINE_WIDTH = 2
+DEFAULT_NPX           = 1000
+# Constants
+JPSI_MASS_PDG         = 3.096 # GeV/c^2
+
+class InvMass:
+  hM     = None # Invariant mass spectrum, TH1D
+  hMPt   = None # Invariant mass vs pT, TH2D (optional)
+  fSig   = None # Function for signal, TF1
+  fBkg   = None # Function for background, TF1
+  fTot   = None # Function for total spectrum, TF1
+  gFitL  = 1.8  # Fitting region, lower edge
+  gFitH  = 4.2  # Fitting region, higher edge
+  gHistL = 1.5  # Drawing region, lower edge
+  gHistH = 4.5  # Drawing region, higher edge
+  def SetStyleForAll(self):
+    # Data - Histogram
+    self.hM.SetLineColor(DATA_COLOR)
+    self.hM.SetMarkerColor(DATA_COLOR)
+    self.hM.SetMarkerStyle(DATA_STYLE)
+    # Signal
+    self.fTot.SetLineColor(TOTAL_COLOR)
+    self.fTot.SetLineWidth(TOTAL_LINE_WIDTH)
+    self.fTot.SetLineStyle(TOTAL_LINE)
+    self.fTot.SetNpx(DEFAULT_NPX)
+    # Signal
+    self.fSig.SetLineColor(SIGNAL_COLOR)
+    self.fSig.SetLineWidth(SIGNAL_LINE_WIDTH)
+    self.fSig.SetLineStyle(SIGNAL_LINE)
+    self.fSig.SetNpx(DEFAULT_NPX)
+    # Background
+    self.fBkg.SetLineColor(BACKGROUND_COLOR)
+    self.fBkg.SetLineWidth(BACKGROUND_LINE_WIDTH)
+    self.fBkg.SetLineStyle(BACKGROUND_LINE)
+    self.fBkg.SetNpx(DEFAULT_NPX)
+  def InitFittingCrystalBall(self):
+    self.fTot = TF1("fTot", "fSig+fBkg", self.gHistL, self.gHistH)
+    self.fTot.SetParNames("A", "#alpha", "n", "#sigma", "#mu", "a0", "a1", "a2")
+    pseudo_peak = self.hM.GetBinContent(self.hM.FindBin(JPSI_MASS_PDG)) # Signal pseudo-peak
+    self.fTot.SetParameter("A", pseudo_peak)
+    self.fTot.SetParLimits(0, 0., 3 * pseudo_peak)
+    self.fTot.SetParameter("#alpha", 0.3)
+    self.fTot.SetParLimits(1, 0., 10.)
+    self.fTot.SetParameter("n", 1.)
+    self.fTot.SetParLimits(2, 0., 100.)
+    self.fTot.SetParameter("#sigma", 0.1)
+    self.fTot.SetParLimits(3, 0., 1.)
+    self.fTot.SetParameter("#mu", JPSI_MASS_PDG)
+    self.fTot.SetParLimits(4, self.gFitL, self.gFitH)
+      # Background parameter
+    self.fTot.SetParameter("a0", 250.)
+    self.fTot.SetParameter("a1", -100)
+    self.fTot.SetParameter("a2", 12.)
+    return self.fTot
+  def UpdateParameters(self):
+    # Signal
+    self.fSig.SetParameter(0, self.fTot.GetParameter("A"))
+    self.fSig.SetParameter(1, self.fTot.GetParameter("#alpha"))
+    self.fSig.SetParameter(2, self.fTot.GetParameter("n"))
+    self.fSig.SetParameter(3, self.fTot.GetParameter("#sigma"))
+    self.fSig.SetParameter(4, self.fTot.GetParameter("#mu"))
+    # Background
+    self.fBkg.SetParameter(0, self.fTot.GetParameter("a0"))
+    self.fBkg.SetParameter(1, self.fTot.GetParameter("a1"))
+    self.fBkg.SetParameter(2, self.fTot.GetParameter("a2"))
+  def SignalExtraction(self):
+    fitResult = self.hM.Fit(self.fTot, "IS", "", self.gFitL, self.gFitH)
+    self.hM.Draw("PE0")
+    ROOT.gStyle.SetOptFit(0000)
+    ROOT.gStyle.SetOptStat(0)
+    self.fTot.Draw("same")
+    self.UpdateParameters()
+    self.fSig.Draw("same")
+    self.fBkg.Draw("same")
+  def __init__(self, hInvMass, mlow = 1.5, mup = 4.5, signalMC = None):
+    self.gFitL = mlow
+    self.gFitH = mup
+    self.hM = hInvMass
+    self.fBkg = TF1("fBkg", "[0]+[1]*x+[2]*x^2", self.gHistL, self.gHistH)
+    if(not signalMC):
+      self.fSig = TF1("fSig", "[0]*ROOT::Math::crystalball_function(x,[1],[2],[3],[4])", self.gHistL, self.gHistH)
+      self.InitFittingCrystalBall()
+    self.SetStyleForAll()
+
+
+if __name__ == '__main__':
+  invM = InvMass()
