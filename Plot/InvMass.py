@@ -47,30 +47,31 @@ class InvMass:
   def SelectRegion(self, mlow = JPSI_MASS_LOWER, mup = JPSI_MASS_UPPER):
     # Integral results and errors
      # DATA
-    EData = 0.0
-    NData = ana_util.HistCount(self.hM, mlow, mup, EData)
+    NData = ana_util.HistCount(self.hM, mlow, mup)
+    EData = math.sqrt(NData)
      # TOTAL
     fitter = ROOT.TVirtualFitter.GetFitter()
     width = self.hM.GetBinWidth(1)
     NTotal = self.fTot.Integral(mlow, mup) / width
     ETotal = self.fTot.IntegralError(mlow, mup) /width
      # Signal and Background
+    errPar = self.fTot.GetParErrors()
     if(not self.hSigMC):
       covTot = ROOT.TMatrixDSym(0,7, fitter.GetCovarianceMatrix())
       covSig = covTot.GetSub(0, 4, 0, 4)
       covBkg = covTot.GetSub(5, 7, 5, 7)
-      self.fSig.SetParErrors(self.fTot.GetParErrors())
-      dp = self.fTot.GetParErrors()
-      dp.SetSize(8)
-      self.fBkg.SetParErrors(array('d',list(dp)[5:]))
+      errPar.SetSize(8)
+      errPar = list(errPar)
+      self.fSig.SetParErrors(array('d',errPar[0:5]))
+      self.fBkg.SetParErrors(array('d',errPar[5:8]))
     else:
       covTot = ROOT.TMatrixDSym(0,3, fitter.GetCovarianceMatrix())
+      errPar.SetSize(4)
+      errPar = list(errPar)
       covSig = covTot.GetSub(0, 0, 0, 0)
       covBkg = covTot.GetSub(1, 3, 1, 3)
-      self.fSig.SetParErrors(self.fTot.GetParErrors())
-      dp = self.fTot.GetParErrors()
-      dp.SetSize(4)
-      self.fBkg.SetParErrors(array('d',list(dp)[1:]))
+      self.fSig.SetParErrors(array('d',errPar[0:1]))
+      self.fBkg.SetParErrors(array('d',errPar[1:4]))
     NSig = self.fSig.Integral(mlow, mup) / width
     ESig = self.fSig.IntegralError(mlow, mup, self.fSig.GetParameters(), covSig.GetMatrixArray()) / width
     NBkg = self.fBkg.Integral(mlow, mup) / width
@@ -90,8 +91,8 @@ class InvMass:
       # Entries - Integral
     self.pTxtFit.AddText("Data:     %.0f #pm %.0f" % (NData, EData))
     self.pTxtFit.AddText("Total:    %.0f #pm %.0f" % (NTotal, ETotal))
-    self.pTxtFit.AddText("Signal:  %.0f #pm %.0f" % (NSig, NSig))
-    self.pTxtFit.AddText("Bkg:      %.0f #pm %.0f" % (NBkg, NBkg))
+    self.pTxtFit.AddText("Signal:  %.0f #pm %.0f" % (NSig, ESig))
+    self.pTxtFit.AddText("Bkg:      %.0f #pm %.0f" % (NBkg, EBkg))
       # Significance - S/B
     SBratio = NSig / NBkg
     ESBratio = SBratio * math.sqrt((ESig/NSig)**2 + (EBkg/NBkg)**2)

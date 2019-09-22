@@ -6,6 +6,7 @@ import ROOT
   # Colors
 from ROOT import kBlack, kRed, kBlue, kGreen, kOrange, kViolet, kCyan, kPink
 import sys, os, time, math, json, logging
+from array import array
 
 # Normalize by column
   # X=measured, Y=true
