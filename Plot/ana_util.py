@@ -32,6 +32,17 @@ def HistNorm(hist, NEv = 0):
     hist.SetBinError(i,  err / factor)
   return hist
 
+def HistCount(hist, xlow, xup, err = None):
+  xBinLow = hist.FindBin(xlow)
+  xBinUp  = hist.FindBin(xup)
+  # x_up on the edge of bin
+  if(hist.GetBinCenter(xBinUp) > xup):
+    xBinUp -= 1
+  if(not err):
+    return hist.Integral(xBinLow, xBinUp)
+  else:
+    return hist.IntegralAndError(xBinLow, xBinUp, err)
+
 # Select color and marker style in pre-defined group
   # Use Bool isNEW to reset the index
 COLOR_SET = [kBlack, kRed, kBlue, kGreen+3, kOrange, kViolet, kCyan, kOrange-6, kPink]

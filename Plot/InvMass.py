@@ -26,6 +26,9 @@ BACKGROUND_LINE_WIDTH = 2
 DEFAULT_NPX           = 1000
 # Constants
 JPSI_MASS_PDG         = 3.096 # GeV/c^2
+JPSI_MASS_LOWER = 2.92
+JPSI_MASS_UPPER = 3.16
+JPSI_SIDEBAND_OFFSET = 1.0
 
 class InvMass:
   hM     = None # Invariant mass spectrum, TH1D
@@ -38,7 +41,64 @@ class InvMass:
   gFitH  = 4.2  # Fitting region, higher edge
   gHistL = 1.5  # Drawing region, lower edge
   gHistH = 4.5  # Drawing region, higher edge
-  lgd    = None # Drawing legend for fitting results
+  lgd    = None # Drawing legend for fitting marks
+  pTxtFit= None # Drawing pave text for fitting results
+  def SelectRegion(self, mlow = JPSI_MASS_LOWER, mup = JPSI_MASS_UPPER):
+    # Integral results and errors
+     # DATA
+    EData = 0.0
+    NData = ana_util.HistCount(self.hM, mlow, mup, EData)
+     # TOTAL
+    fitter = ROOT.TVirtualFitter.GetFitter()
+    width = self.hM.GetBinWidth(1)
+    NTotal = self.fTot.Integral(mlow, mup) / width
+    ETotal = self.fTot.IntegralError(mlow, mup) /width
+     # Signal and Background
+    if(not self.hSigMC):
+      covTot = ROOT.TMatrixDSym(0,7, fitter.GetCovarianceMatrix())
+      covSig = covTot.GetSub(0, 4, 0, 4)
+      covBkg = covTot.GetSub(5, 7, 5, 7)
+      self.fSig.SetParErrors(self.fTot.GetParErrors())
+      self.fBkg.SetParErrors(self.fTot.GetParErrors()[5:])
+    else:
+      covTot = ROOT.TMatrixDSym(0,3, fitter.GetCovarianceMatrix())
+      covSig = covTot.GetSub(0, 0, 0, 0)
+      covBkg = covTot.GetSub(1, 3, 1, 3)
+      self.fSig.SetParErrors(self.fTot.GetParErrors())
+      self.fBkg.SetParErrors(list(self.fTot.GetParErrors())[1:])
+    NSig = self.fSig.Integral(mlow, mup) / width
+    ESig = self.fSig.IntegralError(mlow, mup, self.fSig.GetParameters(), covSig.GetMatrixArray()) / width
+    NBkg = self.fBkg.Integral(mlow, mup) / width
+    EBkg = self.fBkg.IntegralError(mlow, mup, self.fBkg.GetParameters(), covBkg.GetMatrixArray()) / width
+    # Fitting result - TPaveText
+    self.pTxtFit = ROOT.TPaveText(0.62, 0.39, 0.87, 0.88, "brNDC")
+    self.pTxtFit.SetName("pTxtFit")
+    self.pTxtFit.SetBorderSize(0)
+    self.pTxtFit.SetTextAlign(12)
+    self.pTxtFit.SetTextFont(42)
+    self.pTxtFit.SetTextSize(0.03)
+    self.pTxtFit.SetFillColor(0)
+      # Entries - Signal region
+    entry = self.pTxtFit.AddText("M_{J/#psi} #in [%.2f, %.2f] (GeV/c^{2})" % (mlow, mup))
+    entry.SetTextSize(0.03)
+    entry.SetTextFont(62) # Helvetica (Bold)
+      # Entries - Integral
+    self.pTxtFit.AddText("Data:     %.0f #pm %.0f" % (NData, EData))
+    self.pTxtFit.AddText("Total:    %.0f #pm %.0f" % (NTotal, ETotal))
+    self.pTxtFit.AddText("Signal:  %.0f #pm %.0f" % (NSig, NSig))
+    self.pTxtFit.AddText("Bkg:      %.0f #pm %.0f" % (NBkg, NBkg))
+      # Significance - S/B
+    SBratio = NSig / NBkg
+    ESBratio = SBratio * math.sqrt((ESig/NSig)**2 + (EBkg/NBkg)**2)
+    self.pTxtFit.AddText("S/B        = %.2f #pm %.2f" % (SBratio, ESBratio))
+      # Significance - S/#sqrt{S+B}
+    SNratio = NSig / math.sqrt(NTotal)
+    ESNratio = SNratio * math.sqrt((ESig/NSig)**2 + (ETotal/NTotal/2.)**2)
+    self.pTxtFit.AddText("S/#sqrt{S+B}  = %.2f #pm %.2f" % (SNratio, ESNratio))
+      # Chi2
+    self.pTxtFit.AddText("#chi^{2} / NDF = %.1f / %d" % (self.fTot.GetChisquare(), self.fTot.GetNDF()))
+    self.pTxtFit.Draw("same")
+    # End of TPaveText - fitting result
   def DrawLegend(self):
     self.lgd = ROOT.TLegend(0.13, 0.68, 0.49, 0.88, "", "brNDC")
     self.lgd.SetName("lgdInvMass")
