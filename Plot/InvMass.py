@@ -27,9 +27,12 @@ BACKGROUND_LINE_WIDTH = 2
 DEFAULT_NPX           = 1000
 # Constants
 JPSI_MASS_PDG         = 3.096 # GeV/c^2
-JPSI_MASS_LOWER = 2.92
-JPSI_MASS_UPPER = 3.16
-JPSI_SIDEBAND_OFFSET = 1.0
+JPSI_MASS_LOWER       = 2.92
+JPSI_MASS_UPPER       = 3.16
+JPSI_SIDEBAND_OFFSET  = 1.0
+N_PARAMS_POL2         = 3
+N_PARAMS_MC           = 1
+N_PARAMS_CRYSTALBALL  = 5
 
 class InvMass:
   hM     = None # Invariant mass spectrum, TH1D
@@ -46,32 +49,31 @@ class InvMass:
   pTxtFit= None # Drawing pave text for fitting results
   def SelectRegion(self, mlow = JPSI_MASS_LOWER, mup = JPSI_MASS_UPPER):
     # Integral results and errors
-     # DATA
+      # DATA
     NData = ana_util.HistCount(self.hM, mlow, mup)
     EData = math.sqrt(NData)
-     # TOTAL
-    fitter = ROOT.TVirtualFitter.GetFitter()
+      # TOTAL
+    fitter = ROOT.TVirtualFitter.GetFitter() # Fitting results
     width = self.hM.GetBinWidth(1)
     NTotal = self.fTot.Integral(mlow, mup) / width
     ETotal = self.fTot.IntegralError(mlow, mup) /width
-     # Signal and Background
+      # Signal and Background
     errPar = self.fTot.GetParErrors()
     if(not self.hSigMC):
-      covTot = ROOT.TMatrixDSym(0,7, fitter.GetCovarianceMatrix())
-      covSig = covTot.GetSub(0, 4, 0, 4)
-      covBkg = covTot.GetSub(5, 7, 5, 7)
-      errPar.SetSize(8)
-      errPar = list(errPar)
-      self.fSig.SetParErrors(array('d',errPar[0:5]))
-      self.fBkg.SetParErrors(array('d',errPar[5:8]))
+      Nparam_sig = N_PARAMS_CRYSTALBALL
     else:
-      covTot = ROOT.TMatrixDSym(0,3, fitter.GetCovarianceMatrix())
-      errPar.SetSize(4)
-      errPar = list(errPar)
-      covSig = covTot.GetSub(0, 0, 0, 0)
-      covBkg = covTot.GetSub(1, 3, 1, 3)
-      self.fSig.SetParErrors(array('d',errPar[0:1]))
-      self.fBkg.SetParErrors(array('d',errPar[1:4]))
+      Nparam_sig = N_PARAMS_MC
+    Nparam_bkg = N_PARAMS_POL2
+    Nparam_total = Nparam_sig + Nparam_bkg
+      ## Covariant Matrix
+    covTot = ROOT.TMatrixDSym(0,Nparam_total-1, fitter.GetCovarianceMatrix())
+    covSig = covTot.GetSub(0, Nparam_sig-1, 0, Nparam_sig-1)
+    covBkg = covTot.GetSub(Nparam_sig, Nparam_total-1, Nparam_sig, Nparam_total-1)
+    errPar.SetSize(Nparam_total)
+    errPar = list(errPar)
+    self.fSig.SetParErrors(array('d',errPar[0:Nparam_sig]))
+    self.fBkg.SetParErrors(array('d',errPar[Nparam_sig:Nparam_total]))
+      ## Calculation
     NSig = self.fSig.Integral(mlow, mup) / width
     ESig = self.fSig.IntegralError(mlow, mup, self.fSig.GetParameters(), covSig.GetMatrixArray()) / width
     NBkg = self.fBkg.Integral(mlow, mup) / width
@@ -112,7 +114,7 @@ class InvMass:
     self.lgd.SetTextAlign(12)
     self.lgd.SetTextFont(42)
     self.lgd.SetTextSize(0.03)
-    self.lgd.AddEntry(self.hM, "e^{+}e^{-} signal")
+    self.lgd.AddEntry(self.hM, "e^{+}e^{-} pair")
     self.lgd.AddEntry(self.fTot,"Total fit")
     self.lgd.AddEntry(self.fBkg,"Background fit (pol2)")
     if(not self.hSigMC):
@@ -132,7 +134,7 @@ class InvMass:
     self.hM.GetXaxis().SetRangeUser(self.gHistL, self.gHistH)
     self.hM.SetYTitle("N_{pairs}")
     self.hM.GetYaxis().SetRangeUser(0.1, 2 * self.hM.GetBinContent(self.hM.GetMaximumBin()))
-    # Signal
+    # Total
     self.fTot.SetLineColor(TOTAL_COLOR)
     self.fTot.SetLineWidth(TOTAL_LINE_WIDTH)
     self.fTot.SetLineStyle(TOTAL_LINE)
@@ -214,7 +216,7 @@ class InvMass:
       self.InitFittingCrystalBall()
     else:
       signalMC.Scale(1/signalMC.Integral('width'))
-      self.hSigMC = signalMC
+      self.hSigMC = signalMC.Clone('hSigMC')
       self.fSig = TF1("fSig", self.SignalMC, self.gHistL, self.gHistH, 1)
       self.InitFittingMC()
     self.SetStyleForAll()
