@@ -22,7 +22,7 @@ c = ROOT.TCanvas('cTest','Plot Test', 800, 600)
 c.Draw()
 
 Jpsi.hM.Draw()
-Jpsi.SignalExtraction()
+Jpsi.SignalExtraction(1.5, 4.5)
 Jpsi.SelectRegion()
 
 outputFormat = '.root' if args.root else '.pdf'

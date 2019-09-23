@@ -38,7 +38,10 @@ N_PARAMS_CRYSTALBALL  = 5
 class InvMass:
   hM     = None # Invariant mass spectrum, TH1D
   hMPt   = None # Invariant mass vs pT, TH2D (optional)
+  hsMC   = None # Show MC fitting, THStack
   hSigMC = None # MC shape for signal fitting, TH1D
+  hBkgMC = None # Background shape for MC fitting, TH1D
+  hTotMC = None # Total shape for MC fitting, TH1D
   fSig   = None # Function for signal, TF1
   fBkg   = None # Function for background, TF1
   fTot   = None # Function for total spectrum, TF1
@@ -49,6 +52,28 @@ class InvMass:
   lgd    = None # Drawing legend for fitting marks, TLegend
   pTxtFit= None # Drawing pave text for fitting results, TPaveText
   gDrawingList = None # Store objects for drawing to avoid garbage collecting, TObjArray
+  def DrawStack(self):
+    self.hsMC = ROOT.THStack("hsMC","Histograms of MC fitting results")
+    # Background
+    self.hBkgMC = self.hM.Clone('hBkgMC')
+    self.hBkgMC.SetLineColor(BACKGROUND_COLOR)
+    self.hBkgMC.SetLineStyle(TOTAL_LINE)
+    self.hBkgMC.SetFillColor(BACKGROUND_COLOR)
+    self.hBkgMC.SetFillStyle(3006)
+    for iBin in range(self.hBkgMC.GetNbinsX()+2):
+      self.hBkgMC.SetBinContent(iBin, self.fBkg.Eval(self.hBkgMC.GetBinCenter(iBin)))
+    self.hsMC.Add(self.hBkgMC)
+    # Signal as Total by stacked
+    self.hTotMC = self.hM.Clone('hTotMC')
+    self.hTotMC.SetLineWidth(TOTAL_LINE_WIDTH)
+    self.hTotMC.SetLineStyle(TOTAL_LINE)
+    self.hTotMC.SetLineColor(TOTAL_COLOR)
+    self.hTotMC.SetFillColor(TOTAL_COLOR)
+    self.hTotMC.SetFillStyle(3004)
+    self.hsMC.Add(self.hTotMC)
+    for iBin in range(self.hBkgMC.GetNbinsX()+2):
+      self.hTotMC.SetBinContent(iBin, self.fSig.Eval(self.hTotMC.GetBinCenter(iBin)))
+    self.hsMC.Draw('same')
   def DrawLine(self, xval, color = TOTAL_COLOR, style = 3):
     ymin = self.hM.GetMinimum()
     ymax = self.hM.GetMaximum()
@@ -67,7 +92,8 @@ class InvMass:
   def SelectRegion(self, mlow = JPSI_MASS_LOWER, mup = JPSI_MASS_UPPER):
     self.DrawLine(mlow)
     self.DrawLine(mup)
-    self.DrawRegion(self.fTot, mlow, mup, 'Signal')
+    if(not self.hSigMC):
+      self.DrawRegion(self.fTot, mlow, mup, 'Signal')
     # Integral results and errors
       # DATA
     NData = ana_util.HistCount(self.hM, mlow, mup)
@@ -211,13 +237,18 @@ class InvMass:
     self.fBkg.SetParameter(0, self.fTot.GetParameter("a0"))
     self.fBkg.SetParameter(1, self.fTot.GetParameter("a1"))
     self.fBkg.SetParameter(2, self.fTot.GetParameter("a2"))
-  def SignalExtraction(self):
+  def SignalExtraction(self, xlow, xup):
+    self.gFitL = xlow
+    self.gFitH = xup
     fitResult = self.hM.Fit(self.fTot, "ISN", "", self.gFitL, self.gFitH)
     self.hM.Draw("PE0")
     self.UpdateParameters()
-    self.fSig.Draw("same")
-    self.fBkg.Draw("same")
-    self.fTot.Draw("same")
+    if(not self.hSigMC):
+      self.fBkg.Draw("same C")
+      self.fSig.Draw("same C")
+      self.fTot.Draw("same C")
+    else:
+      self.DrawStack()
     self.DrawLegend()
   def TotalMC(self, x, par):
     bkg = par[1] + par[2] * x[0] + par[3] * math.pow(x[0], 2.0)
