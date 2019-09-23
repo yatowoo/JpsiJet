@@ -279,7 +279,12 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
 
   // Fill event level variables
   AliDielectronVarManager::Fill(fAOD, fVars);
+  FillTH2("Runwise/NPVtxZ", fRunNo.Data(), fVars[AliDielectronVarManager::kZvPrim]);
+  FillTH2("Runwise/NVContrib", fRunNo.Data(), fVars[AliDielectronVarManager::kNVtxContrib]);
+  FillTH2("Runwise/NSPDtracklets", fRunNo.Data(), fVars[AliDielectronVarManager::kNaccTrcklts10Corr]);
   FillTH2("Runwise/NTracksAll", fRunNo.Data(), fVars[AliDielectronVarManager::kNTrk]);
+  FillTH2("Runwise/NElectrons", fRunNo.Data(), fVars[AliDielectronVarManager::kTracks]);
+  FillTH2("Runwise/NPairs", fRunNo.Data(), fPairs->GetEntries());
 }
 
 Bool_t AliAnalysisTaskJpsiJet::RunDetectoreLevelAnalysis(){
@@ -360,14 +365,43 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForRunwiseQA(const char* histClass){
     201, -0.5, 200.5,
     int(kEventStatusN)+1, -0.5, int(kEventStatusN)+0.5);
   fHistos->CreateTH2(
+    Form("%s/NPVtxZ", histClass),
+    "Runwise QA - Primary vertex Z",
+    201, -0.5, 200.5,
+    4001, -0.5, 4000.5);
+  fHistos->CreateTH2(
+    Form("%s/NVContrib", histClass),
+    "Runwise QA - Number of Vertex contributors",
+    201, -0.5, 200.5,
+    1001, -0.5, 1000.5);
+  fHistos->CreateTH2(
+    Form("%s/NSPDtracklets", histClass),
+    "Runwise QA - Number of accepted SPD tracklets in |eta|<1.0",
+    201, -0.5, 200.5,
+    501, -0.5, 500.5);
+  fHistos->CreateTH2(
     Form("%s/NTracksAll", histClass),
     "Runwise QA - Number of all tracks",
     201, -0.5, 200.5,
     4001, -0.5, 4000.5);
+  fHistos->CreateTH2(
+    Form("%s/NElectrons", histClass),
+    "Runwise QA - Number of selected tracks/electron",
+    201, -0.5, 200.5,
+    51, -0.5, 50.5);
+  fHistos->CreateTH2(
+    Form("%s/NPairs", histClass),
+    "Runwise QA - Number of selected tracks/electron",
+    201, -0.5, 200.5,
+    21, -0.5, 20.5);
 }
 
 void AliAnalysisTaskJpsiJet::FillTH2(const char* histName, const char* labelX, Double_t value, Double_t weight){
   TH2* h2 = (TH2*)(fHistos->FindObject(histName));
+  if(!h2){
+    AliFatal(Form("Fail to find %s in Hitogram Manager", histName));
+    return;
+  }
   h2->Fill(labelX, value, weight);
 }
 
