@@ -83,8 +83,7 @@ BINNING_JPSI_PT += list(range(15, 25, 2))
 BINNING_JPSI_PT += list(range(25, 55, 5))
 BINNING_JPSI_PT = array('d', BINNING_JPSI_PT) # Convert to double*
 
-TRIGGER_CLASSES = ['INT7', 'EG1', 'EG2', 'DG1', 'DG2']
-TRIGGER_TAG = ['MB', 'EG1', 'EG2', 'DG1', 'DG2']
+TRIGGER_CLASSES = ['MB', 'EG1', 'EG2', 'DG1', 'DG2']
 
 def DrawQA_PairInJet(qa, tag):
   print("[-] INFO - Processing QA plots for " + tag)
@@ -192,7 +191,7 @@ def DrawQA_Calo(qa):
     CaloQA[trig]['NEvent'] = 0
     CaloQA[trig]['E'] = None
     CaloQA[trig]['RF'] = None
-    CaloQA[trig]['Eth'] = 11.0 if trig.count('1') else 6.0 
+    CaloQA[trig]['Eth'] = 11.0 if trig.count('1') else 6.0
   # Event numbers
   evQA = qa.FindObject('Event_afterCuts') # TList
   evQA.SetOwner(True)
@@ -201,6 +200,7 @@ def DrawQA_Calo(qa):
     tag = hTrig.GetXaxis().GetBinLabel(i)
     if(tag == ''):
       break
+    tag = tag.replace('INT7', 'MB')
     for trig in tag.split('_'):
       CaloQA[trig]['NEvent'] += hTrig.GetBinContent(i)
   # End - read with fired tags
@@ -219,8 +219,7 @@ def DrawQA_Calo(qa):
     # Cluster energy
     calo = qa.FindObject('Cluster_' + trig) # TList
     calo.SetOwner(True)
-    caloE = calo.FindObject('ClsVars').Projection(0)
-    caloE.SetName('hClusterE_' + trig)
+    caloE = calo.FindObject('E').Clone('hClusterE_' + trig)
     HistNorm(caloE, CaloQA[trig]['NEvent'])
     caloE.SetTitle('EMCal/DCal cluster energy distribution')
     caloE.GetXaxis().SetRangeUser(0, 40)
@@ -235,13 +234,13 @@ def DrawQA_Calo(qa):
     lgdE.AddEntry(caloE, trig)
     gPad.SetLogy()
     # Rejection factor
-    if(CaloQA['INT7']['E']):
+    if(CaloQA['MB']['E']):
       caloRF = caloE.Clone('hClusterRF_' + trig)
       caloRF.SetTitle('Rejection factor of EMCal by ratio of cluster energy')
       caloRF.GetXaxis().SetRangeUser(0, 40)
       caloRF.GetYaxis().SetRangeUser(1e-2, 1e4)
       caloRF.GetYaxis().SetTitle('R_{trig}')
-      caloRF.Divide(CaloQA['INT7']['E'])
+      caloRF.Divide(CaloQA['MB']['E'])
       padQA.cd(2)
       caloRF.Draw("same PE")
       gPad.SetLogy()
