@@ -71,7 +71,8 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet():
   fJpsiMC(NULL),
   fTaggedJetMC(NULL),
   fHistos(NULL),
-  fHistosMC(NULL)
+  fHistosMC(NULL),
+  fRunNo("")
 {
   // Constructor
 }
@@ -103,7 +104,8 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   fJpsiMC(NULL),
   fTaggedJetMC(NULL),
   fHistos(NULL),
-  fHistosMC(NULL)
+  fHistosMC(NULL),
+  fRunNo("")
 {
   // IO
   DefineInput(0, TChain::Class());
@@ -152,6 +154,8 @@ void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
   InitHistogramsForEventQA("Event_beforeCuts");
   InitHistogramsForEventQA("Event_afterCuts");
 
+  InitHistogramsForRunwiseQA("Runwise");
+
   if(!fIsTriggerQA)
     InitHistogramsForClusterQA("Cluster");
   else{
@@ -191,9 +195,9 @@ void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
 void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
   fAOD = dynamic_cast<AliAODEvent*>(InputEvent());
   fFiredTriggerTag = "";
-
+  fRunNo = Form("%d", fAOD->GetRunNumber());
   fHistos->FillTH1("EventStats", kAllInAOD);
-
+  fHistos->FillTH2("Runwise/NEvent", fRunNo.Data(), "ALL");
   FillHistogramsForEventQA("Event_ALL");
 
   //
@@ -224,17 +228,18 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
   if(!isFired) return;
 
   fHistos->FillTH1("EventStats", kPhysSelected);
-
+  fHistos->FillTH2("Runwise/NEvent", fRunNo.Data(), "PS");
   FillHistogramsForEventQA("Event_beforeCuts");
 
   // Event cuts
   if(fEventFilter && !fEventFilter->IsSelected(fAOD)) return;
   fHistos->FillTH1("EventStats", kFiltered);
+  fHistos->FillTH2("Runwise/NEvent", fRunNo.Data(), "After cuts");
   // Pileup
   fIsPileup = fAOD->IsPileupFromSPDInMultBins();
   if(fRejectPileup && fIsPileup) return;
   fHistos->FillTH1("EventStats", kAfterPileUp);
-
+  fHistos->FillTH2("Runwise/NEvent", fRunNo.Data(), "Analysis");
   FillHistogramsForEventQA("Event_afterCuts");
   
   // QA
@@ -280,12 +285,16 @@ Bool_t AliAnalysisTaskJpsiJet::RunDetectoreLevelAnalysis(){
 
   // Build tracks with dielectron pair
   Int_t nCandidates = fDielectron->GetPairArray(1)->GetEntriesFast();
-  if(nCandidates == 1)
-    fHistos->FillTH1("EventStats", kWithSinglePair);
-  else if(nCandidates > 1)
-    fHistos->FillTH1("EventStats", kWithMultiPair);
-  else
-    return kFALSE;
+  if(nCandidates > 0){
+    fHistos->FillTH2("Runwise/NEvent", fRunNo.Data(), "N_{pair}>0");
+    if(nCandidates == 1){
+      fHistos->FillTH1("EventStats", kWithSinglePair);
+      fHistos->FillTH2("Runwise/NEvent", fRunNo.Data(), "N_{pair}=1");
+    }else if(nCandidates > 1){
+      fHistos->FillTH1("EventStats", kWithMultiPair);
+      fHistos->FillTH2("Runwise/NEvent", fRunNo.Data(), "N_{pair}>1");
+    }
+  }else{return kFALSE;}
   // Pairs and daughters
   fPairs->Clear("C");
   fDaughters->Clear("C");
@@ -327,10 +336,20 @@ Bool_t AliAnalysisTaskJpsiJet::RunDetectoreLevelAnalysis(){
   if(RunJetFinder("JpsiJet"))
     FillHistogramsForJetQA("JpsiJet");
 
-  if(FillHistogramsForTaggedJet("PairInJet"))
+  if(FillHistogramsForTaggedJet("PairInJet")){
     fHistos->FillTH1("EventStats",kWithPairInJet);
+    fHistos->FillTH2("Runwise/NEvent", fRunNo.Data(), "JetTagged");
+  }
   
   return kTRUE;
+}
+
+void AliAnalysisTaskJpsiJet::InitHistogramsForRunwiseQA(const char* histClass){
+  TH2* hEvent = fHistos->CreateTH2(
+    Form("%s/NEvent", histClass),
+    "Runwise QA - Event Number",
+    201, -0.5, 200.5,
+    int(kEventStatusN)+1, -0.5, int(kEventStatusN)+0.5);
 }
 
 // Create event QA histograms in output list

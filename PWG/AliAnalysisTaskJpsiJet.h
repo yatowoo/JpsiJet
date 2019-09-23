@@ -78,7 +78,9 @@ private:
   void FillHistogramsForEventQA(const char* histClass);
   void FillHistogramsForClusterQA(const char* histClass);
   void FillHistogramsForJetQA(const char* jetTag);
-
+  void InitHistogramsForRunwiseQA(const char* histClass);
+  void FillHistogramsForRunwiseQA(const char* histClass);
+  
   // Dielectron framework
 private:
   void InitDielectron();
@@ -206,6 +208,10 @@ private:
 // Histograms
   THistManager      *fHistos;
   THistManager      *fHistosMC;
+
+// Runwise QA
+private:
+  TString            fRunNo;
 
 private:
   ClassDef(AliAnalysisTaskJpsiJet, 5);
