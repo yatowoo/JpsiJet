@@ -78,6 +78,7 @@ private:
   void FillHistogramsForEventQA(const char* histClass);
   void FillHistogramsForClusterQA(const char* histClass);
   void FillHistogramsForJetQA(const char* jetTag);
+  void FillTH2(const char* histName, const char* labelX, Double_t value, Double_t weight = 1.0);
   void InitHistogramsForRunwiseQA(const char* histClass);
   void FillHistogramsForRunwiseQA(const char* histClass);
   
@@ -212,6 +213,7 @@ private:
 // Runwise QA
 private:
   TString            fRunNo;
+  Double_t          *fVars;
 
 private:
   ClassDef(AliAnalysisTaskJpsiJet, 5);

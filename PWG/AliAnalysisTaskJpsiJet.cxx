@@ -72,7 +72,8 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet():
   fTaggedJetMC(NULL),
   fHistos(NULL),
   fHistosMC(NULL),
-  fRunNo("")
+  fRunNo(""),
+  fVars(NULL)
 {
   // Constructor
 }
@@ -105,7 +106,8 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   fTaggedJetMC(NULL),
   fHistos(NULL),
   fHistosMC(NULL),
-  fRunNo("")
+  fRunNo(""),
+  fVars(NULL)
 {
   // IO
   DefineInput(0, TChain::Class());
@@ -154,6 +156,9 @@ void AliAnalysisTaskJpsiJet::UserCreateOutputObjects(){
   InitHistogramsForEventQA("Event_beforeCuts");
   InitHistogramsForEventQA("Event_afterCuts");
 
+  fVars = new Double_t[AliDielectronVarManager::kNMaxValues];
+  for(int i = 0; i < AliDielectronVarManager::kNMaxValues; i++)
+    fVars[i] = 0.0;
   InitHistogramsForRunwiseQA("Runwise");
 
   if(!fIsTriggerQA)
@@ -271,6 +276,10 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
 
   // Process MC truth
   if(fIsMC && fHistosMC) RunParticleLevelAnalysis();
+
+  // Fill event level variables
+  AliDielectronVarManager::Fill(fAOD, fVars);
+  FillTH2("Runwise/NTracksAll", fRunNo.Data(), fVars[AliDielectronVarManager::kNTrk]);
 }
 
 Bool_t AliAnalysisTaskJpsiJet::RunDetectoreLevelAnalysis(){
@@ -345,11 +354,21 @@ Bool_t AliAnalysisTaskJpsiJet::RunDetectoreLevelAnalysis(){
 }
 
 void AliAnalysisTaskJpsiJet::InitHistogramsForRunwiseQA(const char* histClass){
-  TH2* hEvent = fHistos->CreateTH2(
+  fHistos->CreateTH2(
     Form("%s/NEvent", histClass),
     "Runwise QA - Event Number",
     201, -0.5, 200.5,
     int(kEventStatusN)+1, -0.5, int(kEventStatusN)+0.5);
+  fHistos->CreateTH2(
+    Form("%s/NTracksAll", histClass),
+    "Runwise QA - Number of all tracks",
+    201, -0.5, 200.5,
+    4001, -0.5, 4000.5);
+}
+
+void AliAnalysisTaskJpsiJet::FillTH2(const char* histName, const char* labelX, Double_t value, Double_t weight){
+  TH2* h2 = (TH2*)(fHistos->FindObject(histName));
+  h2->Fill(labelX, value, weight);
 }
 
 // Create event QA histograms in output list
