@@ -6,7 +6,7 @@
 import math
 from array import array
 import ROOT
-from ROOT import TH1, TH1D, TF1
+from ROOT import TH1, TH1D, TF1, TGraph
 import ana_util
 from ana_util import *
 
@@ -46,9 +46,28 @@ class InvMass:
   gFitH  = 4.2  # Fitting region, higher edge
   gHistL = 1.5  # Drawing region, lower edge
   gHistH = 4.5  # Drawing region, higher edge
-  lgd    = None # Drawing legend for fitting marks
-  pTxtFit= None # Drawing pave text for fitting results
+  lgd    = None # Drawing legend for fitting marks, TLegend
+  pTxtFit= None # Drawing pave text for fitting results, TPaveText
+  gDrawingList = None # Store objects for drawing to avoid garbage collecting, TObjArray
+  def DrawLine(self, xval, color = TOTAL_COLOR, style = 3):
+    ymin = self.hM.GetMinimum()
+    ymax = self.hM.GetMaximum()
+    yLine = ROOT.TLine(xval, ymin, xval, ymax)
+    yLine.SetLineColor(color)
+    yLine.SetLineStyle(style)
+    yLine.Draw('same')
+    return self.gDrawingList.Add(yLine)
+  def DrawRegion(self, fcn, xlow, xup, tag, color = TOTAL_COLOR, style = 3004):
+    region = fcn.Clone('fRegion_' + tag)
+    region.SetRange(xlow, xup)
+    region.SetFillColor(color)
+    region.SetFillStyle(style)
+    region.Draw('same FC')
+    return self.gDrawingList.Add(region)
   def SelectRegion(self, mlow = JPSI_MASS_LOWER, mup = JPSI_MASS_UPPER):
+    self.DrawLine(mlow)
+    self.DrawLine(mup)
+    self.DrawRegion(self.fTot, mlow, mup, 'Signal')
     # Integral results and errors
       # DATA
     NData = ana_util.HistCount(self.hM, mlow, mup)
@@ -221,6 +240,7 @@ class InvMass:
       self.fSig = TF1("fSig", self.SignalMC, self.gHistL, self.gHistH, 1)
       self.InitFittingMC()
     self.SetStyleForAll()
+    self.gDrawingList = ROOT.TObjArray()
 
 
 if __name__ == '__main__':

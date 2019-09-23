@@ -4,6 +4,7 @@ import argparse
 # Command-line Arguments
 parser = argparse.ArgumentParser(description='Test script for post-processing')
 parser.add_argument('--mc',help='MC flag', default=False, action='store_true')
+parser.add_argument('--root',help='ROOT flag, output ROOT file instead PDF', default=False, action='store_true')
 args = parser.parse_args()
 
 import ana_util
@@ -24,9 +25,10 @@ Jpsi.hM.Draw()
 Jpsi.SignalExtraction()
 Jpsi.SelectRegion()
 
+outputFormat = '.root' if args.root else '.pdf'
 if(args.mc):
-  c.SaveAs('cTest_MC.pdf')
+  c.SaveAs('cTest_MC' + outputFormat)
   fMC.Close()
 else:
-  c.SaveAs('cTest.pdf')
+  c.SaveAs('cTest' + outputFormat)
 f.Close()
