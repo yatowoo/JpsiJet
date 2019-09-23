@@ -81,6 +81,7 @@ private:
   void FillTH2(const char* histName, const char* labelX, Double_t value, Double_t weight = 1.0);
   void InitHistogramsForRunwiseQA(const char* histClass);
   void FillHistogramsForRunwiseQA(const char* histClass);
+  void FillHistogramsForRunwiseElectronQA(const char* histClass, AliAODTrack* ele);
   
   // Dielectron framework
 private:
@@ -216,7 +217,7 @@ private:
   Double_t          *fVars;
 
 private:
-  ClassDef(AliAnalysisTaskJpsiJet, 5);
+  ClassDef(AliAnalysisTaskJpsiJet, 6);
 };
 
 #endif /* ALIANALYSISTASK_JPSIJET_H */
