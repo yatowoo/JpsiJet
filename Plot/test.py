@@ -23,7 +23,9 @@ c.Draw()
 
 Jpsi.hM.Draw()
 Jpsi.SignalExtraction(1.5, 4.5)
-Jpsi.SelectRegion()
+Jpsi.SelectSignalRegion()
+Jpsi.SelectSideband()
+Jpsi.DrawResult()
 
 outputFormat = '.root' if args.root else '.pdf'
 if(args.mc):

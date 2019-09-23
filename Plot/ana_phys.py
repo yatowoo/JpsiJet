@@ -30,7 +30,8 @@ DEFAULT_NPX           = 1000
 JPSI_MASS_PDG         = 3.096 # GeV/c^2
 JPSI_MASS_LOWER       = 2.92
 JPSI_MASS_UPPER       = 3.16
-JPSI_SIDEBAND_OFFSET  = 1.0
+JPSI_SIDEBAND_OFFSET_L= 1.0
+JPSI_SIDEBAND_OFFSET_R= 0.2
 N_PARAMS_POL2         = 3
 N_PARAMS_MC           = 1
 N_PARAMS_CRYSTALBALL  = 5
@@ -75,9 +76,12 @@ class InvMass:
     for iBin in range(self.hBkgMC.GetNbinsX()+2):
       self.hTotMC.SetBinContent(iBin, self.fSig.Eval(self.hTotMC.GetBinCenter(iBin)))
     self.hsMC.Draw('same')
-  def DrawLine(self, xval, color = TOTAL_COLOR, style = 3):
+  def DrawLine(self, xval, fcn = None, color = TOTAL_COLOR, style = 3):
     ymin = self.hM.GetMinimum()
-    ymax = self.hM.GetMaximum()
+    if(not fcn):
+      ymax = self.hM.GetMaximum()
+    else:
+      ymax = fcn.Eval(xval)
     yLine = ROOT.TLine(xval, ymin, xval, ymax)
     yLine.SetLineColor(color)
     yLine.SetLineStyle(style)
@@ -108,12 +112,42 @@ class InvMass:
     pTxtFit.AddText("Total:    %.0f #pm %.0f" % self.result['Total'])
     pTxtFit.AddText("Signal:  %.0f #pm %.0f" % self.result['Signal'])
     pTxtFit.AddText("Bkg:      %.0f #pm %.0f" % self.result['Bkg'])
-    pTxtFit.AddText("S/B        = %.2f #pm %.2f" % self.result['SBratio'])
-    pTxtFit.AddText("S/#sqrt{S+B}  = %.2f #pm %.2f" % self.result['SNratio'])
-    pTxtFit.AddText("#chi^{2} / NDF = %.1f / %d" % self.result['Chi2'])
+    pTxtFit.AddText("S/B         = %.2f #pm %.2f" % self.result['SBratio'])
+    pTxtFit.AddText("S/#sqrt{S+B}   = %.2f #pm %.2f" % self.result['SNratio'])
+    pTxtFit.AddText("#chi^{2} / NDF  = %.1f / %d" % self.result['Chi2'])
+    pTxtFit.AddText("f_{sideband}    = %.2f #pm %.2f" % self.result['SBfactor'])
     pTxtFit.Draw("same")
     return self.gDrawingList.Add(pTxtFit)
-  def SelectRegion(self, mlow = JPSI_MASS_LOWER, mup = JPSI_MASS_UPPER):
+  def SelectSideband(self, method='Normal'):
+    # Normal strategy - Fixed Left and Flexible Right with approximate counts
+    # Left
+    leftLow = self.result['Region']['Signal'][0] - JPSI_SIDEBAND_OFFSET_L
+    leftUp = self.result['Region']['Signal'][1] - JPSI_SIDEBAND_OFFSET_L
+    NLeft = ana_util.HistCount(self.hM, leftLow, leftUp)
+    # Right
+    NRight = 0
+    rightLow = self.result['Region']['Signal'][1] + JPSI_SIDEBAND_OFFSET_R
+    iBinRight = self.hM.FindBin(rightLow)
+    for iBin in range(iBinRight, self.hM.GetNbinsX() + 1):
+      NRight += self.hM.GetBinContent(iBin)
+      if(NRight > NLeft):
+        break
+    rightUp = self.hM.GetBinCenter(iBin) + 0.5 * self.hM.GetBinWidth(iBin)
+    # Result
+    self.result['Region']['SidebandL'] = (leftLow, leftUp)
+    self.result['Region']['SidebandR'] = (rightLow, rightUp)
+    (NBkg, EBkg) = self.result['Bkg']
+    self.result['SBfactor'] = (
+      NBkg / (NLeft + NRight),
+      math.sqrt(1/(NLeft+NRight) + (EBkg/NBkg)**2))
+    # Draw
+    self.DrawLine(leftLow, self.fTot, BACKGROUND_COLOR)
+    self.DrawLine(leftUp, self.fTot, BACKGROUND_COLOR)
+    self.DrawRegion(self.fTot, leftLow, leftUp, 'SBLeft', BACKGROUND_COLOR)
+    self.DrawLine(rightLow, self.fTot, BACKGROUND_COLOR)
+    self.DrawLine(rightUp, self.fTot, BACKGROUND_COLOR)
+    self.DrawRegion(self.fTot, rightLow, rightUp, 'SBLeft', BACKGROUND_COLOR)
+  def SelectSignalRegion(self, mlow = JPSI_MASS_LOWER, mup = JPSI_MASS_UPPER):
     self.result['Region'] = {}
     self.result['Region']['Signal'] = (mlow, mup)
     self.DrawLine(mlow)
@@ -164,8 +198,7 @@ class InvMass:
     self.result['SNratio'] = (SNratio, ESNratio)
       # Chi2
     self.result['Chi2'] = (self.fTot.GetChisquare(), self.fTot.GetNDF())
-    # End - fitting result
-    self.DrawResult()
+    # End - Signal region fitting result
   def DrawLegend(self):
     self.lgd = ROOT.TLegend(0.13, 0.68, 0.49, 0.88, "", "brNDC")
     self.lgd.SetName("lgdInvMass")
