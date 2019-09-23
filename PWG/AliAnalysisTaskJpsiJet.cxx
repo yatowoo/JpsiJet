@@ -62,6 +62,7 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet():
   fIsCellQA(kFALSE),
   fIsJetFinder(kTRUE),
   fIsMC(kFALSE),
+  fEMCalEth(5.0),
   fMCParticles(NULL),
   fMCHeader(NULL),
   fMCGenType(""),
@@ -96,6 +97,7 @@ AliAnalysisTaskJpsiJet::AliAnalysisTaskJpsiJet(const char* taskName):
   fIsCellQA(kFALSE),
   fIsJetFinder(kTRUE),
   fIsMC(kFALSE),
+  fEMCalEth(5.0),
   fMCParticles(NULL),
   fMCHeader(NULL),
   fMCGenType(""),
@@ -886,7 +888,8 @@ void AliAnalysisTaskJpsiJet::InitDielectron(){
  *  Pair cuts
 **/
   // EMCal gamma/electron energy threshold
-  Double_t EMCal_E_Threshold = 5.0; // GeV, ADC setting
+    // TODO: now the inteface ONLY used for ALL and MC
+  Double_t EMCal_E_Threshold = fEMCalEth; // GeV, ADC setting
   if(fSelectedTriggerClasses == "EG1" || fSelectedTriggerClasses == "DG1")
     EMCal_E_Threshold = 10.0;
   if(fSelectedTriggerClasses == "EG2" || fSelectedTriggerClasses == "DG2")
@@ -1337,7 +1340,7 @@ Bool_t AliAnalysisTaskJpsiJet::ApplyEmcalCut(AliVParticle* par, Bool_t isMCTruth
   if(eta < 0.22 || eta > 0.7) isDCal = kFALSE;
   if(phi < 4.377 || phi > 5.707) isDCal = kFALSE;
   // Energy threshold
-  Bool_t isTriggered = (E > 5.0);
+  Bool_t isTriggered = (E > fEMCalEth);
   
   return (isTriggered && (isEMCal || isDCal));
 }

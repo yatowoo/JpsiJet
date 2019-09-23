@@ -151,6 +151,8 @@ public:
   Bool_t   GetRejectPileup(){return fRejectPileup;}
   void     SetEventFilter(AliAnalysisCuts *eventCuts){fEventFilter = eventCuts;}
   void     PrintEventFilter(){;}
+  void     SetEMCalEnergyThreshold(Double_t eth){fEMCalEth = eth;}
+  Double_t GetEMCalThreshold(){return fEMCalEth;}
 
 /**
  *  Data members 
@@ -196,6 +198,7 @@ private:
   Bool_t             fIsCellQA; // Add QA histograms by Cell ID
   Bool_t             fIsJetFinder; // ONLY 1 task should enable the jet finder in LEGO train
   Bool_t             fIsMC;  // Input MC production
+  Double_t           fEMCalEth; // EMCal gamma trigger energy threshold
   TClonesArray      *fMCParticles; // AOD event object in MC
   AliAODMCHeader    *fMCHeader;    // AOD event object in MC
   TString            fMCGenType;   // Generator type - Prompt/Jpsi2ee, Bdecay/B2Jpsi2ee
