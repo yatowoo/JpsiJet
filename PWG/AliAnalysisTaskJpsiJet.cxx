@@ -425,6 +425,28 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForRunwiseQA(const char* histClass){
     201, -0.5, 200.5,
     1001, -0.5, 1000.5);
 
+  // Cluster level
+  fHistos->CreateTH2(
+    Form("%s/EMCal_NClusters", histClass),
+    "Runwise EMCal QA - Number of clusters",
+    201, -0.5, 200.5,
+    1001, -0.5, 1000.5);
+  fHistos->CreateTH2(
+    Form("%s/EMCal_NClsMatched", histClass),
+    "Runwise EMCal QA - Number of clusters (track matched)",
+    201, -0.5, 200.5,
+    1001, -0.5, 1000.5);
+  fHistos->CreateTH2(
+    Form("%s/EMCal_E", histClass),
+    "Runwise EMCal QA - Cluster energy (All)",
+    201, -0.5, 200.5,
+    200, 0., 100.);
+  fHistos->CreateTH2(
+    Form("%s/EMCal_Etrk", histClass),
+    "Runwise EMCal QA - Cluster energy (track matched)",
+    201, -0.5, 200.5,
+    200, 0., 100.);
+
   // Electron level
   fHistos->CreateTH2(
     Form("%s/Ele_Pt", histClass),
@@ -573,6 +595,8 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForClusterQA(const char* histClass){
 }
 
 void AliAnalysisTaskJpsiJet::FillHistogramsForClusterQA(const char* histClass){
+  Int_t nClsMatched = 0;
+  FillTH2("Runwise/EMCal_NClusters", fRunNo.Data(), fAOD->GetNumberOfCaloClusters());
   // Loop EMCal clusters
   for(int iCls = 0; iCls < fAOD->GetNumberOfCaloClusters(); iCls++){
     auto cls = (AliAODCaloCluster*)(fAOD->GetCaloCluster(iCls));
@@ -603,7 +627,15 @@ void AliAnalysisTaskJpsiJet::FillHistogramsForClusterQA(const char* histClass){
         fHistos->FillTH1(Form("%s/CellTime", histClass), cellID, cellT * 1e6);
       }
     }// End - Loop cells
+
+    // Runwise QA
+    FillTH2("Runwise/EMCal_E", fRunNo.Data(), energy);
+    if(nTracks > 0){
+      FillTH2("Runwise/EMCal_Etrk", fRunNo.Data(), energy);
+      nClsMatched ++;
+    }
   }// End - Loop clusters
+  FillTH2("Runwise/EMCal_NClsMatched", fRunNo.Data(), nClsMatched);
 }
 
 
