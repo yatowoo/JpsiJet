@@ -6,7 +6,9 @@ parser = argparse.ArgumentParser(description='Test script for post-processing')
 parser.add_argument('--mc',help='MC flag', default=False, action='store_true')
 args = parser.parse_args()
 
-from InvMass import InvMass
+import ana_util
+import ana_phys
+from ana_phys import InvMass
 import ROOT
 f = ROOT.TFile('../output/QM19/PairVars_LHC16_G2.root')
 if(args.mc):

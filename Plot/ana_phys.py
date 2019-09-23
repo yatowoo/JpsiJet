@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-# Class for invariant mass spectrum processing
+# Physics object analyzing
+# - Invariant mass spectrum processing
 
 import math
 from array import array
