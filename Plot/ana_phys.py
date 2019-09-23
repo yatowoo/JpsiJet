@@ -52,6 +52,7 @@ class InvMass:
   lgd    = None # Drawing legend for fitting marks, TLegend
   pTxtFit= None # Drawing pave text for fitting results, TPaveText
   gDrawingList = None # Store objects for drawing to avoid garbage collecting, TObjArray
+  result = {}
   def DrawStack(self):
     self.hsMC = ROOT.THStack("hsMC","Histograms of MC fitting results")
     # Background
@@ -89,7 +90,32 @@ class InvMass:
     region.SetFillStyle(style)
     region.Draw('same FC')
     return self.gDrawingList.Add(region)
+  def DrawResult(self):
+    # Fitting result - TPaveText
+    pTxtFit = ROOT.TPaveText(0.62, 0.39, 0.87, 0.88, "brNDC")
+    pTxtFit.SetName("pTxtFit")
+    pTxtFit.SetBorderSize(0)
+    pTxtFit.SetTextAlign(12)
+    pTxtFit.SetTextFont(42)
+    pTxtFit.SetTextSize(0.03)
+    pTxtFit.SetFillColor(0)
+      # Entries - Signal region
+    entry = pTxtFit.AddText("M_{J/#psi} #in [%.2f, %.2f] (GeV/c^{2})" % self.result['Region']['Signal'])
+    entry.SetTextSize(0.03)
+    entry.SetTextFont(62) # Helvetica (Bold)
+      # Entries - Integral
+    pTxtFit.AddText("Data:     %.0f #pm %.0f" % self.result['Data'])
+    pTxtFit.AddText("Total:    %.0f #pm %.0f" % self.result['Total'])
+    pTxtFit.AddText("Signal:  %.0f #pm %.0f" % self.result['Signal'])
+    pTxtFit.AddText("Bkg:      %.0f #pm %.0f" % self.result['Bkg'])
+    pTxtFit.AddText("S/B        = %.2f #pm %.2f" % self.result['SBratio'])
+    pTxtFit.AddText("S/#sqrt{S+B}  = %.2f #pm %.2f" % self.result['SNratio'])
+    pTxtFit.AddText("#chi^{2} / NDF = %.1f / %d" % self.result['Chi2'])
+    pTxtFit.Draw("same")
+    return self.gDrawingList.Add(pTxtFit)
   def SelectRegion(self, mlow = JPSI_MASS_LOWER, mup = JPSI_MASS_UPPER):
+    self.result['Region'] = {}
+    self.result['Region']['Signal'] = (mlow, mup)
     self.DrawLine(mlow)
     self.DrawLine(mup)
     if(not self.hSigMC):
@@ -98,11 +124,13 @@ class InvMass:
       # DATA
     NData = ana_util.HistCount(self.hM, mlow, mup)
     EData = math.sqrt(NData)
+    self.result['Data'] = (NData, EData)
       # TOTAL
     fitter = ROOT.TVirtualFitter.GetFitter() # Fitting results
     width = self.hM.GetBinWidth(1)
     NTotal = self.fTot.Integral(mlow, mup) / width
     ETotal = self.fTot.IntegralError(mlow, mup) /width
+    self.result['Total'] = (NTotal, ETotal)
       # Signal and Background
     errPar = self.fTot.GetParErrors()
     if(not self.hSigMC):
@@ -122,37 +150,22 @@ class InvMass:
       ## Calculation
     NSig = self.fSig.Integral(mlow, mup) / width
     ESig = self.fSig.IntegralError(mlow, mup, self.fSig.GetParameters(), covSig.GetMatrixArray()) / width
+    self.result['Signal'] = (NSig, ESig)
     NBkg = self.fBkg.Integral(mlow, mup) / width
     EBkg = self.fBkg.IntegralError(mlow, mup, self.fBkg.GetParameters(), covBkg.GetMatrixArray()) / width
-    # Fitting result - TPaveText
-    self.pTxtFit = ROOT.TPaveText(0.62, 0.39, 0.87, 0.88, "brNDC")
-    self.pTxtFit.SetName("pTxtFit")
-    self.pTxtFit.SetBorderSize(0)
-    self.pTxtFit.SetTextAlign(12)
-    self.pTxtFit.SetTextFont(42)
-    self.pTxtFit.SetTextSize(0.03)
-    self.pTxtFit.SetFillColor(0)
-      # Entries - Signal region
-    entry = self.pTxtFit.AddText("M_{J/#psi} #in [%.2f, %.2f] (GeV/c^{2})" % (mlow, mup))
-    entry.SetTextSize(0.03)
-    entry.SetTextFont(62) # Helvetica (Bold)
-      # Entries - Integral
-    self.pTxtFit.AddText("Data:     %.0f #pm %.0f" % (NData, EData))
-    self.pTxtFit.AddText("Total:    %.0f #pm %.0f" % (NTotal, ETotal))
-    self.pTxtFit.AddText("Signal:  %.0f #pm %.0f" % (NSig, ESig))
-    self.pTxtFit.AddText("Bkg:      %.0f #pm %.0f" % (NBkg, EBkg))
+    self.result['Bkg'] = (NBkg, EBkg)
       # Significance - S/B
     SBratio = NSig / NBkg
     ESBratio = SBratio * math.sqrt((ESig/NSig)**2 + (EBkg/NBkg)**2)
-    self.pTxtFit.AddText("S/B        = %.2f #pm %.2f" % (SBratio, ESBratio))
+    self.result['SBratio'] = (SBratio, ESBratio)
       # Significance - S/#sqrt{S+B}
     SNratio = NSig / math.sqrt(NTotal)
     ESNratio = SNratio * math.sqrt((ESig/NSig)**2 + (ETotal/NTotal/2.)**2)
-    self.pTxtFit.AddText("S/#sqrt{S+B}  = %.2f #pm %.2f" % (SNratio, ESNratio))
+    self.result['SNratio'] = (SNratio, ESNratio)
       # Chi2
-    self.pTxtFit.AddText("#chi^{2} / NDF = %.1f / %d" % (self.fTot.GetChisquare(), self.fTot.GetNDF()))
-    self.pTxtFit.Draw("same")
-    # End of TPaveText - fitting result
+    self.result['Chi2'] = (self.fTot.GetChisquare(), self.fTot.GetNDF())
+    # End - fitting result
+    self.DrawResult()
   def DrawLegend(self):
     self.lgd = ROOT.TLegend(0.13, 0.68, 0.49, 0.88, "", "brNDC")
     self.lgd.SetName("lgdInvMass")
