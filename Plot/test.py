@@ -5,6 +5,7 @@ import argparse
 parser = argparse.ArgumentParser(description='Test script for post-processing')
 parser.add_argument('--mc',help='MC flag', default=False, action='store_true')
 parser.add_argument('--root',help='ROOT flag, output ROOT file instead PDF', default=False, action='store_true')
+parser.add_argument('--cut',help='Cut flag, apply analysis cuts', default=False, action='store_true')
 args = parser.parse_args()
 
 import ana_util
@@ -12,6 +13,9 @@ import ana_phys
 from ana_phys import InvMass
 import ROOT
 f = ROOT.TFile('../output/QM19/PairVars_LHC16_G2.root')
+# Jet pT cut
+if(args.cut):
+  f.PairVars.GetAxis(5).SetRangeUser(15., 50.)
 if(args.mc):
   fMC = ROOT.TFile('MCsignal.root')
   Jpsi = InvMass(f.PairVars.Projection(1), signalMC=fMC.hJpsiMC)

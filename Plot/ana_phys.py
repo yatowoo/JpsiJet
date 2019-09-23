@@ -51,7 +51,6 @@ class InvMass:
   gHistL = 1.5  # Drawing region, lower edge
   gHistH = 4.5  # Drawing region, higher edge
   lgd    = None # Drawing legend for fitting marks, TLegend
-  pTxtFit= None # Drawing pave text for fitting results, TPaveText
   gDrawingList = None # Store objects for drawing to avoid garbage collecting, TObjArray
   result = {}
   def DrawStack(self):
@@ -93,7 +92,8 @@ class InvMass:
     region.SetFillColor(color)
     region.SetFillStyle(style)
     region.Draw('same FC')
-    return self.gDrawingList.Add(region)
+    self.gDrawingList.Add(region)
+    return region
   def DrawResult(self):
     # Fitting result - TPaveText
     pTxtFit = ROOT.TPaveText(0.62, 0.39, 0.87, 0.88, "brNDC")
@@ -146,7 +146,12 @@ class InvMass:
     self.DrawRegion(self.fTot, leftLow, leftUp, 'SBLeft', BACKGROUND_COLOR)
     self.DrawLine(rightLow, self.fTot, BACKGROUND_COLOR)
     self.DrawLine(rightUp, self.fTot, BACKGROUND_COLOR)
-    self.DrawRegion(self.fTot, rightLow, rightUp, 'SBLeft', BACKGROUND_COLOR)
+    region = self.DrawRegion(self.fTot, rightLow, rightUp, 'SBLeft', BACKGROUND_COLOR)
+      # Legend
+    region.SetLineWidth(0)
+    region.SetLineColor(BACKGROUND_COLOR)
+    region.SetMarkerColor(BACKGROUND_COLOR)
+    self.lgd.AddEntry(region, "Sideband")
   def SelectSignalRegion(self, mlow = JPSI_MASS_LOWER, mup = JPSI_MASS_UPPER):
     self.result['Region'] = {}
     self.result['Region']['Signal'] = (mlow, mup)
@@ -207,12 +212,12 @@ class InvMass:
     self.lgd.SetTextFont(42)
     self.lgd.SetTextSize(0.03)
     self.lgd.AddEntry(self.hM, "e^{+}e^{-} pair")
-    self.lgd.AddEntry(self.fTot,"Total fit")
-    self.lgd.AddEntry(self.fBkg,"Background fit (pol2)")
     if(not self.hSigMC):
+      self.lgd.AddEntry(self.fTot,"Total fit")
       self.lgd.AddEntry(self.fSig,"Signal fit (Crystal-Ball)")
     else:
-      self.lgd.AddEntry(self.fSig,"Signal fit (MC shape)")
+      self.lgd.AddEntry(self.fTot,"MC shape + Bkg")
+    self.lgd.AddEntry(self.fBkg,"Background fit (pol2)")
     self.lgd.Draw("same")
   def SetStyleForAll(self):
     # ROOT Style
