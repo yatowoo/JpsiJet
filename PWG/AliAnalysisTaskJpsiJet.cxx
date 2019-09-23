@@ -285,7 +285,14 @@ void AliAnalysisTaskJpsiJet::UserExec(Option_t*){
   FillTH2("Runwise/NTracksAll", fRunNo.Data(), fVars[AliDielectronVarManager::kNTrk]);
   FillTH2("Runwise/NElectrons", fRunNo.Data(), fVars[AliDielectronVarManager::kTracks]);
   FillTH2("Runwise/NPairs", fRunNo.Data(), fPairs->GetEntries());
-  // Fill track level variables
+  // Fill jet level variables
+  auto jets = static_cast<AliJetContainer*>(fJets->At(0));
+  FillTH2("Runwise/NJets", fRunNo.Data(), jets->GetNAcceptedJets());
+  auto jetFinder = static_cast<AliEmcalJetTask*>(fJetTasks->At(0));
+  auto trkCont = jetFinder->GetTrackContainer();
+  FillTH2("Runwise/Jet_NTracks", fRunNo.Data(), trkCont->GetNAcceptedTracks());
+
+  // Fill electron level variables
   auto trkArr = fDielectron->GetTrackArray(0);
   for(int iTrk = 0; iTrk < trkArr->GetEntries(); iTrk++){
     auto trk = (AliAODTrack*)(trkArr->At(iTrk));
@@ -405,6 +412,19 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForRunwiseQA(const char* histClass){
     "Runwise QA - Number of selected tracks/electron",
     201, -0.5, 200.5,
     21, -0.5, 20.5);
+
+  // Jet level
+  fHistos->CreateTH2(
+    Form("%s/NJets", histClass),
+    "Runwise Jet QA - Number of charged jets (R=0.4, |#eta|<0.5)",
+    201, -0.5, 200.5,
+    101, -0.5, 100.5);
+  fHistos->CreateTH2(
+    Form("%s/Jet_NTracks", histClass),
+    "Runwise Jet QA - Number of accepted tracks (Hybrid)",
+    201, -0.5, 200.5,
+    1001, -0.5, 1000.5);
+
   // Electron level
   fHistos->CreateTH2(
     Form("%s/Ele_Pt", histClass),
