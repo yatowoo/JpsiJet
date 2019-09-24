@@ -39,7 +39,7 @@ AliAnalysisAlien* SetupGridHandler(
   alienHandler->SetAdditionalLibs("AddTaskJpsiJet_pp.C AliAnalysisTaskJpsiJet.cxx AliAnalysisTaskJpsiJet.h");
   alienHandler->SetAnalysisSource("AliAnalysisTaskJpsiJet.cxx");
 
-  alienHandler->SetAliPhysicsVersion("vAN-20190821_ROOT6-1");
+  alienHandler->SetAliPhysicsVersion("vAN-20190921_ROOT6-1");
 
   alienHandler->SetAPIVersion("V1.1x");
 
