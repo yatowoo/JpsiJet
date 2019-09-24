@@ -388,7 +388,7 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForRunwiseQA(const char* histClass){
     Form("%s/NPVtxZ", histClass),
     "Runwise QA - Primary vertex Z",
     201, -0.5, 200.5,
-    4001, -0.5, 4000.5);
+    300, -15., 15.);
   fHistos->CreateTH2(
     Form("%s/NVContrib", histClass),
     "Runwise QA - Number of Vertex contributors",
@@ -469,12 +469,12 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForRunwiseQA(const char* histClass){
     Form("%s/Ele_DCAxy", histClass),
     "Runwise Electron QA - DCA_{xy}",
     201, -0.5, 200.5,
-    100, -5., 5.);
+    1000, -5., 5.);
   fHistos->CreateTH2(
     Form("%s/Ele_DCAz", histClass),
     "Runwise Electron QA - DCA_{z}",
     201, -0.5, 200.5,
-    100, -5., 5.);
+    1000, -5., 5.);
   fHistos->CreateTH2(
     Form("%s/Ele_TPCNcls", histClass),
     "Runwise Electron QA - Number of TPC clusters",
