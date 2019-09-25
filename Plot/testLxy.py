@@ -7,6 +7,7 @@ from ROOT import TFile
 
 c = ROOT.TCanvas('cTest','Plot Test', 800, 600)
 c.Draw()
+c.SetLogy()
 
 fData = TFile('../output/QM19/PairVars_LHC16_G2.root')
 fMC = TFile('mc16.root')

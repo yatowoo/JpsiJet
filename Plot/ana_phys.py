@@ -16,10 +16,10 @@ N_FITTING             = 3     # Max times for re-fitting
 # Drawing style
 DATA_COLOR            = kBlue
 DATA_STYLE            = kRound
-TOTAL_COLOR           = kRed
+TOTAL_COLOR           = kBlack
 TOTAL_LINE            = 1     # Normal
 TOTAL_LINE_WIDTH      = 3
-SIGNAL_COLOR          = kBlack
+SIGNAL_COLOR          = kRed
 SIGNAL_LINE           = 2     # Dash-line
 SIGNAL_LINE_WIDTH     = 2
 BACKGROUND_COLOR      = kGreen
@@ -326,22 +326,27 @@ class InvMass:
 
 # Parameters and constants
 PSEUDOLXY_PROMPT_CUT   = 0.01  # cm, |Lxy| < CUT
-PSEUDOLXY_BDECAY_CUT   = 0.01  # cm, Lxy > CUT
 PSEUDOLXY_PROMPT_FIT   = 0.05  # cm, range of MC shape
+PSEUDOLXY_PROMPT_COLOR = kRed
+PSEUDOLXY_BDECAY_CUT   = 0.01  # cm, Lxy > CUT
 PSEUDOLXY_BDECAY_FIT_L = -0.02 # cm, range of MC shape
 PSEUDOLXY_BDECAY_FIT_R = 0.2   # cm, range of MC shape
+PSEUDOLXY_BDECAY_COLOR = kViolet
 PSEUDOLXY_BKG_FIT      = 0.05  # cm, range of MC shape
+PSEUDOLXY_BKG_COLOR    = kGreen
 PSEUDOLXY_TOTAL_FIT_L  = -0.05 # cm, range of fitting
 PSEUDOLXY_TOTAL_FIT_R  = 0.2 # cm, range of fitting
+PSEUDOLXY_TOTAL_COLOR  = kBlack
 
 class PseudoLxy:
   hData     = None # DATA
+  hsMC      = None # THStack
   hMCPrompt = None # MC shape for prompt, TH1D
   hMCBdecay = None # MC shape for b-hadron decay, TH1D
   hMCBkg    = None # MC shape for background decay, TH1D
-  fPrompt   = None # TF1
-  fBdecay   = None # TF1
-  fBkg      = None # TF1
+  fPrompt   = None # TH1D, used for show
+  fBdecay   = None # TH1D, used for show
+  fBkg      = None # TH1D, used for show
   fTotal    = None # TF1
   def PromptMC(self, x, par):
     if(abs(x[0]) > PSEUDOLXY_PROMPT_FIT):
@@ -360,25 +365,53 @@ class PseudoLxy:
     ratioBdecay = self.BdecayMC(x, [par[1]])
     ratioBkg    = self.BkgMC(x, [par[2]])
     return  ratioPrompt + ratioBdecay + ratioBkg
+  def DrawMC(self):
+    self.fTotal.Draw('same')
+    self.fTotal.SetLineColor(PSEUDOLXY_TOTAL_COLOR)
+    self.fBkg = self.hMCBkg.Clone('fBkg')
+    self.fBkg.Scale(self.fTotal.GetParameter(2))
+    self.fBkg.SetLineColor(PSEUDOLXY_BKG_COLOR)
+    self.fBkg.Draw('same HIST')
+    self.fBdecay = self.hMCBdecay.Clone('fBdecay')
+    self.fBdecay.Scale(self.fTotal.GetParameter(1))
+    self.fBdecay.SetLineColor(PSEUDOLXY_BDECAY_COLOR)
+    self.fBdecay.SetFillColor(PSEUDOLXY_BDECAY_COLOR)
+    self.fBdecay.SetFillStyle(3004)
+    self.fBdecay.Draw('same HIST')
+    self.fPrompt = self.hMCPrompt.Clone('fPrompt')
+    self.fPrompt.Scale(self.fTotal.GetParameter(0))
+    self.fPrompt.SetLineColor(PSEUDOLXY_PROMPT_COLOR)
+    self.fPrompt.Draw('same HIST')
   def Fitting(self):
-    self.hData.Fit(self.fTotal, "IS", "", PSEUDOLXY_TOTAL_FIT_L, PSEUDOLXY_TOTAL_FIT_R)
+    self.hData.Fit(self.fTotal, "ISN", "", PSEUDOLXY_TOTAL_FIT_L, PSEUDOLXY_TOTAL_FIT_R)
+    self.DrawMC()
+    # In prompt region
+    nPrompt = ana_util.HistCount(self.fPrompt, -PSEUDOLXY_PROMPT_CUT, PSEUDOLXY_PROMPT_CUT)
+    nBdecay = ana_util.HistCount(self.fBdecay, -PSEUDOLXY_PROMPT_CUT, PSEUDOLXY_PROMPT_CUT)
+    nBkg = ana_util.HistCount(self.fBkg, -PSEUDOLXY_PROMPT_CUT, PSEUDOLXY_PROMPT_CUT)
+    print('Prompt : ' + repr(nPrompt) )
+    print('Bdecay : ' + repr(nBdecay) )
+    print('Bkg : ' + repr(nBkg) )
+    print(' -> Purity: ' + repr(nPrompt / (nPrompt + nBdecay + nBkg)))
+    print(' Chi2/NDF = ' + ' %.1f / %d' % (self.fTotal.GetChisquare(), self.fTotal.GetNDF()))
+  def SetParam(self, hist, iParam, fracMin = 0., fracMax = 1.0):
+    PSEUDO_PEAK = self.hData.GetBinContent(self.hData.GetMaximumBin())
+    histMax = hist.GetBinContent(hist.GetMaximumBin())
+    self.fTotal.SetParameter(iParam, fracMin * PSEUDO_PEAK / histMax)
+    self.fTotal.SetParLimits(iParam, fracMin * PSEUDO_PEAK / histMax, fracMax * PSEUDO_PEAK / histMax)
   def __init__(self, Lxy, Prompt, Bdecay, Bkg):
     self.hData = Lxy.Clone('hLxyData')
     self.hMCPrompt = Prompt.Clone('hPromptMC')
+    self.hMCPrompt.Scale(1./self.hMCPrompt.Integral())
     self.hMCBdecay = Bdecay.Clone('hBdecayMC')
+    self.hMCBdecay.Scale(1./self.hMCBdecay.Integral())
     self.hMCBkg    = Bkg.Clone('hBkgMC')
-    self.fPrompt = TF1('fPrompt', self.PromptMC, -PSEUDOLXY_PROMPT_FIT, PSEUDOLXY_PROMPT_FIT, 1)
-    self.fPrompt.SetParameter(0, 0.1)
-    self.fBdecay = TF1('fBdecay', self.BdecayMC, PSEUDOLXY_BDECAY_FIT_L, PSEUDOLXY_BDECAY_FIT_R, 1)
-    self.fBdecay.SetParameter(0, 0.01)
-    self.fBkg    = TF1('fBkg', self.BkgMC, -PSEUDOLXY_BKG_FIT, PSEUDOLXY_BKG_FIT, 1)
-    self.fBkg.SetParameter(0, 0.01)
+    self.hMCBkg.Scale(1./self.hMCBkg.Integral())
+    # Init fitting function
     self.fTotal  = TF1('fTotal', self.TotalMC, PSEUDOLXY_TOTAL_FIT_L, PSEUDOLXY_TOTAL_FIT_R, 3)
-    self.fTotal.SetParameters(0.1, 0.01, 0.01)
-    self.fTotal.SetParLimits(0, 0., 10.)
-    self.fTotal.SetParLimits(1, 0., 10.)
-    self.fTotal.SetParLimits(2, 0., 10.)
-
+    self.SetParam(self.hMCPrompt, 0, 0.1, 0.5)
+    self.SetParam(self.hMCBdecay, 1, 1e-3, 0.1)
+    self.SetParam(self.hMCBdecay, 2, 1e-3, 0.05)
 
 if __name__ == '__main__':
   invM = InvMass()
