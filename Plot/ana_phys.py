@@ -348,6 +348,9 @@ class PseudoLxy:
   fBdecay   = None # TH1D, used for show
   fBkg      = None # TH1D, used for show
   fTotal    = None # TF1
+  gLgd      = None # TLegend
+  gTxt      = None # TPaveText
+  result    = {}   # Fitting results for output
   def PromptMC(self, x, par):
     if(abs(x[0]) > PSEUDOLXY_PROMPT_FIT):
       return 0.0
@@ -365,6 +368,35 @@ class PseudoLxy:
     ratioBdecay = self.BdecayMC(x, [par[1]])
     ratioBkg    = self.BkgMC(x, [par[2]])
     return  ratioPrompt + ratioBdecay + ratioBkg
+  def DrawResult(self):
+    self.gTxt = ROOT.TPaveText(0.6, 0.5, 0.85, 0.88, "brNDC")
+    self.gTxt.SetName("pTxtFit")
+    self.gTxt.SetBorderSize(0)
+    self.gTxt.SetTextAlign(12)
+    self.gTxt.SetTextFont(42)
+    self.gTxt.SetTextSize(0.03)
+    self.gTxt.SetFillColor(0)
+    txt = self.gTxt.AddText("M_{e^{+}e^{-}} #in [%.2f , %.2f] (GeV/c^{2})" % (JPSI_MASS_LOWER, JPSI_MASS_UPPER))
+    txt = self.gTxt.AddText("Prompt cuts: |#tilde{L}_{xy}| < %.3f" % PSEUDOLXY_PROMPT_CUT)
+    self.gTxt.AddText("Data : %.1f" % self.result['Data'])
+    self.gTxt.AddText("Total : %.1f" % self.result['Total'])
+    self.gTxt.AddText("Prompt : %.1f" % self.result['Prompt'])
+    self.gTxt.AddText("Non-prompt : %.1f" % self.result['Bdecay'])
+    self.gTxt.AddText("Bkg : %.1f" % self.result['Bkg'])
+    self.gTxt.AddText("R_{prompt} : %.1f" % self.result['Ratio'])
+    self.gTxt.AddText("f_{B} : %.1f" % self.result['fB'])
+    self.gTxt.AddText("#chi^{2}/NDF : %.1f / %d" % self.result['Chi2'])
+    self.gTxt.Draw('same')
+  def DrawLegend(self):
+    self.gLgd = ROOT.TLegend(0.15, 0.6, 0.35, 0.88)
+    self.gLgd.SetBorderSize(0)
+    self.gLgd.SetFillColor(0)
+    self.gLgd.AddEntry(self.hData, 'Data')
+    self.gLgd.AddEntry(self.fPrompt, 'Prompt (MC)')
+    self.gLgd.AddEntry(self.fBdecay, 'Non-prompt (MC)')
+    self.gLgd.AddEntry(self.fBkg, 'Background (MC)')
+    self.gLgd.AddEntry(self.fTotal, 'Total fit')
+    self.gLgd.Draw('same')
   def DrawMC(self):
     self.fTotal.Draw('same')
     self.fTotal.SetLineColor(PSEUDOLXY_TOTAL_COLOR)
@@ -385,15 +417,17 @@ class PseudoLxy:
   def Fitting(self):
     self.hData.Fit(self.fTotal, "ISN", "", PSEUDOLXY_TOTAL_FIT_L, PSEUDOLXY_TOTAL_FIT_R)
     self.DrawMC()
+    self.DrawLegend()
     # In prompt region
-    nPrompt = ana_util.HistCount(self.fPrompt, -PSEUDOLXY_PROMPT_CUT, PSEUDOLXY_PROMPT_CUT)
-    nBdecay = ana_util.HistCount(self.fBdecay, -PSEUDOLXY_PROMPT_CUT, PSEUDOLXY_PROMPT_CUT)
-    nBkg = ana_util.HistCount(self.fBkg, -PSEUDOLXY_PROMPT_CUT, PSEUDOLXY_PROMPT_CUT)
-    print('Prompt : ' + repr(nPrompt) )
-    print('Bdecay : ' + repr(nBdecay) )
-    print('Bkg : ' + repr(nBkg) )
-    print(' -> Purity: ' + repr(nPrompt / (nPrompt + nBdecay + nBkg)))
-    print(' Chi2/NDF = ' + ' %.1f / %d' % (self.fTotal.GetChisquare(), self.fTotal.GetNDF()))
+    self.result['Data'] = ana_util.HistCount(self.hData, -PSEUDOLXY_PROMPT_CUT, PSEUDOLXY_PROMPT_CUT)
+    self.result['Prompt'] = ana_util.HistCount(self.fPrompt, -PSEUDOLXY_PROMPT_CUT, PSEUDOLXY_PROMPT_CUT)
+    self.result['Bdecay'] = ana_util.HistCount(self.fBdecay, -PSEUDOLXY_PROMPT_CUT, PSEUDOLXY_PROMPT_CUT)
+    self.result['Bkg'] = ana_util.HistCount(self.fBkg, -PSEUDOLXY_PROMPT_CUT, PSEUDOLXY_PROMPT_CUT)
+    self.result['Total'] = self.result['Prompt'] + self.result['Bdecay'] + self.result['Bkg']
+    self.result['Ratio'] = self.result['Prompt'] / self.result['Total']
+    self.result['fB'] = self.result['Bdecay'] / (self.result['Prompt'] + self.result['Bdecay'])
+    self.result['Chi2'] = (self.fTotal.GetChisquare(), self.fTotal.GetNDF())
+    self.DrawResult()
   def SetParam(self, hist, iParam, fracMin = 0., fracMax = 1.0):
     PSEUDO_PEAK = self.hData.GetBinContent(self.hData.GetMaximumBin())
     histMax = hist.GetBinContent(hist.GetMaximumBin())
