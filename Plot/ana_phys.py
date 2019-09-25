@@ -324,6 +324,61 @@ class InvMass:
     self.SetStyleForAll()
     self.gDrawingList = ROOT.TObjArray()
 
+# Parameters and constants
+PSEUDOLXY_PROMPT_CUT   = 0.01  # cm, |Lxy| < CUT
+PSEUDOLXY_BDECAY_CUT   = 0.01  # cm, Lxy > CUT
+PSEUDOLXY_PROMPT_FIT   = 0.05  # cm, range of MC shape
+PSEUDOLXY_BDECAY_FIT_L = -0.02 # cm, range of MC shape
+PSEUDOLXY_BDECAY_FIT_R = 0.2   # cm, range of MC shape
+PSEUDOLXY_BKG_FIT      = 0.05  # cm, range of MC shape
+PSEUDOLXY_TOTAL_FIT_L  = -0.05 # cm, range of fitting
+PSEUDOLXY_TOTAL_FIT_R  = 0.2 # cm, range of fitting
+
+class PseudoLxy:
+  hData     = None # DATA
+  hMCPrompt = None # MC shape for prompt, TH1D
+  hMCBdecay = None # MC shape for b-hadron decay, TH1D
+  hMCBkg    = None # MC shape for background decay, TH1D
+  fPrompt   = None # TF1
+  fBdecay   = None # TF1
+  fBkg      = None # TF1
+  fTotal    = None # TF1
+  def PromptMC(self, x, par):
+    if(abs(x[0]) > PSEUDOLXY_PROMPT_FIT):
+      return 0.0
+    return par[0] * self.hMCPrompt.GetBinContent(self.hMCPrompt.FindBin(x[0]))
+  def BdecayMC(self, x, par):
+    if(x[0] < PSEUDOLXY_BDECAY_FIT_L or x[0] > PSEUDOLXY_BDECAY_FIT_R):
+      return 0.0
+    return par[0] * self.hMCBdecay.GetBinContent(self.hMCBdecay.FindBin(x[0]))
+  def BkgMC(self, x, par):
+    if(abs(x[0]) > PSEUDOLXY_BKG_FIT):
+      return 0.0
+    return par[0] * self.hMCBkg.GetBinContent(self.hMCBkg.FindBin(x[0]))
+  def TotalMC(self, x, par):
+    ratioPrompt = self.PromptMC(x, par)
+    ratioBdecay = self.BdecayMC(x, [par[1]])
+    ratioBkg    = self.BkgMC(x, [par[2]])
+    return  ratioPrompt + ratioBdecay + ratioBkg
+  def Fitting(self):
+    self.hData.Fit(self.fTotal, "IS", "", PSEUDOLXY_TOTAL_FIT_L, PSEUDOLXY_TOTAL_FIT_R)
+  def __init__(self, Lxy, Prompt, Bdecay, Bkg):
+    self.hData = Lxy.Clone('hLxyData')
+    self.hMCPrompt = Prompt.Clone('hPromptMC')
+    self.hMCBdecay = Bdecay.Clone('hBdecayMC')
+    self.hMCBkg    = Bkg.Clone('hBkgMC')
+    self.fPrompt = TF1('fPrompt', self.PromptMC, -PSEUDOLXY_PROMPT_FIT, PSEUDOLXY_PROMPT_FIT, 1)
+    self.fPrompt.SetParameter(0, 0.1)
+    self.fBdecay = TF1('fBdecay', self.BdecayMC, PSEUDOLXY_BDECAY_FIT_L, PSEUDOLXY_BDECAY_FIT_R, 1)
+    self.fBdecay.SetParameter(0, 0.01)
+    self.fBkg    = TF1('fBkg', self.BkgMC, -PSEUDOLXY_BKG_FIT, PSEUDOLXY_BKG_FIT, 1)
+    self.fBkg.SetParameter(0, 0.01)
+    self.fTotal  = TF1('fTotal', self.TotalMC, PSEUDOLXY_TOTAL_FIT_L, PSEUDOLXY_TOTAL_FIT_R, 3)
+    self.fTotal.SetParameters(0.1, 0.01, 0.01)
+    self.fTotal.SetParLimits(0, 0., 10.)
+    self.fTotal.SetParLimits(1, 0., 10.)
+    self.fTotal.SetParLimits(2, 0., 10.)
+
 
 if __name__ == '__main__':
   invM = InvMass()

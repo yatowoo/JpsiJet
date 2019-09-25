@@ -503,6 +503,7 @@ def DrawMC(mc):
   lgd.AddEntry(jpsiLxyBkg, "Background")
   lgd.Draw("same")
   padQA.Print(args.print, "Title:Jpsi_Lxy")
+  padQA.Write('cJpsiLxy')
   return
 # END - Drawing MC plots
 
