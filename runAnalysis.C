@@ -36,8 +36,8 @@ AliAnalysisAlien* SetupGridHandler(
 
   alienHandler->AddIncludePath("-I. -I$ROOTSYS/include -I$ALICE_ROOT -I$ALICE_ROOT/include -I$ALICE_PHYSICS/include");
 
-  alienHandler->SetAdditionalLibs("AddTaskJpsiJet_pp.C AliAnalysisTaskJpsiJet.cxx AliAnalysisTaskJpsiJet.h");
-  alienHandler->SetAnalysisSource("AliAnalysisTaskJpsiJet.cxx");
+  alienHandler->SetAdditionalLibs("AddTaskJpsiJetFilter_pp.C AliAnalysisTaskJpsiJetFilter.cxx AliAnalysisTaskJpsiJetFilter.h AddTaskJpsiJet_pp.C AliAnalysisTaskJpsiJet.cxx AliAnalysisTaskJpsiJet.h");
+  alienHandler->SetAnalysisSource("AliAnalysisTaskJpsiJetFilter.cxx AliAnalysisTaskJpsiJet.cxx");
 
   alienHandler->SetAliPhysicsVersion("vAN-20190921_ROOT6-1");
 
@@ -202,7 +202,10 @@ void runAnalysis(
   if(mode == "local"){
     // Input data file
     TChain *chain = new TChain("aodTree");
-    chain->Add("AliAOD_input.root");
+    if(isMC)
+      chain->Add("AliAOD_MCinput.root");
+    else
+      chain->Add("AliAOD_input.root");
     // Start Analysis
     mgr->StartAnalysis("local", chain);
   }else{
