@@ -57,7 +57,26 @@ print('>>> Datasets\t: ' + datasets)
 print('>>> Data dir.\t: ' + data_dir)
 print('>>> Work dir.\t: ' + work_dir)
 
-cmd = "aliroot -b -l -q -x \'runAnalysis.C(1, 0, 1, 0, 0, 0, 0, 0," \
+# Run option
+doDevPWG          = 1
+doMult            = 0
+doEmcalCorrection = (0 if args.mode == 'local' else 1)
+doJetQA           = 0
+doJpsiQA          = 0
+doJpsiFilter      = (0 if args.mc else 1)
+doPIDQA           = 0
+doPhysAna         = 0
+
+
+cmd = "aliroot -b -l -q -x \'runAnalysis.C(" \
+    + repr(doDevPWG) + ','   \
+    + repr(doMult) + ','   \
+    + repr(doEmcalCorrection) + ','   \
+    + repr(doJetQA) + ','   \
+    + repr(doJpsiQA) + ','   \
+    + repr(doJpsiFilter) + ','   \
+    + repr(doPIDQA) + ','   \
+    + repr(doPhysAna) + ','   \
     + '"' + args.mode + '",' \
     + '"' + datasets  + '",' \
     + '"' + data_dir  + '",' \
