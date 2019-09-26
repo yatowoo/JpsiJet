@@ -394,7 +394,7 @@ class PseudoLxy:
     self.gLgd.AddEntry(self.hData, 'Data')
     self.gLgd.AddEntry(self.fPrompt, 'Prompt (MC)')
     self.gLgd.AddEntry(self.fBdecay, 'Non-prompt (MC)')
-    self.gLgd.AddEntry(self.fBkg, 'Background (MC)')
+    self.gLgd.AddEntry(self.fBkg, 'Background (Sideband)')
     self.gLgd.AddEntry(self.fTotal, 'Total fit')
     self.gLgd.Draw('same')
   def DrawMC(self):
@@ -440,12 +440,11 @@ class PseudoLxy:
     self.hMCBdecay = Bdecay.Clone('hBdecayMC')
     self.hMCBdecay.Scale(1./self.hMCBdecay.Integral())
     self.hMCBkg    = Bkg.Clone('hBkgMC')
-    self.hMCBkg.Scale(1./self.hMCBkg.Integral())
     # Init fitting function
     self.fTotal  = TF1('fTotal', self.TotalMC, PSEUDOLXY_TOTAL_FIT_L, PSEUDOLXY_TOTAL_FIT_R, 3)
-    self.SetParam(self.hMCPrompt, 0, 0.1, 0.5)
+    self.SetParam(self.hMCPrompt, 0, 0.1, 1.0)
     self.SetParam(self.hMCBdecay, 1, 1e-3, 0.1)
-    self.SetParam(self.hMCBdecay, 2, 1e-3, 0.05)
+    self.fTotal.FixParameter(2, 1.0)
 
 if __name__ == '__main__':
   invM = InvMass()
