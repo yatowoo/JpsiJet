@@ -41,6 +41,7 @@ class InvMass:
   hMPt   = None # Invariant mass vs pT, TH2D (optional)
   hsMC   = None # Show MC fitting, THStack
   hSigMC = None # MC shape for signal fitting, TH1D
+  hSigPlot = None # MC shape for plotting
   hBkgMC = None # Background shape for MC fitting, TH1D
   hTotMC = None # Total shape for MC fitting, TH1D
   fSig   = None # Function for signal, TF1
@@ -53,28 +54,32 @@ class InvMass:
   lgd    = None # Drawing legend for fitting marks, TLegend
   gDrawingList = None # Store objects for drawing to avoid garbage collecting, TObjArray
   result = {}
-  def DrawStack(self):
-    self.hsMC = ROOT.THStack("hsMC","Histograms of MC fitting results")
+  def DrawMC(self):
     # Background
     self.hBkgMC = self.hM.Clone('hBkgMC')
     self.hBkgMC.SetLineColor(BACKGROUND_COLOR)
     self.hBkgMC.SetLineStyle(TOTAL_LINE)
-    self.hBkgMC.SetFillColor(BACKGROUND_COLOR)
-    self.hBkgMC.SetFillStyle(3006)
     for iBin in range(self.hBkgMC.GetNbinsX()+2):
       self.hBkgMC.SetBinContent(iBin, self.fBkg.Eval(self.hBkgMC.GetBinCenter(iBin)))
-    self.hsMC.Add(self.hBkgMC)
-    # Signal as Total by stacked
+    self.hBkgMC.Draw('same HIST')
+    # Signal
+    self.hSigPlot = self.hM.Clone('hSigPlot')
+    self.hSigPlot.SetMarkerColor(SIGNAL_COLOR)
+    self.hSigPlot.SetLineColor(SIGNAL_COLOR)
+    self.hSigPlot.SetLineStyle(SIGNAL_LINE)
+    self.hSigPlot.SetFillColor(SIGNAL_COLOR)
+    self.hSigPlot.SetFillStyle(3005)
+    for iBin in range(self.hSigPlot.GetNbinsX()+2):
+      self.hSigPlot.SetBinContent(iBin, self.fSig.Eval(self.hSigPlot.GetBinCenter(iBin)))
+    self.hSigPlot.Draw('same HIST')
+    # Total
     self.hTotMC = self.hM.Clone('hTotMC')
     self.hTotMC.SetLineWidth(TOTAL_LINE_WIDTH)
     self.hTotMC.SetLineStyle(TOTAL_LINE)
     self.hTotMC.SetLineColor(TOTAL_COLOR)
-    self.hTotMC.SetFillColor(TOTAL_COLOR)
-    self.hTotMC.SetFillStyle(3004)
-    self.hsMC.Add(self.hTotMC)
     for iBin in range(self.hBkgMC.GetNbinsX()+2):
-      self.hTotMC.SetBinContent(iBin, self.fSig.Eval(self.hTotMC.GetBinCenter(iBin)))
-    self.hsMC.Draw('same')
+      self.hTotMC.SetBinContent(iBin, self.hSigPlot.GetBinContent(iBin) + self.hBkgMC.GetBinContent(iBin))
+    self.hTotMC.Draw('same HIST')
   def DrawLine(self, xval, fcn = None, color = TOTAL_COLOR, style = 3):
     ymin = self.hM.GetMinimum()
     if(not fcn):
@@ -216,7 +221,8 @@ class InvMass:
       self.lgd.AddEntry(self.fTot,"Total fit")
       self.lgd.AddEntry(self.fSig,"Signal fit (Crystal-Ball)")
     else:
-      self.lgd.AddEntry(self.fTot,"MC shape + Bkg")
+      self.lgd.AddEntry(self.fTot,"MC signal + Bkg")
+      self.lgd.AddEntry(self.hSigPlot, 'Signal (MC)')
     self.lgd.AddEntry(self.fBkg,"Background fit (pol2)")
     self.lgd.Draw("same")
   def SetStyleForAll(self):
@@ -299,7 +305,7 @@ class InvMass:
       self.fSig.Draw("same C")
       self.fTot.Draw("same C")
     else:
-      self.DrawStack()
+      self.DrawMC()
     self.DrawLegend()
   def TotalMC(self, x, par):
     bkg = par[1] + par[2] * x[0] + par[3] * math.pow(x[0], 2.0)
@@ -323,6 +329,14 @@ class InvMass:
       self.InitFittingMC()
     self.SetStyleForAll()
     self.gDrawingList = ROOT.TObjArray()
+
+def ProcessInvMass(hM, hMC, xlow = 1.5, xup = 4.5):
+  Jpsi = InvMass(hM, signalMC=hMC)
+  Jpsi.SignalExtraction(xlow, xup)
+  Jpsi.SelectSignalRegion()
+  Jpsi.SelectSideband()
+  Jpsi.DrawResult()
+  return Jpsi
 
 # Parameters and constants
 PSEUDOLXY_PROMPT_CUT   = 0.01  # cm, |Lxy| < CUT
