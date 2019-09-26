@@ -58,6 +58,9 @@ if(args.lxy):
     fMCLxy.hJpsiLxyBdecay,
     LxyBkg
   )
+  # For background error
+  Lxy.result['Bkg'] = (0., Jpsi.result['SBfactor'][1] / Jpsi.result['SBfactor'][0])
+  # Fitting and drawing results
   Lxy.hData.Draw('PE')
   Lxy.Fitting()
 

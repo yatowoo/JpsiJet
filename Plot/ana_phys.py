@@ -369,22 +369,25 @@ class PseudoLxy:
     ratioBkg    = self.BkgMC(x, [par[2]])
     return  ratioPrompt + ratioBdecay + ratioBkg
   def DrawResult(self):
-    self.gTxt = ROOT.TPaveText(0.6, 0.5, 0.85, 0.88, "brNDC")
+    self.gTxt = ROOT.TPaveText(0.65, 0.5, 0.89, 0.88, "brNDC")
     self.gTxt.SetName("pTxtFit")
     self.gTxt.SetBorderSize(0)
     self.gTxt.SetTextAlign(12)
     self.gTxt.SetTextFont(42)
-    self.gTxt.SetTextSize(0.03)
+    self.gTxt.SetTextSize(0.025)
     self.gTxt.SetFillColor(0)
     txt = self.gTxt.AddText("M_{e^{+}e^{-}} #in [%.2f , %.2f] (GeV/c^{2})" % (JPSI_MASS_LOWER, JPSI_MASS_UPPER))
-    txt = self.gTxt.AddText("Prompt cuts: |#tilde{L}_{xy}| < %.3f" % PSEUDOLXY_PROMPT_CUT)
-    self.gTxt.AddText("Data : %.1f" % self.result['Data'])
-    self.gTxt.AddText("Total : %.1f" % self.result['Total'])
-    self.gTxt.AddText("Prompt : %.1f" % self.result['Prompt'])
-    self.gTxt.AddText("Non-prompt : %.1f" % self.result['Bdecay'])
-    self.gTxt.AddText("Bkg : %.1f" % self.result['Bkg'])
-    self.gTxt.AddText("R_{prompt} : %.1f" % self.result['Ratio'])
-    self.gTxt.AddText("f_{B} : %.1f" % self.result['fB'])
+    txt.SetTextFont(62)
+    txt = self.gTxt.AddText("Prompt: |#tilde{L}_{xy}| < %.3f cm" % PSEUDOLXY_PROMPT_CUT)
+    txt.SetTextFont(62)
+    txt.SetTextColor(kRed)
+    self.gTxt.AddText("Data : %d #pm %d" % self.result['Data'])
+    self.gTxt.AddText("Total : %.1f #pm %.1f" % self.result['Total'])
+    self.gTxt.AddText("Prompt : %.1f #pm %.1f" % self.result['Prompt'])
+    self.gTxt.AddText("Non-prompt : %.1f #pm %.1f" % self.result['Bdecay'])
+    self.gTxt.AddText("Bkg : %.1f #pm %.1f" % self.result['Bkg'])
+    self.gTxt.AddText("R_{prompt} : %.1f #pm %.1f" % self.result['Ratio'])
+    self.gTxt.AddText("f_{B} : %.2f #pm %.2f" % self.result['fB'])
     self.gTxt.AddText("#chi^{2}/NDF : %.1f / %d" % self.result['Chi2'])
     self.gTxt.Draw('same')
   def DrawLegend(self):
@@ -419,13 +422,34 @@ class PseudoLxy:
     self.DrawMC()
     self.DrawLegend()
     # In prompt region
-    self.result['Data'] = ana_util.HistCount(self.hData, -PSEUDOLXY_PROMPT_CUT, PSEUDOLXY_PROMPT_CUT)
-    self.result['Prompt'] = ana_util.HistCount(self.fPrompt, -PSEUDOLXY_PROMPT_CUT, PSEUDOLXY_PROMPT_CUT)
-    self.result['Bdecay'] = ana_util.HistCount(self.fBdecay, -PSEUDOLXY_PROMPT_CUT, PSEUDOLXY_PROMPT_CUT)
-    self.result['Bkg'] = ana_util.HistCount(self.fBkg, -PSEUDOLXY_PROMPT_CUT, PSEUDOLXY_PROMPT_CUT)
-    self.result['Total'] = self.result['Prompt'] + self.result['Bdecay'] + self.result['Bkg']
-    self.result['Ratio'] = self.result['Prompt'] / self.result['Total']
-    self.result['fB'] = self.result['Bdecay'] / (self.result['Prompt'] + self.result['Bdecay'])
+      # Data
+    NData = ana_util.HistCount(self.hData, -PSEUDOLXY_PROMPT_CUT, PSEUDOLXY_PROMPT_CUT)
+    self.result['Data'] = (NData, math.sqrt(NData))
+      # Prompt
+    NPrompt = ana_util.HistCount(self.fPrompt, -PSEUDOLXY_PROMPT_CUT, PSEUDOLXY_PROMPT_CUT)
+    EPrompt = NPrompt * self.fTotal.GetParError(0) / self.fTotal.GetParameter(0)
+    self.result['Prompt'] = (NPrompt, EPrompt)
+      # Non-prompt
+    NBdecay = ana_util.HistCount(self.fBdecay, -PSEUDOLXY_PROMPT_CUT, PSEUDOLXY_PROMPT_CUT)
+    EBdecay = NBdecay * self.fTotal.GetParError(1) / self.fTotal.GetParameter(1)
+    self.result['Bdecay'] = (NBdecay, EBdecay)
+      # Background
+    NBkg = ana_util.HistCount(self.fBkg, -PSEUDOLXY_PROMPT_CUT, PSEUDOLXY_PROMPT_CUT)
+    EBkg = NBkg * self.result['Bkg'][1]
+    self.result['Bkg'] = (NBkg, EBkg)
+      # Total
+    NTotal = NPrompt + NBdecay + NBkg
+    ETotal = math.sqrt(EPrompt**2 + EBdecay**2 + EBkg**2)
+    self.result['Total'] = (NTotal, ETotal)
+      # Ration of prompt in signal region
+    NRPrompt = NPrompt / NTotal
+    ERPrompt = NRPrompt * math.sqrt((EPrompt/NPrompt)**2 + (ETotal/NTotal)**2)
+    self.result['Ratio'] = (NRPrompt, ERPrompt)
+      # Fraction of b-decay/non-prompt in J/psi candidates
+    fB = NBdecay / (NPrompt + NBdecay)
+    fBerr = fB * math.sqrt((EBdecay/NBdecay)**2 + (EPrompt**2 + EBdecay**2) / ((NPrompt + NBdecay)**2))
+    self.result['fB'] = (fB, fBerr)
+      # Chi square / NDF
     self.result['Chi2'] = (self.fTotal.GetChisquare(), self.fTotal.GetNDF())
     self.DrawResult()
   def SetParam(self, hist, iParam, fracMin = 0., fracMax = 1.0):
