@@ -14,6 +14,8 @@ PERIOD_LIST = 'ghijklop' # LHC16
 
 OUTPUT_DIR = '../output/QM19/'
 
+fMerge = ROOT.TFile('AnaMerge_LHC16.root','RECREATE')
+
 DATA_MARKER = [kRound,  kBlock, kDelta, kNabla, kPenta, kDiamond, kCross, kClover, kClover4, kStar, kIronCross, kXMark]
 
 MC_MARKER = [kRoundHollow, kBlockHollow, kDeltaHollow, kNablaHollow, kPentaHollow, kDiamondHollow, kCrossHollow, kCloverHollow, kClover4Hollow, kStarHollow, kIronCrossHollow, kXMarkHollow]
@@ -27,6 +29,9 @@ HistMerge = {}
 HistMerge['DCAxy'] = {}
 HistMerge['DCAz'] = {}
 
+ListMerge = {}
+ListMerge['Pair'] = {}
+
 # Global Settings and Variables
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetPalette()
@@ -36,8 +41,7 @@ lgd.SetBorderSize(0)
 lgd.SetFillColor(0)
 lgd.SetNColumns(2)
 
-def MergePeriod(i, period, MC=False):
-  period = '16' + period
+def OpenAnalysisOutputs(period,MC):
   if(not MC):
     fAna = ROOT.TFile(OUTPUT_DIR + 'Ana_' + period + '_MultiTasks.root')
   else:
@@ -45,7 +49,12 @@ def MergePeriod(i, period, MC=False):
   if(fAna.IsOpen()):
     print('[-] INFO - Processing ' + fAna.GetName())
   else:
-    return
+    return None
+  return fAna
+
+def MergePlot(i, period, MC=False):
+  period = '16' + period
+  fAna = OpenAnalysisOutputs(period,MC)
   if(MC):
     period = 'MC' + period
   EvTag = 'MC' if MC else 'EG2'
@@ -100,12 +109,17 @@ def MergePeriod(i, period, MC=False):
   fAna.Close()
 
 for i,period in enumerate(PERIOD_LIST):
-  MergePeriod(i, period)
-  MergePeriod(i,period,MC=True)
+  MergePlot(i, period)
+  MergePlot(i,period,MC=True)
 
 padMerge.cd(1)
 lgd.Draw('same')
 padMerge.cd(2)
 lgd.Draw('same')
 padMerge.SaveAs('DCA.pdf')
-padMerge.SaveAs('DCA.root')
+
+fMerge.cd()
+padMerge.Write('cDCA')
+
+fMerge.Write()
+fMerge.Close()
