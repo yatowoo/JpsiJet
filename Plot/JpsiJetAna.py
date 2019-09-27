@@ -273,20 +273,52 @@ def DrawQA_Calo(qa):
   padQA.Write("cQA_Cluster")
 # End - Calo cluster QA
 
-def DrawQA_Runwise(qa):
-  runwise = qa.FindObject('Runwise')
-  if(runwise == None):
-    print('[X] ERROR - %s/Runwise QA not found' % qa.GetName())
-    return
-  runwise.SetOwner(True)
+def DrawQA_Runwise(outputs):
   # Processing - TH2 with x-RunNo, y-Label
   # N event only
+  RunStats['NEvent'] = {}
   padQA.Clear()
   padQA.SetWindowSize(1000,600)
+  padQA.SetLogy()
+  # Legend
+  lgd = ROOT.TLegend(0.15, 0.15, 0.55, 0.25)
+  lgd.SetNColumns(len(TRIGGER_CLASSES))
+  lgd.SetBorderSize(0)
+  lgd.SetFillColor(0)
   for trig in TRIGGER_CLASSES:
-    pass
+    # Trigger
+    qa = outputs.Get('QAhistos_' + trig)
+    if(qa == None):
+      print('[X] ERROR - %s not found.' % trig)
+      continue
+    qa.SetOwner(True)
+    # Runwise
+    runwise = qa.FindObject('Runwise')
+    if(runwise == None):
+      print('[X] ERROR - %s/Runwise QA not found' % qa.GetName())
+      return
+    runwise.SetOwner(True)
+    hEv = runwise.FindObject('NEvent')
+    hEv.LabelsDeflate()
+    # N event
+    RunStats['NEvent'][trig] = ROOT.TH1D('hNEv' + trig, 'Runwise QA - Number of selected events', 201, -0.5, 200)
+    hnew = RunStats['NEvent'][trig]
+    for iBin in range(1, hnew.GetNbinsX()+1):
+      label = hEv.GetXaxis().GetBinLabel(iBin)
+      nev = hEv.GetBinContent(iBin, 4)
+      hnew.Fill(label, nev)
+      binID = hnew.GetXaxis().FindBin(label)
+      hnew.SetBinError(binID, math.sqrt(nev))
+    hnew.SetMarkerStyle(next(MARKER))
+    hnew.GetYaxis().SetRangeUser(1., 1e8)
+    hnew.LabelsOption("av")
+    hnew.LabelsDeflate()
+    hnew.Draw('same PE')
+    lgd.AddEntry(hnew, trig)
+    qa.Delete()
+  lgd.Draw('same')
+  padQA.Print(args.print, 'Title:Runwise_NEv')
   # End
-  runwise.Delete()
 
 def DrawQA_Event(outputs):
   # Print event statistics
@@ -330,6 +362,7 @@ def DrawQA_Event(outputs):
 
 if(args.all):
   DrawQA_Event(outputs)
+  DrawQA_Runwise(outputs)
 elif(args.calo):
   qaName = "QAhistos_ALL"
   qa = outputs.Get(qaName)
