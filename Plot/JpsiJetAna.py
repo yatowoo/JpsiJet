@@ -81,6 +81,7 @@ BINNING_JPSI_PT = array('d', BINNING_JPSI_PT) # Convert to double*
 TRIGGER_CLASSES = ['MB', 'EG1', 'EG2', 'DG1', 'DG2']
 # QA index and results
 EvStats = {}
+RunStats = {}
 
 def DrawQA_PairInJet(qa, tag):
   print("[-] INFO - Processing QA plots for " + tag)
@@ -272,6 +273,21 @@ def DrawQA_Calo(qa):
   padQA.Write("cQA_Cluster")
 # End - Calo cluster QA
 
+def DrawQA_Runwise(qa):
+  runwise = qa.FindObject('Runwise')
+  if(runwise == None):
+    print('[X] ERROR - %s/Runwise QA not found' % qa.GetName())
+    return
+  runwise.SetOwner(True)
+  # Processing - TH2 with x-RunNo, y-Label
+  # N event only
+  padQA.Clear()
+  padQA.SetWindowSize(1000,600)
+  for trig in TRIGGER_CLASSES:
+    pass
+  # End
+  runwise.Delete()
+
 def DrawQA_Event(outputs):
   # Print event statistics
   evTable = ROOT.TPaveText(0.2, 0.2, 0.8, 0.8)
@@ -289,12 +305,18 @@ def DrawQA_Event(outputs):
     # Processing
     hEv = qa.FindObject('EventStats')
     txt = trig + ' | '
-    txt += '%.2e | ' % hEv.GetBinContent(2)
-    txt += '%.2e | ' % hEv.GetBinContent(6)
-    txt += '%.2e | ' % (hEv.GetBinContent(7) + hEv.GetBinContent(8))
-    txt += '%.2e | ' % hEv.GetBinContent(7)
-    txt += '%.2e | ' % hEv.GetBinContent(8)
-    txt += '%.2e | ' % hEv.GetBinContent(9)
+    EvStats[trig]['Trigger'] = hEv.GetBinContent(2)
+    txt += '%.2e | ' % EvStats[trig]['Trigger']
+    EvStats[trig]['Ana'] = hEv.GetBinContent(6)
+    txt += '%.2e | ' % EvStats[trig]['Ana']
+    EvStats[trig]['Dielectron'] = hEv.GetBinContent(7) + hEv.GetBinContent(8)
+    txt += '%.2e | ' % EvStats[trig]['Dielectron']
+    EvStats[trig]['Single'] = hEv.GetBinContent(7)
+    txt += '%.2e | ' % EvStats[trig]['Single']
+    EvStats[trig]['MultiPair'] = hEv.GetBinContent(8)
+    txt += '%.2e | ' % EvStats[trig]['MultiPair']
+    EvStats[trig]['TaggedJet'] = hEv.GetBinContent(9)
+    txt += '%.2e | ' % EvStats[trig]['TaggedJet']
     txt = evTable.AddText(txt)
     # End
     qa.Delete()
@@ -303,6 +325,8 @@ def DrawQA_Event(outputs):
   padQA.cd()
   evTable.Draw()
   padQA.Print(args.print, 'Title:EventStats')
+  evTable.Delete()
+  return EvStats
 
 if(args.all):
   DrawQA_Event(outputs)
