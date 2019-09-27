@@ -177,7 +177,7 @@ void runAnalysis(
     gInterpreter->AddIncludePath("./PWG");
     gInterpreter->LoadMacro("AliAnalysisTaskJpsiJet.cxx++g");
     if(isMC)
-      gInterpreter->ExecuteMacro("AddTaskJpsiJet_pp.C(kMC)");
+      gInterpreter->ExecuteMacro(Form("AddTaskJpsiJet_pp.C(kMC,kTRUE,\"%s\")", datasets.Data()));
     else{
       gInterpreter->ExecuteMacro("AddTaskJpsiJet_pp.C(kALL,kTRUE)");
       gInterpreter->Execute("AddTaskJpsiJet_pp","kINT7,kFALSE");
