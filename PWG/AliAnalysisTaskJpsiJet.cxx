@@ -1311,14 +1311,14 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForJpsiMC(const char* histClass){
   "p_{T}^{jet} vs clustering area;p_{T,jet}^{gen} (GeV/c);A_{jet};",
       200, 0., 100., 100, 0., 2.);
   // Detector response with tagged jet
-    // z_det, z_gen, pT-det, pT-gen
-  Int_t nBinsDetZ[4]   = {11,   11,  100,  100};
-  Double_t xminDetZ[4] = { 0.,  0.,   0.,   0.};
-  Double_t xmaxDetZ[4] = {1.1, 1.1, 100., 100.};
+    // z_det, z_gen, pT-det, pT-gen, dz, dPtJet, dPtJpsi
+  Int_t nBinsDetZ[7]   = {11,   11,  100,  100, 200, 200, 200};
+  Double_t xminDetZ[7] = { 0.,  0.,   0.,   0., -1., -1., -1.};
+  Double_t xmaxDetZ[7] = {1.1, 1.1, 100., 100.,  1.,   1.,  1.};
   fHistosMC->CreateTHnSparse(
       Form("%s/Jet_DetResponse", histClass),
-      "Detector response matrix - Fragmentation Function with J/#psi tagged jet p_{T};z_{det};z_{gen};p_{T,jet}^{det} (GeV/c);p_{T,jet}^{gen} (GeV/c);",
-      4, nBinsDetZ, xminDetZ, xmaxDetZ);
+      "Detector response matrix - Fragmentation Function with J/#psi tagged jet p_{T};z_{det};z_{gen};p_{T,jet}^{det} (GeV/c);p_{T,jet}^{gen} (GeV/c);#delta z;#delta p_{T,jet};#delta p_{T,J/#psi};",
+      7, nBinsDetZ, xminDetZ, xmaxDetZ);
 }
 
 Bool_t AliAnalysisTaskJpsiJet::ApplyEmcalCut(AliVParticle* par, Bool_t isMCTruth = kTRUE){
@@ -1656,13 +1656,16 @@ Bool_t AliAnalysisTaskJpsiJet::FillHistogramsForTaggedJetMC(AliAODMCParticle* jp
 
   // Detector response
   if(!fTaggedJet) return kTRUE;
-  Double_t x[4] = {0.};
+  Double_t x[7] = {0.};
   // z-det
   x[0] = fJpsiPair->Pt() / fTaggedJet->Pt();
   if(fTaggedJet->GetNumberOfTracks() == 1) x[0] = 1.0;
   x[1] = z;  // z-gen
   x[2] = fTaggedJet->Pt(); // jet pT-det
   x[3] = fTaggedJetMC->Pt(); // jet pT-gen
+  x[4] = (x[0] - x[1]) / x[1]; // dz
+  x[5] = (x[2] - x[3]) / x[3]; // dPtJet
+  x[6] = (fJpsiPair->Pt() - fJpsiMC->Pt()) / fJpsiMC->Pt();
   fHistosMC->FillTHnSparse(Form("%s/Jet_DetResponse", fMCGenType.Data()), x, 1.0);
 
   return kTRUE;
