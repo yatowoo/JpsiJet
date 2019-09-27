@@ -51,6 +51,18 @@ AliAnalysisTaskJpsiJet* AddTaskJpsiJet_pp(
   task->SetRejectPileup(kTRUE);
 
   if(task) mgr->AddTask(task);
+  // ITS Improver - by F. Fionda
+  if(trigIndex == kMC){
+    //add improver task before the tree maker 
+    TGrid::Connect("alien://"); // if not connected input files are not loaded by the improver task
+    gSystem->Load("libPWGHFvertexingHF.so"); // load the needed library
+    AliAnalysisTaskSEImproveITS *itsImpr =
+      reinterpret_cast<AliAnalysisTaskSEImproveITS*>(
+      gInterpreter->ExecuteMacro(
+      Form("$ALICE_PHYSICS/PWGHF/vertexingHF/macros/AddTaskImproveITS.C(kFALSE, \"LHC16k/pass1\",\"central\")")));
+    itsImpr->SetMimicData(kTRUE);
+    itsImpr->SetAOD(kTRUE);
+  }
 
   // Output container
   TString containerName = mgr->GetCommonFileName();
