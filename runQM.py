@@ -10,6 +10,7 @@ parser.add_argument('mode',help='Analysis mode : local, test, full, merge')
 parser.add_argument('--tag',help='Job tags for masterjob and work dir', default='QM')
 parser.add_argument('--date',help='Job date stamp (YYMMDD)', default='190920')
 parser.add_argument('--mc',help='MC flag for DrawMC methods', default=False, action='store_true')
+parser.add_argument('--nano',help='Forced to enable AOD filter task', default=False, action='store_true')
 args = parser.parse_args()
 
 period = {}
@@ -63,7 +64,7 @@ doMult            = 0
 doEmcalCorrection = (0 if args.mode == 'local' else 1)
 doJetQA           = 0
 doJpsiQA          = 0
-doJpsiFilter      = (0 if args.mc else 1)
+doJpsiFilter      = int(args.nano)
 doPIDQA           = 0
 doPhysAna         = 0
 
