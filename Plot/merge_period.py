@@ -16,6 +16,8 @@ OUTPUT_DIR = '../output/QM19/'
 
 fMerge = ROOT.TFile('AnaMerge_LHC16.root','RECREATE')
 
+TRIGGER_CLASSES = ['EG1', 'EG2', 'DG1', 'DG2']
+
 DATA_MARKER = [kRound,  kBlock, kDelta, kNabla, kPenta, kDiamond, kCross, kClover, kClover4, kStar, kIronCross, kXMark]
 
 MC_MARKER = [kRoundHollow, kBlockHollow, kDeltaHollow, kNablaHollow, kPentaHollow, kDiamondHollow, kCrossHollow, kCloverHollow, kClover4Hollow, kStarHollow, kIronCrossHollow, kXMarkHollow]
@@ -31,6 +33,8 @@ HistMerge['DCAz'] = {}
 
 ListMerge = {}
 ListMerge['Pair'] = {}
+for trig in TRIGGER_CLASSES:
+  ListMerge['Pair'][trig] = ROOT.TList()
 
 # Global Settings and Variables
 ROOT.gStyle.SetOptStat(0)
@@ -52,8 +56,28 @@ def OpenAnalysisOutputs(period,MC):
     return None
   return fAna
 
+def MergeList(period):
+  fAna = OpenAnalysisOutputs(period,False)
+  print('>>> Finding lists by triggers: Dielectron pair')
+  for trig in TRIGGER_CLASSES:
+    qa = fAna.JpsiJetAnalysis.Get('QAhistos_' +trig)
+    qa.SetOwner(True)
+    # Event stats
+    hEv = qa.FindObject('EventStats')
+    N_EVENT = hEv.GetBinContent(6)
+    # Dielectron
+    die = qa.FindObject('Dielectron')
+    die.SetOwner(True)
+    # Pair
+    pair = die.FindObject('Pair_ev1+_ev1-')
+    pair.SetOwner(True)
+    if(not (period == '16k' and  trig == 'EG1')):
+      ListMerge['Pair'][trig].Add(pair.Clone('Pair'+period+trig))
+    qa.Delete()
+  # End
+  fAna.Close()
+
 def MergePlot(i, period, MC=False):
-  period = '16' + period
   fAna = OpenAnalysisOutputs(period,MC)
   if(MC):
     period = 'MC' + period
@@ -109,8 +133,9 @@ def MergePlot(i, period, MC=False):
   fAna.Close()
 
 for i,period in enumerate(PERIOD_LIST):
-  MergePlot(i, period)
-  MergePlot(i,period,MC=True)
+  #MergePlot(i, '16' + period)
+  #MergePlot(i,'16' + period,MC=True)
+  MergeList('16' + period)
 
 padMerge.cd(1)
 lgd.Draw('same')
@@ -121,5 +146,15 @@ padMerge.SaveAs('DCA.pdf')
 fMerge.cd()
 padMerge.Write('cDCA')
 
-fMerge.Write()
+ListPairHigh = ListMerge['Pair']['DG1'].At(0).Clone('PairH')
+ListPairHigh.Merge(ListMerge['Pair']['EG1'])
+ListPairHigh.Merge(ListMerge['Pair']['DG1'])
+ListPairHigh.Write('PairH', ROOT.TObject.kSingleKey)
+
+ListPairLow = ListMerge['Pair']['DG2'].At(0).Clone('PairH')
+ListPairLow.Merge(ListMerge['Pair']['EG2'])
+ListPairLow.Merge(ListMerge['Pair']['DG2'])
+ListPairLow.Write('PairL', ROOT.TObject.kSingleKey)
+
+
 fMerge.Close()
