@@ -210,6 +210,7 @@ void runAnalysis(
     mgr->StartAnalysis("local", chain);
   }else{
     AliAnalysisAlien* alienH = SetupGridHandler(mode, datasets, data_dir, work_dir, task_name);
+    alienH->SetDropToShell(kFALSE);
     mgr->SetGridHandler(alienH);
     mgr->StartAnalysis("grid");
   }
