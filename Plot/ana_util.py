@@ -63,6 +63,15 @@ def SelectMarker(MARKER_INDEX = 0):
 COLOR = SelectColor()
 MARKER = SelectMarker()
 
+def SetColorAndStyle(obj, c = None, s = None):
+  if(c is None):
+    c = next(COLOR)
+  obj.SetLineColor(c)
+  obj.SetMarkerColor(c)
+  if(s is None):
+    s = next(MARKER)
+  obj.SetMarkerStyle(s)
+
 def PrintCover(pad, file, title = '', isBack = False):
   pTxt = ROOT.TPaveText(0.25,0.4,0.75,0.6, "brNDC")
   if(title == ''):
