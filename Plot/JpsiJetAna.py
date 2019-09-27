@@ -48,12 +48,7 @@ if(args.mc):
   padQA = TCanvas("cMC", "Jpsi in jets analysis on MC",800,600)
 else:
   padQA = TCanvas("cAna", "Jpsi in jets analysis",800,600)
-# Cover
-pTxt = TPaveText(0.25,0.45,0.75,0.55, "brNDC")
-pTxt.AddText(padQA.GetTitle())
-padQA.cd()
-pTxt.Draw()
-  # Open PDF file and draw cover
+# PDF Cover - Open PDF file and draw cover
 PrintCover(padQA, args.print)
 # End - Cover
 
@@ -84,6 +79,8 @@ BINNING_JPSI_PT += list(range(25, 55, 5))
 BINNING_JPSI_PT = array('d', BINNING_JPSI_PT) # Convert to double*
 
 TRIGGER_CLASSES = ['MB', 'EG1', 'EG2', 'DG1', 'DG2']
+# QA index and results
+EvStats = {}
 
 def DrawQA_PairInJet(qa, tag):
   print("[-] INFO - Processing QA plots for " + tag)
@@ -275,11 +272,40 @@ def DrawQA_Calo(qa):
   padQA.Write("cQA_Cluster")
 # End - Calo cluster QA
 
+def DrawQA_Event(outputs):
+  # Print event statistics
+  evTable = ROOT.TPaveText(0.2, 0.2, 0.8, 0.8)
+  txt = evTable.AddText("Event statistics")
+  txt.SetTextFont(62) # Bold
+  txt = evTable.AddText("EvTag | Trigger | Selected | Dielectron | N_{pair} = 1 | N_{pair} > 1 | Tagged jet |")
+  for trig in ['ALL'] + TRIGGER_CLASSES:
+    # Init
+    EvStats[trig] = {}
+    qa = outputs.Get('QAhistos_' + trig)
+    if(qa == None):
+      print('[X] ERROR - %s not found.' % trig)
+      continue
+    qa.SetOwner(True)
+    # Processing
+    hEv = qa.FindObject('EventStats')
+    txt = trig + ' | '
+    txt += '%.2e | ' % hEv.GetBinContent(2)
+    txt += '%.2e | ' % hEv.GetBinContent(6)
+    txt += '%.2e | ' % (hEv.GetBinContent(7) + hEv.GetBinContent(8))
+    txt += '%.2e | ' % hEv.GetBinContent(7)
+    txt += '%.2e | ' % hEv.GetBinContent(8)
+    txt += '%.2e | ' % hEv.GetBinContent(9)
+    txt = evTable.AddText(txt)
+    # End
+    qa.Delete()
+  padQA.Clear()
+  padQA.SetWindowSize(800, 600)
+  padQA.cd()
+  evTable.Draw()
+  padQA.Print(args.print, 'Title:EventStats')
 
 if(args.all):
-  qaName = outputs.GetListOfKeys().At(0).GetName()
-  #DrawQA(outputs.Get(qaName), qaName.split('_')[1])
-  #DrawQA_JetPt(outputs.Get(qaName))
+  DrawQA_Event(outputs)
 elif(args.calo):
   qaName = "QAhistos_ALL"
   qa = outputs.Get(qaName)
