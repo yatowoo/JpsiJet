@@ -375,8 +375,6 @@ class PseudoLxy:
       return 0.0
     return par[0] * self.hMCBdecay.GetBinContent(self.hMCBdecay.FindBin(x[0]))
   def BkgMC(self, x, par):
-    if(abs(x[0]) > PSEUDOLXY_BKG_FIT):
-      return 0.0
     return par[0] * self.hMCBkg.GetBinContent(self.hMCBkg.FindBin(x[0]))
   def TotalMC(self, x, par):
     ratioPrompt = self.PromptMC(x, par)

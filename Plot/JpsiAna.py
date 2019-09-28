@@ -62,12 +62,12 @@ if(args.pt):
   # Final output
   c.SaveAs('Jpsi_MPt_%s.pdf' % args.trig)
 
-def ProjectTH2(hname, h2, xlow, xup):
-  xBinLow = h2.GetXaxis().FindBin(xlow)
-  xBinUp = h2.GetXaxis().FindBin(xup)
-  if(xup > h2.GetXaxis().GetBinCenter(xBinUp)):
-    xBinUp -= 1
-  return h2.ProjectionX(hname, xBinLow, xBinUp)
+def ProjectTH2(hname, h2, ylow, yup):
+  yBinLow = h2.GetYaxis().FindBin(ylow)
+  yBinUp = h2.GetYaxis().FindBin(yup)
+  if(yup > h2.GetYaxis().GetBinCenter(yBinUp)):
+    yBinUp -= 1
+  return h2.ProjectionX(hname, yBinLow, yBinUp)
 
 if(args.lxy):
   c.Clear()
@@ -77,6 +77,7 @@ if(args.lxy):
   c.cd(1)
   hMLxy = pairList.FindObject('InvMass_ProperTime')
   hM = hMLxy.ProjectionY('hM')
+  hM.SetTitle('')
   jpsi = ana_phys.ProcessInvMass(hM, fMC.hJpsiMC)
   jpsi.hM.Draw('same PE')
   # Pseudo-Lxy
@@ -84,6 +85,7 @@ if(args.lxy):
   ROOT.gPad.SetLogy()
   fMCLxy = ROOT.TFile('mc16.root')
   hLxyData = ProjectTH2('hLxySignal', hMLxy, ana_phys.JPSI_MASS_LOWER, ana_phys.JPSI_MASS_UPPER)
+  hLxyData.SetTitle('')
   sideband = jpsi.result['Region']['SidebandL']
   hLxyBkg = ProjectTH2('hLxySB', hMLxy, sideband[0], sideband[1])
   sideband = jpsi.result['Region']['SidebandR']
