@@ -56,6 +56,11 @@ def SelectColor(COLOR_INDEX = 0):
 kRound,  kBlock, kDelta, kNabla, kPenta, kDiamond, kCross, kClover, kClover4, kStar, kIronCross, kXMark = 20, 21, 22, 23, 29, 33, 34, 39, 41, 43, 45, 47
 kRoundHollow, kBlockHollow, kDeltaHollow, kNablaHollow, kPentaHollow, kDiamondHollow, kCrossHollow, kCloverHollow, kClover4Hollow, kStarHollow, kIronCrossHollow, kXMarkHollow = 24, 25, 26, 32, 30, 27, 28, 37, 40, 42, 44, 46
 MARKER_SET = [kRound, kBlockHollow, kCross, kDelta, kDiamondHollow, kPenta, kBlock, kCrossHollow, kDiamond, kXMark]
+
+DATA_MARKER = [kRound,  kBlock, kDelta, kNabla, kPenta, kDiamond, kCross, kClover, kClover4, kStar, kIronCross, kXMark]
+
+MC_MARKER = [kRoundHollow, kBlockHollow, kDeltaHollow, kNablaHollow, kPentaHollow, kDiamondHollow, kCrossHollow, kCloverHollow, kClover4Hollow, kStarHollow, kIronCrossHollow, kXMarkHollow]
+
 def SelectMarker(MARKER_INDEX = 0):
   while(MARKER_INDEX < 100):
     yield MARKER_SET[MARKER_INDEX % len(MARKER_SET)]
@@ -71,6 +76,17 @@ def SetColorAndStyle(obj, c = None, s = None):
   if(s is None):
     s = next(MARKER)
   obj.SetMarkerStyle(s)
+
+def SetRatioPlot(rP, rmin=0.5, rmax=1.5):
+  rP.SetTitle('')
+  rP.SetMinimum(rmin)
+  rP.SetMaximum(rmax)
+  rP.GetYaxis().SetTitleOffset(0.4)
+  rP.GetYaxis().SetTitleSize(0.09)
+  rP.GetYaxis().SetLabelSize(0.08)
+  rP.GetXaxis().SetLabelSize(0.11)
+  rP.GetXaxis().SetTitleSize(0.06)
+  rP.GetXaxis().SetTitleOffset(1.5)
 
 def PrintCover(pad, file, title = '', isBack = False):
   pTxt = ROOT.TPaveText(0.25,0.4,0.75,0.6, "brNDC")

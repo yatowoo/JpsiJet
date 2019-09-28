@@ -85,9 +85,9 @@ BINNING_JET_PT = [0.05*x for x in range(0,6,1)]
 BINNING_JET_PT += [ 0.1*x for x in range(3,10,1)]
 BINNING_JET_PT += [ 0.2*x for x in range(5,15,1)]
 BINNING_JET_PT += [ 0.5*x for x in range(6,20,1)]
-BINNING_JET_PT += list(range(10,20,1))
-BINNING_JET_PT += list(range(20,50,2))
-BINNING_JET_PT += list(range(50,100,5))
+BINNING_JET_PT += list(range(10,20,2))
+BINNING_JET_PT += list(range(20,50,5))
+BINNING_JET_PT += list(range(50,110,10))
 BINNING_JET_PT = array('d', BINNING_JET_PT)
 
 TRIGGER_CLASSES = ['MB', 'EG1', 'EG2', 'DG1', 'DG2']
@@ -129,14 +129,28 @@ def DrawQA_PairInJet(qa, tag):
 
 # ONLY for old 16k outputs
 def DrawQA_Jet(outputs):
+  # Pad initialization
   padQA.Clear()
-  padQA.SetWindowSize(800,600)
-  QAhists['jet'] = {}
+  padQA.SetWindowSize(800,1000)
+  padQA.cd()
+  padMain = ROOT.TPad("padJetPt","Jet pT spectra", 0, 0.3, 1, 1.0)
+  padMain.SetBottomMargin(0)
+  padMain.SetLogy()
+  padMain.Draw()
+  padQA.cd()
+  padRatio = ROOT.TPad("padJetPtRatio","Jet pT ratio", 0, 0.05, 1, 0.3)
+  padRatio.SetTopMargin(0)
+  padRatio.SetBottomMargin(0.2)
+  padRatio.SetGrid()
+  padRatio.Draw()
+  # Legend
   lgd = ROOT.TLegend(0.6, 0.5, 0.85, 0.88)
   lgd.SetBorderSize(0)
   lgd.SetFillColor(0)
   lgd.SetNColumns(2)
-  for trig in TRIGGER_CLASSES:
+  # Loop on triggers
+  QAhists['jet'] = {}
+  for i,trig in enumerate(TRIGGER_CLASSES):
     if(trig == 'MB'):
       continue
     qa = outputs.Get('QAhistos_' + trig)
@@ -144,27 +158,37 @@ def DrawQA_Jet(outputs):
     jetQA = qa.FindObject('Jet')
     jetQA.SetOwner(True)
     # jet pT spectra
-    marker = next(MARKER)
+    padMain.cd()
+    color = next(COLOR)
       # Original
     jetOrig = jetQA.FindObject("Jet_AKTChargedR040_tracks_pT0150_pt_scheme")
     jetOrig.SetOwner(True)
     ptOrig = jetOrig.FindObject('jetPtEtaPhi').Projection(0).Rebin(len(BINNING_JET_PT)-1, "hJetOrig" + trig, BINNING_JET_PT)
     ptOrig.Scale(1./EvStats[trig]['Dielectron'],'width')
-    ana_util.SetColorAndStyle(ptOrig, kBlack, marker)
+    ana_util.SetColorAndStyle(ptOrig, color, DATA_MARKER[i])
     ptOrig.SetTitle('')
     ptOrig.SetXTitle('p_{T,jet} (GeV/c)')
+    ptOrig.GetYaxis().SetRangeUser(5e-5,5)
     ptOrig.SetYTitle('1/N_{ev} dN_{jet}/dp_{T,jet}')
     ptOrig.Draw('SAME PE')
-    lgd.AddEntry(ptOrig,trig + ' - Orignal')
+    lgd.AddEntry(ptOrig,trig + ' - Original')
       # Updated
     jetUpdated = jetQA.FindObject("JpsiJet_AKTChargedR040_tracksWithPair_pT0150_pt_scheme")
     jetUpdated.SetOwner(True)
     ptUpdated = jetUpdated.FindObject('jetPtEtaPhi').Projection(0).Rebin(len(BINNING_JET_PT)-1, "hJetNew_" + trig, BINNING_JET_PT)
     ptUpdated.Scale(1./EvStats[trig]['Dielectron'], 'width')
-    ana_util.SetColorAndStyle(ptUpdated, kRed, marker)
+    ana_util.SetColorAndStyle(ptUpdated, color, MC_MARKER[i])
     ptUpdated.Draw('SAME PE')
     lgd.AddEntry(ptUpdated,trig + ' - Updated')
+    # Ratio
+    padRatio.cd()
+    rp = ptUpdated.Clone('hRatio_' + trig)
+    rp.Divide(ptOrig)
+    rp.GetYaxis().SetTitle('Updated/Original')
+    ana_util.SetRatioPlot(rp, 0.2, 2.0)
+    rp.Draw('same PE')
     qa.Delete()
+  padMain.cd()
   lgd.Draw('same')
   padQA.Print(args.print,'Title:JetQA')
   padQA.Write('cJetPt')
