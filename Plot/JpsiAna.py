@@ -21,23 +21,38 @@ import ROOT
 fData = ROOT.TFile(args.file)
 fMC = ROOT.TFile(args.mcSig)
 
-c = ROOT.TCanvas('cTest','Plot Test', 800, 600)
+c = ROOT.TCanvas('cTest','Plot Test', 1600, 1800)
+c.Divide(2,3)
 c.Draw()
 
+JPSI_PT_BINS = {}
+JPSI_PT_BINS['PairL'] = [5., 7., 9., 13., 21., 50.]
+JPSI_PT_BINS['PairH'] = [10., 12., 14., 18., 26., 50.]
+
 hMPt = fData.Get(args.trig).FindObject('InvMass_Pt')
-N_BINS = len(ana_phys.JPSI_PT_BINS) -1
+N_BINS = len(JPSI_PT_BINS[args.trig]) -1
 hM = list(range(N_BINS))
 jpsi = list(range(N_BINS))
+# Integrated
+c.cd(1)
+hMAll = hMPt.ProjectionY('hM')
+hMAll.SetTitle('Integrated, %.1f < pT < %.1f GeV/c' % (JPSI_PT_BINS[args.trig][0], JPSI_PT_BINS[args.trig][-1]))
+jpsiAll = ana_phys.ProcessInvMass(hMAll, fMC.hJpsiMC)
+jpsiAll.hM.Draw('same PE')
+ROOT.gPad.SaveAs('Jpsi_MPt_%s_0.pdf' % args.trig)
+# pT bin
 for iBin in range(N_BINS):
-  pT = ana_phys.JPSI_PT_BINS[iBin]
-  pTMax = ana_phys.JPSI_PT_BINS[iBin+1]
+  c.cd(iBin+2)
+  pT = JPSI_PT_BINS[args.trig][iBin]
+  pTMax = JPSI_PT_BINS[args.trig][iBin+1]
   hM[iBin] = hMPt.ProjectionY('hM_'+repr(iBin),
     hMPt.GetXaxis().FindBin(pT),
     hMPt.GetXaxis().FindBin(pTMax) - 1)
   hM[iBin].SetTitle('%.1f < pT < %.1f GeV/c' % (pT, pTMax))
   jpsi[iBin] = ana_phys.ProcessInvMass(hM[iBin], fMC.hJpsiMC)
   jpsi[iBin].hM.Draw('same PE')
-  c.SaveAs('Jpsi_InvMassPt_%d.pdf' % iBin)
+  ROOT.gPad.SaveAs('Jpsi_MPt_%s_%d.pdf' % (args.trig, iBin+1))
 
+c.SaveAs('Jpsi_MPt_%s.pdf' % args.trig)
 fData.Close()
 fMC.Close()
