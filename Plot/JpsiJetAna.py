@@ -27,6 +27,7 @@ parser.add_argument('-o', '--output',help='Output file path', default='JpsiJetAn
 parser.add_argument('-p', '--print',help='Print in PDF file', default='JpsiJetAna.pdf')
 parser.add_argument('--mc',help='MC flag for DrawMC methods', default=False, action='store_true')
 parser.add_argument('--calo',help='QA for EMCal cluster energy', default=False, action='store_true')
+parser.add_argument('--jet',help='QA for jet', default=False, action='store_true')
 parser.add_argument('--all',help='Run all QA processing', default=False, action='store_true')
 args = parser.parse_args()
 
@@ -34,6 +35,7 @@ args = parser.parse_args()
 import ROOT
 from ROOT import TFile, TCanvas, TLegend, gPad, TPaveText
 from ROOT import TH1, TH2, TF1
+import ana_util
 from ana_util import *
 
 # Input - analysis results from ALICE tasks
@@ -78,10 +80,21 @@ BINNING_JPSI_PT += list(range(15, 25, 2))
 BINNING_JPSI_PT += list(range(25, 55, 5))
 BINNING_JPSI_PT = array('d', BINNING_JPSI_PT) # Convert to double*
 
+# Jet pT bins - Edge=0, 0.3, 1, 3, 10, 20, 50, 100
+BINNING_JET_PT = [0.05*x for x in range(0,6,1)]
+BINNING_JET_PT += [ 0.1*x for x in range(3,10,1)]
+BINNING_JET_PT += [ 0.2*x for x in range(5,15,1)]
+BINNING_JET_PT += [ 0.5*x for x in range(6,20,1)]
+BINNING_JET_PT += list(range(10,20,1))
+BINNING_JET_PT += list(range(20,50,2))
+BINNING_JET_PT += list(range(50,100,5))
+BINNING_JET_PT = array('d', BINNING_JET_PT)
+
 TRIGGER_CLASSES = ['MB', 'EG1', 'EG2', 'DG1', 'DG2']
 # QA index and results
 EvStats = {}
 RunStats = {}
+QAhists = {}
 
 def DrawQA_PairInJet(qa, tag):
   print("[-] INFO - Processing QA plots for " + tag)
@@ -114,7 +127,49 @@ def DrawQA_PairInJet(qa, tag):
   return
 # END - Drawing QA plots
 
-def DrawQA_JetPt(qa):
+# ONLY for old 16k outputs
+def DrawQA_Jet(outputs):
+  padQA.Clear()
+  padQA.SetWindowSize(800,600)
+  QAhists['jet'] = {}
+  lgd = ROOT.TLegend(0.6, 0.5, 0.85, 0.88)
+  lgd.SetBorderSize(0)
+  lgd.SetFillColor(0)
+  lgd.SetNColumns(2)
+  for trig in TRIGGER_CLASSES:
+    if(trig == 'MB'):
+      continue
+    qa = outputs.Get('QAhistos_' + trig)
+    qa.SetOwner(True)
+    jetQA = qa.FindObject('Jet')
+    jetQA.SetOwner(True)
+    # jet pT spectra
+    marker = next(MARKER)
+      # Original
+    jetOrig = jetQA.FindObject("Jet_AKTChargedR040_tracks_pT0150_pt_scheme")
+    jetOrig.SetOwner(True)
+    ptOrig = jetOrig.FindObject('jetPtEtaPhi').Projection(0).Rebin(len(BINNING_JET_PT)-1, "hJetOrig" + trig, BINNING_JET_PT)
+    ptOrig.Scale(1./EvStats[trig]['Dielectron'],'width')
+    ana_util.SetColorAndStyle(ptOrig, kBlack, marker)
+    ptOrig.SetTitle('')
+    ptOrig.SetXTitle('p_{T,jet} (GeV/c)')
+    ptOrig.SetYTitle('1/N_{ev} dN_{jet}/dp_{T,jet}')
+    ptOrig.Draw('SAME PE')
+    lgd.AddEntry(ptOrig,trig + ' - Orignal')
+      # Updated
+    jetUpdated = jetQA.FindObject("JpsiJet_AKTChargedR040_tracksWithPair_pT0150_pt_scheme")
+    jetUpdated.SetOwner(True)
+    ptUpdated = jetUpdated.FindObject('jetPtEtaPhi').Projection(0).Rebin(len(BINNING_JET_PT)-1, "hJetNew_" + trig, BINNING_JET_PT)
+    ptUpdated.Scale(1./EvStats[trig]['Dielectron'], 'width')
+    ana_util.SetColorAndStyle(ptUpdated, kRed, marker)
+    ptUpdated.Draw('SAME PE')
+    lgd.AddEntry(ptUpdated,trig + ' - Updated')
+    qa.Delete()
+  lgd.Draw('same')
+  padQA.Print(args.print,'Title:JetQA')
+  padQA.Write('cJetPt')
+
+def DrawMC_JetPt(qa):
   # Event norm.
   ev = qa.FindObject("EventStats")
   nEv = ev.GetBinContent(6)
@@ -369,6 +424,9 @@ elif(args.calo):
   qa.SetOwner(True)
   DrawQA_Calo(qa)
   qa.Delete()
+
+if(args.jet):
+  DrawQA_Jet(outputs)
 
 # Detectro response matrix - 4 dim.
 ## THnSparse: z_det, z_gen, jetPt_det, jetPt_gen
