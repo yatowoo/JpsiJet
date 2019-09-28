@@ -13,6 +13,7 @@ from ana_util import *
 # Default parameters for constants and style
 # Variables
 N_FITTING             = 3     # Max times for re-fitting
+JPSI_PT_BINS = [5., 7., 9., 11., 13., 15., 17., 19., 21., 25., 30., 50]
 # Drawing style
 DATA_COLOR            = kBlue
 DATA_STYLE            = kRound
