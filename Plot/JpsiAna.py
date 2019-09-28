@@ -86,6 +86,7 @@ if(args.lxy):
   fMCLxy = ROOT.TFile('mc16.root')
   hLxyData = ProjectTH2('hLxySignal', hMLxy, ana_phys.JPSI_MASS_LOWER, ana_phys.JPSI_MASS_UPPER)
   hLxyData.SetTitle('')
+  hLxyData.GetXaxis().SetRangeUser(-0.2, 0.2)
   sideband = jpsi.result['Region']['SidebandL']
   hLxyBkg = ProjectTH2('hLxySB', hMLxy, sideband[0], sideband[1])
   sideband = jpsi.result['Region']['SidebandR']

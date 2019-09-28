@@ -362,6 +362,7 @@ class PseudoLxy:
   fPrompt   = None # TH1D, used for show
   fBdecay   = None # TH1D, used for show
   fBkg      = None # TH1D, used for show
+  fTotPlot  = None # TH1D, used for show
   fTotal    = None # TF1
   gLgd      = None # TLegend
   gTxt      = None # TPaveText
@@ -399,7 +400,7 @@ class PseudoLxy:
     self.gTxt.AddText("Prompt : %.1f #pm %.1f" % self.result['Prompt'])
     self.gTxt.AddText("Non-prompt : %.1f #pm %.1f" % self.result['Bdecay'])
     self.gTxt.AddText("Bkg : %.1f #pm %.1f" % self.result['Bkg'])
-    self.gTxt.AddText("R_{prompt} : %.1f #pm %.1f" % self.result['Ratio'])
+    self.gTxt.AddText("R_{prompt} : %.2f #pm %.2f" % self.result['Ratio'])
     self.gTxt.AddText("f_{B} : %.2f #pm %.2f" % self.result['fB'])
     self.gTxt.AddText("#chi^{2}/NDF : %.1f / %d" % self.result['Chi2'])
     self.gTxt.Draw('same')
@@ -411,24 +412,31 @@ class PseudoLxy:
     self.gLgd.AddEntry(self.fPrompt, 'Prompt (MC)')
     self.gLgd.AddEntry(self.fBdecay, 'Non-prompt (MC)')
     self.gLgd.AddEntry(self.fBkg, 'Background (Sideband)')
-    self.gLgd.AddEntry(self.fTotal, 'Total fit')
+    self.gLgd.AddEntry(self.fTotPlot, 'Total fit')
     self.gLgd.Draw('same')
   def DrawMC(self):
-    self.fTotal.Draw('same')
-    self.fTotal.SetLineColor(PSEUDOLXY_TOTAL_COLOR)
+    # Total
+    self.fTotPlot = self.hMCBkg.Clone('fTotPlot')
+    ana_util.SetColorAndStyle(self.fTotPlot, PSEUDOLXY_TOTAL_COLOR, 1)
+    self.fTotPlot.SetLineWidth(2)
+    for iBin in range(1, self.fTotPlot.GetNbinsX()+1):
+      self.fTotPlot.SetBinContent(iBin, self.fTotal.Eval(self.fTotPlot.GetBinCenter(iBin)))
+    self.fTotPlot.Draw('same HIST')
+    # Bkg
     self.fBkg = self.hMCBkg.Clone('fBkg')
     self.fBkg.Scale(self.fTotal.GetParameter(2))
+    ana_util.SetColorAndStyle(self.fBkg, PSEUDOLXY_BKG_COLOR, 1)
     self.fBkg.SetLineColor(PSEUDOLXY_BKG_COLOR)
     self.fBkg.Draw('same HIST')
     self.fBdecay = self.hMCBdecay.Clone('fBdecay')
     self.fBdecay.Scale(self.fTotal.GetParameter(1))
-    self.fBdecay.SetLineColor(PSEUDOLXY_BDECAY_COLOR)
+    ana_util.SetColorAndStyle(self.fBdecay, PSEUDOLXY_BDECAY_COLOR, 1)
     self.fBdecay.SetFillColor(PSEUDOLXY_BDECAY_COLOR)
     self.fBdecay.SetFillStyle(3004)
     self.fBdecay.Draw('same HIST')
     self.fPrompt = self.hMCPrompt.Clone('fPrompt')
     self.fPrompt.Scale(self.fTotal.GetParameter(0))
-    self.fPrompt.SetLineColor(PSEUDOLXY_PROMPT_COLOR)
+    ana_util.SetColorAndStyle(self.fPrompt, PSEUDOLXY_PROMPT_COLOR, 1)
     self.fPrompt.Draw('same HIST')
   def Fitting(self):
     self.hData.Fit(self.fTotal, "ISN", "", PSEUDOLXY_TOTAL_FIT_L, PSEUDOLXY_TOTAL_FIT_R)
@@ -472,6 +480,7 @@ class PseudoLxy:
     self.fTotal.SetParLimits(iParam, fracMin * PSEUDO_PEAK / histMax, fracMax * PSEUDO_PEAK / histMax)
   def __init__(self, Lxy, Prompt, Bdecay, Bkg):
     self.hData = Lxy.Clone('hLxyData')
+    ana_util.SetColorAndStyle(self.hData, kBlue, kRound)
     self.hMCPrompt = Prompt.Clone('hPromptMC')
     self.hMCPrompt.Scale(1./self.hMCPrompt.Integral())
     self.hMCBdecay = Bdecay.Clone('hBdecayMC')
