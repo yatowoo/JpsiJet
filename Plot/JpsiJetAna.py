@@ -130,19 +130,7 @@ def DrawQA_PairInJet(qa, tag):
 # ONLY for old 16k outputs
 def DrawQA_Jet(outputs):
   # Pad initialization
-  padQA.Clear()
-  padQA.SetWindowSize(800,800)
-  padQA.Draw()
-  padMain = ROOT.TPad("padJetPt","Jet pT spectra", 0, 0.3, 1, 1.0)
-  padMain.SetBottomMargin(0)
-  padMain.SetLogy()
-  padMain.Draw()
-  padQA.cd()
-  padRatio = ROOT.TPad("padJetPtRatio","Jet pT ratio", 0, 0.05, 1, 0.3)
-  padRatio.SetTopMargin(0)
-  padRatio.SetBottomMargin(0.2)
-  padRatio.SetGrid()
-  padRatio.Draw()
+  padMain, padRatio = ana_util.NewRatioPads(padQA, 'padJetPt', 'padJetPtRatio')
   # Legend
   lgd = ROOT.TLegend(0.6, 0.5, 0.85, 0.88)
   lgd.SetBorderSize(0)

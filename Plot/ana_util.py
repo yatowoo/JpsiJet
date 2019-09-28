@@ -77,6 +77,22 @@ def SetColorAndStyle(obj, c = None, s = None):
     s = next(MARKER)
   obj.SetMarkerStyle(s)
 
+def NewRatioPads(c, nameUpper, nameLower):
+  c.Clear()
+  c.SetWindowSize(800,800)
+  c.Draw()
+  padMain = ROOT.TPad(nameUpper,nameUpper, 0, 0.3, 1, 1.0)
+  padMain.SetBottomMargin(0)
+  padMain.SetLogy()
+  padMain.Draw()
+  c.cd()
+  padRatio = ROOT.TPad(nameLower,nameLower, 0, 0.05, 1, 0.3)
+  padRatio.SetTopMargin(0)
+  padRatio.SetBottomMargin(0.2)
+  padRatio.SetGrid()
+  padRatio.Draw()
+  return padMain, padRatio
+
 def SetRatioPlot(rP, rmin=0.5, rmax=1.5):
   rP.SetTitle('')
   rP.SetMinimum(rmin)
@@ -84,9 +100,9 @@ def SetRatioPlot(rP, rmin=0.5, rmax=1.5):
   rP.GetYaxis().SetTitleOffset(0.4)
   rP.GetYaxis().SetTitleSize(0.09)
   rP.GetYaxis().SetLabelSize(0.08)
-  rP.GetXaxis().SetLabelSize(0.11)
-  rP.GetXaxis().SetTitleSize(0.06)
-  rP.GetXaxis().SetTitleOffset(1.5)
+  rP.GetXaxis().SetLabelSize(0.09)
+  rP.GetXaxis().SetTitleSize(0.09)
+  rP.GetXaxis().SetTitleOffset(1.0)
 
 def PrintCover(pad, file, title = '', isBack = False):
   pTxt = ROOT.TPaveText(0.25,0.4,0.75,0.6, "brNDC")
