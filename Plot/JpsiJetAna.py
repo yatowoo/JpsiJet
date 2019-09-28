@@ -131,8 +131,8 @@ def DrawQA_PairInJet(qa, tag):
 def DrawQA_Jet(outputs):
   # Pad initialization
   padQA.Clear()
-  padQA.SetWindowSize(800,1000)
-  padQA.cd()
+  padQA.SetWindowSize(800,800)
+  padQA.Draw()
   padMain = ROOT.TPad("padJetPt","Jet pT spectra", 0, 0.3, 1, 1.0)
   padMain.SetBottomMargin(0)
   padMain.SetLogy()
@@ -182,14 +182,17 @@ def DrawQA_Jet(outputs):
     lgd.AddEntry(ptUpdated,trig + ' - Updated')
     # Ratio
     padRatio.cd()
-    rp = ptUpdated.Clone('hRatio_' + trig)
+    QAhists['jet']['hRatio_' + trig] = ptUpdated.Clone('hRatio_' + trig)
+    rp = QAhists['jet']['hRatio_' + trig]
     rp.Divide(ptOrig)
     rp.GetYaxis().SetTitle('Updated/Original')
     ana_util.SetRatioPlot(rp, 0.2, 2.0)
+    rp.SetXTitle('p_{T,jet} (GeV/c)')
     rp.Draw('same PE')
     qa.Delete()
   padMain.cd()
   lgd.Draw('same')
+  padQA.Modified()
   padQA.Print(args.print,'Title:JetQA')
   padQA.Write('cJetPt')
 
