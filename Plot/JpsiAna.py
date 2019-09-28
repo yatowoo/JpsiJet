@@ -69,6 +69,12 @@ def ProjectTH2(hname, h2, ylow, yup):
     yBinUp -= 1
   return h2.ProjectionX(hname, yBinLow, yBinUp)
 
+# Pave for cuts
+pTxt = ROOT.TPaveText(0.15, 0.45, 0.35, 0.6, "brNDC")
+pTxt.SetFillColor(0)
+pTxt.AddText('|y_{e^{+}e^{-}}| < 0.9')
+pTxt.AddText('%.1f < p_{T,e^{+}e^{-}} < %.1f GeV/c' % (JPSI_PT_BINS[args.trig][0], JPSI_PT_BINS[args.trig][-1]))
+
 if(args.lxy):
   c.Clear()
   c.SetWindowSize(1600, 600)
@@ -80,6 +86,7 @@ if(args.lxy):
   hM.SetTitle('')
   jpsi = ana_phys.ProcessInvMass(hM, fMC.hJpsiMC)
   jpsi.hM.Draw('same PE')
+  pTxt.Draw('same')
   # Pseudo-Lxy
   c.cd(2)
   ROOT.gPad.SetLogy()
@@ -103,6 +110,7 @@ if(args.lxy):
   # Fitting and drawing results
   Lxy.hData.Draw('PE')
   Lxy.Fitting()
+  pTxt.Draw('same')
   # Output
   c.SaveAs('Jpsi_MLxy_%s.pdf' % args.trig)
 
