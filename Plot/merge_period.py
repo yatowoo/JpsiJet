@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 
 # Merge result from different period (DATA and MC)
+from pprint import pprint
+import argparse
+# Command-line Arguments
+parser = argparse.ArgumentParser(description='Script for period merging of outputs from JpsiJet task')
+parser.add_argument('--mc',help='MC flag', default=False, action='store_true')
+parser.add_argument('--tag',help='Job tag', default='test')
+args = parser.parse_args()
 
 import ROOT
 import ana_phys
@@ -12,9 +19,10 @@ from ana_util import *
 
 PERIOD_LIST = 'ghijklop' # LHC16
 
-OUTPUT_DIR = '../output/QM19/'
+OUTPUT_DIR = '.'
+INPUT_DIR = '/mnt/d/_Temp/ALICE/Train609_16/'
 
-fMerge = ROOT.TFile('AnaMerge_LHC16.root','RECREATE')
+fMerge = ROOT.TFile('AnaMerge_LHC16_Train.root','RECREATE')
 
 TRIGGER_CLASSES = ['EG1', 'EG2', 'DG1', 'DG2']
 
@@ -33,8 +41,10 @@ HistMerge['DCAz'] = {}
 
 ListMerge = {}
 ListMerge['Pair'] = {}
+ListMerge['TagInfo'] = {}
 for trig in TRIGGER_CLASSES:
   ListMerge['Pair'][trig] = ROOT.TList()
+  ListMerge['TagInfo'][trig] = None
 
 # Global Settings and Variables
 ROOT.gStyle.SetOptStat(0)
@@ -47,9 +57,9 @@ lgd.SetNColumns(2)
 
 def OpenAnalysisOutputs(period,MC):
   if(not MC):
-    fAna = ROOT.TFile(OUTPUT_DIR + 'Ana_' + period + '_MultiTasks.root')
+    fAna = ROOT.TFile(INPUT_DIR + 'Ana' + period + '.root')
   else:
-    fAna = ROOT.TFile(OUTPUT_DIR + 'Ana_MC' + period + '.root')
+    fAna = ROOT.TFile(INPUT_DIR + 'Ana_MC' + period + '.root')
   if(fAna.IsOpen()):
     print('[-] INFO - Processing ' + fAna.GetName())
   else:
@@ -73,6 +83,14 @@ def MergeList(period):
     pair.SetOwner(True)
     if(not (period == '16k' and  trig == 'EG1')):
       ListMerge['Pair'][trig].Add(pair.Clone('Pair'+period+trig))
+    # Tag Info
+    tagInfo = qa.FindObject('PairInJet')
+    tagInfo.SetOwner(True)
+    tagInfo = tagInfo.FindObject('PairVars')
+    if(ListMerge['TagInfo'][trig] is None):
+      ListMerge['TagInfo'][trig] = tagInfo.Clone('hsTagInfo_' + trig)
+    else:
+      ListMerge['TagInfo'][trig].Add(tagInfo)
     qa.Delete()
   # End
   fAna.Close()
@@ -156,5 +174,12 @@ ListPairLow.Merge(ListMerge['Pair']['EG2'])
 ListPairLow.Merge(ListMerge['Pair']['DG2'])
 ListPairLow.Write('PairL', ROOT.TObject.kSingleKey)
 
+hsMerge = ListMerge['TagInfo']['EG1']
+hsMerge.Add(ListMerge['TagInfo']['DG1'])
+hsMerge.Write('TagInfoH')
+
+hsMerge = ListMerge['TagInfo']['EG2']
+hsMerge.Add(ListMerge['TagInfo']['DG2'])
+hsMerge.Write('TagInfoL')
 
 fMerge.Close()
