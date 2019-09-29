@@ -72,6 +72,11 @@ JPSI_Y_UPPER = 0.9
 JET_PT_LOWER = 15.0
 JET_PT_UPPER = 50.0
 
+# Drawing Style - Color, Marker, Line and Text
+JPSI_PROMPT_COLOR = kBlue
+JPSI_BDECAY_COLOR = kRed
+MARKER_DEFAULT    = kRound
+
 # J/psi pT bins : 0 - 50, binw = 0.2, 0.5, 1, 2, 5
 BINNING_JPSI_PT = [0.2*x for x in range(0,25,1)]
 BINNING_JPSI_PT += [ 0.1*x for x in range(50,100,5)]
@@ -563,6 +568,9 @@ def DrawMC(mc):
   jpsiPromptAll = jpsiPromptGen.Projection(0).Rebin(len(BINNING_JPSI_PT)-1, "hJpsiPromptAll", BINNING_JPSI_PT)
     # THnSparse - pT, Mee, Lxy
   jpsiPromptReco = jpsiPrompt.FindObject("Reco_sig")
+    # Inv. Mass shape
+  jpsiPromptRecoM = jpsiPromptReco.Projection(1).Clone("hJpsiPromptM")
+  jpsiPromptRecoM.Scale(1./jpsiPromptRecoM.Integral(),'width')
   jpsiPromptReco.GetAxis(1).SetRangeUser(JPSI_MASS_LOWER, JPSI_MASS_UPPER)
   jpsiPromptPt = jpsiPromptReco.Projection(0)
   jpsiPromptPt.SetName('hJpsiPromptReco')
@@ -599,6 +607,9 @@ def DrawMC(mc):
   jpsiBdecayAll = jpsiBdecayGen.Projection(0).Rebin(len(BINNING_JPSI_PT)-1, "hJpsiBdecayAll", BINNING_JPSI_PT)
     # THnSparse - pT, Mee, Lxy
   jpsiBdecayReco = jpsiBdecay.FindObject("Reco_sig")
+    # Inv. Mass shape
+  jpsiBdecayRecoM = jpsiBdecayReco.Projection(1).Clone("hJpsiBdecayM")
+  jpsiBdecayRecoM.Scale(1./jpsiBdecayRecoM.Integral(),'width')
   jpsiBdecayReco.GetAxis(1).SetRangeUser(JPSI_MASS_LOWER, JPSI_MASS_UPPER)
   jpsiBdecayPt = jpsiBdecayReco.Projection(0)
   jpsiBdecayPt.SetName('hJpsiBdecayReco')
@@ -632,6 +643,18 @@ def DrawMC(mc):
   pTxt.Draw("same")
   padQA.Print(args.print, "Title:Jpsi_Eff")
   padQA.Write("cJpsiEff")
+  # J/psi signal shape - invariant mass spectrum
+  padQA.Clear()
+  padQA.SetLogy(False)
+  ana_util.SetColorAndStyle(jpsiPromptRecoM, JPSI_PROMPT_COLOR, MARKER_DEFAULT)
+  jpsiPromptRecoM.GetYaxis().SetRangeUser(0,5.)
+  jpsiPromptRecoM.Draw("PE")
+  ana_util.SetColorAndStyle(jpsiBdecayRecoM, JPSI_BDECAY_COLOR, MARKER_DEFAULT)
+  jpsiBdecayRecoM.Draw("SAME PE")
+  lgd.Draw("same")
+  pTxt.Draw("same")
+  padQA.Print(args.print, "Title:Jpsi_Signal")
+  padQA.Write("cJpsiSignal")
   ##
   ## Plotting : J/psi Lxy
   jpsiLxyAll = jpsiLxyPrompt.Clone("hJpsiLxyAll")
