@@ -8,6 +8,13 @@ from ROOT import kBlack, kRed, kBlue, kGreen, kOrange, kViolet, kCyan, kPink
 import sys, os, time, math, json, logging
 from array import array
 
+def H2ProjectionX(hname, h2, ylow, yup):
+  yBinLow = h2.GetYaxis().FindBin(ylow)
+  yBinUp = h2.GetYaxis().FindBin(yup)
+  if(yup > h2.GetYaxis().GetBinCenter(yBinUp)):
+    yBinUp -= 1
+  return h2.ProjectionX(hname, yBinLow, yBinUp)
+
 # Normalize by column
   # X=measured, Y=true
 def ResponseNorm(h2):

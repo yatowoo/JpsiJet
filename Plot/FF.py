@@ -53,25 +53,26 @@ ROOT.gStyle.SetPalette()
 
 # Raw data and correction files
   # THnSparse - pT_ee, Mee, ~Lxy, z, R, pT_jet
+ID_JPSI_PT, ID_JPSI_M, ID_JPSI_LXY, ID_Z, ID_R, ID_JET_PT = 0, 1, 2, 3, 4, 5
 RAW = fData.Get('TagInfo'+args.trig)
   # Combine prompt and non-prompt signal
 MC_SIGNAL = fMC.hJpsiPromptM.Clone('hMCsignal')
 MC_SIGNAL.Add(fMC.hJpsiBdecayM)
 # Basic cuts
   # Default pT cuts
-RAW.GetAxis(0).SetRangeUser(JPSI_PT_CUT_LOW, JPSI_PT_CUT_UP)
-RAW.GetAxis(5).SetRangeUser(JET_PT_CUT_LOW, JET_PT_CUT_UP)
+RAW.GetAxis(ID_JPSI_PT).SetRangeUser(JPSI_PT_CUT_LOW, JPSI_PT_CUT_UP)
+RAW.GetAxis(ID_JET_PT).SetRangeUser(JET_PT_CUT_LOW, JET_PT_CUT_UP)
 def CutJpsiPt(ptMin, ptMax):
-  RAW.GetAxis(0).SetRangeUser(ptMin, ptMax)
+  RAW.GetAxis(ID_JPSI_PT).SetRangeUser(ptMin, ptMax)
 def CutJpsiM(
   mMin=ana_phys.JPSI_MASS_LOWER,
   mMax=ana_phys.JPSI_MASS_UPPER):
-  RAW.GetAxis(1).SetRangeUser(ptMin, ptMax)
+  RAW.GetAxis(ID_JPSI_M).SetRangeUser(mMin, mMax)
 def CutJpsiPrompt(isPrompt=True):
   if(isPrompt):
-    RAW.GetAxis(2).SetRangeUser(-JPSI_PROMPT_LXY, JPSI_PROMPT_LXY)
+    RAW.GetAxis(ID_JPSI_LXY).SetRangeUser(-JPSI_PROMPT_LXY, JPSI_PROMPT_LXY)
   else:
-    RAW.GetAxis(2).SetRangeUser(JPSI_BDECAY_LXY, JPSI_LXY_MAX)
+    RAW.GetAxis(ID_JPSI_LXY).SetRangeUser(JPSI_BDECAY_LXY, JPSI_LXY_MAX)
 # Drawing methods
   # Unit: NDC
 PAVE_CUTS = ROOT.TPaveText(0.15, 0.5, 0.35, 0.65, "brNDC")
@@ -99,6 +100,31 @@ Jpsi = ana_phys.ProcessInvMass(HistM, MC_SIGNAL)
 Jpsi.hM.Draw("same PE")
 DrawCuts(PAVE_CUTS)
 # Step 1 : Fitting pseudo-proper decay length
+c.cd(2)
+ROOT.gPad.SetLogy()
+CutJpsiM()
+LxyData = RAW.Projection(ID_JPSI_LXY)
+LxyData.SetName('hLxyRaw')
+LxyData.SetTitle('')
+LxyData.GetXaxis().SetRangeUser(-0.2, 0.2)
+CutJpsiM(Jpsi.result['Region']['SidebandL'][0], Jpsi.result['Region']['SidebandL'][1])
+LxyBkg = RAW.Projection(ID_JPSI_LXY)
+LxyBkg.SetName('hLxySB')
+CutJpsiM(Jpsi.result['Region']['SidebandR'][0], Jpsi.result['Region']['SidebandR'][1])
+LxyBkg.Add(RAW.Projection(ID_JPSI_LXY))
+LxyBkg.Scale(Jpsi.result['SBfactor'][0])
+# Rebin to 0.05?
+LxyData.Rebin(5)
+fMC.hJpsiLxyPrompt.Rebin(5)
+fMC.hJpsiLxyBdecay.Rebin(5)
+LxyBkg.Rebin(5)
+# Rebin
+Lxy = ana_phys.PseudoLxy(LxyData, fMC.hJpsiLxyPrompt, fMC.hJpsiLxyBdecay, LxyBkg)
+Lxy.result['Bkg'] = (0., Jpsi.result['SBfactor'][1] / Jpsi.result['SBfactor'][0])
+Lxy.hData.Draw('PE')
+Lxy.Fitting()
+DrawCuts(PAVE_CUTS)
+# End - Step 1
 fout.cd()
 c.Write('cMLxy')
 c.Print(printFile, 'Title:Fitting')
