@@ -156,7 +156,8 @@ for i,tag in enumerate(['Prompt', 'Bdecay']):
   FF[tag]['Total'] = RAW.Projection(ID_Z)
   FF[tag]['Total'].SetName('hFF' + tag + 'Total')
   ana_util.SetColorAndStyle(FF[tag]['Total'], ana_phys.PSEUDOLXY_TOTAL_COLOR, ana_util.kRound)
-  FF[tag]['Total'].Draw("PE0")
+  FF[tag]['Total'].GetXaxis().SetRangeUser(0, 1.0)
+  FF[tag]['Total'].Draw("PE1")
   FF[tag]['Legend'].AddEntry(FF[tag]['Total'], 'Total (%s)' % tag)
   # Sideband
   CutJpsiM(Jpsi.result['Region']['SidebandL'][0], Jpsi.result['Region']['SidebandL'][1])
@@ -211,6 +212,16 @@ c.Write('cRawPtZ')
 c.Clear()
 c.SetWindowSize(1600,600)
 c.Divide(2)
+def NormalizeFF(hZ):
+  hZ.GetXaxis().SetRangeUser(0.,1.0)
+  hZ.SetXTitle('z = (p_{T,J/#psi} / p_{T,jet})')
+  hZ.GetYaxis().SetRangeUser(0.,10.)
+  hZ.SetYTitle('1/N dN/dz')
+  for iBin in range(1,hZ.GetNbinsX()):
+    if(hZ.GetBinCenter(iBin) < FF_Z_LOW):
+      hZ.SetBinContent(iBin, 0.)
+      hZ.SetBinError(iBin, 0.)
+  hZ.Scale(1./hZ.Integral(),'width')
 for i,tag in enumerate(['Prompt', 'Bdecay']):
   c.cd(i+1)
   FF[tag]['Eff'] = fMC.Get('hJpsiEff' + tag)
@@ -230,10 +241,12 @@ for i,tag in enumerate(['Prompt', 'Bdecay']):
       newErr = rawVal/eff * math.sqrt((rawErr/rawVal)**2 + (effErr/eff)**2)
       hPtZ.SetBinError(iBinPt, iBinZ, newErr)
   FF[tag]['Corrected'] = hPtZ.ProjectionY('hFF' + tag + 'Corrected')
+  NormalizeFF(FF[tag]['Corrected'])
   #FF[tag]['Corrected'].SetBins(FF_Z_BIN_N, FF_Z_LOW, FF_Z_UP)
   #FF[tag]['Corrected'].GetXaxis().SetRangeUser(0., 1.0)
   #FF[tag]['Corrected'].Scale(1/FF[tag]['Corrected'].Integral('width'))
   FF[tag]['Corrected'].Draw("PE")
+  DrawCuts(PAVE_CUTS,0.15,0.4,0.4,0.8)
 
 c.Print(printFile, 'Titel:FF_Corrected')
 c.Write('cFFCorrected')
