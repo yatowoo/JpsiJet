@@ -13,6 +13,8 @@ parser.add_argument('--trig',help='Trigger for analysis', default='L')
 parser.add_argument('--jetCut',nargs='+', help='Jet pT cut', type=int, default=(15,50))
 parser.add_argument('--jpsiCut',nargs='+', help='J/psi pT cut', type=int, default=(5,50))
 parser.add_argument('--lxyCut',nargs='+', help='Pseudo-proper decay length cut for prompt and non-prompt J/psi', type=float, default=(0.01,0.01))
+parser.add_argument('--zCut',nargs='+', help='Range of fragmentation function', type=float, default=(0.4,1.0))
+parser.add_argument('--zBin', help='Range of fragmentation function', type=int, default=6)
 args = parser.parse_args()
 
 # Global cuts and variables
@@ -23,6 +25,10 @@ JPSI_PT_CUT_UP  = float(args.jpsiCut[1])
 JPSI_PROMPT_LXY = args.lxyCut[0]
 JPSI_BDECAY_LXY = args.lxyCut[1]
 JPSI_LXY_MAX    = 0.3
+FF_Z_LOW        = args.zCut[0]
+FF_Z_UP         = args.zCut[1]
+FF_Z_BIN_WIDTH  = 0.1
+FF_Z_BIN_N      = args.zBin
 
 print("J/psi pT cut   : %.0f - %.0f (GeV/c)" % (JPSI_PT_CUT_LOW, JPSI_PT_CUT_UP))
 print("Jet pT cut     : %.0f - %.0f (GeV/c)" % (JET_PT_CUT_LOW, JET_PT_CUT_UP))
@@ -224,6 +230,9 @@ for i,tag in enumerate(['Prompt', 'Bdecay']):
       newErr = rawVal/eff * math.sqrt((rawErr/rawVal)**2 + (effErr/eff)**2)
       hPtZ.SetBinError(iBinPt, iBinZ, newErr)
   FF[tag]['Corrected'] = hPtZ.ProjectionY('hFF' + tag + 'Corrected')
+  #FF[tag]['Corrected'].SetBins(FF_Z_BIN_N, FF_Z_LOW, FF_Z_UP)
+  #FF[tag]['Corrected'].GetXaxis().SetRangeUser(0., 1.0)
+  #FF[tag]['Corrected'].Scale(1/FF[tag]['Corrected'].Integral('width'))
   FF[tag]['Corrected'].Draw("PE")
 
 c.Print(printFile, 'Titel:FF_Corrected')
