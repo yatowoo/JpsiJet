@@ -58,7 +58,8 @@ RAW = fData.Get('TagInfo'+args.trig)
 MC_SIGNAL = fMC.hJpsiPromptM.Clone('hMCsignal')
 MC_SIGNAL.Add(fMC.hJpsiBdecayM)
 # Basic cuts
-  # Defatul jet pt
+  # Default pT cuts
+RAW.GetAxis(0).SetRangeUser(JPSI_PT_CUT_LOW, JPSI_PT_CUT_UP)
 RAW.GetAxis(5).SetRangeUser(JET_PT_CUT_LOW, JET_PT_CUT_UP)
 def CutJpsiPt(ptMin, ptMax):
   RAW.GetAxis(0).SetRangeUser(ptMin, ptMax)
@@ -71,6 +72,21 @@ def CutJpsiPrompt(isPrompt=True):
     RAW.GetAxis(2).SetRangeUser(-JPSI_PROMPT_LXY, JPSI_PROMPT_LXY)
   else:
     RAW.GetAxis(2).SetRangeUser(JPSI_BDECAY_LXY, JPSI_LXY_MAX)
+# Drawing methods
+  # Unit: NDC
+PAVE_CUTS = ROOT.TPaveText(0.15, 0.5, 0.35, 0.65, "brNDC")
+PAVE_CUTS.SetName("pTxtCuts")
+PAVE_CUTS.SetFillColor(0)
+PAVE_CUTS.AddText('|y_{e^{+}e^{-}}| < 0.9')
+PAVE_CUTS.AddText('%.1f < p_{T,e^{+}e^{-}} < %.1f GeV/c' % (JPSI_PT_CUT_LOW, JPSI_PT_CUT_UP) )
+PAVE_CUTS.AddText('|#eta_{jet}| < 0.9')
+PAVE_CUTS.AddText('%.1f < p_{T,jet} < %.1f GeV/c' % (JET_PT_CUT_LOW, JET_PT_CUT_UP) )
+def DrawCuts(PAVE_CUTS, xlow=0.13, ylow=0.4, xup=0.3, yup=0.55):
+  PAVE_CUTS.SetX1NDC(xlow)
+  PAVE_CUTS.SetX2NDC(xup)
+  PAVE_CUTS.SetY1NDC(ylow)
+  PAVE_CUTS.SetY2NDC(yup)
+  PAVE_CUTS.Draw("same")
 # Step 1 : Fitting invariant mass
 HistM = RAW.Projection(1)
 HistM.SetName('hM')
@@ -81,6 +97,7 @@ c.Divide(2)
 c.cd(1)
 Jpsi = ana_phys.ProcessInvMass(HistM, MC_SIGNAL)
 Jpsi.hM.Draw("same PE")
+DrawCuts(PAVE_CUTS)
 # Step 1 : Fitting pseudo-proper decay length
 fout.cd()
 c.Write('cMLxy')
