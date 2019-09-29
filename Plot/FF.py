@@ -129,6 +129,53 @@ fout.cd()
 c.Write('cMLxy')
 c.Print(printFile, 'Title:Fitting')
 
+# Step 2: Raw FF, Sideband, After
+c.Clear()
+c.SetWindowSize(1600, 600)
+c.Divide(2)
+FF = {}
+FF['Prompt'] = {}
+FF['Bdecay'] = {}
+for i,tag in enumerate(['Prompt', 'Bdecay']):
+  c.cd(i+1)
+  CutJpsiPrompt((tag == 'Prompt'))
+  FF[tag]['Legend'] = ROOT.TLegend(0.13, 0.68, 0.40, 0.88)
+  FF[tag]['Legend'].SetName('lgd' + tag + 'RawFF')
+  FF[tag]['Legend'].SetBorderSize(0)
+  FF[tag]['Legend'].SetFillColor(0)
+  # Total
+  CutJpsiM()
+  FF[tag]['Total'] = RAW.Projection(ID_Z)
+  FF[tag]['Total'].SetName('hFF' + tag + 'Total')
+  ana_util.SetColorAndStyle(FF[tag]['Total'], ana_phys.PSEUDOLXY_TOTAL_COLOR, ana_util.kRound)
+  FF[tag]['Total'].Draw("PE0")
+  FF[tag]['Legend'].AddEntry(FF[tag]['Total'], 'Total (%s)' % tag)
+  # Sideband
+  CutJpsiM(Jpsi.result['Region']['SidebandL'][0], Jpsi.result['Region']['SidebandL'][1])
+  FF[tag]['SB'] = RAW.Projection(ID_Z)
+  FF[tag]['SB'].SetName('hFF' + tag + 'SB')
+  CutJpsiM(Jpsi.result['Region']['SidebandR'][0], Jpsi.result['Region']['SidebandR'][1])
+  FF[tag]['SB'].Add(RAW.Projection(ID_Z))
+  ana_util.SetColorAndStyle(FF[tag]['SB'], ana_phys.PSEUDOLXY_BKG_COLOR, kRoundHollow)
+  FF[tag]['SB'].Scale(Jpsi.result['SBfactor'][0])
+  FF[tag]['SB'].Draw("SAME PE0")
+  FF[tag]['Legend'].AddEntry(FF[tag]['SB'], 'Sideband (%s)' % tag)
+  # Subtracted
+  FF[tag]['Signal'] = FF[tag]['Total'].Clone('hFF' + tag + 'Signal')
+  FF[tag]['Signal'].Add(FF[tag]['SB'], -1.0)
+  if(tag == 'Prompt'):
+    SignalColor = ana_phys.PSEUDOLXY_PROMPT_COLOR
+  else:
+    SignalColor = ana_phys.PSEUDOLXY_BDECAY_COLOR
+  ana_util.SetColorAndStyle(FF[tag]['Signal'], SignalColor, kStar)
+  FF[tag]['Signal'].SetMarkerSize(3.0)
+  FF[tag]['Signal'].Draw("SAME PE0")
+  FF[tag]['Legend'].AddEntry(FF[tag]['Signal'], 'Total - SB (%s)' % tag)
+  FF[tag]['Legend'].Draw("SAME")
+  DrawCuts(PAVE_CUTS, 0.13, 0.45, 0.40, 0.65)
+c.Print(printFile, 'Titel:RawFF')
+c.Write('cRawFF')
+
 # End
 c.Clear()
 ana_util.PrintCover(c, printFile, isBack=True)
