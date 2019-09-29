@@ -145,6 +145,8 @@ for i,tag in enumerate(['Prompt', 'Bdecay']):
   FF[tag]['Legend'].SetFillColor(0)
   # Total
   CutJpsiM()
+  FF[tag]['TotalPtZ'] = RAW.Projection(ID_Z, ID_JPSI_PT)
+  FF[tag]['TotalPtZ'].SetName('hPtZ' + tag + 'Total')
   FF[tag]['Total'] = RAW.Projection(ID_Z)
   FF[tag]['Total'].SetName('hFF' + tag + 'Total')
   ana_util.SetColorAndStyle(FF[tag]['Total'], ana_phys.PSEUDOLXY_TOTAL_COLOR, ana_util.kRound)
@@ -152,15 +154,21 @@ for i,tag in enumerate(['Prompt', 'Bdecay']):
   FF[tag]['Legend'].AddEntry(FF[tag]['Total'], 'Total (%s)' % tag)
   # Sideband
   CutJpsiM(Jpsi.result['Region']['SidebandL'][0], Jpsi.result['Region']['SidebandL'][1])
+  FF[tag]['SBPtZ'] = RAW.Projection(ID_Z, ID_JPSI_PT)
+  FF[tag]['SBPtZ'].SetName('hPtZ' + tag + 'SB')
   FF[tag]['SB'] = RAW.Projection(ID_Z)
   FF[tag]['SB'].SetName('hFF' + tag + 'SB')
   CutJpsiM(Jpsi.result['Region']['SidebandR'][0], Jpsi.result['Region']['SidebandR'][1])
+  FF[tag]['SBPtZ'].Add(RAW.Projection(ID_Z, ID_JPSI_PT))
+  FF[tag]['SBPtZ'].Scale(Jpsi.result['SBfactor'][0])
   FF[tag]['SB'].Add(RAW.Projection(ID_Z))
   ana_util.SetColorAndStyle(FF[tag]['SB'], ana_phys.PSEUDOLXY_BKG_COLOR, kRoundHollow)
   FF[tag]['SB'].Scale(Jpsi.result['SBfactor'][0])
   FF[tag]['SB'].Draw("SAME PE0")
   FF[tag]['Legend'].AddEntry(FF[tag]['SB'], 'Sideband (%s)' % tag)
   # Subtracted
+  FF[tag]['SignalPtZ'] = FF[tag]['TotalPtZ'].Clone('hPtZ' + tag + 'Signal')
+  FF[tag]['SignalPtZ'].Add(FF[tag]['SBPtZ'], -1.0)
   FF[tag]['Signal'] = FF[tag]['Total'].Clone('hFF' + tag + 'Signal')
   FF[tag]['Signal'].Add(FF[tag]['SB'], -1.0)
   if(tag == 'Prompt'):
@@ -175,6 +183,24 @@ for i,tag in enumerate(['Prompt', 'Bdecay']):
   DrawCuts(PAVE_CUTS, 0.13, 0.45, 0.40, 0.65)
 c.Print(printFile, 'Titel:RawFF')
 c.Write('cRawFF')
+
+# Step 2: Efficiency correction
+fMC.cJpsiEff.Draw()
+fMC.cJpsiEff.Print(printFile, 'Title:JpsiEff')
+fMC.cJpsiEff.Write('cJpsiEff')
+fMC.cJpsiEff.Close()
+c.Clear()
+c.SetWindowSize(1600, 600)
+c.Divide(2)
+ROOT.gStyle.SetPalette(ROOT.kInvertedDarkBodyRadiator)
+c.cd(1)
+FF['Prompt']['SignalPtZ'].SetTitle("Pair p_{T} vs Z(p_{T,ee}/p_{T,jet}) - Prompt J/#psi candidates")
+FF['Prompt']['SignalPtZ'].Draw("COLZ")
+c.cd(2)
+FF['Bdecay']['SignalPtZ'].SetTitle("Pair p_{T} vs Z(p_{T,ee}/p_{T,jet}) - Non-Prompt J/#psi candidates")
+FF['Bdecay']['SignalPtZ'].Draw("COLZ")
+c.Print(printFile, 'Titel:RawPtZ')
+c.Write('cRawPtZ')
 
 # End
 c.Clear()
