@@ -489,7 +489,7 @@ class PseudoLxy:
     # Init fitting function
     self.fTotal  = TF1('fTotal', self.TotalMC, PSEUDOLXY_TOTAL_FIT_L, PSEUDOLXY_TOTAL_FIT_R, 3)
     self.SetParam(self.hMCPrompt, 0, 0.1, 1.0)
-    self.SetParam(self.hMCBdecay, 1, 1e-3, 0.3)
+    self.SetParam(self.hMCBdecay, 1, 1e-3, 0.1)
     self.fTotal.FixParameter(2, 1.0)
 
 if __name__ == '__main__':
