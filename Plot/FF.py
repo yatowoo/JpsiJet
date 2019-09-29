@@ -202,6 +202,33 @@ FF['Bdecay']['SignalPtZ'].Draw("COLZ")
 c.Print(printFile, 'Titel:RawPtZ')
 c.Write('cRawPtZ')
 
+c.Clear()
+c.SetWindowSize(1600,600)
+c.Divide(2)
+for i,tag in enumerate(['Prompt', 'Bdecay']):
+  c.cd(i+1)
+  FF[tag]['Eff'] = fMC.Get('hJpsiEff' + tag)
+  hEff = FF[tag]['Eff']
+  FF[tag]['PtZ'] = FF[tag]['SignalPtZ'].Clone('hPtZ' + tag + 'Corrected')
+  hPtZ = FF[tag]['PtZ']
+  for iBinZ in range(1,hPtZ.GetNbinsY()+1):
+    for iBinPt in range(1,hPtZ.GetNbinsX()+1):
+      rawVal = hPtZ.GetBinContent(iBinPt, iBinZ)
+      if(rawVal < 1e-3):
+        continue
+      pt = hPtZ.GetXaxis().GetBinCenter(iBinPt)
+      eff = hEff.GetBinContent(hEff.FindBin(pt))
+      effErr = hEff.GetBinError(hEff.FindBin(pt))
+      rawErr = hPtZ.GetBinError(iBinPt, iBinZ)
+      hPtZ.SetBinContent(iBinPt, iBinZ, rawVal/eff)
+      newErr = rawVal/eff * math.sqrt((rawErr/rawVal)**2 + (effErr/eff)**2)
+      hPtZ.SetBinError(iBinPt, iBinZ, newErr)
+  FF[tag]['Corrected'] = hPtZ.ProjectionY('hFF' + tag + 'Corrected')
+  FF[tag]['Corrected'].Draw("PE")
+
+c.Print(printFile, 'Titel:FF_Corrected')
+c.Write('cFFCorrected')
+
 # End
 c.Clear()
 ana_util.PrintCover(c, printFile, isBack=True)
