@@ -21,10 +21,10 @@ args = parser.parse_args()
 JET_PT_CUT_LOW  = float(args.jetCut[0])
 JET_PT_CUT_UP   = float(args.jetCut[1])
 JPSI_PT_CUT_LOW = max(5.0 if args.trig == 'L' else 10.0, args.jpsiCut[0])
-JPSI_PT_CUT_UP  = float(args.jpsiCut[1])
+JPSI_PT_CUT_UP  = min(float(args.jpsiCut[1]), JET_PT_CUT_UP)
 JPSI_PROMPT_LXY = args.lxyCut[0]
 JPSI_BDECAY_LXY = args.lxyCut[1]
-JPSI_LXY_MAX    = 0.3
+JPSI_LXY_MAX    = 0.2
 FF_Z_LOW        = args.zCut[0]
 FF_Z_UP         = args.zCut[1]
 FF_Z_BIN_WIDTH  = 0.1
@@ -206,7 +206,7 @@ FF['Prompt']['TotalPtZ'].SetTitle("Pair p_{T} vs Z(p_{T,ee}/p_{T,jet}) - Prompt 
 FF['Prompt']['TotalPtZ'].GetYaxis().SetRangeUser(0., 1.0)
 FF['Prompt']['TotalPtZ'].Draw("COLZ")
 c.cd(2)
-FF['Bdecay']['TotalPtZ'].SetTitle("Pair p_{T} vs Z(p_{T,ee}/p_{T,jet}) [] - Non-Prompt (Total)")
+FF['Bdecay']['TotalPtZ'].SetTitle("Pair p_{T} vs Z(p_{T,ee}/p_{T,jet}) - Non-Prompt (Total)")
 FF['Bdecay']['TotalPtZ'].GetYaxis().SetRangeUser(0., 1.0)
 FF['Bdecay']['TotalPtZ'].Draw("COLZ")
 c.Print(printFile, 'Title:TotalPtZ')
