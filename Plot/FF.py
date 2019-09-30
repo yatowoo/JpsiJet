@@ -144,7 +144,9 @@ c.SetWindowSize(1600, 600)
 c.Divide(2)
 FF = {}
 FF['Prompt'] = {}
+FF['Prompt']['Color'] = kBlue
 FF['Bdecay'] = {}
+FF['Bdecay']['Color'] = kRed
 for i,tag in enumerate(['Prompt', 'Bdecay']):
   c.cd(i+1)
   CutJpsiPrompt((tag == 'Prompt'))
@@ -181,11 +183,7 @@ for i,tag in enumerate(['Prompt', 'Bdecay']):
   FF[tag]['SignalPtZ'].Add(FF[tag]['SBPtZ'], -1.0)
   FF[tag]['Signal'] = FF[tag]['Total'].Clone('hFF' + tag + 'Signal')
   FF[tag]['Signal'].Add(FF[tag]['SB'], -1.0)
-  if(tag == 'Prompt'):
-    SignalColor = ana_phys.PSEUDOLXY_PROMPT_COLOR
-  else:
-    SignalColor = ana_phys.PSEUDOLXY_BDECAY_COLOR
-  ana_util.SetColorAndStyle(FF[tag]['Signal'], SignalColor, kStar)
+  ana_util.SetColorAndStyle(FF[tag]['Signal'], FF[tag]['Color'], kStar)
   FF[tag]['Signal'].SetMarkerSize(3.0)
   FF[tag]['Signal'].Draw("SAME PE0")
   FF[tag]['Legend'].AddEntry(FF[tag]['Signal'], 'Total - SB (%s)' % tag)
@@ -220,12 +218,12 @@ c.SetWindowSize(1600, 600)
 c.Divide(2)
 ROOT.gStyle.SetPalette(ROOT.kInvertedDarkBodyRadiator)
 c.cd(1)
-FF['Prompt']['SignalPtZ'].SetTitle("Pair p_{T} vs Z(p_{T,ee}/p_{T,jet}) - Prompt (Total - SB)")
+FF['Prompt']['SignalPtZ'].SetTitle("e^{+}e^{-} pair p_{T} vs Z(p_{T,ee}/p_{T,jet}) - Prompt (Total - SB)")
 FF['Prompt']['SignalPtZ'].GetYaxis().SetRangeUser(0., 1.0)
 FF['Prompt']['SignalPtZ'].SetMinimum(0.)
 FF['Prompt']['SignalPtZ'].Draw("COLZ")
 c.cd(2)
-FF['Bdecay']['SignalPtZ'].SetTitle("Pair p_{T} vs Z(p_{T,ee}/p_{T,jet}) - Non-Prompt (Total - SB)")
+FF['Bdecay']['SignalPtZ'].SetTitle("e^{+}e^{-} pair p_{T} vs Z(p_{T,ee}/p_{T,jet}) - Non-Prompt (Total - SB)")
 FF['Bdecay']['SignalPtZ'].GetYaxis().SetRangeUser(0., 1.0)
 FF['Bdecay']['SignalPtZ'].SetMinimum(0.)
 FF['Bdecay']['SignalPtZ'].Draw("COLZ")
@@ -251,6 +249,7 @@ for i,tag in enumerate(['Prompt', 'Bdecay']):
   hEff = FF[tag]['Eff']
   FF[tag]['PtZ'] = FF[tag]['SignalPtZ'].Clone('hPtZ' + tag + 'Corrected')
   hPtZ = FF[tag]['PtZ']
+  # Correction by pT bins
   for iBinZ in range(1,hPtZ.GetNbinsY()+1):
     for iBinPt in range(1,hPtZ.GetNbinsX()+1):
       rawVal = hPtZ.GetBinContent(iBinPt, iBinZ)
@@ -267,12 +266,18 @@ for i,tag in enumerate(['Prompt', 'Bdecay']):
   FF[tag]['Corrected'].SetTitle('FF after A #times #varepsilon correction - ' + tag)
   NormalizeFF(FF[tag]['Corrected'])
   NormalizeFF(FF[tag]['Signal'])
-  #FF[tag]['Corrected'].SetBins(FF_Z_BIN_N, FF_Z_LOW, FF_Z_UP)
-  #FF[tag]['Corrected'].GetXaxis().SetRangeUser(0., 1.0)
-  #FF[tag]['Corrected'].Scale(1/FF[tag]['Corrected'].Integral('width'))
-  FF[tag]['Corrected'].Draw("PE")
-  FF[tag]['Signal'].Draw("same")
-  DrawCuts(PAVE_CUTS,0.15,0.4,0.4,0.8)
+  # Drawing
+  ana_util.ResetLegend(FF[tag]['Legend'], 0.15, 0.70, 0.30, 0.80)
+  ana_util.SetColorAndStyle(FF[tag]['Signal'], kBlack, kRound)
+  FF[tag]['Signal'].SetMarkerSize(1)
+  FF[tag]['Signal'].Draw("PE1")
+  FF[tag]['Legend'].AddEntry(FF[tag]['Signal'], 'RAW')
+  ana_util.SetColorAndStyle(FF[tag]['Corrected'], FF[tag]['Color'], kBlock)
+  FF[tag]['Corrected'].SetMarkerSize(2.5)
+  FF[tag]['Corrected'].Draw("same PE1")
+  FF[tag]['Legend'].AddEntry(FF[tag]['Corrected'], 'Corrected')
+  FF[tag]['Legend'].Draw('same')
+  DrawCuts(PAVE_CUTS,0.15,0.4,0.35,0.65)
 
 c.Print(printFile, 'Titel:FF_Corrected')
 c.Write('cFFCorrected')

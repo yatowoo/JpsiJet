@@ -8,6 +8,13 @@ from ROOT import kBlack, kRed, kBlue, kGreen, kOrange, kViolet, kCyan, kPink
 import sys, os, time, math, json, logging
 from array import array
 
+def ResetLegend(lgd, xlow, ylow, xup, yup):
+  lgd.Clear()
+  lgd.SetX1NDC(xlow)
+  lgd.SetX2NDC(xup)
+  lgd.SetY1NDC(ylow)
+  lgd.SetY2NDC(yup)
+
 def H2ProjectionX(hname, h2, ylow, yup):
   yBinLow = h2.GetYaxis().FindBin(ylow)
   yBinUp = h2.GetYaxis().FindBin(yup)
