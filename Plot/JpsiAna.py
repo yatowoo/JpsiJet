@@ -26,7 +26,7 @@ MC_SIGNAL = fMC.hJpsiPromptM.Clone('hMCsignal')
 MC_SIGNAL.Add(fMC.hJpsiBdecayM)
 # Lxy sideband shape
 fSB = ROOT.TFile('LxySBtest.root')
-fSB.hLxySB.Rebin(5)
+hLxySBtest = fSB.hLxySB.Rebin(5,"hLxySBtest")
 
 c = ROOT.TCanvas('cTest','Plot Test', 800, 600)
 printName = args.output.replace('.root','.pdf')
@@ -105,10 +105,10 @@ if(args.lxy):
   hLxyBkg.Scale(jpsi.result['SBfactor'][0])
   # Fitting
   Lxy = ana_phys.PseudoLxy(
-    hLxyData,
-    fMC.hJpsiLxyPrompt,
-    fMC.hJpsiLxyBdecay,
-    fSB.hLxySB)
+    hLxyData.Rebin(5),
+    fMC.hJpsiLxyPrompt.Rebin(5),
+    fMC.hJpsiLxyBdecay.Rebin(5),
+    hLxySBtest)
   # For background error
   Lxy.result['Bkg'] = (0., jpsi.result['SBfactor'][1] / jpsi.result['SBfactor'][0])
   # Fitting and drawing results

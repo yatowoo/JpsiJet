@@ -482,6 +482,7 @@ class PseudoLxy:
     self.fTotal.SetParLimits(iParam, fracMin * PSEUDO_PEAK / histMax, fracMax * PSEUDO_PEAK / histMax)
   def __init__(self, Lxy, Prompt, Bdecay, Bkg):
     self.hData = Lxy.Clone('hLxyData')
+    self.hData.GetXaxis().SetRangeUser(-0.2,0.2)
     ana_util.SetColorAndStyle(self.hData, kBlue, kRound)
     self.hMCPrompt = Prompt.Clone('hLxyPromptMC')
     self.hMCPrompt.Scale(1./self.hMCPrompt.Integral())
@@ -492,8 +493,8 @@ class PseudoLxy:
     # Init fitting function
     self.fTotal  = TF1('fTotal', self.TotalMC, PSEUDOLXY_TOTAL_FIT_L, PSEUDOLXY_TOTAL_FIT_R, 3)
     self.SetParam(self.hMCPrompt, 0, 0.1, 1.0)
-    self.SetParam(self.hMCBdecay, 1, 0.05, 0.2)
-    self.SetParam(self.hMCBkg, 2, 0.1, 0.5)
+    self.SetParam(self.hMCBdecay, 1, 0.05, 0.3)
+    self.SetParam(self.hMCBkg, 2, 0.01, 0.3)
     #self.fTotal.FixParameter(2, 1.0)
 
 if __name__ == '__main__':
