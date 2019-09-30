@@ -7,8 +7,7 @@ import argparse
 # Command-line Arguments
 parser = argparse.ArgumentParser(description='Test script for post-processing')
 parser.add_argument('-f', '--file',help='Input file', default='JpsiData.root')
-parser.add_argument('--mcSig',help='MC signal file', default='MCsignal.root')
-parser.add_argument('--mcLxy',help='MC Pseudo-Lxy file', default='mc2016.root')
+parser.add_argument('--mc',help='MC signal file', default='MC16L.root')
 parser.add_argument('-o','--output',help='Output ROOT file instead PDF', default='AnaJpsi.root')
 parser.add_argument('--trig',help='Trigger for analysis', default='PairL')
 parser.add_argument('--pt',help='pT analysis', default=False, action='store_true')
@@ -21,10 +20,13 @@ from ana_phys import InvMass
 import ROOT
 
 fData = ROOT.TFile(args.file)
-fMC = ROOT.TFile(args.mcSig)
+fMC = ROOT.TFile(args.mc)
+  # Combine prompt and non-prompt signal
+MC_SIGNAL = fMC.hJpsiPromptM.Clone('hMCsignal')
+MC_SIGNAL.Add(fMC.hJpsiBdecayM)
 
 c = ROOT.TCanvas('cTest','Plot Test', 800, 600)
-
+printName = args.output.replace('.root','.pdf')
 pairList = fData.Get(args.trig)
 pairList.SetOwner(True)
 
@@ -44,7 +46,7 @@ if(args.pt):
   c.cd(1)
   hMAll = hMPt.ProjectionY('hM')
   hMAll.SetTitle('Integrated, %.1f < pT < %.1f GeV/c' % (JPSI_PT_BINS[args.trig][0], JPSI_PT_BINS[args.trig][-1]))
-  jpsiAll = ana_phys.ProcessInvMass(hMAll, fMC.hJpsiMC)
+  jpsiAll = ana_phys.ProcessInvMass(hMAll, MC_SIGNAL)
   jpsiAll.hM.Draw('same PE')
   ROOT.gPad.SaveAs('Jpsi_MPt_%s_0.pdf' % args.trig)
   # pT bin
@@ -56,7 +58,7 @@ if(args.pt):
       hMPt.GetXaxis().FindBin(pT),
       hMPt.GetXaxis().FindBin(pTMax) - 1)
     hM[iBin].SetTitle('%.1f < pT < %.1f GeV/c' % (pT, pTMax))
-    jpsi[iBin] = ana_phys.ProcessInvMass(hM[iBin], fMC.hJpsiMC)
+    jpsi[iBin] = ana_phys.ProcessInvMass(hM[iBin], MC_SIGNAL)
     jpsi[iBin].hM.Draw('same PE')
     ROOT.gPad.SaveAs('Jpsi_MPt_%s_%d.pdf' % (args.trig, iBin+1))
   # Final output
@@ -84,13 +86,12 @@ if(args.lxy):
   hMLxy = pairList.FindObject('InvMass_ProperTime')
   hM = hMLxy.ProjectionY('hM')
   hM.SetTitle('')
-  jpsi = ana_phys.ProcessInvMass(hM, fMC.hJpsiMC)
+  jpsi = ana_phys.ProcessInvMass(hM, MC_SIGNAL)
   jpsi.hM.Draw('same PE')
   pTxt.Draw('same')
   # Pseudo-Lxy
   c.cd(2)
   ROOT.gPad.SetLogy()
-  fMCLxy = ROOT.TFile('mc16.root')
   hLxyData = ProjectTH2('hLxySignal', hMLxy, ana_phys.JPSI_MASS_LOWER, ana_phys.JPSI_MASS_UPPER)
   hLxyData.SetTitle('')
   hLxyData.GetXaxis().SetRangeUser(-0.2, 0.2)
@@ -102,8 +103,8 @@ if(args.lxy):
   # Fitting
   Lxy = ana_phys.PseudoLxy(
     hLxyData,
-    fMCLxy.hJpsiLxyPrompt,
-    fMCLxy.hJpsiLxyBdecay,
+    fMC.hJpsiLxyPrompt,
+    fMC.hJpsiLxyBdecay,
     hLxyBkg)
   # For background error
   Lxy.result['Bkg'] = (0., jpsi.result['SBfactor'][1] / jpsi.result['SBfactor'][0])
@@ -112,7 +113,7 @@ if(args.lxy):
   Lxy.Fitting()
   pTxt.Draw('same')
   # Output
-  c.SaveAs('Jpsi_MLxy_%s.pdf' % args.trig)
+  c.SaveAs(printName)
 
 fData.Close()
 fMC.Close()
