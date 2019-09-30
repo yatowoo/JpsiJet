@@ -474,9 +474,11 @@ class PseudoLxy:
     self.result['Chi2'] = (self.fTotal.GetChisquare(), self.fTotal.GetNDF())
     self.DrawResult()
   def SetParam(self, hist, iParam, fracMin = 0., fracMax = 1.0):
-    PSEUDO_PEAK = self.hData.GetBinContent(self.hData.GetMaximumBin())
-    histMax = hist.GetBinContent(hist.GetMaximumBin())
-    self.fTotal.SetParameter(iParam, fracMin * PSEUDO_PEAK / histMax)
+    #PSEUDO_PEAK = self.hData.GetBinContent(self.hData.GetMaximumBin())
+    PSEUDO_PEAK = self.hData.Integral()
+    #histMax = hist.GetBinContent(hist.GetMaximumBin())
+    histMax = hist.Integral()
+    self.fTotal.SetParameter(iParam, 0.5 * (fracMin + fracMax) * PSEUDO_PEAK / histMax)
     self.fTotal.SetParLimits(iParam, fracMin * PSEUDO_PEAK / histMax, fracMax * PSEUDO_PEAK / histMax)
   def __init__(self, Lxy, Prompt, Bdecay, Bkg):
     self.hData = Lxy.Clone('hLxyData')
@@ -486,11 +488,13 @@ class PseudoLxy:
     self.hMCBdecay = Bdecay.Clone('hBdecayMC')
     self.hMCBdecay.Scale(1./self.hMCBdecay.Integral())
     self.hMCBkg    = Bkg.Clone('hBkgMC')
+    self.hMCBkg.Scale(1./self.hMCBkg.Integral())
     # Init fitting function
     self.fTotal  = TF1('fTotal', self.TotalMC, PSEUDOLXY_TOTAL_FIT_L, PSEUDOLXY_TOTAL_FIT_R, 3)
     self.SetParam(self.hMCPrompt, 0, 0.1, 1.0)
-    self.SetParam(self.hMCBdecay, 1, 1e-3, 0.1)
-    self.fTotal.FixParameter(2, 1.0)
+    self.SetParam(self.hMCBdecay, 1, 0.05, 0.2)
+    self.SetParam(self.hMCBkg, 2, 0.1, 0.5)
+    #self.fTotal.FixParameter(2, 1.0)
 
 if __name__ == '__main__':
   invM = InvMass()

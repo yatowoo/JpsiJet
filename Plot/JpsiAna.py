@@ -24,6 +24,9 @@ fMC = ROOT.TFile(args.mc)
   # Combine prompt and non-prompt signal
 MC_SIGNAL = fMC.hJpsiPromptM.Clone('hMCsignal')
 MC_SIGNAL.Add(fMC.hJpsiBdecayM)
+# Lxy sideband shape
+fSB = ROOT.TFile('LxySBtest.root')
+fSB.hLxySB.Rebin(5)
 
 c = ROOT.TCanvas('cTest','Plot Test', 800, 600)
 printName = args.output.replace('.root','.pdf')
@@ -105,7 +108,7 @@ if(args.lxy):
     hLxyData,
     fMC.hJpsiLxyPrompt,
     fMC.hJpsiLxyBdecay,
-    hLxyBkg)
+    fSB.hLxySB)
   # For background error
   Lxy.result['Bkg'] = (0., jpsi.result['SBfactor'][1] / jpsi.result['SBfactor'][0])
   # Fitting and drawing results
@@ -114,6 +117,7 @@ if(args.lxy):
   pTxt.Draw('same')
   # Output
   c.SaveAs(printName)
+  c.SaveAs(args.output)
 
 fData.Close()
 fMC.Close()
