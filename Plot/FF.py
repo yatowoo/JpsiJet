@@ -64,6 +64,9 @@ RAW = fData.Get('TagInfo'+args.trig)
   # Combine prompt and non-prompt signal
 MC_SIGNAL = fMC.hJpsiPromptM.Clone('hMCsignal')
 MC_SIGNAL.Add(fMC.hJpsiBdecayM)
+  # Lxy sideband shape
+fSB = ROOT.TFile('LxySBtest.root')
+hLxySBtest = fSB.hLxySB.Rebin(5,"hLxySBtest")
 # Basic cuts
   # Default pT cuts
 RAW.GetAxis(ID_JPSI_PT).SetRangeUser(JPSI_PT_CUT_LOW, JPSI_PT_CUT_UP)
@@ -125,7 +128,7 @@ fMC.hJpsiLxyPrompt.Rebin(5)
 fMC.hJpsiLxyBdecay.Rebin(5)
 LxyBkg.Rebin(5)
 # Rebin
-Lxy = ana_phys.PseudoLxy(LxyData, fMC.hJpsiLxyPrompt, fMC.hJpsiLxyBdecay, LxyBkg)
+Lxy = ana_phys.PseudoLxy(LxyData, fMC.hJpsiLxyPrompt, fMC.hJpsiLxyBdecay, hLxySBtest)
 Lxy.result['Bkg'] = (0., Jpsi.result['SBfactor'][1] / Jpsi.result['SBfactor'][0])
 Lxy.hData.Draw('PE')
 Lxy.Fitting()
@@ -278,5 +281,6 @@ c.Write('cFFCorrected')
 c.Clear()
 ana_util.PrintCover(c, printFile, isBack=True)
 fData.Close()
+fSB.Close()
 fMC.Close()
 fout.Close()
