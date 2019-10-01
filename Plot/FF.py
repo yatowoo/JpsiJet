@@ -15,6 +15,7 @@ parser.add_argument('--jpsiCut',nargs='+', help='J/psi pT cut', type=int, defaul
 parser.add_argument('--lxyCut',nargs='+', help='Pseudo-proper decay length cut for prompt and non-prompt J/psi', type=float, default=(0.01,0.01))
 parser.add_argument('--zCut',nargs='+', help='Range of fragmentation function', type=float, default=(0.4,1.0))
 parser.add_argument('--zBin', help='Range of fragmentation function', type=int, default=6)
+parser.add_argument('--more', help='More outputs for each canvas', default=False, action='store_true')
 args = parser.parse_args()
 
 # Global cuts and variables
@@ -51,12 +52,17 @@ if(outputDir == ''):
 outputName = os.path.basename(args.output)
 printName = outputName.replace('.root','.pdf')
 printFile = outputDir + '/' + printName
+printPrefix = printName.replace('.pdf','')
 # Drawing and printer
 c = ROOT.TCanvas('cFF','J/#psi in jets analysis - FF', 800, 600)
 ana_util.PrintCover(c, printFile)
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetPalette()
-
+def PrintOut(c, title):
+  c.Write('c' + title)
+  c.Print(printFile, 'Title:' + title)
+  if(args.more):
+    c.SaveAs(printPrefix + '_' + title + '.pdf')
 # Raw data and correction files
   # THnSparse - pT_ee, Mee, ~Lxy, z, R, pT_jet
 ID_JPSI_PT, ID_JPSI_M, ID_JPSI_LXY, ID_Z, ID_R, ID_JET_PT = 0, 1, 2, 3, 4, 5
@@ -135,8 +141,7 @@ Lxy.Fitting()
 DrawCuts(PAVE_CUTS)
 # End - Step 1
 fout.cd()
-c.Write('cMLxy')
-c.Print(printFile, 'Title:Fitting')
+PrintOut(c,'MLxy')
 
 # Step 2: Raw FF, Sideband, After
 c.Clear()
@@ -199,8 +204,7 @@ for i,tag in enumerate(['Prompt', 'Bdecay']):
   FF[tag]['Label'].Draw("same")
   FF[tag]['Legend'].Draw("SAME")
   DrawCuts(PAVE_CUTS, 0.13, 0.45, 0.35, 0.62)
-c.Print(printFile, 'Titel:RawFF')
-c.Write('cRawFF')
+PrintOut(c,'RawFF')
 
 # Step 2: Efficiency correction
 fMC.cJpsiEff.Draw()
@@ -220,8 +224,7 @@ c.cd(2)
 FF['Bdecay']['TotalPtZ'].SetTitle("Pair p_{T} vs Z(p_{T,ee}/p_{T,jet}) - Non-Prompt (Total)")
 FF['Bdecay']['TotalPtZ'].GetYaxis().SetRangeUser(0., 1.0)
 FF['Bdecay']['TotalPtZ'].Draw("COLZ")
-c.Print(printFile, 'Title:TotalPtZ')
-c.Write('cTotalPtZ')
+PrintOut(c,'TotalPtZ')
 
 def NormalizeFF(hZ):
   hZ.GetXaxis().SetRangeUser(0.,1.0)
@@ -280,8 +283,7 @@ for i,tag in enumerate(['Prompt', 'Bdecay']):
   FF[tag]['Legend'].Draw('same')
   DrawCuts(PAVE_CUTS,0.15,0.4,0.35,0.65)
   # Output
-  c.Print(printFile, 'Titel:FF_' + tag + 'Corrected')
-  c.Write('cFFCorrected' + tag)
+  PrintOut(c, 'FF_' + tag + 'Corrected')
 
 # End
 c.Clear()
