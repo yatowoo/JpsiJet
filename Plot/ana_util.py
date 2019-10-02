@@ -8,6 +8,24 @@ from ROOT import kBlack, kRed, kBlue, kGreen, kOrange, kViolet, kCyan, kPink
 import sys, os, time, math, json, logging
 from array import array
 
+# J/psi pT bins : 0 - 50, binw = 0.2, 0.5, 1, 2, 5
+BINNING_JPSI_PT = [0.2*x for x in range(0,25,1)]
+BINNING_JPSI_PT += [ 0.1*x for x in range(50,100,5)]
+BINNING_JPSI_PT += list(range(10, 15, 1))
+BINNING_JPSI_PT += list(range(15, 25, 2))
+BINNING_JPSI_PT += list(range(25, 55, 5))
+BINNING_JPSI_PT = array('d', BINNING_JPSI_PT) # Convert to double*
+
+# Jet pT bins - Edge=0, 0.3, 1, 3, 10, 20, 50, 100
+BINNING_JET_PT = [0.05*x for x in range(0,6,1)]
+BINNING_JET_PT += [ 0.1*x for x in range(3,10,1)]
+BINNING_JET_PT += [ 0.2*x for x in range(5,15,1)]
+BINNING_JET_PT += [ x for x in range(3,10,1)]
+BINNING_JET_PT += list(range(10,20,2))
+BINNING_JET_PT += list(range(20,50,5))
+BINNING_JET_PT += list(range(50,110,10))
+BINNING_JET_PT = array('d', BINNING_JET_PT)
+
 def ResetLegend(lgd, xlow, ylow, xup, yup):
   lgd.Clear()
   lgd.SetX1NDC(xlow)
