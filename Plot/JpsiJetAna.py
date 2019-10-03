@@ -27,6 +27,7 @@ parser.add_argument('-o', '--output',help='Output file path', default='JpsiJetAn
 parser.add_argument('-p', '--print',help='Print in PDF file', default='JpsiJetAna.pdf')
 parser.add_argument('--mc',help='MC flag for DrawMC methods', default=False, action='store_true')
 parser.add_argument('--calo',help='QA for EMCal cluster energy', default=False, action='store_true')
+parser.add_argument('--jet',help='QA for jet', default=False, action='store_true')
 parser.add_argument('--all',help='Run all QA processing', default=False, action='store_true')
 args = parser.parse_args()
 
@@ -34,6 +35,7 @@ args = parser.parse_args()
 import ROOT
 from ROOT import TFile, TCanvas, TLegend, gPad, TPaveText
 from ROOT import TH1, TH2, TF1
+import ana_util
 from ana_util import *
 
 # Input - analysis results from ALICE tasks
@@ -48,12 +50,7 @@ if(args.mc):
   padQA = TCanvas("cMC", "Jpsi in jets analysis on MC",800,600)
 else:
   padQA = TCanvas("cAna", "Jpsi in jets analysis",800,600)
-# Cover
-pTxt = TPaveText(0.25,0.45,0.75,0.55, "brNDC")
-pTxt.AddText(padQA.GetTitle())
-padQA.cd()
-pTxt.Draw()
-  # Open PDF file and draw cover
+# PDF Cover - Open PDF file and draw cover
 PrintCover(padQA, args.print)
 # End - Cover
 
@@ -75,6 +72,11 @@ JPSI_Y_UPPER = 0.9
 JET_PT_LOWER = 15.0
 JET_PT_UPPER = 50.0
 
+# Drawing Style - Color, Marker, Line and Text
+JPSI_PROMPT_COLOR = kBlue
+JPSI_BDECAY_COLOR = kRed
+MARKER_DEFAULT    = kRound
+
 # J/psi pT bins : 0 - 50, binw = 0.2, 0.5, 1, 2, 5
 BINNING_JPSI_PT = [0.2*x for x in range(0,25,1)]
 BINNING_JPSI_PT += [ 0.1*x for x in range(50,100,5)]
@@ -83,7 +85,21 @@ BINNING_JPSI_PT += list(range(15, 25, 2))
 BINNING_JPSI_PT += list(range(25, 55, 5))
 BINNING_JPSI_PT = array('d', BINNING_JPSI_PT) # Convert to double*
 
+# Jet pT bins - Edge=0, 0.3, 1, 3, 10, 20, 50, 100
+BINNING_JET_PT = [0.05*x for x in range(0,6,1)]
+BINNING_JET_PT += [ 0.1*x for x in range(3,10,1)]
+BINNING_JET_PT += [ 0.2*x for x in range(5,15,1)]
+BINNING_JET_PT += [ 0.5*x for x in range(6,20,1)]
+BINNING_JET_PT += list(range(10,20,2))
+BINNING_JET_PT += list(range(20,50,5))
+BINNING_JET_PT += list(range(50,110,10))
+BINNING_JET_PT = array('d', BINNING_JET_PT)
+
 TRIGGER_CLASSES = ['MB', 'EG1', 'EG2', 'DG1', 'DG2']
+# QA index and results
+EvStats = {}
+RunStats = {}
+QAhists = {}
 
 def DrawQA_PairInJet(qa, tag):
   print("[-] INFO - Processing QA plots for " + tag)
@@ -116,7 +132,64 @@ def DrawQA_PairInJet(qa, tag):
   return
 # END - Drawing QA plots
 
-def DrawQA_JetPt(qa):
+# ONLY for old 16k outputs
+def DrawQA_Jet(outputs):
+  # Pad initialization
+  padMain, padRatio = ana_util.NewRatioPads(padQA, 'padJetPt', 'padJetPtRatio')
+  # Legend
+  lgd = ROOT.TLegend(0.6, 0.5, 0.85, 0.88)
+  lgd.SetBorderSize(0)
+  lgd.SetFillColor(0)
+  lgd.SetNColumns(2)
+  # Loop on triggers
+  QAhists['jet'] = {}
+  for i,trig in enumerate(TRIGGER_CLASSES):
+    if(trig == 'MB'):
+      continue
+    qa = outputs.Get('QAhistos_' + trig)
+    qa.SetOwner(True)
+    jetQA = qa.FindObject('Jet')
+    jetQA.SetOwner(True)
+    # jet pT spectra
+    padMain.cd()
+    color = next(COLOR)
+      # Original
+    jetOrig = jetQA.FindObject("Jet_AKTChargedR040_tracks_pT0150_pt_scheme")
+    jetOrig.SetOwner(True)
+    ptOrig = jetOrig.FindObject('jetPtEtaPhi').Projection(0).Rebin(len(BINNING_JET_PT)-1, "hJetOrig" + trig, BINNING_JET_PT)
+    ptOrig.Scale(1./EvStats[trig]['Dielectron'],'width')
+    ana_util.SetColorAndStyle(ptOrig, color, DATA_MARKER[i])
+    ptOrig.SetTitle('')
+    ptOrig.SetXTitle('p_{T,jet} (GeV/c)')
+    ptOrig.GetYaxis().SetRangeUser(5e-5,5)
+    ptOrig.SetYTitle('1/N_{ev} dN_{jet}/dp_{T,jet}')
+    ptOrig.Draw('SAME PE')
+    lgd.AddEntry(ptOrig,trig + ' - Original')
+      # Updated
+    jetUpdated = jetQA.FindObject("JpsiJet_AKTChargedR040_tracksWithPair_pT0150_pt_scheme")
+    jetUpdated.SetOwner(True)
+    ptUpdated = jetUpdated.FindObject('jetPtEtaPhi').Projection(0).Rebin(len(BINNING_JET_PT)-1, "hJetNew_" + trig, BINNING_JET_PT)
+    ptUpdated.Scale(1./EvStats[trig]['Dielectron'], 'width')
+    ana_util.SetColorAndStyle(ptUpdated, color, MC_MARKER[i])
+    ptUpdated.Draw('SAME PE')
+    lgd.AddEntry(ptUpdated,trig + ' - Updated')
+    # Ratio
+    padRatio.cd()
+    QAhists['jet']['hRatio_' + trig] = ptUpdated.Clone('hRatio_' + trig)
+    rp = QAhists['jet']['hRatio_' + trig]
+    rp.Divide(ptOrig)
+    rp.GetYaxis().SetTitle('Updated/Original')
+    ana_util.SetRatioPlot(rp, 0.2, 2.0)
+    rp.SetXTitle('p_{T,jet} (GeV/c)')
+    rp.Draw('same PE')
+    qa.Delete()
+  padMain.cd()
+  lgd.Draw('same')
+  padQA.Modified()
+  padQA.Print(args.print,'Title:JetQA')
+  padQA.Write('cJetPt')
+
+def DrawMC_JetPt(qa):
   # Event norm.
   ev = qa.FindObject("EventStats")
   nEv = ev.GetBinContent(6)
@@ -275,17 +348,105 @@ def DrawQA_Calo(qa):
   padQA.Write("cQA_Cluster")
 # End - Calo cluster QA
 
+def DrawQA_Runwise(outputs):
+  # Processing - TH2 with x-RunNo, y-Label
+  # N event only
+  RunStats['NEvent'] = {}
+  padQA.Clear()
+  padQA.SetWindowSize(1000,600)
+  padQA.SetLogy()
+  # Legend
+  lgd = ROOT.TLegend(0.15, 0.15, 0.55, 0.25)
+  lgd.SetNColumns(len(TRIGGER_CLASSES))
+  lgd.SetBorderSize(0)
+  lgd.SetFillColor(0)
+  for trig in TRIGGER_CLASSES:
+    # Trigger
+    qa = outputs.Get('QAhistos_' + trig)
+    if(qa == None):
+      print('[X] ERROR - %s not found.' % trig)
+      continue
+    qa.SetOwner(True)
+    # Runwise
+    runwise = qa.FindObject('Runwise')
+    if(runwise == None):
+      print('[X] ERROR - %s/Runwise QA not found' % qa.GetName())
+      return
+    runwise.SetOwner(True)
+    hEv = runwise.FindObject('NEvent')
+    hEv.LabelsDeflate()
+    # N event
+    RunStats['NEvent'][trig] = ROOT.TH1D('hNEv' + trig, 'Runwise QA - Number of selected events', 201, -0.5, 200)
+    hnew = RunStats['NEvent'][trig]
+    for iBin in range(1, hnew.GetNbinsX()+1):
+      label = hEv.GetXaxis().GetBinLabel(iBin)
+      nev = hEv.GetBinContent(iBin, 4)
+      hnew.Fill(label, nev)
+      binID = hnew.GetXaxis().FindBin(label)
+      hnew.SetBinError(binID, math.sqrt(nev))
+    hnew.SetMarkerStyle(next(MARKER))
+    hnew.GetYaxis().SetRangeUser(1., 1e8)
+    hnew.LabelsOption("av")
+    hnew.LabelsDeflate()
+    hnew.Draw('same PE')
+    lgd.AddEntry(hnew, trig)
+    qa.Delete()
+  lgd.Draw('same')
+  padQA.Print(args.print, 'Title:Runwise_NEv')
+  # End
+
+def DrawQA_Event(outputs):
+  # Print event statistics
+  evTable = ROOT.TPaveText(0.2, 0.2, 0.8, 0.8)
+  txt = evTable.AddText("Event statistics")
+  txt.SetTextFont(62) # Bold
+  txt = evTable.AddText("EvTag | Trigger | Selected | Dielectron | N_{pair} = 1 | N_{pair} > 1 | Tagged jet |")
+  for trig in ['ALL'] + TRIGGER_CLASSES:
+    # Init
+    EvStats[trig] = {}
+    qa = outputs.Get('QAhistos_' + trig)
+    if(qa == None):
+      print('[X] ERROR - %s not found.' % trig)
+      continue
+    qa.SetOwner(True)
+    # Processing
+    hEv = qa.FindObject('EventStats')
+    txt = trig + ' | '
+    EvStats[trig]['Trigger'] = hEv.GetBinContent(2)
+    txt += '%.2e | ' % EvStats[trig]['Trigger']
+    EvStats[trig]['Ana'] = hEv.GetBinContent(6)
+    txt += '%.2e | ' % EvStats[trig]['Ana']
+    EvStats[trig]['Dielectron'] = hEv.GetBinContent(7) + hEv.GetBinContent(8)
+    txt += '%.2e | ' % EvStats[trig]['Dielectron']
+    EvStats[trig]['Single'] = hEv.GetBinContent(7)
+    txt += '%.2e | ' % EvStats[trig]['Single']
+    EvStats[trig]['MultiPair'] = hEv.GetBinContent(8)
+    txt += '%.2e | ' % EvStats[trig]['MultiPair']
+    EvStats[trig]['TaggedJet'] = hEv.GetBinContent(9)
+    txt += '%.2e | ' % EvStats[trig]['TaggedJet']
+    txt = evTable.AddText(txt)
+    # End
+    qa.Delete()
+  padQA.Clear()
+  padQA.SetWindowSize(800, 600)
+  padQA.cd()
+  evTable.Draw()
+  padQA.Print(args.print, 'Title:EventStats')
+  evTable.Delete()
+  return EvStats
 
 if(args.all):
-  qaName = outputs.GetListOfKeys().At(0).GetName()
-  #DrawQA(outputs.Get(qaName), qaName.split('_')[1])
-  #DrawQA_JetPt(outputs.Get(qaName))
+  DrawQA_Event(outputs)
+  DrawQA_Runwise(outputs)
 elif(args.calo):
   qaName = "QAhistos_ALL"
   qa = outputs.Get(qaName)
   qa.SetOwner(True)
   DrawQA_Calo(qa)
   qa.Delete()
+
+if(args.jet):
+  DrawQA_Jet(outputs)
 
 # Detectro response matrix - 4 dim.
 ## THnSparse: z_det, z_gen, jetPt_det, jetPt_gen
@@ -351,31 +512,31 @@ def DrawMC(mc):
   mcEle = mc.FindObject("Electron")
   mcEle.SetOwner(True)
     # TPC
-  eleAllTPC = mcEle.FindObject("eleVars").Projection(0)
-  eleAllTPC.SetName("hEleAllTPC")
+  eleAllTPC = mcEle.FindObject("eleVars").Projection(0).Rebin(len(BINNING_JPSI_PT)-1, "hEleAllTPC", BINNING_JPSI_PT)
   elePureTPC = mcEle.FindObject("PID_pure")
   eleWrongTPC = mcEle.FindObject("PID_wrong")
   eleTPC = elePureTPC.Clone("hEleDetTPC")
   eleTPC.Add(eleWrongTPC)
-  eleEffTPC = elePureTPC.Clone("hEleEffTPC")
+  eleEffTPC = elePureTPC.Rebin(len(BINNING_JPSI_PT)-1, "hEleEffTPC", BINNING_JPSI_PT)
+  eleEffTPC.Sumw2()
+  eleAllTPC.Sumw2()
   eleEffTPC.Divide(eleAllTPC)
   eleEffTPC.GetXaxis().SetRangeUser(0., 50.)
   eleEffTPC.GetYaxis().SetTitle("A #times #varepsilon")
   eleEffTPC.SetTitle("Electron PID Acceptance and Efficiency")
-  eleEffTPC.SetLineWidth(2)
   #eleEffTPC.Rebin(5) # Bin width : 0.2 -> 1.0
-  eleEffTPC.Draw()
+  ana_util.SetColorAndStyle(eleEffTPC, kBlue, MARKER_DEFAULT)
+  eleEffTPC.Draw("PE")
   eleEffTPC.Write()
     # EMCal
-  eleAllEMC = mcEle.FindObject("EMCal_all")
-  eleDetEMC = mcEle.FindObject("EMCal_det")
-  eleEffEMC = eleDetEMC.Clone("hEleEffEMC")
+  eleAllEMC = mcEle.FindObject("EMCal_all").Rebin(len(BINNING_JPSI_PT)-1, "hEleEMCAll", BINNING_JPSI_PT)
+  eleEffEMC = mcEle.FindObject("EMCal_det").Rebin(len(BINNING_JPSI_PT)-1, "hEleEffEMC", BINNING_JPSI_PT)
+  eleEffEMC.Sumw2()
+  eleAllEMC.Sumw2()
   eleEffEMC.Divide(eleAllEMC)
-  eleEffEMC.SetLineColor(ROOT.kRed)
-  eleEffEMC.SetLineWidth(2)
-  #eleEffEMC.Rebin(5) # Bin width : 0.2 -> 1.0
   eleEffEMC.GetXaxis().SetRangeUser(5.0, 45)
-  eleEffEMC.Draw("same")
+  ana_util.SetColorAndStyle(eleEffEMC, kRed, MARKER_DEFAULT)
+  eleEffEMC.Draw("same PE")
   eleEffEMC.Write()
     # Legend
   lgd = ROOT.TLegend(0.6, 0.7, 0.85, 0.85)
@@ -383,6 +544,7 @@ def DrawMC(mc):
   lgd.AddEntry(eleEffEMC, "TPC + EMCal/DCal")
   lgd.Draw("same")
   padQA.Print(args.print, "Title:Electron_Eff")
+  padQA.Write('cElePID')
   # Electron Purity
   elePurityTPC = elePureTPC.Clone("hElePurityTPC")
   elePurityTPC.Divide(eleTPC)
@@ -407,6 +569,9 @@ def DrawMC(mc):
   jpsiPromptAll = jpsiPromptGen.Projection(0).Rebin(len(BINNING_JPSI_PT)-1, "hJpsiPromptAll", BINNING_JPSI_PT)
     # THnSparse - pT, Mee, Lxy
   jpsiPromptReco = jpsiPrompt.FindObject("Reco_sig")
+    # Inv. Mass shape
+  jpsiPromptRecoM = jpsiPromptReco.Projection(1).Clone("hJpsiPromptM")
+  jpsiPromptRecoM.Scale(1./jpsiPromptRecoM.Integral(),'width')
   jpsiPromptReco.GetAxis(1).SetRangeUser(JPSI_MASS_LOWER, JPSI_MASS_UPPER)
   jpsiPromptPt = jpsiPromptReco.Projection(0)
   jpsiPromptPt.SetName('hJpsiPromptReco')
@@ -443,6 +608,9 @@ def DrawMC(mc):
   jpsiBdecayAll = jpsiBdecayGen.Projection(0).Rebin(len(BINNING_JPSI_PT)-1, "hJpsiBdecayAll", BINNING_JPSI_PT)
     # THnSparse - pT, Mee, Lxy
   jpsiBdecayReco = jpsiBdecay.FindObject("Reco_sig")
+    # Inv. Mass shape
+  jpsiBdecayRecoM = jpsiBdecayReco.Projection(1).Clone("hJpsiBdecayM")
+  jpsiBdecayRecoM.Scale(1./jpsiBdecayRecoM.Integral(),'width')
   jpsiBdecayReco.GetAxis(1).SetRangeUser(JPSI_MASS_LOWER, JPSI_MASS_UPPER)
   jpsiBdecayPt = jpsiBdecayReco.Projection(0)
   jpsiBdecayPt.SetName('hJpsiBdecayReco')
@@ -476,6 +644,20 @@ def DrawMC(mc):
   pTxt.Draw("same")
   padQA.Print(args.print, "Title:Jpsi_Eff")
   padQA.Write("cJpsiEff")
+  # J/psi signal shape - invariant mass spectrum
+  padQA.Clear()
+  padQA.SetLogy(False)
+  ana_util.SetColorAndStyle(jpsiPromptRecoM, JPSI_PROMPT_COLOR, MARKER_DEFAULT)
+  jpsiPromptRecoM.GetYaxis().SetRangeUser(0,5.)
+  jpsiPromptRecoM.Draw("PE")
+  jpsiPromptRecoM.Write()
+  ana_util.SetColorAndStyle(jpsiBdecayRecoM, JPSI_BDECAY_COLOR, MARKER_DEFAULT)
+  jpsiBdecayRecoM.Draw("SAME PE")
+  jpsiBdecayRecoM.Write()
+  lgd.Draw("same")
+  pTxt.Draw("same")
+  padQA.Print(args.print, "Title:Jpsi_Signal")
+  padQA.Write("cJpsiSignal")
   ##
   ## Plotting : J/psi Lxy
   jpsiLxyAll = jpsiLxyPrompt.Clone("hJpsiLxyAll")
