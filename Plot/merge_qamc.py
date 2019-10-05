@@ -6,10 +6,18 @@ import argparse
 # Command-line arguments
 parser = argparse.ArgumentParser(description='QA script for MC with pT hard bins')
 parser.add_argument('--sub',help='Subcycle: 16, 17 or 18', default='16')
+parser.add_argument('-o', '--output',help='Output ROOT file', default='NewMCQA.root')
+parser.add_argument('-p', '--print',help='Output PDF', default='NewMCQA.pdf')
 args = parser.parse_args()
 
 import ROOT
 import ana_util
+
+fout = ROOT.TFile(args.output,'RECREATE')
+c = ROOT.TCanvas('cQA','J/#psi in jets MC production - QA 10%% (LHC%s)' % args.sub, 800, 600)
+c.Draw()
+
+ana_util.PrintCover(c,args.print)
 
 PT_HARD_BINS = [12, 16, 21, 28, 36, 45, 57, 70, 85, 100, -1]
 QA_NAME = ['VtxZ', 'ElePt','EleDCAxy','EleDCAz', 'JetPt', 'JetNtrk', 'TagJetPt', 'TagJetNtrk']
@@ -72,33 +80,30 @@ for i,pTmin in enumerate(PT_HARD_BINS[:-1]):
   mc.Delete()
   f.Close()
 
-print(QA)
-
-c = ROOT.TCanvas('cQA','MC QA', 800, 600)
-c.Draw()
+fout.cd()
 for hist in QA_NAME:
   c.Clear()
-  if(hist.find('Pt') > -1):
-    c.SetLogy()
-  histMin = 0
-  histMax = 0
+  c.SetLogy(False)
+  ana_util.COLOR = ana_util.SelectColor()
+  ana_util.MARKER = ana_util.SelectMarker()
   for i,pTmin in enumerate(PT_HARD_BINS[:-1]):
     color = next(ana_util.COLOR)
     ana_util.SetColorAndStyle(QA[i][hist], color)
-    QA[i][hist].Scale(1/QA[i]['NEvent'],'width')
+    if(hist.find('Ntrk') < 0):
+      c.SetLogy()
+      QA[i][hist].GetYaxis().SetRangeUser(1e-8, 10)
+      QA[i][hist].Scale(1./QA[i]['NEvent'],'width')
+    else:
+      QA[i][hist].Scale(1.,'width')
     QA[i][hist].SetTitle(QA[i]['Title'])
-    # Y Range
-    hMin = QA[i][hist].GetMinimum()
-    if(histMin > hMin):
-      histMin = hMin
-    hMax = QA[i][hist].GetMinimum()
-    if(histMax < hMax):
-      histMax = hMax
     if(i == 0):
       QA[i][hist].Draw('PE')
     else:
       QA[i][hist].Draw('same PE')
   c.BuildLegend()
   QA[0][hist].SetTitle(hist)
-  QA[0][hist].GetYaxis().SetRangeUser(histMin, histMax)
-  c.SaveAs('MCQA' + args.sub + '_' + hist + '.pdf')
+  c.Print(args.print, 'Title:' + hist)
+  c.Write('c' + hist)
+
+ana_util.PrintCover(c,args.print,'-',isBack=True)
+fout.Close()

@@ -141,6 +141,7 @@ def SetRatioPlot(rP, rmin=0.5, rmax=1.5):
   rP.GetXaxis().SetTitleOffset(1.0)
 
 def PrintCover(pad, file, title = '', isBack = False):
+  pad.Clear()
   pTxt = ROOT.TPaveText(0.25,0.4,0.75,0.6, "brNDC")
   if(title == ''):
     if(isBack):
