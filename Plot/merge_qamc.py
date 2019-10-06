@@ -96,11 +96,12 @@ for hist in QA_NAME:
     color = next(ana_util.COLOR)
     ana_util.SetColorAndStyle(QA[i][hist], color)
     if(hist.find('Ntrk') < 0):
-      c.SetLogy()
       QA[i][hist].GetYaxis().SetRangeUser(1e-8, 10)
+      c.SetLogy()
       QA[i][hist].Scale(1./QA[i]['NEvent'],'width')
     else:
       QA[i][hist].Scale(1.,'width')
+      QA[i][hist].GetYaxis().SetRangeUser(0, 30)
     QA[i][hist].SetTitle(QA[i]['Title'])
     if(i == 0):
       QA[i][hist].Draw('PE')
@@ -108,6 +109,12 @@ for hist in QA_NAME:
       QA[i][hist].Draw('same PE')
   c.BuildLegend()
   QA[0][hist].SetTitle(hist)
+  if(hist.find('Ntrk') < 0):
+    QA[0][hist].GetYaxis().SetRangeUser(1e-8, 10)
+    c.SetLogy()
+  else:
+    c.SetLogy(False)
+    QA[0][hist].GetYaxis().SetRangeUser(0, 30)
   c.Print(args.print, 'Title:' + hist)
   c.Write('c' + hist)
 
