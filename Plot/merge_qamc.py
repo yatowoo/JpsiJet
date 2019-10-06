@@ -21,7 +21,7 @@ ana_util.PrintCover(c,args.print)
 
 PT_HARD_BINS = [12, 16, 21, 28, 36, 45, 57, 70, 85, 100, -1]
 BINNING_PT = ana_util.BINNING_JET_PT
-QA_NAME = ['VtxZ', 'ElePt','EleDCAxy','EleDCAz', 'JetPt', 'JetNtrk', 'TagJetPt', 'TagJetNtrk', 'JpsiPt', 'JpsiY']
+QA_NAME = ['VtxZ', 'ElePt','EleDCAxy','EleDCAz', 'JetPt', 'JetNtrk', 'TagJetPt', 'TagJetNtrk', 'DieleJetPt', 'DieleJetNtrk', 'JpsiPt', 'JpsiY']
 QA_HIST_CONFIG = {
   'VtxZ':{'Logy':False, 'X':[-20,20], 'Y': [0., 0.1], 'Ytitle': '1/N_{ev} dN_{ev}/dZ', 'Legend': [0.1,0.55,0.4,0.9], 'Title':'Event primary vertex Z'},
   'ElePt':{'Logy':True, 'X':[0,100], 'Y': [1e-10, 10], 'Ytitle': '1/N_{ev} dN_{trk}/dp_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Selected track/electron (TPC only) - p_{T}'},
@@ -31,6 +31,8 @@ QA_HIST_CONFIG = {
   'JetNtrk':{'Logy':False, 'X':[0,100], 'Y': [0, 12], 'Ytitle': '<N_{trk}>', 'Legend': [0.1,0.6,0.3,0.9], 'Title':'Inclusive jet - N constituents'},
   'TagJetPt':{'Logy':True, 'X':[0,100], 'Y': [1e-8, 1], 'Ytitle': '1/N_{ev} dN_{jet}/dp_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Inclusive jet (updated) - raw p_{T}'},
   'TagJetNtrk':{'Logy':False, 'X':[0,100], 'Y': [0, 12], 'Ytitle': '<N_{trk}>', 'Legend': [0.1,0.6,0.3,0.9], 'Title':'Inclusive jet (updated) - N constituents'},
+  'DieleJetPt':{'Logy':True, 'X':[0,100], 'Y': [1e-8, 1e-1], 'Ytitle': '1/N_{ev} dN_{jet}/dp_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Dielectron tagged jet - raw p_{T}'},
+  'DieleJetNtrk':{'Logy':False, 'X':[0,100], 'Y': [0, 12], 'Ytitle': '<N_{trk}>', 'Legend': [0.1,0.6,0.3,0.9], 'Title':'Dielectron tagged jet - N constituents'},
   'JpsiPt':{'Logy':True, 'X':[0,100], 'Y': [1e-8, 10], 'Ytitle': '1/N_{ev} dN_{J/#psi}/dp_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Generated J/#psi - p_{T}'},
   'JpsiY':{'Logy':False, 'X':[-2, 2], 'Y': [0, 1], 'Ytitle': '1/N_{ev} dN_{J/#psi}/dY', 'Legend': [0.75,0.5,0.9,0.9], 'Title':'Generated J/#psi - Y'}
 }
@@ -86,6 +88,12 @@ for i,pTmin in enumerate(PT_HARD_BINS[:-1]):
   hs = taggedJetQA.FindObject('jetVars')
   QA[i]['TagJetPt'] = hs.Projection(0).Rebin(len(BINNING_PT)-1,'hTagJetPt_%d' % i, BINNING_PT)
   QA[i]['TagJetNtrk'] = taggedJetQA.FindObject('Ntracks_pT').ProfileX('hTagJetNtrk_%d' % i).Rebin(len(BINNING_PT)-1,'', BINNING_PT)
+    # Dielectron tagged
+  tagQA = qa.FindObject('PairInJet')
+  tagQA.SetOwner(True)
+  hs = tagQA.FindObject('PairVars')
+  QA[i]['DieleJetPt'] = hs.Projection(5).Rebin(len(BINNING_PT)-1,'hDieleJetPt_%d' % i, BINNING_PT)
+  QA[i]['DieleJetNtrk'] = tagQA.FindObject('Ntracks_pT').ProfileX('hDieleJetNtrk_%d' % i).Rebin(len(BINNING_PT)-1,'', BINNING_PT)
   # MC J/psi
   jpsiQA = mc.FindObject('JpsiBdecay')
   hs = jpsiQA.FindObject('jpsiVars')
