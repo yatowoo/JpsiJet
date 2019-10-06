@@ -20,7 +20,7 @@ c.Draw()
 ana_util.PrintCover(c,args.print)
 
 PT_HARD_BINS = [12, 16, 21, 28, 36, 45, 57, 70, 85, 100, -1]
-QA_NAME = ['VtxZ', 'ElePt','EleDCAxy','EleDCAz', 'JetPt', 'JetNtrk', 'TagJetPt', 'TagJetNtrk']
+QA_NAME = ['VtxZ', 'ElePt','EleDCAxy','EleDCAz', 'JetPt', 'JetNtrk', 'TagJetPt', 'TagJetNtrk', 'JpsiPt', 'JpsiY']
 QA = list(range(len(PT_HARD_BINS) - 1))
 for i,pTmin in enumerate(PT_HARD_BINS[:-1]):
   QA[i] = {}
@@ -73,9 +73,15 @@ for i,pTmin in enumerate(PT_HARD_BINS[:-1]):
   hs = taggedJetQA.FindObject('jetVars')
   QA[i]['TagJetPt'] = hs.Projection(0).Rebin(len(ana_util.BINNING_JET_PT)-1,'hTagJetPt_%d' % i, ana_util.BINNING_JET_PT)
   QA[i]['TagJetNtrk'] = taggedJetQA.FindObject('Ntracks_pT').ProfileX('hTagJetNtrk_%d' % i).Rebin(len(ana_util.BINNING_JET_PT)-1,'', ana_util.BINNING_JET_PT)
+  # MC J/psi
+  jpsiQA = mc.FindObject('JpsiBdecay')
+  hs = jpsiQA.FindObject('jpsiVars')
+  QA[i]['JpsiPt'] = hs.Projection(0).Rebin(len(ana_util.BINNING_JPSI_PT)-1,'hJpsiPt_%d' % i, ana_util.BINNING_JPSI_PT)
+  QA[i]['JpsiY'] = hs.Projection(1)
+  QA[i]['JpsiY'].SetName('hJpsiY_%d' % i)
+  # End
   for hist in QA_NAME:
     QA[i][hist].SetDirectory(None)
-  # End
   qa.Delete()
   mc.Delete()
   f.Close()
