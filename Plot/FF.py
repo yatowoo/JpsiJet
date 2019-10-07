@@ -315,6 +315,31 @@ for i,tag in enumerate(['Prompt', 'Bdecay']):
   # Output
   PrintOut(c, 'FF_' + tag + 'Corrected')
 
+# Step 3: Non-prompt subtraction
+NONPROMPT_RATIO = 0.35
+c.Clear()
+c.SetWindowSize(800,600)
+FF['Prompt']['Corrected2'] = FF['Prompt']['Corrected'].Clone('hFFPromptCorrected2')
+FF['Prompt']['Corrected2'].Add(FF['Bdecay']['Corrected'], -NONPROMPT_RATIO)
+FF['Bdecay']['Corrected'].Scale(NONPROMPT_RATIO)
+FF['Bdecay']['Corrected'].SetMarkerSize(1.0)
+FF['Prompt']['Corrected2'].Scale(1/FF['Prompt']['Corrected2'].Integral(), 'width')
+FF['Prompt']['Corrected2'].SetTitle('Prompt FF after B-decay subtraction')
+FF['Prompt']['Corrected2'].Draw('PE1')
+ana_util.SetColorAndStyle(FF['Prompt']['Corrected'], kBlack, kBlock)
+FF['Prompt']['Corrected'].SetMarkerSize(1.0)
+FF['Prompt']['Corrected'].Draw('same PE1')
+FF['Bdecay']['Corrected'].Draw('same PE1')
+ana_util.ResetLegend(FF['Prompt']['Legend'], 0.15, 0.70, 0.30, 0.80)
+FF['Prompt']['Legend'].AddEntry(FF['Prompt']['Corrected'],'Total')
+FF['Prompt']['Legend'].AddEntry(FF['Bdecay']['Corrected'],'%.2f #times Non-prompt' % NONPROMPT_RATIO)
+FF['Prompt']['Legend'].AddEntry(FF['Prompt']['Corrected2'],'Subtracted')
+FF['Prompt']['Label'].Draw("SAME")
+FF['Prompt']['Legend'].Draw('same')
+DrawCuts(PAVE_CUTS,0.15,0.4,0.35,0.65)
+PrintOut(c, 'FF_SubBdecay')
+
+
 # End
 c.Clear()
 ana_util.PrintCover(c, printFile, isBack=True)
