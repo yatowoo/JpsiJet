@@ -18,6 +18,12 @@ parser.add_argument('--zBin', help='Range of fragmentation function', type=int, 
 parser.add_argument('--more', help='More outputs for each canvas', default=False, action='store_true')
 args = parser.parse_args()
 
+# Analysis
+import os, sys
+import ana_util
+from ana_util import *
+import ana_phys
+import ROOT
 # Global cuts and variables
 JET_PT_CUT_LOW  = float(args.jetCut[0])
 JET_PT_CUT_UP   = float(args.jetCut[1])
@@ -25,6 +31,8 @@ JPSI_PT_CUT_LOW = max(6.0 if args.trig == 'L' else 11.0, args.jpsiCut[0])
 JPSI_PT_CUT_UP  = min(float(args.jpsiCut[1]), JET_PT_CUT_UP)
 JPSI_PROMPT_LXY = args.lxyCut[0]
 JPSI_BDECAY_LXY = args.lxyCut[1]
+ana_phys.PSEUDOLXY_PROMPT_CUT = JPSI_PROMPT_LXY
+ana_phys.PSEUDOLXY_BDECAY_CUT = JPSI_BDECAY_LXY
 JPSI_LXY_MAX    = 0.2
 FF_Z_LOW        = args.zCut[0]
 FF_Z_UP         = args.zCut[1]
@@ -36,12 +44,6 @@ print("Jet pT cut     : %.0f - %.0f (GeV/c)" % (JET_PT_CUT_LOW, JET_PT_CUT_UP))
 print("Prompt region  : %.3f - %.3f (cm)" % (-JPSI_PROMPT_LXY, JPSI_PROMPT_LXY))
 print("Non-prompt cut : %.3f - %.3f (cm)" % (JPSI_BDECAY_LXY, JPSI_LXY_MAX))
 
-# Analysis
-import os, sys
-import ana_util
-from ana_util import *
-import ana_phys
-import ROOT
 # I/O
 fData = ROOT.TFile(args.file)
 fMC   = ROOT.TFile(args.mc)
