@@ -113,6 +113,7 @@ c.SetWindowSize(1600,600)
 c.Divide(2)
 c.cd(1)
 ROOT.gPad.SetLogy()
+RAW.GetAxis(ID_JET_PT).SetRangeUser(JPSI_PT_CUT_LOW, 50)
 allJetPt  = RAW.Projection(ID_JET_PT)
 allJetPt.SetName('hJetPtAll')
 allJetPt = allJetPt.Rebin(len(ana_util.BINNING_JET_PT)-1, "", ana_util.BINNING_JET_PT)
@@ -132,6 +133,7 @@ allJetPtZ.SetTitle('Dielectron pair tagged jet - z vs p_{T,jet}')
 allJetPtZ.GetYaxis().SetRangeUser(0.0,1.0)
 allJetPtZ.Draw("COLZ")
 PrintOut(c, 'JetPt')
+RAW.GetAxis(ID_JET_PT).SetRangeUser(JET_PT_CUT_LOW, JET_PT_CUT_UP)
 
 # Step 1 : Fitting invariant mass
 HistM = RAW.Projection(1)
@@ -316,7 +318,10 @@ for i,tag in enumerate(['Prompt', 'Bdecay']):
   PrintOut(c, 'FF_' + tag + 'Corrected')
 
 # Step 3: Non-prompt subtraction
-NONPROMPT_RATIO = 0.35
+if(args.trig == 'H'):
+  NONPROMPT_RATIO = 0.395
+elif(args.trig == 'L'):
+  NONPROMPT_RATIO = 0.257
 c.Clear()
 c.SetWindowSize(800,600)
 FF['Prompt']['Corrected2'] = FF['Prompt']['Corrected'].Clone('hFFPromptCorrected2')
@@ -332,7 +337,7 @@ FF['Prompt']['Corrected'].Draw('same PE1')
 FF['Bdecay']['Corrected'].Draw('same PE1')
 ana_util.ResetLegend(FF['Prompt']['Legend'], 0.15, 0.70, 0.30, 0.80)
 FF['Prompt']['Legend'].AddEntry(FF['Prompt']['Corrected'],'Total')
-FF['Prompt']['Legend'].AddEntry(FF['Bdecay']['Corrected'],'%.2f #times Non-prompt' % NONPROMPT_RATIO)
+FF['Prompt']['Legend'].AddEntry(FF['Bdecay']['Corrected'],'%.3f #times Non-prompt' % NONPROMPT_RATIO)
 FF['Prompt']['Legend'].AddEntry(FF['Prompt']['Corrected2'],'Subtracted')
 FF['Prompt']['Label'].Draw("SAME")
 FF['Prompt']['Legend'].Draw('same')
