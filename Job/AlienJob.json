@@ -22,8 +22,8 @@
     "doJpsiFilter": false,
     "doPIDQA": false,
     "doPhysAna": false,
-    "datasets": "16k_pass1",
-    "data_dir": "2017/LHC17h2h",
+    "datasets": "16i_pass1",
+    "data_dir": "2019/LHC19i2a/1",
     "work_dir": "DevDebug_MC",
     "task_name": "JpsiJet"
   },

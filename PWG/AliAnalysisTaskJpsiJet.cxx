@@ -1448,11 +1448,11 @@ void AliAnalysisTaskJpsiJet::FillPythiaInfo(){
   if(evHeaderName == "AliGenPythiaEventHeader"){
     pythiaH = dynamic_cast<AliGenPythiaEventHeader*>(fMCHeader);
   }else{
-    pythiaH = fMCHeader->GetCocktailHeader(0);
+    pythiaH = dynamic_cast<AliGenPythiaEventHeader*>(fMCHeader->GetCocktailHeader(0));
   }
   fHistosMC->FillTH1("Event/Ntrials", 0., pythiaH->Trials());
   fHistosMC->FillTH1("Event/Xsec", 0., pythiaH->GetXsection());
-  fHistosMC->FillTH1("Event/PtHard", fMCHeader->GetPtHard());
+  fHistosMC->FillTH1("Event/PtHard", pythiaH->GetPtHard());
 }
 
 void AliAnalysisTaskJpsiJet::FillHistogramsForParticle(const char* histName, AliVParticle* par){

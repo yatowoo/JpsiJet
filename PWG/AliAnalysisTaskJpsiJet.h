@@ -43,6 +43,8 @@
 class AliFJWrapper;
 #include "AliEmcalJetTask.h"
 
+#include "AliGenPythiaEventHeader.h"
+
 #include "AliAnalysisTaskSE.h"
 
 class AliAnalysisCuts;
@@ -50,6 +52,7 @@ class AliDielectron;
 class AliDielectronVarManager;
 class AliEmcalJet;
 class AliJetContainer;
+class AliGenPythiaEventHeader;
 
 class AliAnalysisTaskJpsiJet : public AliAnalysisTaskSE
 {
