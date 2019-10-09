@@ -18,6 +18,12 @@ parser.add_argument('--zBin', help='Range of fragmentation function', type=int, 
 parser.add_argument('--more', help='More outputs for each canvas', default=False, action='store_true')
 args = parser.parse_args()
 
+# Analysis
+import os, sys
+import ana_util
+from ana_util import *
+import ana_phys
+import ROOT
 # Global cuts and variables
 JET_PT_CUT_LOW  = float(args.jetCut[0])
 JET_PT_CUT_UP   = float(args.jetCut[1])
@@ -25,6 +31,8 @@ JPSI_PT_CUT_LOW = max(6.0 if args.trig == 'L' else 11.0, args.jpsiCut[0])
 JPSI_PT_CUT_UP  = min(float(args.jpsiCut[1]), JET_PT_CUT_UP)
 JPSI_PROMPT_LXY = args.lxyCut[0]
 JPSI_BDECAY_LXY = args.lxyCut[1]
+ana_phys.PSEUDOLXY_PROMPT_CUT = JPSI_PROMPT_LXY
+ana_phys.PSEUDOLXY_BDECAY_CUT = JPSI_BDECAY_LXY
 JPSI_LXY_MAX    = 0.2
 FF_Z_LOW        = args.zCut[0]
 FF_Z_UP         = args.zCut[1]
@@ -36,12 +44,6 @@ print("Jet pT cut     : %.0f - %.0f (GeV/c)" % (JET_PT_CUT_LOW, JET_PT_CUT_UP))
 print("Prompt region  : %.3f - %.3f (cm)" % (-JPSI_PROMPT_LXY, JPSI_PROMPT_LXY))
 print("Non-prompt cut : %.3f - %.3f (cm)" % (JPSI_BDECAY_LXY, JPSI_LXY_MAX))
 
-# Analysis
-import os, sys
-import ana_util
-from ana_util import *
-import ana_phys
-import ROOT
 # I/O
 fData = ROOT.TFile(args.file)
 fMC   = ROOT.TFile(args.mc)
@@ -111,6 +113,7 @@ c.SetWindowSize(1600,600)
 c.Divide(2)
 c.cd(1)
 ROOT.gPad.SetLogy()
+RAW.GetAxis(ID_JET_PT).SetRangeUser(JPSI_PT_CUT_LOW, 50)
 allJetPt  = RAW.Projection(ID_JET_PT)
 allJetPt.SetName('hJetPtAll')
 allJetPt = allJetPt.Rebin(len(ana_util.BINNING_JET_PT)-1, "", ana_util.BINNING_JET_PT)
@@ -130,6 +133,7 @@ allJetPtZ.SetTitle('Dielectron pair tagged jet - z vs p_{T,jet}')
 allJetPtZ.GetYaxis().SetRangeUser(0.0,1.0)
 allJetPtZ.Draw("COLZ")
 PrintOut(c, 'JetPt')
+RAW.GetAxis(ID_JET_PT).SetRangeUser(JET_PT_CUT_LOW, JET_PT_CUT_UP)
 
 # Step 1 : Fitting invariant mass
 HistM = RAW.Projection(1)
@@ -312,6 +316,34 @@ for i,tag in enumerate(['Prompt', 'Bdecay']):
   DrawCuts(PAVE_CUTS,0.15,0.4,0.35,0.65)
   # Output
   PrintOut(c, 'FF_' + tag + 'Corrected')
+
+# Step 3: Non-prompt subtraction
+if(args.trig == 'H'):
+  NONPROMPT_RATIO = 0.395
+elif(args.trig == 'L'):
+  NONPROMPT_RATIO = 0.257
+c.Clear()
+c.SetWindowSize(800,600)
+FF['Prompt']['Corrected2'] = FF['Prompt']['Corrected'].Clone('hFFPromptCorrected2')
+FF['Prompt']['Corrected2'].Add(FF['Bdecay']['Corrected'], -NONPROMPT_RATIO)
+FF['Bdecay']['Corrected'].Scale(NONPROMPT_RATIO)
+FF['Bdecay']['Corrected'].SetMarkerSize(1.0)
+FF['Prompt']['Corrected2'].Scale(1/FF['Prompt']['Corrected2'].Integral(), 'width')
+FF['Prompt']['Corrected2'].SetTitle('Prompt FF after B-decay subtraction')
+FF['Prompt']['Corrected2'].Draw('PE1')
+ana_util.SetColorAndStyle(FF['Prompt']['Corrected'], kBlack, kBlock)
+FF['Prompt']['Corrected'].SetMarkerSize(1.0)
+FF['Prompt']['Corrected'].Draw('same PE1')
+FF['Bdecay']['Corrected'].Draw('same PE1')
+ana_util.ResetLegend(FF['Prompt']['Legend'], 0.15, 0.70, 0.30, 0.80)
+FF['Prompt']['Legend'].AddEntry(FF['Prompt']['Corrected'],'Total')
+FF['Prompt']['Legend'].AddEntry(FF['Bdecay']['Corrected'],'%.3f #times Non-prompt' % NONPROMPT_RATIO)
+FF['Prompt']['Legend'].AddEntry(FF['Prompt']['Corrected2'],'Subtracted')
+FF['Prompt']['Label'].Draw("SAME")
+FF['Prompt']['Legend'].Draw('same')
+DrawCuts(PAVE_CUTS,0.15,0.4,0.35,0.65)
+PrintOut(c, 'FF_SubBdecay')
+
 
 # End
 c.Clear()

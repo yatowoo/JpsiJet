@@ -8,6 +8,10 @@ from ROOT import kBlack, kRed, kBlue, kGreen, kOrange, kViolet, kCyan, kPink
 import sys, os, time, math, json, logging
 from array import array
 
+# Global style
+ROOT.gStyle.SetOptStat(0)
+ROOT.gStyle.SetPalette()
+
 # J/psi pT bins : 0 - 50, binw = 0.2, 0.5, 1, 2, 5
 BINNING_JPSI_PT = [0.2*x for x in range(0,25,1)]
 BINNING_JPSI_PT += [ 0.1*x for x in range(50,100,5)]
@@ -137,6 +141,7 @@ def SetRatioPlot(rP, rmin=0.5, rmax=1.5):
   rP.GetXaxis().SetTitleOffset(1.0)
 
 def PrintCover(pad, file, title = '', isBack = False):
+  pad.Clear()
   pTxt = ROOT.TPaveText(0.25,0.4,0.75,0.6, "brNDC")
   if(title == ''):
     if(isBack):
