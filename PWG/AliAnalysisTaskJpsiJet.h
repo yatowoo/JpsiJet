@@ -133,6 +133,7 @@ private:
   Bool_t ApplyEmcalCut(AliVParticle* par, Bool_t isMCTruth);
   Bool_t RunParticleLevelAnalysis();
   void   SetJpsiGeneratorType();
+  void   FillPythiaInfo();
   void   FillHistogramsForParticle(const char* histName, AliVParticle* par);
   void   FillHistogramsForElectronPID(const TObjArray* eleArray);
   void   FillHistogramsForJpsiMC();
@@ -222,7 +223,7 @@ private:
   Double_t          *fVars;
 
 private:
-  ClassDef(AliAnalysisTaskJpsiJet, 6);
+  ClassDef(AliAnalysisTaskJpsiJet, 8);
 };
 
 #endif /* ALIANALYSISTASK_JPSIJET_H */

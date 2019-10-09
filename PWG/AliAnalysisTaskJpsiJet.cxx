@@ -1245,6 +1245,11 @@ void AliAnalysisTaskJpsiJet::InitHistogramsForMC(){
 
   // Event
   TString histGroup = "Event";
+    // Pythia - for pT hard bins
+  fHistosMC->CreateTH1(Form("%s/Ntrials", histGroup.Data()), "Pythia event info. - number of trials;#Sigma N_{trials};Sum;", 1, -0.5, 0.5);
+  fHistosMC->CreateTH1(Form("%s/Xsec", histGroup.Data()), "Pythia event info. - sum of cross section;#Sigma #sigma;Sum;", 1, -0.5, 0.5);
+  fHistosMC->CreateTH1(Form("%s/PtHard", histGroup.Data()), "Pythia event info. - highest p_{T} parton;p_{T,hard} (GeV/#it{c});N_{event};", 1000, 0., 1000.);
+    // Tracks
   fHistosMC->CreateTH1(Form("%s/NParticles", histGroup.Data()), "MC particles - ALL produced", 5001, -0.5, 5000.5);
   fHistosMC->CreateTH1(Form("%s/NPhysPrim", histGroup.Data()), "MC particles - Physical Primary with |#eta|<1.0", 501, -0.5, 500.5);
   fHistosMC->CreateTH2(
@@ -1359,6 +1364,8 @@ Bool_t AliAnalysisTaskJpsiJet::RunParticleLevelAnalysis(){
     return kFALSE;
   }
 
+  FillPythiaInfo();
+
   SetJpsiGeneratorType();
 
   fHistosMC->FillTH1("Event/NParticles", fMCParticles->GetEntriesFast());
@@ -1429,6 +1436,23 @@ void AliAnalysisTaskJpsiJet::SetJpsiGeneratorType(){
     AliWarning("Unknown generator type for J/psi MC");
     return;
   }
+}
+
+void AliAnalysisTaskJpsiJet::FillPythiaInfo(){
+  if(!fMCHeader){
+    AliFatal("Can not found MC header.");
+    return;
+  }
+  AliGenPythiaEventHeader* pythiaH = NULL;
+  TString evHeaderName = fMCHeader->ClassName();
+  if(evHeaderName == "AliGenPythiaEventHeader"){
+    pythiaH = dynamic_cast<AliGenPythiaEventHeader*>(fMCHeader);
+  }else{
+    pythiaH = fMCHeader->GetCocktailHeader(0);
+  }
+  fHistosMC->FillTH1("Event/Ntrials", 0., pythiaH->Trials());
+  fHistosMC->FillTH1("Event/Xsec", 0., pythiaH->GetXsection());
+  fHistosMC->FillTH1("Event/PtHard", fMCHeader->GetPtHard());
 }
 
 void AliAnalysisTaskJpsiJet::FillHistogramsForParticle(const char* histName, AliVParticle* par){
