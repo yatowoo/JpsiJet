@@ -20,7 +20,7 @@ ROOT.gStyle.SetPalette(ROOT.kInvertedDarkBodyRadiator)
 
 c = ROOT.TCanvas('cRM','Detector response matrix - 4D',800,800)
 c.Divide(3,3,0,0)
-JET_PT_BINS = [10,15,25,100]
+JET_PT_BINS = [20,25,35,100]
 RM = [[1,2,3],[4,5,6],[7,8,9]]
 PAD_INDEX = [7,4,1,8,5,2,9,6,3]
 PAVE = [[1,2,3],[4,5,6],[7,8,9]]
@@ -66,7 +66,7 @@ for i in range(3):
       PAVE[i][j].AddText('%d < p_{T,gen} < %d GeV' % (JET_PT_BINS[j],JET_PT_BINS[j+1]))
     PAVE[i][j].Draw('same')
 
-c.SaveAs('RM.root')
-c.SaveAs('RM.pdf')
+c.SaveAs('RM_High.root')
+c.SaveAs('RM_High.pdf')
 
 f.Close()
