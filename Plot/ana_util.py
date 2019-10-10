@@ -104,7 +104,7 @@ def SelectMarker(MARKER_INDEX = 0):
 COLOR = SelectColor()
 MARKER = SelectMarker()
 
-def SetColorAndStyle(obj, c = None, s = None):
+def SetColorAndStyle(obj, c = None, s = None, size = 1.0):
   if(c is None):
     c = next(COLOR)
   obj.SetLineColor(c)
@@ -112,6 +112,7 @@ def SetColorAndStyle(obj, c = None, s = None):
   if(s is None):
     s = next(MARKER)
   obj.SetMarkerStyle(s)
+  obj.SetMarkerSize(size)
 
 def NewRatioPads(c, nameUpper, nameLower):
   c.Clear()
