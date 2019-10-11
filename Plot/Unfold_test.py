@@ -41,8 +41,22 @@ for i in range(1,11):
 
 ana_util.SetColorAndStyle(hRefold, ROOT.kRed, ana_util.kBlock, 1.0)
 
+# Drawing
+  # Label
+label = fDet.cFF_SubBdecay.FindObject('TPave')
+  # Cuts
+pTxtCuts = fDet.cFF_SubBdecay.FindObject('pTxtCuts')
+  # Legend
+lgd = ROOT.TLegend(0.13, 0.65, 0.40, 0.80)
+lgd.SetName('lgdPromptRawFF')
+lgd.SetBorderSize(0)
+lgd.SetFillColor(0)
+lgd.AddEntry(hDet,'Measured')
+lgd.AddEntry(hTrue,'Unfolded')
+lgd.AddEntry(hRefold,'Refolded')
+
 ROOT.gStyle.SetPalette(ROOT.kInvertedDarkBodyRadiator)
-c = ROOT.TCanvas('cUnfold','Unfoldin',1600,600)
+c = ROOT.TCanvas('cUnfold','Unfolding',1600,600)
 c.Divide(2)
 c.cd(1)
 hRM.Draw('COLZ')
@@ -51,3 +65,6 @@ c.cd(2)
 hDet.Draw('PE1')
 hTrue.Draw('SAME PE1')
 hRefold.Draw('SAME PE1')
+label.Draw('same')
+lgd.Draw('same')
+pTxtCuts.Draw('same')
