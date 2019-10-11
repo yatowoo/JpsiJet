@@ -18,23 +18,23 @@ c = ROOT.TCanvas('cQA','J/#psi in jets MC production - QA 10%% (LHC%s)' % args.s
 c.Draw()
 
 ana_util.PrintCover(c,args.print)
-
+SCALE_FACTOR = [2.59e-2, 1.35e-2, 7.41e-3, 2.95e-3, 1.21e-3, 5.67e-4, 2.54e-4, 1.17e-4, 4.71e-5, 5.18e-5]
 PT_HARD_BINS = [12, 16, 21, 28, 36, 45, 57, 70, 85, 100, -1]
 BINNING_PT = ana_util.BINNING_JET_PT
 QA_NAME = ['VtxZ', 'ElePt','EleDCAxy','EleDCAz', 'JetPt', 'JetNtrk', 'TagJetPt', 'TagJetNtrk', 'DieleJetPt', 'DieleJetNtrk', 'JpsiPt', 'JpsiY']
 QA_HIST_CONFIG = {
-  'VtxZ':{'Logy':False, 'X':[-20,20], 'Y': [0., 0.1], 'Ytitle': '1/N_{ev} dN_{ev}/dZ', 'Legend': [0.1,0.55,0.4,0.9], 'Title':'Event primary vertex Z'},
-  'ElePt':{'Logy':True, 'X':[0,100], 'Y': [1e-10, 10], 'Ytitle': '1/N_{ev} dN_{trk}/dp_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Selected track/electron (TPC only) - p_{T}'},
-  'EleDCAxy':{'Logy':True, 'X':[-2,2], 'Y': [1e-4, 100], 'Ytitle': '1/N_{ev} dN_{trk}/dXY', 'Legend': [0.1,0.55,0.4,0.9], 'Title':'Selected track/electron (TPC only) - DCA_{xy}'},
-  'EleDCAz':{'Logy':True, 'X':[-5,5], 'Y': [1e-6, 100], 'Ytitle': '1/N_{ev} dN_{trk}/dZ', 'Legend': [0.1,0.55,0.4,0.9], 'Title':'Selected track/electron (TPC only) - DCA_{z}'},
-  'JetPt':{'Logy':True, 'X':[0,100], 'Y': [1e-8, 10], 'Ytitle': '1/N_{ev} dN_{jet}/dp_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Inclusive jet - raw p_{T}'},
-  'JetNtrk':{'Logy':False, 'X':[0,100], 'Y': [0, 12], 'Ytitle': '<N_{trk}>', 'Legend': [0.1,0.6,0.3,0.9], 'Title':'Inclusive jet - N constituents'},
-  'TagJetPt':{'Logy':True, 'X':[0,100], 'Y': [1e-8, 1], 'Ytitle': '1/N_{ev} dN_{jet}/dp_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Inclusive jet (updated) - raw p_{T}'},
-  'TagJetNtrk':{'Logy':False, 'X':[0,100], 'Y': [0, 12], 'Ytitle': '<N_{trk}>', 'Legend': [0.1,0.6,0.3,0.9], 'Title':'Inclusive jet (updated) - N constituents'},
-  'DieleJetPt':{'Logy':True, 'X':[0,100], 'Y': [1e-8, 1e-1], 'Ytitle': '1/N_{ev} dN_{jet}/dp_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Dielectron tagged jet - raw p_{T}'},
-  'DieleJetNtrk':{'Logy':False, 'X':[0,100], 'Y': [0, 12], 'Ytitle': '<N_{trk}>', 'Legend': [0.1,0.6,0.3,0.9], 'Title':'Dielectron tagged jet - N constituents'},
-  'JpsiPt':{'Logy':True, 'X':[0,100], 'Y': [1e-8, 10], 'Ytitle': '1/N_{ev} dN_{J/#psi}/dp_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Generated J/#psi - p_{T}'},
-  'JpsiY':{'Logy':False, 'X':[-2, 2], 'Y': [0, 1], 'Ytitle': '1/N_{ev} dN_{J/#psi}/dY', 'Legend': [0.75,0.5,0.9,0.9], 'Title':'Generated J/#psi - Y'}
+  'VtxZ':{'Logy':False, 'X':[-20,20], 'Y': [0., 0.1], 'Ytitle': '1/N_{ev} dN_{ev}/dZ', 'Legend': [0.1,0.55,0.4,0.9], 'Title':'Event primary vertex Z', 'Sum':False},
+  'ElePt':{'Logy':True, 'X':[0,100], 'Y': [1e-10, 10], 'Ytitle': '1/N_{ev} dN_{trk}/dp_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Selected track/electron (TPC only) - p_{T}', 'Sum':True},
+  'EleDCAxy':{'Logy':True, 'X':[-2,2], 'Y': [1e-4, 100], 'Ytitle': '1/N_{ev} dN_{trk}/dXY', 'Legend': [0.1,0.55,0.4,0.9], 'Title':'Selected track/electron (TPC only) - DCA_{xy}', 'Sum':False},
+  'EleDCAz':{'Logy':True, 'X':[-5,5], 'Y': [1e-6, 100], 'Ytitle': '1/N_{ev} dN_{trk}/dZ', 'Legend': [0.1,0.55,0.4,0.9], 'Title':'Selected track/electron (TPC only) - DCA_{z}', 'Sum':False},
+  'JetPt':{'Logy':True, 'X':[0,100], 'Y': [1e-8, 10], 'Ytitle': '1/N_{ev} dN_{jet}/dp_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Inclusive jet - raw p_{T}', 'Sum':True},
+  'JetNtrk':{'Logy':False, 'X':[0,100], 'Y': [0, 12], 'Ytitle': '<N_{trk}>', 'Legend': [0.1,0.6,0.3,0.9], 'Title':'Inclusive jet - N constituents', 'Sum':True},
+  'TagJetPt':{'Logy':True, 'X':[0,100], 'Y': [1e-9, 1], 'Ytitle': '1/N_{ev} dN_{jet}/dp_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Inclusive jet (updated) - raw p_{T}', 'Sum':True},
+  'TagJetNtrk':{'Logy':False, 'X':[0,100], 'Y': [0, 12], 'Ytitle': '<N_{trk}>', 'Legend': [0.1,0.6,0.3,0.9], 'Title':'Inclusive jet (updated) - N constituents', 'Sum':True},
+  'DieleJetPt':{'Logy':True, 'X':[0,100], 'Y': [1e-9, 1e-1], 'Ytitle': '1/N_{ev} dN_{jet}/dp_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Dielectron tagged jet - raw p_{T}', 'Sum':True},
+  'DieleJetNtrk':{'Logy':False, 'X':[0,100], 'Y': [0, 12], 'Ytitle': '<N_{trk}>', 'Legend': [0.1,0.6,0.3,0.9], 'Title':'Dielectron tagged jet - N constituents', 'Sum':True},
+  'JpsiPt':{'Logy':True, 'X':[0,100], 'Y': [1e-8, 10], 'Ytitle': '1/N_{ev} dN_{J/#psi}/dp_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Generated J/#psi - p_{T}', 'Sum':True},
+  'JpsiY':{'Logy':False, 'X':[-2, 2], 'Y': [0, 1], 'Ytitle': '1/N_{ev} dN_{J/#psi}/dY', 'Legend': [0.75,0.5,0.9,0.9], 'Title':'Generated J/#psi - Y', 'Sum':False}
 }
 QA = list(range(len(PT_HARD_BINS) - 1))
 for i,pTmin in enumerate(PT_HARD_BINS[:-1]):
@@ -116,22 +116,27 @@ for hist in QA_NAME:
   # Hist config
   cfg = QA_HIST_CONFIG[hist]
   lgd = ROOT.TLegend(cfg['Legend'][0], cfg['Legend'][1], cfg['Legend'][2], cfg['Legend'][3])
+  hSum = QA[0][hist].Clone('hSum'+hist)
+  hSum.Reset()
+  ana_util.SetColorAndStyle(hSum, ROOT.kRed, ana_util.kRound, 1.5)
+  lgd.AddEntry(hSum, 'Sum')
   for i,pTmin in enumerate(PT_HARD_BINS[:-1]):
     color = next(ana_util.COLOR)
     ana_util.SetColorAndStyle(QA[i][hist], color)
+    QA[i][hist].Sumw2()
     if(hist.find('Ntrk') < 0):
-      QA[i][hist].GetYaxis().SetRangeUser(1e-8, 10)
-      c.SetLogy()
       QA[i][hist].Scale(1./QA[i]['NEvent'],'width')
     else:
       QA[i][hist].Scale(1.,'width')
-      QA[i][hist].GetYaxis().SetRangeUser(0, 30)
     QA[i][hist].SetTitle(QA[i]['Title'])
+    hSum.Add(QA[i][hist], SCALE_FACTOR[i])
     if(i == 0):
       QA[i][hist].Draw('PE')
     else:
       QA[i][hist].Draw('same PE')
     lgd.AddEntry(QA[i][hist],QA[i][hist].GetTitle())
+  if(cfg['Sum']):
+    hSum.Draw('same')
   # Hist config
   lgd.Draw('same')
   c.SetLogy(cfg['Logy'])
