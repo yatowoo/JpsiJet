@@ -1,17 +1,14 @@
 import ROOT
 import ana_util
-
-UNFOLD_N_ITERATION = 8
-
 fRM = ROOT.TFile('RM_Low.root')
 fDet = ROOT.TFile('testL.root')
-hDet = fDet.cFF_BdecayCorrected.FindObject('hFFBdecayCorrected').Clone('hDet')
+hDet = fDet.cFF_SubBdecay.FindObject('hFFPromptCorrected2').Clone('hDet')
 hRM = fRM.cRM.FindObject('RM_1_1').Clone('hRM')
 ana_util.ResponseNorm(hRM)
 
 response = ROOT.RooUnfoldResponse(hDet,hDet,hRM)
 bayes = ROOT.RooUnfoldBayes(response,hDet)
-bayes.SetIterations(UNFOLD_N_ITERATION)
+bayes.SetIterations(4)
 hTrue = bayes.Hreco(0)
 hTrue.SetName('hTrue')
 hTrue.Scale(1./hTrue.Integral(),'width')
@@ -36,7 +33,7 @@ ana_util.ResponseNorm(hRMInv)
 
 responseRefold = ROOT.RooUnfoldResponse(hTrue,hTrue,hRMInv)
 bayesRefold = ROOT.RooUnfoldBayes(responseRefold,hTrue)
-bayesRefold.SetIterations(UNFOLD_N_ITERATION)
+bayesRefold.SetIterations(4)
 hRefold = bayesRefold.Hreco(0)
 hRefold.Scale(1./hRefold.Integral(),'width')
 for i in range(1,11):
@@ -46,9 +43,9 @@ ana_util.SetColorAndStyle(hRefold, ROOT.kRed, ana_util.kBlock, 1.0)
 
 # Drawing
   # Label
-label = fDet.cFF_BdecayCorrected.FindObject('TPave')
+label = fDet.cFF_SubBdecay.FindObject('TPave')
   # Cuts
-pTxtCuts = fDet.cFF_BdecayCorrected.FindObject('pTxtCuts')
+pTxtCuts = fDet.cFF_SubBdecay.FindObject('pTxtCuts')
   # Legend
 lgd = ROOT.TLegend(0.13, 0.65, 0.40, 0.80)
 lgd.SetName('lgdPromptRawFF')
@@ -71,5 +68,3 @@ hRefold.Draw('SAME PE1')
 label.Draw('same')
 lgd.Draw('same')
 pTxtCuts.Draw('same')
-
-c.SaveAs('Unfold_test.root')
