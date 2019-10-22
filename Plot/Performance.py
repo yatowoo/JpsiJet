@@ -16,12 +16,14 @@ args = parser.parse_args()
 import ROOT
 import ana_util
 from ana_util import *
+import ana_phys
 
 args.print = args.output.replace('.root','.pdf')
 
 TRIGGER_CLASSES = ['MB', 'EG1', 'EG2', 'DG1', 'DG2']
 
 c = ROOT.TCanvas('cQA','ALICE Performance Figures',1280, 800)
+c.Draw()
 
 fout = ROOT.TFile(args.output,'RECREATE')
 PrintCover(c, args.print)
@@ -115,8 +117,32 @@ def DrawQA_Electron(output):
   fout.cd()
   c.Write('cDieleE')
 
-def DrawQA_InvMass(tagInfo):
+def DrawQA_InvMass(tagInfo, JPSI_PT_CUT_LOW = 10., JPSI_PT_CUT_UP = 35., JET_PT_CUT_LOW = 10., JET_PT_CUT_UP = 35.):
   print('>>> Processing performance figure : Invariant Mass Spectrum')
+  tagInfo.GetAxis(0).SetRangeUser(JPSI_PT_CUT_LOW, JPSI_PT_CUT_UP)
+  tagInfo.GetAxis(5).SetRangeUser(JET_PT_CUT_LOW, JET_PT_CUT_UP)
+  hM = tagInfo.Projection(1)
+  hM.SetName('hM')
+  hM.SetTitle('')
+  c.Clear()
+  c.SetWindowSize(1280, 800)
+  jpsi = ana_phys.ProcessInvMass(hM, None, 1.5, 4.5)
+  jpsi.hM.Draw('same PE')
+  # Cuts
+  PAVE_CUTS = ROOT.TPaveText(0.15, 0.5, 0.35, 0.65, "brNDC")
+  PAVE_CUTS.SetName("pTxtCuts")
+  PAVE_CUTS.SetFillColor(0)
+  PAVE_CUTS.AddText('|y_{e^{+}e^{-}}| < 0.9')
+  PAVE_CUTS.AddText('%.1f < p_{T,e^{+}e^{-}} < %.1f GeV/c' % (JPSI_PT_CUT_LOW, JPSI_PT_CUT_UP) )
+  PAVE_CUTS.AddText('|#eta_{jet}| < 0.5')
+  PAVE_CUTS.AddText('%.1f < p_{T,jet} < %.1f GeV/c' % (JET_PT_CUT_LOW, JET_PT_CUT_UP) )
+  PAVE_CUTS.Draw('same')
+  # Output
+  c.Print(args.print, 'Title:DieleJets_InvMas')
+  ROOT.gPad.SaveAs("PERF_JpsiJet_DielectronJets_InvMass_pp13TeV.pdf")
+  ROOT.gPad.SaveAs("PERF_JpsiJet_DielectronJets_InvMass_pp13TeV.eps")
+  fout.cd()
+  c.Write('cM')
 
 anaResult = ROOT.TFile(args.file)
 
