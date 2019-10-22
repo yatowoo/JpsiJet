@@ -8,11 +8,16 @@ parser = argparse.ArgumentParser(description='Post-processing script for AliAnal
 parser.add_argument('-f', '--file',help='Analysis results of AliAnalysisTaskJpsiJet', default="AnalysisResults.root")
 parser.add_argument('-o', '--output',help='Output file path', default='JpsiJetAna.root')
 parser.add_argument('-p', '--print',help='Print in PDF file', default='JpsiJetAna.pdf')
+parser.add_argument('--calo',help='Plot calo QA figure', default=False, action='store_true')
+parser.add_argument('--invmass',help='Plot figure of invariant mass spectrum', default=False, action='store_true')
+
 args = parser.parse_args()
 
 import ROOT
 import ana_util
 from ana_util import *
+
+args.print = args.output.replace('.root','.pdf')
 
 TRIGGER_CLASSES = ['MB', 'EG1', 'EG2', 'DG1', 'DG2']
 
@@ -110,11 +115,16 @@ def DrawQA_Electron(output):
   fout.cd()
   c.Write('cDieleE')
 
+def DrawQA_InvMass(tagInfo):
+  print('>>> Processing performance figure : Invariant Mass Spectrum')
+
 anaResult = ROOT.TFile(args.file)
 
-anaOutput = anaResult.JpsiJetAnalysis
+if(args.calo):
+  DrawQA_Electron(anaResult.JpsiJetAnalysis)
 
-DrawQA_Electron(anaOutput)
+if(args.invmass):
+  DrawQA_InvMass(anaResult.TagInfoH)
 
 PrintCover(c, args.print, isBack=True)
 
