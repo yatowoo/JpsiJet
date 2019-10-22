@@ -126,17 +126,21 @@ def DrawQA_InvMass(tagInfo, JPSI_PT_CUT_LOW = 10., JPSI_PT_CUT_UP = 35., JET_PT_
   hM.SetTitle('')
   c.Clear()
   c.SetWindowSize(1280, 800)
+  ana_phys.STYLE_PERFORMANCE = True
   jpsi = ana_phys.ProcessInvMass(hM, None, 1.5, 4.5)
   jpsi.hM.Draw('same PE')
   # Cuts
-  PAVE_CUTS = ROOT.TPaveText(0.15, 0.5, 0.35, 0.65, "brNDC")
+  PAVE_CUTS = ROOT.TPaveText(0.62, 0.48, 0.82, 0.68, "brNDC")
   PAVE_CUTS.SetName("pTxtCuts")
   PAVE_CUTS.SetFillColor(0)
+  PAVE_CUTS.SetTextFont(42)
   PAVE_CUTS.AddText('|y_{e^{+}e^{-}}| < 0.9')
   PAVE_CUTS.AddText('%.1f < p_{T,e^{+}e^{-}} < %.1f GeV/c' % (JPSI_PT_CUT_LOW, JPSI_PT_CUT_UP) )
   PAVE_CUTS.AddText('|#eta_{jet}| < 0.5')
   PAVE_CUTS.AddText('%.1f < p_{T,jet} < %.1f GeV/c' % (JET_PT_CUT_LOW, JET_PT_CUT_UP) )
   PAVE_CUTS.Draw('same')
+  # Label
+  DrawALICE(0.15, 0.75, 0.35, 0.89)
   # Output
   c.Print(args.print, 'Title:DieleJets_InvMas')
   ROOT.gPad.SaveAs("PERF_JpsiJet_DielectronJets_InvMass_pp13TeV.pdf")
@@ -150,7 +154,13 @@ if(args.calo):
   DrawQA_Electron(anaResult.JpsiJetAnalysis)
 
 if(args.invmass):
-  DrawQA_InvMass(anaResult.TagInfoH)
+  txt = pTxtALICE.AddText("pp, #it{#sqrt{s}} = 13 TeV, #it{N}_{ev} = 126 M")
+  txt.SetTextFont(42) # Helvetica
+  txt.SetTextAlign(13) # Top Left
+  txt = pTxtALICE.AddText("EMCal trigger, #it{E} > 5 GeV")
+  txt.SetTextFont(42) # Helvetica
+  txt.SetTextAlign(13) # Top Left
+  DrawQA_InvMass(anaResult.TagInfoL, 5.0, 35., 5., 35.)
 
 PrintCover(c, args.print, isBack=True)
 

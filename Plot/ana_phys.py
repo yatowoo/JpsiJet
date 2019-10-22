@@ -15,6 +15,7 @@ from ana_util import *
 N_FITTING             = 3     # Max times for re-fitting
 JPSI_PT_BINS = [5., 7., 9., 11., 13., 15., 17., 19., 21., 25., 30., 50]
 # Drawing style
+STYLE_PERFORMANCE     = False
 DATA_COLOR            = kBlue
 DATA_STYLE            = kRound
 TOTAL_COLOR           = kBlack
@@ -102,7 +103,10 @@ class InvMass:
     return region
   def DrawResult(self):
     # Fitting result - TPaveText
-    pTxtFit = ROOT.TPaveText(0.62, 0.39, 0.87, 0.88, "brNDC")
+    if(STYLE_PERFORMANCE):
+      pTxtFit = ROOT.TPaveText(0.62, 0.72, 0.87, 0.85, "brNDC")
+    else:
+      pTxtFit = ROOT.TPaveText(0.62, 0.39, 0.87, 0.88, "brNDC")
     pTxtFit.SetName("pTxtFit")
     pTxtFit.SetBorderSize(0)
     pTxtFit.SetTextAlign(12)
@@ -114,14 +118,16 @@ class InvMass:
     entry.SetTextSize(0.03)
     entry.SetTextFont(62) # Helvetica (Bold)
       # Entries - Integral
-    pTxtFit.AddText("Data:     %.0f #pm %.0f" % self.result['Data'])
-    pTxtFit.AddText("Total:    %.0f #pm %.0f" % self.result['Total'])
-    pTxtFit.AddText("Signal:  %.0f #pm %.0f" % self.result['Signal'])
-    pTxtFit.AddText("Bkg:      %.0f #pm %.0f" % self.result['Bkg'])
+    if(not STYLE_PERFORMANCE):
+      pTxtFit.AddText("Data:     %.0f #pm %.0f" % self.result['Data'])
+      pTxtFit.AddText("Total:    %.0f #pm %.0f" % self.result['Total'])
+      pTxtFit.AddText("Signal:  %.0f #pm %.0f" % self.result['Signal'])
+      pTxtFit.AddText("Bkg:      %.0f #pm %.0f" % self.result['Bkg'])
+      pTxtFit.AddText("S/#sqrt{S+B}   = %.2f #pm %.2f" % self.result['SNratio'])
     pTxtFit.AddText("S/B         = %.2f #pm %.2f" % self.result['SBratio'])
-    pTxtFit.AddText("S/#sqrt{S+B}   = %.2f #pm %.2f" % self.result['SNratio'])
     pTxtFit.AddText("#chi^{2} / NDF  = %.1f / %d" % self.result['Chi2'])
-    pTxtFit.AddText("f_{sideband}    = %.2f #pm %.2f" % self.result['SBfactor'])
+    if(not STYLE_PERFORMANCE):
+      pTxtFit.AddText("f_{sideband}    = %.2f #pm %.2f" % self.result['SBfactor'])
     pTxtFit.Draw("same")
     return self.gDrawingList.Add(pTxtFit)
   def SelectSideband(self, method='Normal'):
@@ -211,7 +217,10 @@ class InvMass:
     self.result['Chi2'] = (self.fTot.GetChisquare(), self.fTot.GetNDF())
     # End - Signal region fitting result
   def DrawLegend(self):
-    self.lgd = ROOT.TLegend(0.13, 0.68, 0.49, 0.88, "", "brNDC")
+    if(STYLE_PERFORMANCE):
+      self.lgd = ROOT.TLegend(0.13, 0.48, 0.49, 0.68, "", "brNDC")
+    else:
+      self.lgd = ROOT.TLegend(0.13, 0.68, 0.49, 0.88, "", "brNDC")
     self.lgd.SetName("lgdInvMass")
     self.lgd.SetBorderSize(0)
     self.lgd.SetTextAlign(12)
