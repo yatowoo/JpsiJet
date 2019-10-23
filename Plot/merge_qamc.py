@@ -15,8 +15,13 @@ import ana_util
 
 args.print = args.output.replace('.root','.pdf')
 
+MC_TAG = {}
+MC_TAG['18'] = 'LHC19i2a'
+MC_TAG['17'] = 'LHC19i2b'
+MC_TAG['16'] = 'LHC19i2c'
+
 fout = ROOT.TFile(args.output,'RECREATE')
-c = ROOT.TCanvas('cQA','J/#psi in jets MC production - QA 10%% (LHC%s)' % args.sub, 800, 600)
+c = ROOT.TCanvas('cQA','J/#psi in jets MC production - Final QA (%s)' % MC_TAG[args.sub], 1200, 600)
 c.Draw()
 
 ana_util.PrintCover(c,args.print)
@@ -27,18 +32,18 @@ QA_NAME = ['PtHard', 'PtHardScaled', 'VtxZ', 'ElePt','EleDCAxy','EleDCAz', 'JetP
 QA_HIST_CONFIG = {
   'PtHard':{'Logy':True, 'X':[0,200], 'Y': [1e-8, 10.0], 'Ytitle': '1/#it{N}_{ev} d#it{N}_{evts}/d#it{p}_{T}', 'Legend': [0.65,0.1,0.9,0.5], 'Title':'Pythia event info. - pT hard (Unscale)', 'Sum':False},
   'PtHardScaled':{'Logy':True, 'X':[0,200], 'Y': [1e-12, 0.1], 'Ytitle': '1/#it{N}_{ev} d#it{N}_{evts}/d#it{p}_{T}', 'Legend': [0.65,0.55,0.9,0.9], 'Title':'Pythia event info. - pT hard (Scaled)', 'Sum':False},
-  'VtxZ':{'Logy':False, 'X':[-20,20], 'Y': [0., 0.1], 'Ytitle': '1/N_{ev} dN_{ev}/dZ', 'Legend': [0.1,0.55,0.4,0.9], 'Title':'Event primary vertex Z', 'Sum':False},
-  'ElePt':{'Logy':True, 'X':[0,100], 'Y': [1e-10, 10], 'Ytitle': '1/N_{ev} dN_{trk}/dp_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Selected track/electron (TPC only) - p_{T}', 'Sum':True},
-  'EleDCAxy':{'Logy':True, 'X':[-2,2], 'Y': [1e-4, 100], 'Ytitle': '1/N_{ev} dN_{trk}/dXY', 'Legend': [0.1,0.55,0.4,0.9], 'Title':'Selected track/electron (TPC only) - DCA_{xy}', 'Sum':False},
-  'EleDCAz':{'Logy':True, 'X':[-5,5], 'Y': [1e-6, 100], 'Ytitle': '1/N_{ev} dN_{trk}/dZ', 'Legend': [0.1,0.55,0.4,0.9], 'Title':'Selected track/electron (TPC only) - DCA_{z}', 'Sum':False},
-  'JetPt':{'Logy':True, 'X':[0,100], 'Y': [1e-8, 10], 'Ytitle': '1/N_{ev} dN_{jet}/dp_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Inclusive jet - raw p_{T}', 'Sum':True},
-  'JetNtrk':{'Logy':False, 'X':[0,100], 'Y': [0, 12], 'Ytitle': '<N_{trk}>', 'Legend': [0.1,0.6,0.3,0.9], 'Title':'Inclusive jet - N constituents', 'Sum':True},
-  'TagJetPt':{'Logy':True, 'X':[0,100], 'Y': [1e-9, 1], 'Ytitle': '1/N_{ev} dN_{jet}/dp_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Inclusive jet (updated) - raw p_{T}', 'Sum':True},
-  'TagJetNtrk':{'Logy':False, 'X':[0,100], 'Y': [0, 12], 'Ytitle': '<N_{trk}>', 'Legend': [0.1,0.6,0.3,0.9], 'Title':'Inclusive jet (updated) - N constituents', 'Sum':True},
-  'DieleJetPt':{'Logy':True, 'X':[0,100], 'Y': [1e-9, 1e-1], 'Ytitle': '1/N_{ev} dN_{jet}/dp_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Dielectron tagged jet - raw p_{T}', 'Sum':True},
-  'DieleJetNtrk':{'Logy':False, 'X':[0,100], 'Y': [0, 12], 'Ytitle': '<N_{trk}>', 'Legend': [0.1,0.6,0.3,0.9], 'Title':'Dielectron tagged jet - N constituents', 'Sum':True},
-  'JpsiPt':{'Logy':True, 'X':[0,100], 'Y': [1e-8, 10], 'Ytitle': '1/N_{ev} dN_{J/#psi}/dp_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Generated J/#psi - p_{T}', 'Sum':True},
-  'JpsiY':{'Logy':False, 'X':[-2, 2], 'Y': [0, 1], 'Ytitle': '1/N_{ev} dN_{J/#psi}/dY', 'Legend': [0.75,0.5,0.9,0.9], 'Title':'Generated J/#psi - Y', 'Sum':False}
+  'VtxZ':{'Logy':False, 'X':[-20,20], 'Y': [0., 0.1], 'Ytitle': '1/#it{N}_{ev} d#it{N}_{ev}/dZ', 'Legend': [0.1,0.6,0.35,0.9], 'Title':'Event primary vertex Z', 'Sum':False},
+  'ElePt':{'Logy':True, 'X':[0,100], 'Y': [1e-10, 10], 'Ytitle': '1/#it{N}_{ev} d#it{N}_{trk}/d#it{p}_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Selected track/electron (TPC only) - #it{p}_{T}', 'Sum':True},
+  'EleDCAxy':{'Logy':True, 'X':[-2,2], 'Y': [1e-4, 100], 'Ytitle': '1/#it{N}_{ev} d#it{N}_{trk}/d#it{XY}', 'Legend': [0.1,0.6,0.35,0.9], 'Title':'Selected track/electron (TPC only) - #it{DCA}_{xy}', 'Sum':False},
+  'EleDCAz':{'Logy':True, 'X':[-5,5], 'Y': [1e-6, 100], 'Ytitle': '1/#it{N}_{ev} d#it{N}_{trk}/d#it{Z}', 'Legend': [0.1,0.6,0.35,0.9], 'Title':'Selected track/electron (TPC only) - #it{DCA}_{z}', 'Sum':False},
+  'JetPt':{'Logy':True, 'X':[0,100], 'Y': [1e-9, 1e2], 'Ytitle': '1/#it{N}_{ev} d#it{N}_{jet}/d#it{p}_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Inclusive jet - raw #it{p}_{T}', 'Sum':True},
+  'JetNtrk':{'Logy':False, 'X':[0,100], 'Y': [0, 12], 'Ytitle': '<#it{N}_{trk}>', 'Legend': [0.1,0.6,0.3,0.9], 'Title':'Inclusive jet - N constituents', 'Sum':True},
+  'TagJetPt':{'Logy':True, 'X':[0,100], 'Y': [1e-9, 5], 'Ytitle': '1/#it{N}_{ev} d#it{N}_{jet}/d#it{p}_{T}', 'Legend': [0.72,0.65,0.9,0.9], 'Title':'Inclusive jet (updated) - raw #it{p}_{T}', 'Sum':True},
+  'TagJetNtrk':{'Logy':False, 'X':[0,100], 'Y': [0, 12], 'Ytitle': '<#it{N}_{trk}>', 'Legend': [0.1,0.6,0.3,0.9], 'Title':'Inclusive jet (updated) - N constituents', 'Sum':True},
+  'DieleJetPt':{'Logy':True, 'X':[0,100], 'Y': [1e-10, 1e-2], 'Ytitle': '1/#it{N}_{ev} d#it{N}_{jet}/d#it{p}_{T}', 'Legend': [0.1,0.1,0.3,0.4], 'Title':'Dielectron tagged jet - raw #it{p}_{T}', 'Sum':True},
+  'DieleJetNtrk':{'Logy':False, 'X':[0,100], 'Y': [0, 12], 'Ytitle': '<#it{N}_{trk}>', 'Legend': [0.1,0.6,0.3,0.9], 'Title':'Dielectron tagged jet - N constituents', 'Sum':True},
+  'JpsiPt':{'Logy':True, 'X':[0,100], 'Y': [1e-8, 10], 'Ytitle': '1/#it{N}_{ev} d#it{N}_{J/#psi}/d#it{p}_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Generated J/#psi - #it{p}_{T}', 'Sum':True},
+  'JpsiY':{'Logy':False, 'X':[-2, 2], 'Y': [0, 1], 'Ytitle': '1/#it{N}_{ev} d#it{N}_{J/#psi}/d#it{Y}', 'Legend': [0.75,0.5,0.9,0.9], 'Title':'Generated J/#psi - #it{Y}', 'Sum':False}
 }
 QA = list(range(len(PT_HARD_BINS) - 1))
 for i,pTmin in enumerate(PT_HARD_BINS[:-1]):
@@ -46,9 +51,9 @@ for i,pTmin in enumerate(PT_HARD_BINS[:-1]):
   QA[i] = {}
   QA[i]['pTHard'] = (PT_HARD_BINS[i], PT_HARD_BINS[i+1])
   if(PT_HARD_BINS[i+1] == -1):
-    QA[i]['Title'] = "p_{T} hard bin > %d GeV/c" % PT_HARD_BINS[i]
+    QA[i]['Title'] = "#it{p}_{T} hard bin > %d GeV/c" % PT_HARD_BINS[i]
   else:
-    QA[i]['Title'] = "p_{T} hard bin: %d - %d GeV/c" % (PT_HARD_BINS[i], PT_HARD_BINS[i+1])
+    QA[i]['Title'] = "#it{p}_{T} hard bin: %d - %d GeV/c" % (PT_HARD_BINS[i], PT_HARD_BINS[i+1])
   f = ROOT.TFile('../output/JpsiJetMC_FullQA/JpsiJetMC_FullQA%s_bin%d_191017/AnalysisResults.root' % (args.sub, i+1))
   if(f.IsOpen()):
     print('>>> Processing ' + f.GetName())
@@ -137,6 +142,7 @@ for hist in QA_NAME:
   for i,pTmin in enumerate(PT_HARD_BINS[:-1]):
     color = next(ana_util.COLOR)
     ana_util.SetColorAndStyle(QA[i][hist], color)
+    QA[i][hist].GetYaxis().SetTitleOffset(1.2)
     QA[i][hist].Sumw2()
     if(hist.find('Ntrk') < 0):
       QA[i][hist].Scale(1./QA[i]['NEvent'],'width')
