@@ -34,7 +34,26 @@ response.GetAxis(0).SetRangeUser(0,1)
 response.GetAxis(1).SetRangeUser(0,1)
 
 # pT bin
+PAVE_TEXT = []
+def DrawPtBin(text, x1, y1, x2, y2, onY = False):
+  pTxt = ROOT.TPaveText(x1, y1, x2, y2, "brNDC")
+  pTxt.SetFillColor(0)
+  pTxt.SetTextFont(42)
+  pTxt.SetTextAlign(22)
+  pTxt.SetTextSize(0.03)
+  txt = pTxt.AddText(text)
+  if(onY):
+    txt.SetTextAngle(270)
+  pTxt.Draw("same")
+  PAVE_TEXT.append(pTxt)
 
+c.cd()
+DrawPtBin("10 - 15 GeV/#it{c}", 0.05, 0.85, 0.3, 0.90)
+DrawPtBin("15 - 35 GeV/#it{c}", 0.3, 0.85, 0.55, 0.90)
+DrawPtBin("> 35 GeV/#it{c}", 0.55, 0.85, 0.8, 0.90)
+DrawPtBin("10 - 15 GeV/#it{c}", 0.85, 0.05, 0.90, 0.32, onY=True)
+DrawPtBin("15 - 35 GeV/#it{c}", 0.85, 0.32, 0.90, 0.58, onY=True)
+DrawPtBin("> 35 GeV/#it{c}", 0.85, 0.58, 0.90, 0.85, onY=True)
 
 for i in range(3):
   response.GetAxis(2).SetRangeUser(JET_PT_BINS[i],JET_PT_BINS[i+1])
