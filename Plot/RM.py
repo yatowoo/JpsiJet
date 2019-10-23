@@ -96,7 +96,9 @@ for i in range(3):
       RM[i][j].GetXaxis().SetLabelSize(0.)
       RM[i][j].SetYTitle('')
       RM[i][j].GetYaxis().SetLabelSize(0.)
-    RM[i][j].Draw('COLZ')
+      RM[i][j].Draw('COL')
+    else:
+      RM[i][j].Draw('COLZ')
     RM[i][j].GetZaxis().SetLabelSize(0.02)
     RM[i][j].GetZaxis().SetLabelFont(42)
     PAVE[i][j] = ROOT.TPaveText(0.15,0.8,0.4,0.95,'brNDC')
