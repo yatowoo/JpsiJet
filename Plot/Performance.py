@@ -133,7 +133,7 @@ def DrawQA_InvMass(tagInfo, JPSI_PT_CUT_LOW = 10., JPSI_PT_CUT_UP = 35., JET_PT_
   jpsi = ana_phys.ProcessInvMass(hM, None, 1.5, 4.5)
   jpsi.hM.Draw('same PE')
   # Cuts
-  PAVE_CUTS = ROOT.TPaveText(0.70, 0.56, 0.90, 0.76, "brNDC")
+  PAVE_CUTS = ROOT.TPaveText(0.70, 0.50, 0.90, 0.76, "brNDC")
   PAVE_CUTS.SetName("pTxtCuts")
   PAVE_CUTS.SetFillColor(0)
   PAVE_CUTS.SetTextFont(42)
