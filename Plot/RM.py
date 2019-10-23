@@ -20,14 +20,21 @@ ana_util.ALICEStyle()
 ROOT.gStyle.SetPalette(ROOT.kInvertedDarkBodyRadiator)
 
 c = ROOT.TCanvas('cRM','Detector response matrix - 4D',1600,1600)
-ana_util.SetPadMargin(c, 0.3, 0.7, 0.4,0.2)
-c.Divide(3,3,0,0)
+c.Draw()
+ana_util.SetPadMargin(c,0,0,0,0)
+PAD_RM = ROOT.TPad("padBody","Body of response matrix", 0.02, 0.02, 0.8, 0.85)
+ana_util.SetPadMargin(PAD_RM,0.1,0.,0.,0.1)
+PAD_RM.Divide(3,3,0,0)
+PAD_RM.Draw()
 JET_PT_BINS = [10,15,35,100]
 RM = [[1,2,3],[4,5,6],[7,8,9]]
 PAD_INDEX = [7,4,1,8,5,2,9,6,3]
 PAVE = [[1,2,3],[4,5,6],[7,8,9]]
 response.GetAxis(0).SetRangeUser(0,1)
 response.GetAxis(1).SetRangeUser(0,1)
+
+# pT bin
+
 
 for i in range(3):
   response.GetAxis(2).SetRangeUser(JET_PT_BINS[i],JET_PT_BINS[i+1])
@@ -50,7 +57,7 @@ for i in range(3):
       for iy in range(1, NY+1):
         val = RM[i][j].GetBinContent(ix, iy) / SumY
         RM[i][j].SetBinContent(ix, iy, val)
-    c.cd(PAD_INDEX[3*i+j])
+    PAD_RM.cd(PAD_INDEX[3*i+j])
     RM[i][j].SetTitle('')
     RM[i][j].SetMaximum(1.0)
     RM[i][j].SetMinimum(0.0)
