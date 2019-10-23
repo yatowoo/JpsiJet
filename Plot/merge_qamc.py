@@ -25,7 +25,7 @@ c = ROOT.TCanvas('cQA','J/#psi in jets MC production - Final QA (%s)' % MC_TAG[a
 c.Draw()
 
 ana_util.PrintCover(c,args.print)
-SCALE_FACTOR = [2.59e-2, 1.35e-2, 7.41e-3, 2.95e-3, 1.21e-3, 5.67e-4, 2.54e-4, 1.17e-4, 4.71e-5, 5.18e-5]
+
 PT_HARD_BINS = [12, 16, 21, 28, 36, 45, 57, 70, 85, 100, -1]
 BINNING_PT = ana_util.BINNING_JET_PT
 QA_NAME = ['PtHard', 'PtHardScaled', 'VtxZ', 'ElePt','EleDCAxy','EleDCAz', 'JetPt', 'JetNtrk', 'TagJetPt', 'TagJetNtrk', 'DieleJetPt', 'DieleJetNtrk', 'JpsiPt', 'JpsiY']
@@ -45,6 +45,14 @@ QA_HIST_CONFIG = {
   'JpsiPt':{'Logy':True, 'X':[0,100], 'Y': [1e-8, 10], 'Ytitle': '1/#it{N}_{ev} d#it{N}_{J/#psi}/d#it{p}_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Generated J/#psi - #it{p}_{T}', 'Sum':True},
   'JpsiY':{'Logy':False, 'X':[-2, 2], 'Y': [0, 1], 'Ytitle': '1/#it{N}_{ev} d#it{N}_{J/#psi}/d#it{Y}', 'Legend': [0.75,0.5,0.9,0.9], 'Title':'Generated J/#psi - #it{Y}', 'Sum':False}
 }
+
+pTxtStats = ROOT.TPaveText(0.1, 0.02, 0.9, 0.98, "brNDC")
+pTxtStats.SetFillColor(0)
+pTxtStats.SetTextFont(42)
+pTxtStats.SetTextSize(0.03)
+txt = pTxtStats.AddText(" #it{p}_{T,hard} |  #it{N}_{events}  |  <#it{#sigma}>  |  <#it{N}_{trials}>  | Scale factor |") # Header
+txt.SetTextFont(62)
+
 QA = list(range(len(PT_HARD_BINS) - 1))
 for i,pTmin in enumerate(PT_HARD_BINS[:-1]):
   # Init
@@ -68,20 +76,21 @@ for i,pTmin in enumerate(PT_HARD_BINS[:-1]):
     # Generator
   genQA = mc.FindObject('Event')
   genQA.SetOwner(True)
-  QA[i]['Ntrials'] = genQA.FindObject('Ntrials').GetBinContent(1)
-  QA[i]['Xsec'] = genQA.FindObject('Xsec').GetBinContent(1)
-  QA[i]['ScaleFactor'] = QA[i]['Xsec'] / QA[i]['Ntrials']
   QA[i]['PtHard'] = genQA.FindObject('PtHard').Clone('hPtHard_%d' % i)
-  QA[i]['PtHardScaled'] = genQA.FindObject('PtHard').Clone('hPtHard_%d' % i)
+  QA[i]['NEvent'] = QA[i]['PtHard'].GetEntries()
+  QA[i]['Ntrials'] = genQA.FindObject('Ntrials').GetBinContent(1) / QA[i]['NEvent']
+  QA[i]['Xsec'] = genQA.FindObject('Xsec').GetBinContent(1) / QA[i]['NEvent']
+  QA[i]['ScaleFactor'] = QA[i]['Xsec'] / QA[i]['Ntrials']
+  QA[i]['PtHardScaled'] = genQA.FindObject('PtHard').Clone('hPtHardScaled_%d' % i)
   QA[i]['PtHardScaled'].Scale(QA[i]['ScaleFactor'])
+  print('[-] N event : %1.3e' % QA[i]['NEvent'])
+  txt = pTxtStats.AddText("%d - %d (GeV/#it{c})| %.2e | %.3e | %.3e | %.2e" % (QA[i]['pTHard'][0], QA[i]['pTHard'][1], QA[i]['NEvent'], QA[i]['Xsec'], QA[i]['Ntrials'], QA[i]['ScaleFactor']))
     # Event
   diele = qa.FindObject('Dielectron')
   diele.SetOwner(True)
   evQA = diele.FindObject('Event')
   evQA.SetOwner(True)
   QA[i]['VtxZ'] = evQA.FindObject('VtxZ').Clone('hVtxZ_%d' % i)
-  QA[i]['NEvent'] = QA[i]['VtxZ'].GetEntries()
-  print('[-] N event : %1.3e' % QA[i]['NEvent'])
     # Track / Electron
   eleP = diele.FindObject('Track_ev1+')
   eleP.SetOwner(True)
@@ -126,8 +135,17 @@ for i,pTmin in enumerate(PT_HARD_BINS[:-1]):
   f.Close()
 
 fout.cd()
+# Print stats
+c.Clear()
+c.SetWindowSize(800, 800)
+c.Draw()
+pTxtStats.Draw()
+c.Print(args.print, 'Title:EventStats')
+c.Write('cEvStats')
+
 for hist in QA_NAME:
   c.Clear()
+  c.SetWindowSize(1600, 1200)
   c.SetLogy(False)
   ana_util.COLOR = ana_util.SelectColor()
   ana_util.MARKER = ana_util.SelectMarker()
