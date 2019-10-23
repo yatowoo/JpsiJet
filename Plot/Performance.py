@@ -166,12 +166,27 @@ def DrawQA_Eff(mc):
   c.SetWindowSize(1600,1200)
   c.SetLogy()
   hP = mc.hJpsiEffPrompt
+  hP.SetMarkerSize(2)
   hP.SetXTitle("#it{p}_{T,J/#psi} (GeV/#it{c})")
   hP.SetYTitle('#it{A #times #varepsilon}')
   hP.GetYaxis().SetRangeUser(5e-4, 5e-1)
   hP.GetYaxis().SetTitleOffset(1.2)
+  hP.GetXaxis().SetTitleOffset(1.2)
   mc.hJpsiEffPrompt.Draw("PE")
+  hB = mc.hJpsiEffBdecay
+  hB.SetMarkerSize(2)
   mc.hJpsiEffBdecay.Draw("same PE")
+  # Description
+  pTxt = ROOT.TPaveText(0.6, 0.4, 0.96, 0.5,"tlNDC")
+  pTxt.SetFillColor(0)
+  pTxt.AddText("J/#psi #rightarrow e^{+}e^{-}, |#it{y}_{J/#psi}| < 0.9")
+  pTxt.AddText("reco. with EMCal/DCal, #it{E} > 5 GeV")
+  pTxt.Draw("same")
+  # Legend
+  lgd = ROOT.TLegend(0.67, 0.2, 0.87, 0.38)
+  lgd.AddEntry(hP, 'Prompt')
+  lgd.AddEntry(hB, 'Non-prompt')
+  lgd.Draw("same")
   # Label
   pTxtALICE.Draw("same")
   # Output
