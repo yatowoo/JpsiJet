@@ -11,6 +11,7 @@ parser.add_argument('-p', '--print',help='Print in PDF file', default='JpsiJetAn
 parser.add_argument('--calo',help='Plot calo QA figure', default=False, action='store_true')
 parser.add_argument('--invmassH',help='Plot figure of invariant mass spectrum (EMCal high)', default=False, action='store_true')
 parser.add_argument('--invmassL',help='Plot figure of invariant mass spectrum (EMCal low)', default=False, action='store_true')
+parser.add_argument('--eff',help='Plot figure of J/psi efficiency', default=False, action='store_true')
 
 args = parser.parse_args()
 
@@ -23,8 +24,11 @@ args.print = args.output.replace('.root','.pdf')
 
 TRIGGER_CLASSES = ['MB', 'EG1', 'EG2', 'DG1', 'DG2']
 
+ana_util.ALICEStyle()
 c = ROOT.TCanvas('cQA','ALICE Performance Figures',1280, 800)
 c.SetTopMargin(0.02)
+c.SetBottomMargin(0.1)
+c.SetLeftMargin(0.1)
 c.SetRightMargin(0.02)
 c.Draw()
 
@@ -38,9 +42,13 @@ PrintCover(c, args.print)
 c.cd(1)
 pTxtALICE = ROOT.TPaveText(0.12, PAD_EDGE_TOP - 0.18, 0.45, PAD_EDGE_TOP - 0.02,"brNDC")
 pTxtALICE.SetFillColor(0)
-txt = pTxtALICE.AddText("ALICE Performance")
+pTxtALICE.SetTextFont(42) # Helvetica
+pTxtALICE.SetTextAlign(13) # Top Left
+if(args.eff):
+  txt = pTxtALICE.AddText("ALICE Simulation")
+else:
+  txt = pTxtALICE.AddText("ALICE Performance")
 txt.SetTextFont(62) # Helvetica Bold
-txt.SetTextAlign(13) # Top Left
 def DrawALICE(x1, y1, x2, y2):
   pTxtALICE.SetX1NDC(x1)
   pTxtALICE.SetY1NDC(y1)
@@ -152,6 +160,26 @@ def DrawQA_InvMass(tagInfo, JPSI_PT_CUT_LOW = 10., JPSI_PT_CUT_UP = 35., JET_PT_
   fout.cd()
   c.Write('cM')
 
+# Processing MC output from JpsiJetAna.py
+def DrawQA_Eff(mc):
+  c.Clear()
+  c.SetWindowSize(1600,1200)
+  c.SetLogy()
+  hP = mc.hJpsiEffPrompt
+  hP.SetXTitle("#it{p}_{T,J/#psi} (GeV/#it{c})")
+  hP.SetYTitle('#it{A #times #varepsilon}')
+  hP.GetYaxis().SetRangeUser(5e-4, 5e-1)
+  hP.GetYaxis().SetTitleOffset(1.2)
+  mc.hJpsiEffPrompt.Draw("PE")
+  mc.hJpsiEffBdecay.Draw("same PE")
+  # Label
+  pTxtALICE.Draw("same")
+  # Output
+  c.Print(args.print, 'Title:MC_JpsiEff')
+  ROOT.gPad.SaveAs("JpsiJet_SIMUL_JpsiEff_EMCal_pp13TeV.eps")
+  fout.cd()
+  c.Write('cEff')
+
 anaResult = ROOT.TFile(args.file)
 
 if(args.calo):
@@ -174,6 +202,11 @@ if(args.invmassH):
   txt.SetTextFont(42) # Helvetica
   txt.SetTextAlign(13) # Top Left
   DrawQA_InvMass(anaResult.TagInfoH, 10.0, 35., 10., 35.)
+
+if(args.eff):
+  txt = pTxtALICE.AddText("pp, #sqrt{#it{s}} = 13 TeV")
+  txt = pTxtALICE.AddText("Pythia6, Perugia2011")
+  DrawQA_Eff(anaResult)
 
 PrintCover(c, args.print, isBack=True)
 
