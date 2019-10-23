@@ -28,12 +28,15 @@ c.SetTopMargin(0.02)
 c.SetRightMargin(0.02)
 c.Draw()
 
+PAD_EDGE_RIGHT = 1 - c.GetRightMargin()
+PAD_EDGE_TOP   = 1 - c.GetTopMargin()
+
 fout = ROOT.TFile(args.output,'RECREATE')
 PrintCover(c, args.print)
 
 # Label - ALICE figure
 c.cd(1)
-pTxtALICE = ROOT.TPaveText(0.12, 0.80, 0.45, 0.96,"brNDC")
+pTxtALICE = ROOT.TPaveText(0.12, PAD_EDGE_TOP - 0.18, 0.45, PAD_EDGE_TOP - 0.02,"brNDC")
 pTxtALICE.SetFillColor(0)
 txt = pTxtALICE.AddText("ALICE Performance")
 txt.SetTextFont(62) # Helvetica Bold
@@ -48,9 +51,8 @@ def DrawALICE(x1, y1, x2, y2):
 def DrawQA_Electron(output):
   CaloQA = {}
   c.Clear()
-  c.SetWindowSize(1600, 600)
-  c.Divide(2)
-  lgdE = ROOT.TLegend(0.55, 0.65, 0.85, 0.85, "", "brNDC")
+  c.SetWindowSize(1600, 1200)
+  lgdE = ROOT.TLegend(PAD_EDGE_RIGHT - 0.35, PAD_EDGE_TOP - 0.25, PAD_EDGE_TOP - 0.05, PAD_EDGE_TOP - 0.05, "", "brNDC")
   lgdE.SetBorderSize(0)
   lgdRF = ROOT.TLegend(0.5, 0.12, 0.88, 0.45, "", "brNDC")
   lgdRF.SetBorderSize(0)
@@ -82,7 +84,7 @@ def DrawQA_Electron(output):
     qa.Delete("C")
   # Drawing
     # MB
-  ana_util.SetColorAndStyle(CaloQA['MB']['E'], ROOT.kBlack, ROOT.kFullTriangleUp)
+  ana_util.SetColorAndStyle(CaloQA['MB']['E'], ROOT.kBlack, ROOT.kFullTriangleUp, 2.0)
   CaloQA['MB']['E'].SetTitle('')
   CaloQA['MB']['E'].SetXTitle('#it{E} (GeV)')
   CaloQA['MB']['E'].SetYTitle('#frac{1}{#it{N}_{evts}} #frac{d#it{N}_{cluster}}{d#it{E}}')
@@ -90,20 +92,19 @@ def DrawQA_Electron(output):
   CaloQA['MB']['E'].GetYaxis().SetRangeUser(1e-9, 20)
   CaloQA['MB']['E'].GetYaxis().SetTitleOffset(1.5)
   CaloQA['MB']['E'].GetYaxis().SetTitleSize(0.03)
-  c.cd(1)
   ROOT.gPad.SetLogy()
   CaloQA['MB']['E'].Draw('PE')
   lgdE.AddEntry(CaloQA['MB']['E'], 'Minimum bias trigger')
     # Gamma lower
   CaloQA['EG2']['E'].Add(CaloQA['DG2']['E'])
-  ana_util.SetColorAndStyle(CaloQA['EG2']['E'], ROOT.kRed, ROOT.kFullCircle)
+  ana_util.SetColorAndStyle(CaloQA['EG2']['E'], ROOT.kRed, ROOT.kFullCircle, 2.0)
   CaloQA['EG2']['E'].Draw('same PE')
-  lgdE.AddEntry(CaloQA['EG2']['E'], 'Trigger E_{EMC}^{Cluster} > 5 GeV')
+  lgdE.AddEntry(CaloQA['EG2']['E'], 'Trigger #it{E}_{EMC}^{Cluster} > 5 GeV')
     # Gamma higher
   CaloQA['EG1']['E'].Add(CaloQA['DG1']['E'])
-  ana_util.SetColorAndStyle(CaloQA['EG1']['E'], ROOT.kBlue, ROOT.kFullSquare)
+  ana_util.SetColorAndStyle(CaloQA['EG1']['E'], ROOT.kBlue, ROOT.kFullSquare, 2.0)
   CaloQA['EG1']['E'].Draw('same PE')
-  lgdE.AddEntry(CaloQA['EG1']['E'], 'Trigger E_{EMC}^{Cluster} > 10 GeV')
+  lgdE.AddEntry(CaloQA['EG1']['E'], 'Trigger #it{E}_{EMC}^{Cluster} > 10 GeV')
   lgdE.Draw('same')
     # Label
   txt = pTxtALICE.AddText("pp, #sqrt{#it{s}} = 13 TeV")
