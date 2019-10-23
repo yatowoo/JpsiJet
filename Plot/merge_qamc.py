@@ -23,8 +23,10 @@ ana_util.PrintCover(c,args.print)
 SCALE_FACTOR = [2.59e-2, 1.35e-2, 7.41e-3, 2.95e-3, 1.21e-3, 5.67e-4, 2.54e-4, 1.17e-4, 4.71e-5, 5.18e-5]
 PT_HARD_BINS = [12, 16, 21, 28, 36, 45, 57, 70, 85, 100, -1]
 BINNING_PT = ana_util.BINNING_JET_PT
-QA_NAME = ['VtxZ', 'ElePt','EleDCAxy','EleDCAz', 'JetPt', 'JetNtrk', 'TagJetPt', 'TagJetNtrk', 'DieleJetPt', 'DieleJetNtrk', 'JpsiPt', 'JpsiY']
+QA_NAME = ['PtHard', 'PtHardScaled', 'VtxZ', 'ElePt','EleDCAxy','EleDCAz', 'JetPt', 'JetNtrk', 'TagJetPt', 'TagJetNtrk', 'DieleJetPt', 'DieleJetNtrk', 'JpsiPt', 'JpsiY']
 QA_HIST_CONFIG = {
+  'PtHard':{'Logy':True, 'X':[0,200], 'Y': [1e-8, 10.0], 'Ytitle': '1/#it{N}_{ev} d#it{N}_{evts}/d#it{p}_{T}', 'Legend': [0.65,0.1,0.9,0.5], 'Title':'Pythia event info. - pT hard (Unscale)', 'Sum':False},
+  'PtHardScaled':{'Logy':True, 'X':[0,200], 'Y': [1e-12, 0.1], 'Ytitle': '1/#it{N}_{ev} d#it{N}_{evts}/d#it{p}_{T}', 'Legend': [0.65,0.55,0.9,0.9], 'Title':'Pythia event info. - pT hard (Scaled)', 'Sum':False},
   'VtxZ':{'Logy':False, 'X':[-20,20], 'Y': [0., 0.1], 'Ytitle': '1/N_{ev} dN_{ev}/dZ', 'Legend': [0.1,0.55,0.4,0.9], 'Title':'Event primary vertex Z', 'Sum':False},
   'ElePt':{'Logy':True, 'X':[0,100], 'Y': [1e-10, 10], 'Ytitle': '1/N_{ev} dN_{trk}/dp_{T}', 'Legend': [0.68,0.62,0.9,0.9], 'Title':'Selected track/electron (TPC only) - p_{T}', 'Sum':True},
   'EleDCAxy':{'Logy':True, 'X':[-2,2], 'Y': [1e-4, 100], 'Ytitle': '1/N_{ev} dN_{trk}/dXY', 'Legend': [0.1,0.55,0.4,0.9], 'Title':'Selected track/electron (TPC only) - DCA_{xy}', 'Sum':False},
@@ -40,9 +42,9 @@ QA_HIST_CONFIG = {
 }
 QA = list(range(len(PT_HARD_BINS) - 1))
 for i,pTmin in enumerate(PT_HARD_BINS[:-1]):
-  QA[i] = {}
-for i,pTmin in enumerate(PT_HARD_BINS[:-1]):
   # Init
+  QA[i] = {}
+  QA[i]['pTHard'] = (PT_HARD_BINS[i], PT_HARD_BINS[i+1])
   if(PT_HARD_BINS[i+1] == -1):
     QA[i]['Title'] = "p_{T} hard bin > %d GeV/c" % PT_HARD_BINS[i]
   else:
@@ -58,6 +60,15 @@ for i,pTmin in enumerate(PT_HARD_BINS[:-1]):
   mc = f.JpsiJetAnalysis.Get('MChistos')
   mc.SetOwner(True)
   # QA
+    # Generator
+  genQA = mc.FindObject('Event')
+  genQA.SetOwner(True)
+  QA[i]['Ntrials'] = genQA.FindObject('Ntrials').GetBinContent(1)
+  QA[i]['Xsec'] = genQA.FindObject('Xsec').GetBinContent(1)
+  QA[i]['ScaleFactor'] = QA[i]['Xsec'] / QA[i]['Ntrials']
+  QA[i]['PtHard'] = genQA.FindObject('PtHard').Clone('hPtHard_%d' % i)
+  QA[i]['PtHardScaled'] = genQA.FindObject('PtHard').Clone('hPtHard_%d' % i)
+  QA[i]['PtHardScaled'].Scale(QA[i]['ScaleFactor'])
     # Event
   diele = qa.FindObject('Dielectron')
   diele.SetOwner(True)
@@ -132,7 +143,7 @@ for hist in QA_NAME:
     else:
       QA[i][hist].Scale(1.,'width')
     QA[i][hist].SetTitle(QA[i]['Title'])
-    hSum.Add(QA[i][hist], SCALE_FACTOR[i])
+    hSum.Add(QA[i][hist], QA[i]['ScaleFactor'])
     if(i == 0):
       QA[i][hist].Draw('PE')
     else:
@@ -151,6 +162,9 @@ for hist in QA_NAME:
   # Output
   c.Print(args.print, 'Title:' + hist)
   c.Write('c' + hist)
+
+for i,pTmin in enumerate(PT_HARD_BINS[:-1]):
+  print('[-] INFO : pT hard bin scale factor = %.3e / %.3e = %.2e' % (QA[i]['Xsec'], QA[i]['Ntrials'], QA[i]['ScaleFactor']))
 
 ana_util.PrintCover(c,args.print,'End of QA',isBack=True)
 fout.Close()
