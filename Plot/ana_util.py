@@ -4,7 +4,7 @@
 
 import ROOT
   # Colors
-from ROOT import kBlack, kRed, kBlue, kGreen, kOrange, kViolet, kCyan, kPink
+from ROOT import *
 import sys, os, time, math, json, logging
 from array import array
 
@@ -83,6 +83,8 @@ def HistCount(hist, xlow, xup, err = None):
 # Select color and marker style in pre-defined group
   # Use Bool isNEW to reset the index
 COLOR_SET = [kBlack, kRed, kBlue, kGreen+3, kOrange, kViolet, kCyan, kOrange-6, kPink]
+COLOR_SET_ALICE = [kBlack, kRed+1 , kBlue+1, kGreen+3, kMagenta+1, kOrange-1,kCyan+2,kYellow+2]
+COLOR_SET_ALICE_FILL = [kGray+1,  kRed-10, kBlue-9, kGreen-8, kMagenta-9, kOrange-9,kCyan-8,kYellow-7] # For systematic bands
 COLOR_INDEX = -1
 def SelectColor(COLOR_INDEX = 0):
   while(COLOR_INDEX < 100):
@@ -91,11 +93,13 @@ def SelectColor(COLOR_INDEX = 0):
 # Marker Style
 kRound,  kBlock, kDelta, kNabla, kPenta, kDiamond, kCross, kClover, kClover4, kStar, kIronCross, kXMark = 20, 21, 22, 23, 29, 33, 34, 39, 41, 43, 45, 47
 kRoundHollow, kBlockHollow, kDeltaHollow, kNablaHollow, kPentaHollow, kDiamondHollow, kCrossHollow, kCloverHollow, kClover4Hollow, kStarHollow, kIronCrossHollow, kXMarkHollow = 24, 25, 26, 32, 30, 27, 28, 37, 40, 42, 44, 46
-MARKER_SET = [kRound, kBlockHollow, kCross, kDelta, kDiamondHollow, kPenta, kBlock, kCrossHollow, kDiamond, kXMark]
+MARKER_SET = [kFullCircle, kOpenSquare, kCross, kFullTriangleUp, kOpenDiamond, kFullStar, kFullSquare, kOpenCross, kFullDiamond, kFullCrossX]
 
-DATA_MARKER = [kRound,  kBlock, kDelta, kNabla, kPenta, kDiamond, kCross, kClover, kClover4, kStar, kIronCross, kXMark]
+MARKER_SET_ALICE = [kFullCircle, kFullSquare, kOpenCircle, kOpenSquare, kOpenDiamond, kOpenCross, kFullCross, kFullDiamond, kFullStar, kOpenStar]
 
-MC_MARKER = [kRoundHollow, kBlockHollow, kDeltaHollow, kNablaHollow, kPentaHollow, kDiamondHollow, kCrossHollow, kCloverHollow, kClover4Hollow, kStarHollow, kIronCrossHollow, kXMarkHollow]
+DATA_MARKER = [kFullCircle, kFullSquare, kFullTriangleUp, kFullTriangleDown, kFullStar, kFullDiamond, kFullCross, kFullThreeTriangles, kFullFourTrianglesX, kFullDoubleDiamond, kFullFourTrianglesPlus, kFullCrossX]
+
+MC_MARKER = [kOpenCircle, kOpenSquare, kOpenTriangleUp, kOpenTriangleDown, kOpenStar, kOpenDiamond, kOpenCross, kOpenThreeTriangles, kOpenFourTrianglesX, kOpenDoubleDiamond, kOpenFourTrianglesPlus, kOpenCrossX]
 
 def SelectMarker(MARKER_INDEX = 0):
   while(MARKER_INDEX < 100):
