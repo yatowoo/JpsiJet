@@ -33,6 +33,27 @@ PAVE = [[1,2,3],[4,5,6],[7,8,9]]
 response.GetAxis(0).SetRangeUser(0,1)
 response.GetAxis(1).SetRangeUser(0,1)
 
+# ALICE Label
+pTxtALICE = ROOT.TPaveText(0.06, 0.75, 0.26, 0.84,"brNDC")
+pTxtALICE.SetFillColor(0)
+pTxtALICE.SetTextFont(42) # Helvetica
+pTxtALICE.SetTextAlign(13) # Top Left
+txt = pTxtALICE.AddText("ALICE Simulation")
+txt.SetTextFont(62) # Helvetica Bold
+txt = pTxtALICE.AddText("pp, #sqrt{#it{s}} = 13 TeV")
+txt = pTxtALICE.AddText("Pythia6, Perugia2011")
+pTxtALICE.Draw("same")
+
+# Cuts
+pTxtCuts = ROOT.TPaveText(0.60, 0.08, 0.78, 0.20, "brNDC")
+pTxtCuts.SetFillColor(0)
+pTxtCuts.SetTextFont(42) # Helvetica
+pTxtCuts.SetTextAlign(22)
+pTxtCuts.AddText('|#it{#eta}_{jet}| < 0.5')
+pTxtCuts.AddText("|#it{y}_{J/#psi}| < 0.9")
+pTxtCuts.AddText("5 < #it{p}_{T,J/#psi}| < 50 GeV/#it{c}")
+pTxtCuts.Draw("same")
+
 # pT bin
 PAVE_TEXT = []
 def DrawPtBin(text, x1, y1, x2, y2, onY = False, leftY = False, isHeader = False):
