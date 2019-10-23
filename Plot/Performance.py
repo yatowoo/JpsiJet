@@ -9,7 +9,8 @@ parser.add_argument('-f', '--file',help='Analysis results of AliAnalysisTaskJpsi
 parser.add_argument('-o', '--output',help='Output file path', default='JpsiJetAna.root')
 parser.add_argument('-p', '--print',help='Print in PDF file', default='JpsiJetAna.pdf')
 parser.add_argument('--calo',help='Plot calo QA figure', default=False, action='store_true')
-parser.add_argument('--invmass',help='Plot figure of invariant mass spectrum', default=False, action='store_true')
+parser.add_argument('--invmassH',help='Plot figure of invariant mass spectrum (EMCal high)', default=False, action='store_true')
+parser.add_argument('--invmassL',help='Plot figure of invariant mass spectrum (EMCal low)', default=False, action='store_true')
 
 args = parser.parse_args()
 
@@ -153,7 +154,7 @@ anaResult = ROOT.TFile(args.file)
 if(args.calo):
   DrawQA_Electron(anaResult.JpsiJetAnalysis)
 
-if(args.invmass):
+if(args.invmassL):
   txt = pTxtALICE.AddText("pp, #it{#sqrt{s}} = 13 TeV, #it{N}_{ev} = 126 M")
   txt.SetTextFont(42) # Helvetica
   txt.SetTextAlign(13) # Top Left
@@ -161,6 +162,15 @@ if(args.invmass):
   txt.SetTextFont(42) # Helvetica
   txt.SetTextAlign(13) # Top Left
   DrawQA_InvMass(anaResult.TagInfoL, 5.0, 35., 5., 35.)
+
+if(args.invmassH):
+  txt = pTxtALICE.AddText("pp, #it{#sqrt{s}} = 13 TeV, #it{N}_{ev} = 96 M")
+  txt.SetTextFont(42) # Helvetica
+  txt.SetTextAlign(13) # Top Left
+  txt = pTxtALICE.AddText("EMCal trigger, #it{E} > 10 GeV")
+  txt.SetTextFont(42) # Helvetica
+  txt.SetTextAlign(13) # Top Left
+  DrawQA_InvMass(anaResult.TagInfoH, 10.0, 35., 10., 35.)
 
 PrintCover(c, args.print, isBack=True)
 

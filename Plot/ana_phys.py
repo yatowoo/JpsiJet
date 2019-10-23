@@ -245,7 +245,7 @@ class InvMass:
     self.hM.SetMarkerStyle(DATA_STYLE)
     self.hM.SetXTitle("M_{e^{+}e^{-}} (GeV/c^{2})")
     self.hM.GetXaxis().SetRangeUser(self.gHistL, self.gHistH)
-    self.hM.SetYTitle("N_{pairs}")
+    self.hM.SetYTitle("Counts per 40 MeV/#it{c^{2}}")
     self.hM.GetYaxis().SetRangeUser(0.1, 2 * self.hM.GetBinContent(self.hM.GetMaximumBin()))
     # Total
     self.fTot.SetLineColor(TOTAL_COLOR)
