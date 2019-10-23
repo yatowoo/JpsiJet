@@ -12,6 +12,43 @@ from array import array
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetPalette()
 
+def ALICEStyle(graypalette = False):
+  print("[-] INFO - Setting ALICE figure style")
+  ROOT.gStyle.Reset("Plain")
+  ROOT.gStyle.SetOptTitle(0)
+  ROOT.gStyle.SetOptStat(0)
+  if(graypalette):
+    ROOT.gStyle.SetPalette(8,0)
+  else:
+    ROOT.gStyle.SetPalette(1)
+  ROOT.gStyle.SetCanvasColor(10)
+  ROOT.gStyle.SetCanvasBorderMode(0)
+  ROOT.gStyle.SetFrameLineWidth(1)
+  ROOT.gStyle.SetFrameFillColor(kWhite)
+  ROOT.gStyle.SetPadColor(10)
+  ROOT.gStyle.SetPadTickX(1)
+  ROOT.gStyle.SetPadTickY(1)
+  ROOT.gStyle.SetPadBottomMargin(0.15)
+  ROOT.gStyle.SetPadLeftMargin(0.15)
+  ROOT.gStyle.SetHistLineWidth(1)
+  ROOT.gStyle.SetHistLineColor(kRed)
+  ROOT.gStyle.SetFuncWidth(2)
+  ROOT.gStyle.SetFuncColor(kGreen+3)
+  ROOT.gStyle.SetLineWidth(2)
+  ROOT.gStyle.SetLabelSize(0.045,"xyz")
+  ROOT.gStyle.SetLabelOffset(0.01,"y")
+  ROOT.gStyle.SetLabelOffset(0.01,"x")
+  ROOT.gStyle.SetLabelColor(kBlack,"xyz")
+  ROOT.gStyle.SetTitleSize(0.05,"xyz")
+  ROOT.gStyle.SetTitleOffset(1.25,"y")
+  ROOT.gStyle.SetTitleOffset(1.2,"x")
+  ROOT.gStyle.SetTitleFillColor(kWhite)
+  ROOT.gStyle.SetTextSizePixels(26)
+  ROOT.gStyle.SetTextFont(42)
+  ROOT.gStyle.SetLegendBorderSize(0)
+  ROOT.gStyle.SetLegendFillColor(kWhite)
+  ROOT.gStyle.SetLegendFont(42)
+
 # J/psi pT bins : 0 - 50, binw = 0.2, 0.5, 1, 2, 5
 BINNING_JPSI_PT = [0.2*x for x in range(0,25,1)]
 BINNING_JPSI_PT += [ 0.1*x for x in range(50,100,5)]
