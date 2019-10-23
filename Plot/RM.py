@@ -16,11 +16,13 @@ jpsi = mc.FindObject('JpsiBdecay')
 response = jpsi.FindObject('Jet_DetResponse')
 # THnSparse - z_det, z_gen, pTjet_det, pTjet_gen, dZ, dpTjet, dpTJ/psi
 
+ana_util.ALICEStyle()
 ROOT.gStyle.SetPalette(ROOT.kInvertedDarkBodyRadiator)
 
-c = ROOT.TCanvas('cRM','Detector response matrix - 4D',800,800)
+c = ROOT.TCanvas('cRM','Detector response matrix - 4D',1600,1600)
+ana_util.SetPadMargin(c, 0.3, 0.7, 0.4,0.2)
 c.Divide(3,3,0,0)
-JET_PT_BINS = [20,25,35,100]
+JET_PT_BINS = [10,15,35,100]
 RM = [[1,2,3],[4,5,6],[7,8,9]]
 PAD_INDEX = [7,4,1,8,5,2,9,6,3]
 PAVE = [[1,2,3],[4,5,6],[7,8,9]]
@@ -52,6 +54,13 @@ for i in range(3):
     RM[i][j].SetTitle('')
     RM[i][j].SetMaximum(1.0)
     RM[i][j].SetMinimum(0.0)
+    if(3*i + j != 0):
+      RM[i][j].SetXTitle('')
+      RM[i][j].GetXaxis().SetTitleSize(0.)
+      RM[i][j].GetXaxis().SetLabelSize(0.)
+      RM[i][j].SetYTitle('')
+      RM[i][j].GetYaxis().SetTitleSize(0.)
+      RM[i][j].GetYaxis().SetLabelSize(0.)
     RM[i][j].Draw('COLZ')
     PAVE[i][j] = ROOT.TPaveText(0.15,0.8,0.4,0.95,'brNDC')
     PAVE[i][j].SetName('TxtCuts_%d_%d' % (i,j))
@@ -64,9 +73,9 @@ for i in range(3):
       PAVE[i][j].AddText('p_{T,gen} > %d GeV' % JET_PT_BINS[j])
     else:
       PAVE[i][j].AddText('%d < p_{T,gen} < %d GeV' % (JET_PT_BINS[j],JET_PT_BINS[j+1]))
-    PAVE[i][j].Draw('same')
+    #PAVE[i][j].Draw('same')
 
-c.SaveAs('RM_High.root')
-c.SaveAs('RM_High.pdf')
+c.SaveAs('RM_Full.root')
+c.SaveAs('RM_Full.pdf')
 
 f.Close()
