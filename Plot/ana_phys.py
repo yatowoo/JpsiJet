@@ -24,7 +24,7 @@ TOTAL_LINE_WIDTH      = 3
 SIGNAL_COLOR          = kRed
 SIGNAL_LINE           = 2     # Dash-line
 SIGNAL_LINE_WIDTH     = 2
-BACKGROUND_COLOR      = kGreen
+BACKGROUND_COLOR      = kGreen + 3
 BACKGROUND_LINE       = 2
 BACKGROUND_LINE_WIDTH = 2
 DEFAULT_NPX           = 1000
@@ -103,10 +103,12 @@ class InvMass:
     return region
   def DrawResult(self):
     # Fitting result - TPaveText
+    PAD_EDGE_RIGHT = 1 - ROOT.gPad.GetRightMargin()
+    PAD_EDGE_TOP = 1 - ROOT.gPad.GetTopMargin()
     if(STYLE_PERFORMANCE):
-      pTxtFit = ROOT.TPaveText(0.62, 0.72, 0.87, 0.85, "brNDC")
+      pTxtFit = ROOT.TPaveText(PAD_EDGE_RIGHT - 0.28, PAD_EDGE_TOP - 0.18, PAD_EDGE_RIGHT - 0.03, PAD_EDGE_TOP - 0.05, "brNDC")
     else:
-      pTxtFit = ROOT.TPaveText(0.62, 0.39, 0.87, 0.88, "brNDC")
+      pTxtFit = ROOT.TPaveText(PAD_EDGE_RIGHT - 0.28, PAD_EDGE_TOP - 0.51, PAD_EDGE_RIGHT - 0.03, PAD_EDGE_RIGHT - 0.02, "brNDC")
     pTxtFit.SetName("pTxtFit")
     pTxtFit.SetBorderSize(0)
     pTxtFit.SetTextAlign(12)
@@ -217,10 +219,12 @@ class InvMass:
     self.result['Chi2'] = (self.fTot.GetChisquare(), self.fTot.GetNDF())
     # End - Signal region fitting result
   def DrawLegend(self):
+    PAD_EDGE_RIGHT = 1 - ROOT.gPad.GetRightMargin()
+    PAD_EDGE_TOP = 1 - ROOT.gPad.GetTopMargin()
     if(STYLE_PERFORMANCE):
-      self.lgd = ROOT.TLegend(0.13, 0.48, 0.49, 0.68, "", "brNDC")
+      self.lgd = ROOT.TLegend(0.13, PAD_EDGE_TOP - 0.42, 0.49, PAD_EDGE_TOP -0.22, "", "brNDC")
     else:
-      self.lgd = ROOT.TLegend(0.13, 0.68, 0.49, 0.88, "", "brNDC")
+      self.lgd = ROOT.TLegend(0.13, PAD_EDGE_TOP - 0.22, 0.49, PAD_EDGE_TOP - 0.02, "", "brNDC")
     self.lgd.SetName("lgdInvMass")
     self.lgd.SetBorderSize(0)
     self.lgd.SetTextAlign(12)
@@ -246,7 +250,11 @@ class InvMass:
     self.hM.SetXTitle("M_{e^{+}e^{-}} (GeV/c^{2})")
     self.hM.GetXaxis().SetRangeUser(self.gHistL, self.gHistH)
     self.hM.SetYTitle("Counts per 40 MeV/#it{c^{2}}")
-    self.hM.GetYaxis().SetRangeUser(0.1, 2 * self.hM.GetBinContent(self.hM.GetMaximumBin()))
+    if(STYLE_PERFORMANCE):
+      HIST_MAXIMUM_RATIO = 1.35
+    else:
+      HIST_MAXIMUM_RATIO = 2.0
+    self.hM.GetYaxis().SetRangeUser(0.1, HIST_MAXIMUM_RATIO * self.hM.GetBinContent(self.hM.GetMaximumBin()))
     # Total
     self.fTot.SetLineColor(TOTAL_COLOR)
     self.fTot.SetLineWidth(TOTAL_LINE_WIDTH)
@@ -357,7 +365,7 @@ PSEUDOLXY_BDECAY_FIT_L = -0.02 # cm, range of MC shape
 PSEUDOLXY_BDECAY_FIT_R = 0.2   # cm, range of MC shape
 PSEUDOLXY_BDECAY_COLOR = kViolet
 PSEUDOLXY_BKG_FIT      = 0.05  # cm, range of MC shape
-PSEUDOLXY_BKG_COLOR    = kGreen
+PSEUDOLXY_BKG_COLOR    = kGreen + 3
 PSEUDOLXY_TOTAL_FIT_L  = -0.05 # cm, range of fitting
 PSEUDOLXY_TOTAL_FIT_R  = 0.2 # cm, range of fitting
 PSEUDOLXY_TOTAL_COLOR  = kBlack

@@ -23,7 +23,9 @@ args.print = args.output.replace('.root','.pdf')
 
 TRIGGER_CLASSES = ['MB', 'EG1', 'EG2', 'DG1', 'DG2']
 
-c = ROOT.TCanvas('cQA','ALICE Performance Figures',1200, 800)
+c = ROOT.TCanvas('cQA','ALICE Performance Figures',1280, 800)
+c.SetTopMargin(0.02)
+c.SetRightMargin(0.02)
 c.Draw()
 
 fout = ROOT.TFile(args.output,'RECREATE')
@@ -31,7 +33,7 @@ PrintCover(c, args.print)
 
 # Label - ALICE figure
 c.cd(1)
-pTxtALICE = ROOT.TPaveText(0.12, 0.75, 0.35, 0.88,"brNDC")
+pTxtALICE = ROOT.TPaveText(0.12, 0.80, 0.45, 0.96,"brNDC")
 pTxtALICE.SetFillColor(0)
 txt = pTxtALICE.AddText("ALICE Performance")
 txt.SetTextFont(62) # Helvetica Bold
@@ -126,12 +128,12 @@ def DrawQA_InvMass(tagInfo, JPSI_PT_CUT_LOW = 10., JPSI_PT_CUT_UP = 35., JET_PT_
   hM.SetName('hM')
   hM.SetTitle('')
   c.Clear()
-  c.SetWindowSize(1280, 800)
+  c.SetWindowSize(1600, 1200)
   ana_phys.STYLE_PERFORMANCE = True
   jpsi = ana_phys.ProcessInvMass(hM, None, 1.5, 4.5)
   jpsi.hM.Draw('same PE')
   # Cuts
-  PAVE_CUTS = ROOT.TPaveText(0.62, 0.48, 0.82, 0.68, "brNDC")
+  PAVE_CUTS = ROOT.TPaveText(0.70, 0.56, 0.90, 0.76, "brNDC")
   PAVE_CUTS.SetName("pTxtCuts")
   PAVE_CUTS.SetFillColor(0)
   PAVE_CUTS.SetTextFont(42)
