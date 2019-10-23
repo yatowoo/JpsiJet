@@ -123,9 +123,9 @@ class InvMass:
       pTxtFit.AddText("Total:    %.0f #pm %.0f" % self.result['Total'])
       pTxtFit.AddText("Signal:  %.0f #pm %.0f" % self.result['Signal'])
       pTxtFit.AddText("Bkg:      %.0f #pm %.0f" % self.result['Bkg'])
-      pTxtFit.AddText("S/#sqrt{S+B}   = %.2f #pm %.2f" % self.result['SNratio'])
-    pTxtFit.AddText("S/B         = %.2f #pm %.2f" % self.result['SBratio'])
-    pTxtFit.AddText("#chi^{2} / NDF  = %.1f / %d" % self.result['Chi2'])
+      pTxtFit.AddText("#it{S/#sqrt{S+B}}   = %.2f #pm %.2f" % self.result['SNratio'])
+    pTxtFit.AddText("#it{S/B}         = %.2f #pm %.2f" % self.result['SBratio'])
+    pTxtFit.AddText("#it{#chi^{2}} / NDF  = %.1f / %d" % self.result['Chi2'])
     if(not STYLE_PERFORMANCE):
       pTxtFit.AddText("f_{sideband}    = %.2f #pm %.2f" % self.result['SBfactor'])
     pTxtFit.Draw("same")

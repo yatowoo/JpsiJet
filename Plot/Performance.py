@@ -23,7 +23,7 @@ args.print = args.output.replace('.root','.pdf')
 
 TRIGGER_CLASSES = ['MB', 'EG1', 'EG2', 'DG1', 'DG2']
 
-c = ROOT.TCanvas('cQA','ALICE Performance Figures',1280, 800)
+c = ROOT.TCanvas('cQA','ALICE Performance Figures',1200, 800)
 c.Draw()
 
 fout = ROOT.TFile(args.output,'RECREATE')
@@ -104,7 +104,7 @@ def DrawQA_Electron(output):
   lgdE.AddEntry(CaloQA['EG1']['E'], 'Trigger E_{EMC}^{Cluster} > 10 GeV')
   lgdE.Draw('same')
     # Label
-  txt = pTxtALICE.AddText("pp, #it{#sqrt{s}} = 13 TeV")
+  txt = pTxtALICE.AddText("pp, #sqrt{#it{s}} = 13 TeV")
   txt.SetTextFont(42) # Helvetica
   txt.SetTextAlign(13) # Top Left
   txt = pTxtALICE.AddText("|#it{#eta}| < 0.7")
@@ -135,10 +135,10 @@ def DrawQA_InvMass(tagInfo, JPSI_PT_CUT_LOW = 10., JPSI_PT_CUT_UP = 35., JET_PT_
   PAVE_CUTS.SetName("pTxtCuts")
   PAVE_CUTS.SetFillColor(0)
   PAVE_CUTS.SetTextFont(42)
-  PAVE_CUTS.AddText('|y_{e^{+}e^{-}}| < 0.9')
-  PAVE_CUTS.AddText('%.1f < p_{T,e^{+}e^{-}} < %.1f GeV/c' % (JPSI_PT_CUT_LOW, JPSI_PT_CUT_UP) )
-  PAVE_CUTS.AddText('|#eta_{jet}| < 0.5')
-  PAVE_CUTS.AddText('%.1f < p_{T,jet} < %.1f GeV/c' % (JET_PT_CUT_LOW, JET_PT_CUT_UP) )
+  PAVE_CUTS.AddText('|#it{y}_{e^{+}e^{-}}| < 0.9')
+  PAVE_CUTS.AddText('%.1f < #it{p}_{T,e^{+}e^{-}} < %.1f GeV/#it{c}' % (JPSI_PT_CUT_LOW, JPSI_PT_CUT_UP) )
+  PAVE_CUTS.AddText('|#it{#eta}_{jet}| < 0.5')
+  PAVE_CUTS.AddText('%.1f < #it{p}_{T,jet} < %.1f GeV/#it{c}' % (JET_PT_CUT_LOW, JET_PT_CUT_UP) )
   PAVE_CUTS.Draw('same')
   # Label
   DrawALICE(0.15, 0.75, 0.35, 0.89)
@@ -164,7 +164,7 @@ if(args.invmassL):
   DrawQA_InvMass(anaResult.TagInfoL, 5.0, 35., 5., 35.)
 
 if(args.invmassH):
-  txt = pTxtALICE.AddText("pp, #it{#sqrt{s}} = 13 TeV, #it{N}_{ev} = 96 M")
+  txt = pTxtALICE.AddText("pp, #sqrt{#it{s}} = 13 TeV, #it{N}_{ev} = 96 M")
   txt.SetTextFont(42) # Helvetica
   txt.SetTextAlign(13) # Top Left
   txt = pTxtALICE.AddText("EMCal trigger, #it{E} > 10 GeV")
