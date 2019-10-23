@@ -35,7 +35,7 @@ response.GetAxis(1).SetRangeUser(0,1)
 
 # pT bin
 PAVE_TEXT = []
-def DrawPtBin(text, x1, y1, x2, y2, onY = False):
+def DrawPtBin(text, x1, y1, x2, y2, onY = False, leftY = False, isHeader = False):
   pTxt = ROOT.TPaveText(x1, y1, x2, y2, "brNDC")
   pTxt.SetFillColor(0)
   pTxt.SetTextFont(42)
@@ -44,6 +44,11 @@ def DrawPtBin(text, x1, y1, x2, y2, onY = False):
   txt = pTxt.AddText(text)
   if(onY):
     txt.SetTextAngle(270)
+  if(leftY):
+    txt.SetTextAngle(90)
+  if(isHeader):
+    txt.SetTextFont(62)
+    txt.SetTextSize(0.04)
   pTxt.Draw("same")
   PAVE_TEXT.append(pTxt)
 
@@ -51,9 +56,13 @@ c.cd()
 DrawPtBin("10 - 15 GeV/#it{c}", 0.05, 0.85, 0.3, 0.90)
 DrawPtBin("15 - 35 GeV/#it{c}", 0.3, 0.85, 0.55, 0.90)
 DrawPtBin("> 35 GeV/#it{c}", 0.55, 0.85, 0.8, 0.90)
-DrawPtBin("10 - 15 GeV/#it{c}", 0.85, 0.05, 0.90, 0.32, onY=True)
-DrawPtBin("15 - 35 GeV/#it{c}", 0.85, 0.32, 0.90, 0.58, onY=True)
-DrawPtBin("> 35 GeV/#it{c}", 0.85, 0.58, 0.90, 0.85, onY=True)
+DrawPtBin("Measured jet #it{p}_{T}", 0.05, 0.9, 0.8, 0.95, isHeader=True)
+DrawPtBin("10 - 15 GeV/#it{c}", 0.9, 0.05, 0.95, 0.32, onY=True)
+DrawPtBin("15 - 35 GeV/#it{c}", 0.9, 0.32, 0.95, 0.58, onY=True)
+DrawPtBin("> 35 GeV/#it{c}", 0.9, 0.58, 0.95, 0.85, onY=True)
+DrawPtBin("True jet #it{p}_{T}", 0.95, 0.05, 1.0, 0.85, onY=True, isHeader=True)
+DrawPtBin("True #it{z}", 0.06, 0.06, 0.09, 0.3, leftY=True, isHeader=True)
+DrawPtBin("Measured #it{z}", 0.06, 0.06, 0.28, 0.09, isHeader=True)
 
 for i in range(3):
   response.GetAxis(2).SetRangeUser(JET_PT_BINS[i],JET_PT_BINS[i+1])
@@ -80,14 +89,16 @@ for i in range(3):
     RM[i][j].SetTitle('')
     RM[i][j].SetMaximum(1.0)
     RM[i][j].SetMinimum(0.0)
+    RM[i][j].GetXaxis().SetTitleSize(0.)
+    RM[i][j].GetYaxis().SetTitleSize(0.)
     if(3*i + j != 0):
       RM[i][j].SetXTitle('')
-      RM[i][j].GetXaxis().SetTitleSize(0.)
       RM[i][j].GetXaxis().SetLabelSize(0.)
       RM[i][j].SetYTitle('')
-      RM[i][j].GetYaxis().SetTitleSize(0.)
       RM[i][j].GetYaxis().SetLabelSize(0.)
     RM[i][j].Draw('COLZ')
+    RM[i][j].GetZaxis().SetLabelSize(0.02)
+    RM[i][j].GetZaxis().SetLabelFont(42)
     PAVE[i][j] = ROOT.TPaveText(0.15,0.8,0.4,0.95,'brNDC')
     PAVE[i][j].SetName('TxtCuts_%d_%d' % (i,j))
     PAVE[i][j].SetFillColor(0)
