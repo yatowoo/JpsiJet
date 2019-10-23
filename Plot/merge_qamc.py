@@ -13,6 +13,8 @@ args = parser.parse_args()
 import ROOT
 import ana_util
 
+args.print = args.output.replace('.root','.pdf')
+
 fout = ROOT.TFile(args.output,'RECREATE')
 c = ROOT.TCanvas('cQA','J/#psi in jets MC production - QA 10%% (LHC%s)' % args.sub, 800, 600)
 c.Draw()
@@ -45,7 +47,7 @@ for i,pTmin in enumerate(PT_HARD_BINS[:-1]):
     QA[i]['Title'] = "p_{T} hard bin > %d GeV/c" % PT_HARD_BINS[i]
   else:
     QA[i]['Title'] = "p_{T} hard bin: %d - %d GeV/c" % (PT_HARD_BINS[i], PT_HARD_BINS[i+1])
-  f = ROOT.TFile('../output/MCrequest/NewMC/JpsiJetMC_NewQA%s_bin%d_191002/AnalysisResults.root' % (args.sub, i+1))
+  f = ROOT.TFile('../output/JpsiJetMC_FullQA/JpsiJetMC_FullQA%s_bin%d_191017/AnalysisResults.root' % (args.sub, i+1))
   if(f.IsOpen()):
     print('>>> Processing ' + f.GetName())
     print('[-] Config : ' + QA[i]['Title'])
@@ -119,7 +121,8 @@ for hist in QA_NAME:
   hSum = QA[0][hist].Clone('hSum'+hist)
   hSum.Reset()
   ana_util.SetColorAndStyle(hSum, ROOT.kRed, ana_util.kRound, 1.5)
-  lgd.AddEntry(hSum, 'Sum')
+  if(cfg['Sum']):
+    lgd.AddEntry(hSum, 'Sum')
   for i,pTmin in enumerate(PT_HARD_BINS[:-1]):
     color = next(ana_util.COLOR)
     ana_util.SetColorAndStyle(QA[i][hist], color)
@@ -149,5 +152,5 @@ for hist in QA_NAME:
   c.Print(args.print, 'Title:' + hist)
   c.Write('c' + hist)
 
-ana_util.PrintCover(c,args.print,'-',isBack=True)
+ana_util.PrintCover(c,args.print,'End of QA',isBack=True)
 fout.Close()
