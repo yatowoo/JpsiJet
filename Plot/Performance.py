@@ -225,7 +225,7 @@ if(args.map):
   c.Clear()
   c.SetWindowSize(1200,1200)
   c.SetMargin(0,0,0,0)
-  padBody = ROOT.TPad("padBody","padBody", 0., 0., 1.0, 0.85)
+  padBody = ROOT.TPad("padBody","padBody", 0., 0., 1.0, 0.95)
   padBody.SetMargin(0.10,0.12,0.05,0.02)
   padBody.SetLogz()
   padBody.Draw()
