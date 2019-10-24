@@ -60,7 +60,8 @@ def DeltaPhi(phi1, phi2):
     dPhi += 2*pi;
   return dPhi; 
 
-for ev in tqdm(f.aodTree, desc='Processing events : ', unit='evts'):
+pbar = tqdm(total=100, desc='Processing events : ', unit='evts')
+for ev in f.aodTree:
   for jet in ev.jets:
     if(not CutJet(jet)):
       continue
@@ -76,6 +77,7 @@ for ev in tqdm(f.aodTree, desc='Processing events : ', unit='evts'):
           HistMgr['JpsiJet'].Fill(
             DeltaPhi(ROOT.TVector2.Phi_0_2pi(jpsi.Phi()),jet.Phi()),
             jpsi.Eta()-jet.Eta())
+  pbar.update(1)
 
 fout.cd()
 for obj in HistMgr.values():
