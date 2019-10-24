@@ -159,6 +159,8 @@ def DrawQA_InvMass(tagInfo, JPSI_PT_CUT_LOW = 10., JPSI_PT_CUT_UP = 35., JET_PT_
   hM.SetTitle('')
   c.Clear()
   c.SetWindowSize(1600, 1200)
+  hM.GetXaxis().SetTitleSize(0.05)
+  hM.GetYaxis().SetTitleSize(0.05)
   ana_phys.STYLE_PERFORMANCE = True
   jpsi = ana_phys.ProcessInvMass(hM, None, 1.5, 4.5)
   jpsi.hM.Draw('same PE')
@@ -167,17 +169,20 @@ def DrawQA_InvMass(tagInfo, JPSI_PT_CUT_LOW = 10., JPSI_PT_CUT_UP = 35., JET_PT_
   PAVE_CUTS.SetName("pTxtCuts")
   PAVE_CUTS.SetFillColor(0)
   PAVE_CUTS.SetTextFont(42)
+  PAVE_CUTS.SetTextSize(0.035)
   PAVE_CUTS.AddText('|#it{y}_{e^{+}e^{-}}| < 0.9')
-  PAVE_CUTS.AddText('%.1f < #it{p}_{T,e^{+}e^{-}} < %.1f GeV/#it{c}' % (JPSI_PT_CUT_LOW, JPSI_PT_CUT_UP) )
+  PAVE_CUTS.AddText('   %.1f < #it{p}_{T,e^{+}e^{-}} < %.1f GeV/#it{c}' % (JPSI_PT_CUT_LOW, JPSI_PT_CUT_UP) )
   PAVE_CUTS.AddText('|#it{#eta}_{jet}| < 0.5')
-  PAVE_CUTS.AddText('%.1f < #it{p}_{T,jet} < %.1f GeV/#it{c}' % (JET_PT_CUT_LOW, JET_PT_CUT_UP) )
+  PAVE_CUTS.AddText('    %.1f < #it{p}_{T,jet} < %.1f GeV/#it{c}' % (JET_PT_CUT_LOW, JET_PT_CUT_UP) )
   PAVE_CUTS.Draw('same')
   # Label
-  DrawALICE(pTxtALICE, 0.15, 0.75, 0.35, 0.89)
+  pTxtALICE.Draw("same")
   # Output
   c.Print(args.print, 'Title:DieleJets_InvMas')
-  ROOT.gPad.SaveAs("PERF_JpsiJet_DielectronJets_InvMass_pp13TeV.pdf")
-  ROOT.gPad.SaveAs("PERF_JpsiJet_DielectronJets_InvMass_pp13TeV.eps")
+  if(args.invmassL):
+    PrintFigure("PERF_JpsiJet_DielectronJets_InvMassL_pp13TeV")
+  if(args.invmassH):
+    PrintFigure("PERF_JpsiJet_DielectronJets_InvMassH_pp13TeV")
   fout.cd()
   c.Write('cM')
 
@@ -222,21 +227,20 @@ if(args.calo):
   DrawQA_Electron(anaResult.JpsiJetAnalysis)
 
 if(args.invmassL):
+  pTxtALICE = InitALICELabel("ALICE Performance", 0.02, -0.20, 0.35, -0.02)
   txt = pTxtALICE.AddText("pp, #it{#sqrt{s}} = 13 TeV, #it{N}_{ev} = 126 M")
-  txt.SetTextFont(42) # Helvetica
-  txt.SetTextAlign(13) # Top Left
+  txt.SetTextSize(0.035)
   txt = pTxtALICE.AddText("EMCal trigger, #it{E} > 5 GeV")
-  txt.SetTextFont(42) # Helvetica
-  txt.SetTextAlign(13) # Top Left
+  txt.SetTextSize(0.035)
   DrawQA_InvMass(anaResult.TagInfoL, 5.0, 35., 5., 35.)
 
+
 if(args.invmassH):
+  pTxtALICE = InitALICELabel("ALICE Performance", 0.02, -0.20, 0.35, -0.02)
   txt = pTxtALICE.AddText("pp, #sqrt{#it{s}} = 13 TeV, #it{N}_{ev} = 96 M")
-  txt.SetTextFont(42) # Helvetica
-  txt.SetTextAlign(13) # Top Left
+  txt.SetTextSize(0.035)
   txt = pTxtALICE.AddText("EMCal trigger, #it{E} > 10 GeV")
-  txt.SetTextFont(42) # Helvetica
-  txt.SetTextAlign(13) # Top Left
+  txt.SetTextSize(0.035)
   DrawQA_InvMass(anaResult.TagInfoH, 10.0, 35., 10., 35.)
 
 if(args.eff):

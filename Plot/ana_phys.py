@@ -106,18 +106,18 @@ class InvMass:
     PAD_EDGE_RIGHT = 1 - ROOT.gPad.GetRightMargin()
     PAD_EDGE_TOP = 1 - ROOT.gPad.GetTopMargin()
     if(STYLE_PERFORMANCE):
-      pTxtFit = ROOT.TPaveText(PAD_EDGE_RIGHT - 0.28, PAD_EDGE_TOP - 0.18, PAD_EDGE_RIGHT - 0.03, PAD_EDGE_TOP - 0.05, "brNDC")
+      pTxtFit = ROOT.TPaveText(PAD_EDGE_RIGHT - 0.33, PAD_EDGE_TOP - 0.18, PAD_EDGE_RIGHT - 0.05, PAD_EDGE_TOP - 0.05, "brNDC")
+      pTxtFit.SetTextSize(0.035)
     else:
       pTxtFit = ROOT.TPaveText(PAD_EDGE_RIGHT - 0.28, PAD_EDGE_TOP - 0.51, PAD_EDGE_RIGHT - 0.03, PAD_EDGE_RIGHT - 0.02, "brNDC")
+      pTxtFit.SetTextSize(0.03)
     pTxtFit.SetName("pTxtFit")
     pTxtFit.SetBorderSize(0)
     pTxtFit.SetTextAlign(12)
     pTxtFit.SetTextFont(42)
-    pTxtFit.SetTextSize(0.03)
     pTxtFit.SetFillColor(0)
       # Entries - Signal region
-    entry = pTxtFit.AddText("M_{J/#psi} #in [%.2f, %.2f] (GeV/c^{2})" % self.result['Region']['Signal'])
-    entry.SetTextSize(0.03)
+    entry = pTxtFit.AddText("#it{M}_{J/#psi} #in [%.2f, %.2f] (GeV/#it{c}^{2})" % self.result['Region']['Signal'])
     entry.SetTextFont(62) # Helvetica (Bold)
       # Entries - Integral
     if(not STYLE_PERFORMANCE):
@@ -219,17 +219,19 @@ class InvMass:
     self.result['Chi2'] = (self.fTot.GetChisquare(), self.fTot.GetNDF())
     # End - Signal region fitting result
   def DrawLegend(self):
+    PAD_EDGE_LEFT = ROOT.gPad.GetLeftMargin()
     PAD_EDGE_RIGHT = 1 - ROOT.gPad.GetRightMargin()
     PAD_EDGE_TOP = 1 - ROOT.gPad.GetTopMargin()
     if(STYLE_PERFORMANCE):
-      self.lgd = ROOT.TLegend(0.13, PAD_EDGE_TOP - 0.42, 0.49, PAD_EDGE_TOP -0.22, "", "brNDC")
+      self.lgd = ROOT.TLegend(PAD_EDGE_LEFT + 0.03, PAD_EDGE_TOP - 0.47, PAD_EDGE_LEFT + 0.35, PAD_EDGE_TOP -0.22, "", "brNDC")
+      self.lgd.SetTextSize(0.035)
     else:
       self.lgd = ROOT.TLegend(0.13, PAD_EDGE_TOP - 0.22, 0.49, PAD_EDGE_TOP - 0.02, "", "brNDC")
+      self.lgd.SetTextSize(0.03)
     self.lgd.SetName("lgdInvMass")
     self.lgd.SetBorderSize(0)
     self.lgd.SetTextAlign(12)
     self.lgd.SetTextFont(42)
-    self.lgd.SetTextSize(0.03)
     self.lgd.AddEntry(self.hM, "e^{+}e^{-} pair")
     if(not self.hSigMC):
       self.lgd.AddEntry(self.fTot,"Total fit")
@@ -247,8 +249,9 @@ class InvMass:
     self.hM.SetLineColor(DATA_COLOR)
     self.hM.SetMarkerColor(DATA_COLOR)
     self.hM.SetMarkerStyle(DATA_STYLE)
-    self.hM.SetXTitle("M_{e^{+}e^{-}} (GeV/c^{2})")
+    self.hM.SetXTitle("#it{M}_{e^{+}e^{-}} (GeV/#it{c}^{2})")
     self.hM.GetXaxis().SetRangeUser(self.gHistL, self.gHistH)
+    self.hM.GetYaxis().CenterTitle(True)
     self.hM.SetYTitle("Counts per 40 MeV/#it{c^{2}}")
     if(STYLE_PERFORMANCE):
       HIST_MAXIMUM_RATIO = 1.35
