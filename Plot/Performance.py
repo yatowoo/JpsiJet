@@ -246,9 +246,10 @@ if(args.map):
   zAxis.SetTitle("Counts")
   zAxis.CenterTitle(True)
   zAxis.SetTitleSize(0.05)
-  hMap.Draw("LEGO2Z")
+  hMap.Draw("LEGO2")
   # Palette
-  pAxis = hMap.FindObject('palette')
+  pAxis = ROOT.TPaletteAxis(0.81, -0.9, 0.9, 0.9, hMap)
+  pAxis.Draw("same")
   # Label
   c.cd()
   txt = pTxtALICE.AddText("pp, #sqrt{#it{s}} = 13 TeV")
