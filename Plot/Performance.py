@@ -27,18 +27,21 @@ TRIGGER_CLASSES = ['MB', 'EG1', 'EG2', 'DG1', 'DG2']
 
 ana_util.ALICEStyle()
 c = ROOT.TCanvas('cQA','ALICE Performance Figures',1280, 800)
-c.SetMargin(0.1, 0.02, 0.1, 0.02)
+c.SetMargin(0.15, 0.02, 0.15, 0.02)
 c.Draw()
 
+PAD_EDGE_LEFT = c.GetLeftMargin()
 PAD_EDGE_RIGHT = 1 - c.GetRightMargin()
+PAD_EDGE_BOTTOM   = c.GetBottomMargin()
 PAD_EDGE_TOP   = 1 - c.GetTopMargin()
 
 fout = ROOT.TFile(args.output,'RECREATE')
 PrintCover(c, args.print)
 
 # Label - ALICE figure
-pTxtALICE = ROOT.TPaveText(0.12, PAD_EDGE_TOP - 0.18, 0.45, PAD_EDGE_TOP - 0.02,"brNDC")
+pTxtALICE = ROOT.TPaveText(PAD_EDGE_LEFT + 0.02, PAD_EDGE_TOP - 0.18, PAD_EDGE_LEFT + 0.35, PAD_EDGE_TOP - 0.01,"brNDC")
 pTxtALICE.SetFillColor(0)
+pTxtALICE.SetTextSize(0.05)
 pTxtALICE.SetTextFont(42) # Helvetica
 pTxtALICE.SetTextAlign(13) # Top Left
 if(args.eff):
@@ -57,8 +60,9 @@ def DrawQA_Electron(output):
   CaloQA = {}
   c.Clear()
   c.SetWindowSize(1600, 1200)
-  lgdE = ROOT.TLegend(PAD_EDGE_RIGHT - 0.35, PAD_EDGE_TOP - 0.25, PAD_EDGE_TOP - 0.05, PAD_EDGE_TOP - 0.05, "", "brNDC")
+  lgdE = ROOT.TLegend(PAD_EDGE_RIGHT - 0.42, PAD_EDGE_TOP - 0.25, PAD_EDGE_TOP - 0.05, PAD_EDGE_TOP - 0.015, "", "brNDC")
   lgdE.SetBorderSize(0)
+  lgdE.SetTextSize(0.04)
   lgdRF = ROOT.TLegend(0.5, 0.12, 0.88, 0.45, "", "brNDC")
   lgdRF.SetBorderSize(0)
   for trig in TRIGGER_CLASSES:
@@ -94,9 +98,10 @@ def DrawQA_Electron(output):
   CaloQA['MB']['E'].SetXTitle('#it{E} (GeV)')
   CaloQA['MB']['E'].SetYTitle('#frac{1}{#it{N}_{evts}} #frac{d#it{N}_{cluster}}{d#it{E}}')
   CaloQA['MB']['E'].GetXaxis().SetRangeUser(0., 30.)
+  CaloQA['MB']['E'].GetXaxis().SetTitleSize(0.05)
   CaloQA['MB']['E'].GetYaxis().SetRangeUser(1e-9, 20)
-  CaloQA['MB']['E'].GetYaxis().SetTitleOffset(1.5)
-  CaloQA['MB']['E'].GetYaxis().SetTitleSize(0.03)
+  CaloQA['MB']['E'].GetYaxis().SetTitleOffset(1.2)
+  CaloQA['MB']['E'].GetYaxis().SetTitleSize(0.05)
   ROOT.gPad.SetLogy()
   CaloQA['MB']['E'].Draw('PE')
   lgdE.AddEntry(CaloQA['MB']['E'], 'Minimum bias trigger')
@@ -118,7 +123,7 @@ def DrawQA_Electron(output):
   txt = pTxtALICE.AddText("|#it{#eta}| < 0.7")
   txt.SetTextFont(42) # Helvetica
   txt.SetTextAlign(13) # Top Left
-  DrawALICE(0.15, 0.75, 0.35, 0.88)
+  DrawALICE(PAD_EDGE_LEFT + 0.02, PAD_EDGE_TOP - 0.18, PAD_EDGE_LEFT + 0.35, PAD_EDGE_TOP - 0.01)
   # Output
   c.Print(args.print, 'Title:Dielectron_E')
   ROOT.gPad.SaveAs("PERF_JpsiJet_ElectronEMCalE_pp13TeV.pdf")
