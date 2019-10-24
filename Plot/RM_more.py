@@ -16,3 +16,6 @@ plt.SetY2NDC(0.85)
 plt.Draw()
 
 f.cRM.SaveAs('JpsiJet_SIMUL_BJetJpsi_RM_pp13TeV.eps')
+f.cRM.SaveAs('JpsiJet_SIMUL_BJetJpsi_RM_pp13TeV.root')
+f.cRM.SaveAs('JpsiJet_SIMUL_BJetJpsi_RM_pp13TeV.pdf')
+f.cRM.SaveAs('JpsiJet_SIMUL_BJetJpsi_RM_pp13TeV.png')

@@ -35,9 +35,12 @@ response.GetAxis(1).SetRangeUser(0,1)
 
 # ALICE Label
 pTxtALICE = ROOT.TPaveText(0.06, 0.75, 0.26, 0.84,"brNDC")
+pTxtALICE.SetBorderSize(0)
+pTxtALICE.SetFillStyle(0)
 pTxtALICE.SetFillColor(0)
 pTxtALICE.SetTextFont(42) # Helvetica
 pTxtALICE.SetTextAlign(13) # Top Left
+pTxtALICE.SetTextSize(0.025)
 txt = pTxtALICE.AddText("ALICE Simulation")
 txt.SetTextFont(62) # Helvetica Bold
 txt = pTxtALICE.AddText("pp, #sqrt{#it{s}} = 13 TeV")
@@ -45,10 +48,13 @@ txt = pTxtALICE.AddText("Pythia6, Perugia2011")
 pTxtALICE.Draw("same")
 
 # Cuts
-pTxtCuts = ROOT.TPaveText(0.60, 0.08, 0.78, 0.20, "brNDC")
+pTxtCuts = ROOT.TPaveText(0.59, 0.06, 0.76, 0.18, "brNDC")
+pTxtCuts.SetBorderSize(0)
+pTxtCuts.SetFillStyle(0)
 pTxtCuts.SetFillColor(0)
 pTxtCuts.SetTextFont(42) # Helvetica
 pTxtCuts.SetTextAlign(22)
+pTxtCuts.SetTextSize(0.025)
 pTxtCuts.AddText('|#it{#eta}_{jet}| < 0.5')
 pTxtCuts.AddText("|#it{y}_{J/#psi}| < 0.9")
 pTxtCuts.AddText("5 < #it{p}_{T,J/#psi}| < 50 GeV/#it{c}")
@@ -84,6 +90,9 @@ DrawPtBin("> 35 GeV/#it{c}", 0.9, 0.58, 0.95, 0.85, onY=True)
 DrawPtBin("True jet #it{p}_{T}", 0.95, 0.05, 1.0, 0.85, onY=True, isHeader=True)
 DrawPtBin("True #it{z}", 0.06, 0.06, 0.09, 0.3, leftY=True, isHeader=True)
 DrawPtBin("Measured #it{z}", 0.06, 0.06, 0.28, 0.09, isHeader=True)
+DrawPtBin("0", 0.03, 0.03, 0.05, 0.05)
+DrawPtBin("1", 0.28, 0.02, 0.32, 0.05)
+DrawPtBin("1", 0.02, 0.3, 0.05, 0.34)
 
 for i in range(3):
   response.GetAxis(2).SetRangeUser(JET_PT_BINS[i],JET_PT_BINS[i+1])
@@ -112,11 +121,11 @@ for i in range(3):
     RM[i][j].SetMinimum(0.0)
     RM[i][j].GetXaxis().SetTitleSize(0.)
     RM[i][j].GetYaxis().SetTitleSize(0.)
+    RM[i][j].SetXTitle('')
+    RM[i][j].GetXaxis().SetLabelSize(0.)
+    RM[i][j].SetYTitle('')
+    RM[i][j].GetYaxis().SetLabelSize(0.)
     if(3*i + j != 0):
-      RM[i][j].SetXTitle('')
-      RM[i][j].GetXaxis().SetLabelSize(0.)
-      RM[i][j].SetYTitle('')
-      RM[i][j].GetYaxis().SetLabelSize(0.)
       RM[i][j].Draw('COL')
     else:
       RM[i][j].Draw('COLZ')
