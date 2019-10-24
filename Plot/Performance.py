@@ -49,12 +49,26 @@ if(args.eff):
 else:
   txt = pTxtALICE.AddText("ALICE Performance")
 txt.SetTextFont(62) # Helvetica Bold
-def DrawALICE(x1, y1, x2, y2):
-  pTxtALICE.SetX1NDC(x1)
-  pTxtALICE.SetY1NDC(y1)
-  pTxtALICE.SetX2NDC(x2)
-  pTxtALICE.SetY2NDC(y2)
-  pTxtALICE.Draw("same")
+def DrawALICE(pTxt, x1, y1, x2, y2):
+  pTxt.SetX1NDC(x1)
+  pTxt.SetY1NDC(y1)
+  pTxt.SetX2NDC(x2)
+  pTxt.SetY2NDC(y2)
+  pTxt.Draw("same")
+
+def InitALICELabel(text, x1, y1, x2, y2, size=0.04):
+  PAD_EDGE_LEFT = ROOT.gPad.GetLeftMargin()
+  PAD_EDGE_RIGHT = 1 - ROOT.gPad.GetRightMargin()
+  PAD_EDGE_BOTTOM   = ROOT.gPad.GetBottomMargin()
+  PAD_EDGE_TOP   = 1 - ROOT.gPad.GetTopMargin()
+  pTxtALICE = ROOT.TPaveText(PAD_EDGE_LEFT + x1, PAD_EDGE_TOP + y1, PAD_EDGE_LEFT + x2, PAD_EDGE_TOP + y2,"brNDC")
+  pTxtALICE.SetFillColor(0)
+  pTxtALICE.SetTextSize(size)
+  pTxtALICE.SetTextFont(42) # Helvetica
+  pTxtALICE.SetTextAlign(13) # Top Left
+  txt = pTxtALICE.AddText(text)
+  txt.SetTextFont(62) # Helvetica Bold
+  return pTxtALICE
 
 def PrintFigure(name):
   ROOT.gPad.SaveAs(name + ".pdf")
@@ -129,7 +143,7 @@ def DrawQA_Electron(output):
   txt = pTxtALICE.AddText("|#it{#eta}| < 0.7")
   txt.SetTextFont(42) # Helvetica
   txt.SetTextAlign(13) # Top Left
-  DrawALICE(PAD_EDGE_LEFT + 0.02, PAD_EDGE_TOP - 0.18, PAD_EDGE_LEFT + 0.35, PAD_EDGE_TOP - 0.01)
+  DrawALICE(pTxtALICE, PAD_EDGE_LEFT + 0.02, PAD_EDGE_TOP - 0.18, PAD_EDGE_LEFT + 0.35, PAD_EDGE_TOP - 0.01)
   # Output
   c.Print(args.print, 'Title:Dielectron_E')
   PrintFigure("PERF_JpsiJet_ElectronEMCalE_pp13TeV")
@@ -159,7 +173,7 @@ def DrawQA_InvMass(tagInfo, JPSI_PT_CUT_LOW = 10., JPSI_PT_CUT_UP = 35., JET_PT_
   PAVE_CUTS.AddText('%.1f < #it{p}_{T,jet} < %.1f GeV/#it{c}' % (JET_PT_CUT_LOW, JET_PT_CUT_UP) )
   PAVE_CUTS.Draw('same')
   # Label
-  DrawALICE(0.15, 0.75, 0.35, 0.89)
+  DrawALICE(pTxtALICE, 0.15, 0.75, 0.35, 0.89)
   # Output
   c.Print(args.print, 'Title:DieleJets_InvMas')
   ROOT.gPad.SaveAs("PERF_JpsiJet_DielectronJets_InvMass_pp13TeV.pdf")
@@ -267,16 +281,17 @@ if(args.map):
   pAxis = ROOT.TPaletteAxis(0.81, -0.9, 0.9, 0.8, hMap)
   pAxis.Draw("same")
   # Label
-  c.cd()
-  txt = pTxtALICE.AddText("pp, #sqrt{#it{s}} = 13 TeV")
-  txt = pTxtALICE.AddText("EMCal trigger, #it{E} > 5 GeV")
-  pTxtALICE.Draw("same")
+  pTxt = InitALICELabel("ALICE Performance", 0.02, -0.20, 0.35, -0.02)
+  txt = pTxt.AddText("pp, #sqrt{#it{s}} = 13 TeV")
+  txt = pTxt.AddText("EMCal trigger, #it{E} > 5 GeV")
+  pTxt.Draw("same")
   # Cuts
-  PAVE_CUTS = ROOT.TPaveText(0.6, 0.7, 0.85, 0.95, "brNDC")
+  PAVE_CUTS = ROOT.TPaveText(0.55, 0.7, 0.88, 0.96, "brNDC")
   PAVE_CUTS.SetName("pTxtCuts")
   PAVE_CUTS.SetFillColor(0)
   PAVE_CUTS.SetTextFont(42)
-  PAVE_CUTS.SetTextSize(0.03)
+  PAVE_CUTS.SetTextSize(0.035)
+  PAVE_CUTS.SetTextAlign(22)
   txt = PAVE_CUTS.AddText('#it{M}_{e^{+}e^{-}} #in [2.92, 3.16] (GeV/#it{c}^{2})')
   txt.SetTextFont(62)
   PAVE_CUTS.AddText('|#it{y}_{e^{+}e^{-}}| < 0.9')
@@ -286,7 +301,7 @@ if(args.map):
   PAVE_CUTS.Draw('same')
   # Output
   c.Print(args.print, 'Title:QA_JpsiJetMap')
-  ROOT.gPad.SaveAs("JpsiJet_PERF_JpsiJetCorrelation_Raw_pp13TeV.eps")
+  PrintFigure("JpsiJet_PERF_JpsiJetCorrelation_Raw_pp13TeV")
   fout.cd()
   c.Write('cMap')
 
