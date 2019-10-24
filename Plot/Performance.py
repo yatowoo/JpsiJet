@@ -189,27 +189,35 @@ def DrawQA_InvMass(tagInfo, JPSI_PT_CUT_LOW = 10., JPSI_PT_CUT_UP = 35., JET_PT_
 # Processing MC output from JpsiJetAna.py
 def DrawQA_Eff(mc):
   c.Clear()
-  c.SetWindowSize(1600,1200)
+  c.SetWindowSize(1440,1200)
   c.SetLogy()
   hP = mc.hJpsiEffPrompt
   hP.SetMarkerSize(2)
   hP.SetXTitle("#it{p}_{T,J/#psi} (GeV/#it{c})")
   hP.SetYTitle('#it{A #times #varepsilon}')
-  hP.GetYaxis().SetRangeUser(5e-4, 5e-1)
-  hP.GetYaxis().SetTitleOffset(1.2)
+  hP.GetYaxis().SetRangeUser(5e-4, 8e-1)
+  hP.GetYaxis().CenterTitle(True)
+  hP.GetYaxis().SetTitleFont(62)
+  hP.GetYaxis().SetTitleSize(0.07)
+  hP.GetYaxis().SetTitleOffset(0.9)
+  hP.GetXaxis().SetTitleSize(0.05)
   hP.GetXaxis().SetTitleOffset(1.2)
   mc.hJpsiEffPrompt.Draw("PE")
   hB = mc.hJpsiEffBdecay
   hB.SetMarkerSize(2)
   mc.hJpsiEffBdecay.Draw("same PE")
   # Description
-  pTxt = ROOT.TPaveText(0.6, 0.4, 0.96, 0.5,"tlNDC")
+  pTxt = ROOT.TPaveText(0.6, 0.35, 0.9, 0.53,"tlNDC")
   pTxt.SetFillColor(0)
+  pTxt.SetTextSize(0.04)
+  pTxt.SetTextAlign(32)
   pTxt.AddText("J/#psi #rightarrow e^{+}e^{-}, |#it{y}_{J/#psi}| < 0.9")
-  pTxt.AddText("reco. with EMCal/DCal, #it{E} > 5 GeV")
+  pTxt.AddText("reco. with EMCal/DCal")
+  pTxt.AddText("#it{E} > 5 GeV")
   pTxt.Draw("same")
   # Legend
-  lgd = ROOT.TLegend(0.67, 0.2, 0.87, 0.38)
+  lgd = ROOT.TLegend(0.65, 0.2, 0.88, 0.35)
+  lgd.SetTextSize(0.04)
   lgd.AddEntry(hP, 'Prompt')
   lgd.AddEntry(hB, 'Non-prompt')
   lgd.Draw("same")
@@ -217,7 +225,7 @@ def DrawQA_Eff(mc):
   pTxtALICE.Draw("same")
   # Output
   c.Print(args.print, 'Title:MC_JpsiEff')
-  ROOT.gPad.SaveAs("JpsiJet_SIMUL_JpsiEff_EMCal_pp13TeV.eps")
+  PrintFigure("JpsiJet_SIMUL_JpsiEff_EMCal_pp13TeV")
   fout.cd()
   c.Write('cEff')
 
