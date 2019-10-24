@@ -230,7 +230,25 @@ if(args.map):
   padBody.SetLogz()
   padBody.Draw()
   padBody.cd()
+  # TH2
+    # x
+  xAxis = hMap.GetXaxis()
+  xAxis.SetTitle("#it{#Delta#varphi}")
+  xAxis.CenterTitle(True)
+  xAxis.SetTitleSize(0.05)
+    # y
+  yAxis = hMap.GetYaxis()
+  yAxis.SetTitle("#it{#Delta#eta}")
+  yAxis.CenterTitle(True)
+  yAxis.SetTitleSize(0.05)
+    # z
+  zAxis = hMap.GetZaxis()
+  zAxis.SetTitle("Counts")
+  zAxis.CenterTitle(True)
+  zAxis.SetTitleSize(0.05)
   hMap.Draw("LEGO2Z")
+  # Palette
+  pAxis = hMap.FindObject('palette')
   # Label
   c.cd()
   txt = pTxtALICE.AddText("pp, #sqrt{#it{s}} = 13 TeV")
