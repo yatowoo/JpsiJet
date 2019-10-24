@@ -12,6 +12,7 @@ parser.add_argument('--calo',help='Plot calo QA figure', default=False, action='
 parser.add_argument('--invmassH',help='Plot figure of invariant mass spectrum (EMCal high)', default=False, action='store_true')
 parser.add_argument('--invmassL',help='Plot figure of invariant mass spectrum (EMCal low)', default=False, action='store_true')
 parser.add_argument('--eff',help='Plot figure of J/psi efficiency', default=False, action='store_true')
+parser.add_argument('--map',help='Plot figure of J/psi-jet correlation map', default=False, action='store_true')
 
 args = parser.parse_args()
 
@@ -26,10 +27,7 @@ TRIGGER_CLASSES = ['MB', 'EG1', 'EG2', 'DG1', 'DG2']
 
 ana_util.ALICEStyle()
 c = ROOT.TCanvas('cQA','ALICE Performance Figures',1280, 800)
-c.SetTopMargin(0.02)
-c.SetBottomMargin(0.1)
-c.SetLeftMargin(0.1)
-c.SetRightMargin(0.02)
+c.SetMargin(0.1, 0.02, 0.1, 0.02)
 c.Draw()
 
 PAD_EDGE_RIGHT = 1 - c.GetRightMargin()
@@ -39,7 +37,6 @@ fout = ROOT.TFile(args.output,'RECREATE')
 PrintCover(c, args.print)
 
 # Label - ALICE figure
-c.cd(1)
 pTxtALICE = ROOT.TPaveText(0.12, PAD_EDGE_TOP - 0.18, 0.45, PAD_EDGE_TOP - 0.02,"brNDC")
 pTxtALICE.SetFillColor(0)
 pTxtALICE.SetTextFont(42) # Helvetica
@@ -222,6 +219,39 @@ if(args.eff):
   txt = pTxtALICE.AddText("pp, #sqrt{#it{s}} = 13 TeV")
   txt = pTxtALICE.AddText("Pythia6, Perugia2011")
   DrawQA_Eff(anaResult)
+
+if(args.map):
+  hMap = anaResult.hJpsiJet
+  c.Clear()
+  c.SetWindowSize(1200,1200)
+  c.SetMargin(0,0,0,0)
+  padBody = ROOT.TPad("padBody","padBody", 0., 0., 1.0, 0.85)
+  padBody.SetMargin(0.10,0.12,0.05,0.02)
+  padBody.SetLogz()
+  padBody.Draw()
+  padBody.cd()
+  hMap.Draw("LEGO2Z")
+  # Label
+  c.cd()
+  txt = pTxtALICE.AddText("pp, #sqrt{#it{s}} = 13 TeV")
+  txt = pTxtALICE.AddText("EMCal trigger, #it{E} > 5 GeV")
+  pTxtALICE.Draw("same")
+  # Cuts
+  PAVE_CUTS = ROOT.TPaveText(0.68, 0.72, 0.85, 0.95, "brNDC")
+  PAVE_CUTS.SetName("pTxtCuts")
+  PAVE_CUTS.SetFillColor(0)
+  PAVE_CUTS.SetTextFont(42)
+  PAVE_CUTS.SetTextSize(0.03)
+  PAVE_CUTS.AddText('|#it{y}_{e^{+}e^{-}}| < 0.9')
+  PAVE_CUTS.AddText('#it{p}_{T,e^{+}e^{-}} > 5 GeV/#it{c}')
+  PAVE_CUTS.AddText('|#it{#eta}_{jet}| < 0.5')
+  PAVE_CUTS.AddText('#it{p}_{T,jet} > 1 GeV/#it{c}')
+  PAVE_CUTS.Draw('same')
+  # Output
+  c.Print(args.print, 'Title:QA_JpsiJetMap')
+  ROOT.gPad.SaveAs("JpsiJet_PERF_JpsiJetCorrelation_Raw_pp13TeV.eps")
+  fout.cd()
+  c.Write('cMap')
 
 PrintCover(c, args.print, isBack=True)
 
