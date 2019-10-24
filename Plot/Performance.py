@@ -56,6 +56,12 @@ def DrawALICE(x1, y1, x2, y2):
   pTxtALICE.SetY2NDC(y2)
   pTxtALICE.Draw("same")
 
+def PrintFigure(name):
+  ROOT.gPad.SaveAs(name + ".pdf")
+  ROOT.gPad.SaveAs(name + ".eps")
+  ROOT.gPad.SaveAs(name + ".png")
+  ROOT.gPad.SaveAs(name + ".root")
+
 def DrawQA_Electron(output):
   CaloQA = {}
   c.Clear()
@@ -126,8 +132,7 @@ def DrawQA_Electron(output):
   DrawALICE(PAD_EDGE_LEFT + 0.02, PAD_EDGE_TOP - 0.18, PAD_EDGE_LEFT + 0.35, PAD_EDGE_TOP - 0.01)
   # Output
   c.Print(args.print, 'Title:Dielectron_E')
-  ROOT.gPad.SaveAs("PERF_JpsiJet_ElectronEMCalE_pp13TeV.pdf")
-  ROOT.gPad.SaveAs("PERF_JpsiJet_ElectronEMCalE_pp13TeV.eps")
+  PrintFigure("PERF_JpsiJet_ElectronEMCalE_pp13TeV")
   fout.cd()
   c.Write('cDieleE')
 
