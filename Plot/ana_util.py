@@ -56,6 +56,7 @@ def InitALICELabel(x1 = 0.02, y1 = -0.18, x2 = 0.35, y2 = -0.02, size=0.04, type
   PAD_EDGE_BOTTOM   = ROOT.gPad.GetBottomMargin()
   PAD_EDGE_TOP   = 1 - ROOT.gPad.GetTopMargin()
   pTxtALICE = ROOT.TPaveText(PAD_EDGE_LEFT + x1, PAD_EDGE_TOP + y1, PAD_EDGE_LEFT + x2, PAD_EDGE_TOP + y2,"brNDC")
+  pTxtALICE.SetBorderSize(0)
   pTxtALICE.SetFillColor(0)
   pTxtALICE.SetTextSize(size)
   pTxtALICE.SetTextFont(42) # Helvetica

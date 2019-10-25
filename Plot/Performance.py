@@ -306,10 +306,9 @@ def DrawPtBin(text, x1, y1, x2, y2, onY = False, leftY = False, isHeader = False
 if(args.rm):
   mc = anaResult.JpsiJetAnalysis.Get('MChistos')
   jpsi = mc.FindObject('JpsiBdecay')
-  ana_util.ALICEStyle()
   ROOT.gStyle.SetPalette(ROOT.kInvertedDarkBodyRadiator)
-  c = ROOT.TCanvas('cRM','Detector response matrix - 4D',1600,1600)
-  c.Draw()
+  c.Clear()
+  c.SetWindowSize(1200, 1200)
   c.SetMargin(0,0,0,0)
   PAD_RM = ROOT.TPad("padBody","Body of response matrix", 0.02, 0.05, 0.8, 0.90)
   PAD_RM.SetMargin(0.1,0.,0.,0.1)
@@ -324,19 +323,16 @@ if(args.rm):
   response.GetAxis(0).SetRangeUser(0,1)
   response.GetAxis(1).SetRangeUser(0,1)
   # ALICE Label
-  pTxtALICE = ROOT.TPaveText(0.06, 0.78, 0.26, 0.88,"brNDC")
-  pTxtALICE.SetBorderSize(0)
+  PAD_RM.cd()
+  pTxtALICE = InitALICELabel(0.01, -0.15, 0.21, -0.01, size=0.035, type='simul')
   pTxtALICE.SetFillStyle(0)
-  pTxtALICE.SetFillColor(0)
-  pTxtALICE.SetTextFont(42) # Helvetica
-  pTxtALICE.SetTextAlign(13) # Top Left
-  pTxtALICE.SetTextSize(0.025)
-  txt = pTxtALICE.AddText("ALICE Simulation")
-  txt.SetTextFont(62) # Helvetica Bold
   txt = pTxtALICE.AddText("pp, #sqrt{#it{s}} = 13 TeV")
+  txt.SetTextSize(0.03)
   txt = pTxtALICE.AddText("Pythia6, Perugia2011")
+  txt.SetTextSize(0.03)
   pTxtALICE.Draw("same")
   # Cuts
+  c.cd()
   pTxtCuts = ROOT.TPaveText(0.59, 0.06, 0.76, 0.18, "brNDC")
   pTxtCuts.SetBorderSize(0)
   pTxtCuts.SetFillStyle(0)
