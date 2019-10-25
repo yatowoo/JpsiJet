@@ -125,7 +125,9 @@ def DrawQA_InvMass(tagInfo, JPSI_PT_CUT_LOW = 10., JPSI_PT_CUT_UP = 35., JET_PT_
   hM.SetTitle('')
   c.Clear()
   c.SetWindowSize(1600, 1200)
+  c.SetMargin(0.12, 0.02, 0.14, 0.02)
   hM.GetXaxis().SetTitleSize(0.05)
+  hM.GetYaxis().SetTitleOffset(1.1)
   hM.GetYaxis().SetTitleSize(0.05)
   ana_phys.STYLE_PERFORMANCE = True
   jpsi = ana_phys.ProcessInvMass(hM, None, 1.5, 4.5)
@@ -142,6 +144,17 @@ def DrawQA_InvMass(tagInfo, JPSI_PT_CUT_LOW = 10., JPSI_PT_CUT_UP = 35., JET_PT_
   PAVE_CUTS.AddText('    %.1f < #it{p}_{T,jet} < %.1f GeV/#it{c}' % (JET_PT_CUT_LOW, JET_PT_CUT_UP) )
   PAVE_CUTS.Draw('same')
   # Label
+  pTxtALICE = InitALICELabel(0.02, -0.20, 0.35, -0.02)
+  if(args.invmassL):
+    txt = pTxtALICE.AddText("pp, #it{#sqrt{s}} = 13 TeV, #it{N}_{ev} = 126 M")
+    txt.SetTextSize(.035)
+    txt = pTxtALICE.AddText("EMCal trigger, #it{E} > 5 GeV")
+    txt.SetTextSize(.035)
+  elif(args.invmassH):
+    txt = pTxtALICE.AddText("pp, #sqrt{#it{s}} = 13 TeV, #it{N}_{ev} = 96 M")
+    txt.SetTextSize(.035)
+    txt = pTxtALICE.AddText("EMCal trigger, #it{E} > 10 GeV")
+    txt.SetTextSize(.035)
   pTxtALICE.Draw("same")
   # Output
   c.Print(args.print, 'Title:DieleJets_InvMas')
@@ -204,20 +217,10 @@ if(args.calo):
   DrawQA_Electron(anaResult.JpsiJetAnalysis)
 
 if(args.invmassL):
-  pTxtALICE = InitALICELabel(0.02, -0.20, 0.35, -0.02)
-  txt = pTxtALICE.AddText("pp, #it{#sqrt{s}} = 13 TeV, #it{N}_{ev} = 126 M")
-  txt.SetTextSize(0.035)
-  txt = pTxtALICE.AddText("EMCal trigger, #it{E} > 5 GeV")
-  txt.SetTextSize(0.035)
   DrawQA_InvMass(anaResult.TagInfoL, 5.0, 35., 5., 35.)
 
 
 if(args.invmassH):
-  pTxtALICE = InitALICELabel(0.02, -0.20, 0.35, -0.02)
-  txt = pTxtALICE.AddText("pp, #sqrt{#it{s}} = 13 TeV, #it{N}_{ev} = 96 M")
-  txt.SetTextSize(0.035)
-  txt = pTxtALICE.AddText("EMCal trigger, #it{E} > 10 GeV")
-  txt.SetTextSize(0.035)
   DrawQA_InvMass(anaResult.TagInfoH, 10.0, 35., 10., 35.)
 
 if(args.eff):
