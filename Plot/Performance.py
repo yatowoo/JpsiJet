@@ -13,6 +13,7 @@ parser.add_argument('--invmassH',help='Plot figure of invariant mass spectrum (E
 parser.add_argument('--invmassL',help='Plot figure of invariant mass spectrum (EMCal low)', default=False, action='store_true')
 parser.add_argument('--eff',help='Plot figure of J/psi efficiency', default=False, action='store_true')
 parser.add_argument('--map',help='Plot figure of J/psi-jet correlation map', default=False, action='store_true')
+parser.add_argument('--rm',help='Plot figure of J/psi-jet detector response matrix', default=False, action='store_true')
 
 args = parser.parse_args()
 
@@ -280,6 +281,140 @@ if(args.map):
   PrintFigure("JpsiJet_PERF_JpsiJetCorrelation_Raw_pp13TeV")
   fout.cd()
   c.Write('cMap')
+
+  
+# pT bin
+PAVE_TEXT = []
+def DrawPtBin(text, x1, y1, x2, y2, onY = False, leftY = False, isHeader = False):
+  pTxt = ROOT.TPaveText(x1, y1, x2, y2, "brNDC")
+  pTxt.SetFillColor(0)
+  pTxt.SetTextFont(42)
+  pTxt.SetTextAlign(22)
+  pTxt.SetTextSize(0.03)
+  txt = pTxt.AddText(text)
+  if(onY):
+    txt.SetTextAngle(270)
+  if(leftY):
+    txt.SetTextAngle(90)
+  if(isHeader):
+    txt.SetTextFont(62)
+    txt.SetTextSize(0.04)
+  pTxt.Draw("same")
+  PAVE_TEXT.append(pTxt)
+  
+# Input : MC analysis result
+if(args.rm):
+  mc = anaResult.JpsiJetAnalysis.Get('MChistos')
+  jpsi = mc.FindObject('JpsiBdecay')
+  ana_util.ALICEStyle()
+  ROOT.gStyle.SetPalette(ROOT.kInvertedDarkBodyRadiator)
+  c = ROOT.TCanvas('cRM','Detector response matrix - 4D',1600,1600)
+  c.Draw()
+  c.SetMargin(0,0,0,0)
+  PAD_RM = ROOT.TPad("padBody","Body of response matrix", 0.02, 0.05, 0.8, 0.90)
+  PAD_RM.SetMargin(0.1,0.,0.,0.1)
+  PAD_RM.Divide(3,3,0,0)
+  PAD_RM.Draw()
+  # THnSparse - z_det, z_gen, pTjet_det, pTjet_gen, dZ, dpTjet, dpTJ/psi
+  response = jpsi.FindObject('Jet_DetResponse')
+  JET_PT_BINS = [10,15,35,100]
+  RM = [[1,2,3],[4,5,6],[7,8,9]]
+  PAD_INDEX = [7,4,1,8,5,2,9,6,3]
+  PAVE = [[1,2,3],[4,5,6],[7,8,9]]
+  response.GetAxis(0).SetRangeUser(0,1)
+  response.GetAxis(1).SetRangeUser(0,1)
+  # ALICE Label
+  pTxtALICE = ROOT.TPaveText(0.06, 0.78, 0.26, 0.88,"brNDC")
+  pTxtALICE.SetBorderSize(0)
+  pTxtALICE.SetFillStyle(0)
+  pTxtALICE.SetFillColor(0)
+  pTxtALICE.SetTextFont(42) # Helvetica
+  pTxtALICE.SetTextAlign(13) # Top Left
+  pTxtALICE.SetTextSize(0.025)
+  txt = pTxtALICE.AddText("ALICE Simulation")
+  txt.SetTextFont(62) # Helvetica Bold
+  txt = pTxtALICE.AddText("pp, #sqrt{#it{s}} = 13 TeV")
+  txt = pTxtALICE.AddText("Pythia6, Perugia2011")
+  pTxtALICE.Draw("same")
+  # Cuts
+  pTxtCuts = ROOT.TPaveText(0.59, 0.06, 0.76, 0.18, "brNDC")
+  pTxtCuts.SetBorderSize(0)
+  pTxtCuts.SetFillStyle(0)
+  pTxtCuts.SetFillColor(0)
+  pTxtCuts.SetTextFont(42) # Helvetica
+  pTxtCuts.SetTextAlign(22)
+  pTxtCuts.SetTextSize(0.025)
+  pTxtCuts.AddText('|#it{#eta}_{jet}| < 0.5')
+  pTxtCuts.AddText("|#it{y}_{J/#psi}| < 0.9")
+  pTxtCuts.AddText("5 < #it{p}_{T,J/#psi}| < 50 GeV/#it{c}")
+  pTxtCuts.Draw("same")
+  # pT bin
+  c.cd()
+  PAD_EDGE_LEFT = ROOT.gPad.GetLeftMargin()
+  PAD_EDGE_RIGHT = 1 - ROOT.gPad.GetRightMargin()
+  PAD_EDGE_BOTTOM   = ROOT.gPad.GetBottomMargin()
+  PAD_EDGE_TOP   = 1 - ROOT.gPad.GetTopMargin()
+  RM_PAD_TOP = 0.9
+  PT_BIN_BOTTOM = RM_PAD_TOP
+  PT_BIN_TOP = PT_BIN_BOTTOM + 0.02
+  TEXT_H_BOTTOM = PT_BIN_TOP
+  TEXT_H_TOP = PAD_EDGE_TOP - 0.01
+  PT_BIN_LEFT = 0.90
+  PT_BIN_RIGHT = PT_BIN_LEFT + 0.02
+  DrawPtBin("10 - 15 GeV/#it{c}", 0.05, PT_BIN_BOTTOM, 0.3, PT_BIN_TOP)
+  DrawPtBin("15 - 35 GeV/#it{c}", 0.3, PT_BIN_BOTTOM, 0.55, PT_BIN_TOP)
+  DrawPtBin("> 35 GeV/#it{c}", 0.55, PT_BIN_BOTTOM, 0.8, PT_BIN_TOP)
+  DrawPtBin("Measured jet #it{p}_{T}", 0.05, TEXT_H_BOTTOM, 0.8, TEXT_H_TOP, isHeader=True)
+  DrawPtBin("10 - 15 GeV/#it{c}", PT_BIN_LEFT, 0.05, PT_BIN_RIGHT, 0.32, onY=True)
+  DrawPtBin("15 - 35 GeV/#it{c}", PT_BIN_LEFT, 0.32, PT_BIN_RIGHT, 0.58, onY=True)
+  DrawPtBin("> 35 GeV/#it{c}", PT_BIN_LEFT, 0.58, PT_BIN_RIGHT, 0.85, onY=True)
+  DrawPtBin("True jet #it{p}_{T}", 0.94, 0.05, 0.98, 0.85, onY=True, isHeader=True)
+  DrawPtBin("True #it{z}", 0.06, 0.06, 0.09, 0.3, leftY=True, isHeader=True)
+  DrawPtBin("Measured #it{z}", 0.06, 0.06, 0.28, 0.09, isHeader=True)
+  DrawPtBin("0", 0.03, 0.03, 0.05, 0.05)
+  DrawPtBin("1", 0.28, 0.02, 0.32, 0.05)
+  DrawPtBin("1", 0.02, 0.3, 0.05, 0.34)
+  # Generate matrix by pT bins
+  for i in range(3):
+    response.GetAxis(2).SetRangeUser(JET_PT_BINS[i],JET_PT_BINS[i+1])
+    SUM = None
+    for j in range(3):
+      response.GetAxis(3).SetRangeUser(JET_PT_BINS[j],JET_PT_BINS[j+1])
+      RM[i][j] = response.Projection(1,0)
+      RM[i][j].SetName('RM_%d_%d' % (i, j))
+      if(SUM is None):
+        SUM = RM[i][j].Clone('hSum_%d' % i)
+      else:
+        SUM.Add(RM[i][j])
+    for j in range(3):
+      NX = SUM.GetNbinsX()
+      NY = SUM.GetNbinsY()
+      for ix in range(1,NX+1):
+        SumY = SUM.Integral(ix, ix, 1, NY)
+        if(SumY == 0):
+          continue
+        for iy in range(1, NY+1):
+          val = RM[i][j].GetBinContent(ix, iy) / SumY
+          RM[i][j].SetBinContent(ix, iy, val)
+      PAD_RM.cd(PAD_INDEX[3*i+j])
+      RM[i][j].SetTitle('')
+      RM[i][j].SetMaximum(1.0)
+      RM[i][j].SetMinimum(0.0)
+      RM[i][j].GetXaxis().SetTitleSize(0.)
+      RM[i][j].GetYaxis().SetTitleSize(0.)
+      RM[i][j].SetXTitle('')
+      RM[i][j].GetXaxis().SetLabelSize(0.)
+      RM[i][j].SetYTitle('')
+      RM[i][j].GetYaxis().SetLabelSize(0.)
+      RM[i][j].Draw('COL')
+      RM[i][j].GetZaxis().SetLabelSize(0.02)
+      RM[i][j].GetZaxis().SetLabelFont(42)
+  # Palette
+  c.cd()
+  palette = ROOT.TPaletteAxis(0.8,0.05,0.85,0.875,RM[0][0]);
+  palette.Draw("same")
+  # Output
+  PrintFigure('JpsiJet_SIMUL_BJetJpsi_RM_pp13TeV')  
 
 PrintCover(c, args.print, isBack=True)
 
