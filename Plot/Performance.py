@@ -38,12 +38,6 @@ PAD_EDGE_TOP   = 1 - c.GetTopMargin()
 fout = ROOT.TFile(args.output,'RECREATE')
 PrintCover(c, args.print)
 
-def PrintFigure(name):
-  ROOT.gPad.SaveAs(name + ".pdf")
-  ROOT.gPad.SaveAs(name + ".eps")
-  ROOT.gPad.SaveAs(name + ".png")
-  ROOT.gPad.SaveAs(name + ".root")
-
 def DrawQA_Electron(output):
   CaloQA = {}
   c.Clear()

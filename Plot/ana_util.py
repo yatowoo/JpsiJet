@@ -70,6 +70,12 @@ def InitALICELabel(x1 = 0.02, y1 = -0.18, x2 = 0.35, y2 = -0.02, size=0.04, type
   txt.SetTextFont(62) # Helvetica Bold
   return pTxtALICE
 
+def PrintFigure(name):
+  ROOT.gPad.SaveAs(name + ".pdf")
+  ROOT.gPad.SaveAs(name + ".eps")
+  ROOT.gPad.SaveAs(name + ".png")
+  ROOT.gPad.SaveAs(name + ".root")
+
 # J/psi pT bins : 0 - 50, binw = 0.2, 0.5, 1, 2, 5
 BINNING_JPSI_PT = [0.2*x for x in range(0,25,1)]
 BINNING_JPSI_PT += [ 0.1*x for x in range(50,100,5)]

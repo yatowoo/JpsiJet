@@ -136,10 +136,7 @@ for i in range(3):
     RM[i][j].GetXaxis().SetLabelSize(0.)
     RM[i][j].SetYTitle('')
     RM[i][j].GetYaxis().SetLabelSize(0.)
-    if(3*i + j != 0):
-      RM[i][j].Draw('COL')
-    else:
-      RM[i][j].Draw('COLZ')
+    RM[i][j].Draw('COL')
     RM[i][j].GetZaxis().SetLabelSize(0.02)
     RM[i][j].GetZaxis().SetLabelFont(42)
     PAVE[i][j] = ROOT.TPaveText(0.15,0.8,0.4,0.95,'brNDC')
@@ -155,7 +152,10 @@ for i in range(3):
       PAVE[i][j].AddText('%d < p_{T,gen} < %d GeV' % (JET_PT_BINS[j],JET_PT_BINS[j+1]))
     #PAVE[i][j].Draw('same')
 
-c.SaveAs('RM_Full.root')
-c.SaveAs('RM_Full.pdf')
+c.cd()
+palette = ROOT.TPaletteAxis(0.8,0.05,0.85,0.875,RM[0][0]);
+palette.Draw("same")
+
+ana_util.PrintFigure('JpsiJet_SIMUL_BJetJpsi_RM_pp13TeV')
 
 f.Close()
