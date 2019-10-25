@@ -50,6 +50,26 @@ def ALICEStyle(graypalette = False):
   ROOT.gStyle.SetLegendFillColor(kWhite)
   ROOT.gStyle.SetLegendFont(42)
 
+def InitALICELabel(x1 = 0.02, y1 = -0.18, x2 = 0.35, y2 = -0.02, size=0.04, type="perf"):
+  PAD_EDGE_LEFT = ROOT.gPad.GetLeftMargin()
+  PAD_EDGE_RIGHT = 1 - ROOT.gPad.GetRightMargin()
+  PAD_EDGE_BOTTOM   = ROOT.gPad.GetBottomMargin()
+  PAD_EDGE_TOP   = 1 - ROOT.gPad.GetTopMargin()
+  pTxtALICE = ROOT.TPaveText(PAD_EDGE_LEFT + x1, PAD_EDGE_TOP + y1, PAD_EDGE_LEFT + x2, PAD_EDGE_TOP + y2,"brNDC")
+  pTxtALICE.SetFillColor(0)
+  pTxtALICE.SetTextSize(size)
+  pTxtALICE.SetTextFont(42) # Helvetica
+  pTxtALICE.SetTextAlign(13) # Top Left
+  if(type == "perf"):
+    text = "ALICE Performance"
+  elif(type == "simul"):
+    text = "ALICE Simulation"
+  elif(type == "prel"):
+    text = "ALICE Preliminary"
+  txt = pTxtALICE.AddText(text)
+  txt.SetTextFont(62) # Helvetica Bold
+  return pTxtALICE
+
 def SetPadMargin(pad, l = 0.1, r = 0.02, t = 0.02, b = 0.1):
   pad.SetLeftMargin(l)
   pad.SetRightMargin(r)

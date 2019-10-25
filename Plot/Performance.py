@@ -38,38 +38,6 @@ PAD_EDGE_TOP   = 1 - c.GetTopMargin()
 fout = ROOT.TFile(args.output,'RECREATE')
 PrintCover(c, args.print)
 
-# Label - ALICE figure
-pTxtALICE = ROOT.TPaveText(PAD_EDGE_LEFT + 0.02, PAD_EDGE_TOP - 0.18, PAD_EDGE_LEFT + 0.35, PAD_EDGE_TOP - 0.01,"brNDC")
-pTxtALICE.SetFillColor(0)
-pTxtALICE.SetTextSize(0.05)
-pTxtALICE.SetTextFont(42) # Helvetica
-pTxtALICE.SetTextAlign(13) # Top Left
-if(args.eff):
-  txt = pTxtALICE.AddText("ALICE Simulation")
-else:
-  txt = pTxtALICE.AddText("ALICE Performance")
-txt.SetTextFont(62) # Helvetica Bold
-def DrawALICE(pTxt, x1, y1, x2, y2):
-  pTxt.SetX1NDC(x1)
-  pTxt.SetY1NDC(y1)
-  pTxt.SetX2NDC(x2)
-  pTxt.SetY2NDC(y2)
-  pTxt.Draw("same")
-
-def InitALICELabel(text, x1, y1, x2, y2, size=0.04):
-  PAD_EDGE_LEFT = ROOT.gPad.GetLeftMargin()
-  PAD_EDGE_RIGHT = 1 - ROOT.gPad.GetRightMargin()
-  PAD_EDGE_BOTTOM   = ROOT.gPad.GetBottomMargin()
-  PAD_EDGE_TOP   = 1 - ROOT.gPad.GetTopMargin()
-  pTxtALICE = ROOT.TPaveText(PAD_EDGE_LEFT + x1, PAD_EDGE_TOP + y1, PAD_EDGE_LEFT + x2, PAD_EDGE_TOP + y2,"brNDC")
-  pTxtALICE.SetFillColor(0)
-  pTxtALICE.SetTextSize(size)
-  pTxtALICE.SetTextFont(42) # Helvetica
-  pTxtALICE.SetTextAlign(13) # Top Left
-  txt = pTxtALICE.AddText(text)
-  txt.SetTextFont(62) # Helvetica Bold
-  return pTxtALICE
-
 def PrintFigure(name):
   ROOT.gPad.SaveAs(name + ".pdf")
   ROOT.gPad.SaveAs(name + ".eps")
@@ -138,13 +106,13 @@ def DrawQA_Electron(output):
   lgdE.AddEntry(CaloQA['EG1']['E'], 'Trigger #it{E}_{EMC}^{Cluster} > 10 GeV')
   lgdE.Draw('same')
     # Label
-  pTxtALICE = InitALICELabel("ALICE Performance", 0.02, -0.17, 0.35, -0.01)
+  pTxtALICE = InitALICELabel(0.02, -0.17, 0.35, -0.01)
   txt = pTxtALICE.AddText("pp, #sqrt{#it{s}} = 13 TeV")
   txt = pTxtALICE.AddText("|#it{#eta}| < 0.7")
   pTxtALICE.Draw("same")
   # Output
   c.Print(args.print, 'Title:Dielectron_E')
-  PrintFigure("PERF_JpsiJet_ElectronEMCalE_pp13TeV")
+  PrintFigure("JpsiJet_PERF_Electron_EMCalE_pp13TeV")
   fout.cd()
   c.Write('cDieleE')
 
@@ -178,9 +146,9 @@ def DrawQA_InvMass(tagInfo, JPSI_PT_CUT_LOW = 10., JPSI_PT_CUT_UP = 35., JET_PT_
   # Output
   c.Print(args.print, 'Title:DieleJets_InvMas')
   if(args.invmassL):
-    PrintFigure("PERF_JpsiJet_DielectronJets_InvMassL_pp13TeV")
+    PrintFigure("JpsiJet_PERF_DielectronInJets_InvMassL_pp13TeV")
   if(args.invmassH):
-    PrintFigure("PERF_JpsiJet_DielectronJets_InvMassH_pp13TeV")
+    PrintFigure("JpsiJet_PERF_DielectronInJets_InvMassH_pp13TeV")
   fout.cd()
   c.Write('cM')
 
@@ -220,6 +188,9 @@ def DrawQA_Eff(mc):
   lgd.AddEntry(hB, 'Non-prompt')
   lgd.Draw("same")
   # Label
+  pTxtALICE = InitALICELabel(type="simul")
+  txt = pTxtALICE.AddText("pp, #sqrt{#it{s}} = 13 TeV")
+  txt = pTxtALICE.AddText("Pythia6, Perugia2011")
   pTxtALICE.Draw("same")
   # Output
   c.Print(args.print, 'Title:MC_JpsiEff')
@@ -233,7 +204,7 @@ if(args.calo):
   DrawQA_Electron(anaResult.JpsiJetAnalysis)
 
 if(args.invmassL):
-  pTxtALICE = InitALICELabel("ALICE Performance", 0.02, -0.20, 0.35, -0.02)
+  pTxtALICE = InitALICELabel(0.02, -0.20, 0.35, -0.02)
   txt = pTxtALICE.AddText("pp, #it{#sqrt{s}} = 13 TeV, #it{N}_{ev} = 126 M")
   txt.SetTextSize(0.035)
   txt = pTxtALICE.AddText("EMCal trigger, #it{E} > 5 GeV")
@@ -242,7 +213,7 @@ if(args.invmassL):
 
 
 if(args.invmassH):
-  pTxtALICE = InitALICELabel("ALICE Performance", 0.02, -0.20, 0.35, -0.02)
+  pTxtALICE = InitALICELabel(0.02, -0.20, 0.35, -0.02)
   txt = pTxtALICE.AddText("pp, #sqrt{#it{s}} = 13 TeV, #it{N}_{ev} = 96 M")
   txt.SetTextSize(0.035)
   txt = pTxtALICE.AddText("EMCal trigger, #it{E} > 10 GeV")
@@ -250,8 +221,6 @@ if(args.invmassH):
   DrawQA_InvMass(anaResult.TagInfoH, 10.0, 35., 10., 35.)
 
 if(args.eff):
-  txt = pTxtALICE.AddText("pp, #sqrt{#it{s}} = 13 TeV")
-  txt = pTxtALICE.AddText("Pythia6, Perugia2011")
   DrawQA_Eff(anaResult)
 
 # Input : JpsiJetFilterAna.root (TH2D of dEta-dPhi)
@@ -291,7 +260,7 @@ if(args.map):
   pAxis = ROOT.TPaletteAxis(0.81, -0.9, 0.9, 0.8, hMap)
   pAxis.Draw("same")
   # Label
-  pTxt = InitALICELabel("ALICE Performance", 0.02, -0.20, 0.35, -0.02)
+  pTxt = InitALICELabel(0.02, -0.20, 0.35, -0.02)
   txt = pTxt.AddText("pp, #sqrt{#it{s}} = 13 TeV")
   txt = pTxt.AddText("EMCal trigger, #it{E} > 5 GeV")
   pTxt.Draw("same")
