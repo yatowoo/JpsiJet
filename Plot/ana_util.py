@@ -70,12 +70,6 @@ def InitALICELabel(x1 = 0.02, y1 = -0.18, x2 = 0.35, y2 = -0.02, size=0.04, type
   txt.SetTextFont(62) # Helvetica Bold
   return pTxtALICE
 
-def SetPadMargin(pad, l = 0.1, r = 0.02, t = 0.02, b = 0.1):
-  pad.SetLeftMargin(l)
-  pad.SetRightMargin(r)
-  pad.SetTopMargin(t)
-  pad.SetBottomMargin(b)
-
 # J/psi pT bins : 0 - 50, binw = 0.2, 0.5, 1, 2, 5
 BINNING_JPSI_PT = [0.2*x for x in range(0,25,1)]
 BINNING_JPSI_PT += [ 0.1*x for x in range(50,100,5)]

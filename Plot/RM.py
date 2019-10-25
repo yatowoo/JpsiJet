@@ -21,9 +21,9 @@ ROOT.gStyle.SetPalette(ROOT.kInvertedDarkBodyRadiator)
 
 c = ROOT.TCanvas('cRM','Detector response matrix - 4D',1600,1600)
 c.Draw()
-ana_util.SetPadMargin(c,0,0,0,0)
-PAD_RM = ROOT.TPad("padBody","Body of response matrix", 0.02, 0.02, 0.8, 0.85)
-ana_util.SetPadMargin(PAD_RM,0.1,0.,0.,0.1)
+c.SetMargin(0,0,0,0)
+PAD_RM = ROOT.TPad("padBody","Body of response matrix", 0.02, 0.05, 0.8, 0.90)
+PAD_RM.SetMargin(0.1,0.,0.,0.1)
 PAD_RM.Divide(3,3,0,0)
 PAD_RM.Draw()
 JET_PT_BINS = [10,15,35,100]
@@ -34,7 +34,7 @@ response.GetAxis(0).SetRangeUser(0,1)
 response.GetAxis(1).SetRangeUser(0,1)
 
 # ALICE Label
-pTxtALICE = ROOT.TPaveText(0.06, 0.75, 0.26, 0.84,"brNDC")
+pTxtALICE = ROOT.TPaveText(0.06, 0.78, 0.26, 0.88,"brNDC")
 pTxtALICE.SetBorderSize(0)
 pTxtALICE.SetFillStyle(0)
 pTxtALICE.SetFillColor(0)
@@ -80,14 +80,25 @@ def DrawPtBin(text, x1, y1, x2, y2, onY = False, leftY = False, isHeader = False
   PAVE_TEXT.append(pTxt)
 
 c.cd()
-DrawPtBin("10 - 15 GeV/#it{c}", 0.05, 0.85, 0.3, 0.90)
-DrawPtBin("15 - 35 GeV/#it{c}", 0.3, 0.85, 0.55, 0.90)
-DrawPtBin("> 35 GeV/#it{c}", 0.55, 0.85, 0.8, 0.90)
-DrawPtBin("Measured jet #it{p}_{T}", 0.05, 0.9, 0.8, 0.95, isHeader=True)
-DrawPtBin("10 - 15 GeV/#it{c}", 0.9, 0.05, 0.95, 0.32, onY=True)
-DrawPtBin("15 - 35 GeV/#it{c}", 0.9, 0.32, 0.95, 0.58, onY=True)
-DrawPtBin("> 35 GeV/#it{c}", 0.9, 0.58, 0.95, 0.85, onY=True)
-DrawPtBin("True jet #it{p}_{T}", 0.95, 0.05, 1.0, 0.85, onY=True, isHeader=True)
+PAD_EDGE_LEFT = ROOT.gPad.GetLeftMargin()
+PAD_EDGE_RIGHT = 1 - ROOT.gPad.GetRightMargin()
+PAD_EDGE_BOTTOM   = ROOT.gPad.GetBottomMargin()
+PAD_EDGE_TOP   = 1 - ROOT.gPad.GetTopMargin()
+RM_PAD_TOP = 0.9
+PT_BIN_BOTTOM = RM_PAD_TOP
+PT_BIN_TOP = PT_BIN_BOTTOM + 0.02
+TEXT_H_BOTTOM = PT_BIN_TOP
+TEXT_H_TOP = PAD_EDGE_TOP - 0.01
+PT_BIN_LEFT = 0.90
+PT_BIN_RIGHT = PT_BIN_LEFT + 0.02
+DrawPtBin("10 - 15 GeV/#it{c}", 0.05, PT_BIN_BOTTOM, 0.3, PT_BIN_TOP)
+DrawPtBin("15 - 35 GeV/#it{c}", 0.3, PT_BIN_BOTTOM, 0.55, PT_BIN_TOP)
+DrawPtBin("> 35 GeV/#it{c}", 0.55, PT_BIN_BOTTOM, 0.8, PT_BIN_TOP)
+DrawPtBin("Measured jet #it{p}_{T}", 0.05, TEXT_H_BOTTOM, 0.8, TEXT_H_TOP, isHeader=True)
+DrawPtBin("10 - 15 GeV/#it{c}", PT_BIN_LEFT, 0.05, PT_BIN_RIGHT, 0.32, onY=True)
+DrawPtBin("15 - 35 GeV/#it{c}", PT_BIN_LEFT, 0.32, PT_BIN_RIGHT, 0.58, onY=True)
+DrawPtBin("> 35 GeV/#it{c}", PT_BIN_LEFT, 0.58, PT_BIN_RIGHT, 0.85, onY=True)
+DrawPtBin("True jet #it{p}_{T}", 0.94, 0.05, 0.98, 0.85, onY=True, isHeader=True)
 DrawPtBin("True #it{z}", 0.06, 0.06, 0.09, 0.3, leftY=True, isHeader=True)
 DrawPtBin("Measured #it{z}", 0.06, 0.06, 0.28, 0.09, isHeader=True)
 DrawPtBin("0", 0.03, 0.03, 0.05, 0.05)
