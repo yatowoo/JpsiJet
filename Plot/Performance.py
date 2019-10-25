@@ -80,6 +80,7 @@ def DrawQA_Electron(output):
   CaloQA = {}
   c.Clear()
   c.SetWindowSize(1600, 1200)
+  c.SetMargin(0.15, 0.02, 0.12, 0.02)
   lgdE = ROOT.TLegend(PAD_EDGE_RIGHT - 0.42, PAD_EDGE_TOP - 0.25, PAD_EDGE_TOP - 0.05, PAD_EDGE_TOP - 0.015, "", "brNDC")
   lgdE.SetBorderSize(0)
   lgdE.SetTextSize(0.04)
@@ -137,13 +138,10 @@ def DrawQA_Electron(output):
   lgdE.AddEntry(CaloQA['EG1']['E'], 'Trigger #it{E}_{EMC}^{Cluster} > 10 GeV')
   lgdE.Draw('same')
     # Label
+  pTxtALICE = InitALICELabel("ALICE Performance", 0.02, -0.17, 0.35, -0.01)
   txt = pTxtALICE.AddText("pp, #sqrt{#it{s}} = 13 TeV")
-  txt.SetTextFont(42) # Helvetica
-  txt.SetTextAlign(13) # Top Left
   txt = pTxtALICE.AddText("|#it{#eta}| < 0.7")
-  txt.SetTextFont(42) # Helvetica
-  txt.SetTextAlign(13) # Top Left
-  DrawALICE(pTxtALICE, PAD_EDGE_LEFT + 0.02, PAD_EDGE_TOP - 0.18, PAD_EDGE_LEFT + 0.35, PAD_EDGE_TOP - 0.01)
+  pTxtALICE.Draw("same")
   # Output
   c.Print(args.print, 'Title:Dielectron_E')
   PrintFigure("PERF_JpsiJet_ElectronEMCalE_pp13TeV")
