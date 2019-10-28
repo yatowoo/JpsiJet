@@ -80,7 +80,7 @@ def DrawQA_Electron(output):
   ana_util.SetColorAndStyle(CaloQA['MB']['E'], ROOT.kBlack, ROOT.kFullTriangleUp, 2.0)
   CaloQA['MB']['E'].SetTitle('')
   CaloQA['MB']['E'].SetXTitle('#it{E} (GeV)')
-  CaloQA['MB']['E'].SetYTitle('#frac{1}{#it{N}_{evts}} #frac{d#it{N}_{cluster}}{d#it{E}}')
+  CaloQA['MB']['E'].SetYTitle('#frac{1}{#it{N}_{evts}} #frac{d#it{N}_{cluster}}{d#it{E}} (GeV^{-1})')
   CaloQA['MB']['E'].GetXaxis().SetRangeUser(0., 30.)
   CaloQA['MB']['E'].GetXaxis().SetTitleSize(0.05)
   CaloQA['MB']['E'].GetYaxis().SetRangeUser(1e-9, 20)
