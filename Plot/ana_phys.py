@@ -126,7 +126,7 @@ class InvMass:
       pTxtFit.AddText("Signal:  %.0f #pm %.0f" % self.result['Signal'])
       pTxtFit.AddText("Bkg:      %.0f #pm %.0f" % self.result['Bkg'])
       pTxtFit.AddText("#it{S/#sqrt{S+B}}   = %.2f #pm %.2f" % self.result['SNratio'])
-    pTxtFit.AddText("#it{S/B}         = %.2f #pm %.2f" % self.result['SBratio'])
+    pTxtFit.AddText("#it{S / B}        = %.2f #pm %.2f" % self.result['SBratio'])
     pTxtFit.AddText("#it{#chi^{2}} / NDF  = %.1f / %d" % self.result['Chi2'])
     if(not STYLE_PERFORMANCE):
       pTxtFit.AddText("f_{sideband}    = %.2f #pm %.2f" % self.result['SBfactor'])
@@ -165,14 +165,20 @@ class InvMass:
     region.SetLineWidth(0)
     region.SetLineColor(BACKGROUND_COLOR)
     region.SetMarkerColor(BACKGROUND_COLOR)
+    region.SetMarkerSize(0)
     self.lgd.AddEntry(region, "Sideband")
   def SelectSignalRegion(self, mlow = JPSI_MASS_LOWER, mup = JPSI_MASS_UPPER):
     self.result['Region'] = {}
     self.result['Region']['Signal'] = (mlow, mup)
-    self.DrawLine(mlow)
-    self.DrawLine(mup)
+    #self.DrawLine(mlow)
+    #self.DrawLine(mup)
     if(not self.hSigMC):
-      self.DrawRegion(self.fTot, mlow, mup, 'Signal')
+      region = self.DrawRegion(self.fTot, mlow, mup, 'Signal')
+      region.SetLineWidth(0)
+      region.SetFillStyle(3005)
+      region.SetFillColor(SIGNAL_COLOR)
+      region.SetMarkerSize(0)
+      self.lgd.AddEntry(region, "Signal region")
     # Integral results and errors
       # DATA
     NData = ana_util.HistCount(self.hM, mlow, mup)
@@ -235,11 +241,11 @@ class InvMass:
     self.lgd.AddEntry(self.hM, "e^{+}e^{-} pair")
     if(not self.hSigMC):
       self.lgd.AddEntry(self.fTot,"Total fit")
-      self.lgd.AddEntry(self.fSig,"Signal fit (Crystal-Ball)")
+      self.lgd.AddEntry(self.fSig,"Signal fit")
     else:
       self.lgd.AddEntry(self.fTot,"MC signal + Bkg")
       self.lgd.AddEntry(self.hSigPlot, 'Signal (MC)')
-    self.lgd.AddEntry(self.fBkg,"Background fit (pol2)")
+    self.lgd.AddEntry(self.fBkg,"Background fit")
     self.lgd.Draw("same")
   def SetStyleForAll(self):
     # ROOT Style

@@ -271,9 +271,9 @@ if(args.map):
   txt = PAVE_CUTS.AddText('#it{M}_{e^{+}e^{-}} #in [2.92, 3.16] (GeV/#it{c}^{2})')
   txt.SetTextFont(62)
   PAVE_CUTS.AddText('|#it{y}_{e^{+}e^{-}}| < 0.9')
-  PAVE_CUTS.AddText('#it{p}_{T,e^{+}e^{-}} > 5 GeV/#it{c}')
+  PAVE_CUTS.AddText('#it{p}_{T}^{e^{+}e^{-}} > 5 GeV/#it{c}')
   PAVE_CUTS.AddText('|#it{#eta}_{jet}| < 0.5')
-  PAVE_CUTS.AddText('#it{p}_{T,jet} > 1 GeV/#it{c}')
+  PAVE_CUTS.AddText('#it{p}_{T}^{jet} > 1 GeV/#it{c}')
   PAVE_CUTS.Draw('same')
   # Output
   c.Print(args.print, 'Title:QA_JpsiJetMap')
