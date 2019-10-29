@@ -306,7 +306,7 @@ def DrawPtBin(text, x1, y1, x2, y2, onY = False, leftY = False, isHeader = False
 if(args.rm):
   mc = anaResult.JpsiJetAnalysis.Get('MChistos')
   jpsi = mc.FindObject('JpsiBdecay')
-  ROOT.gStyle.SetPalette(ROOT.kInvertedDarkBodyRadiator)
+  ROOT.gStyle.SetPalette(ROOT.kBird)
   c.Clear()
   c.SetWindowSize(1200, 1200)
   c.SetMargin(0,0,0,0)
@@ -393,6 +393,7 @@ if(args.rm):
           val = RM[i][j].GetBinContent(ix, iy) / SumY
           RM[i][j].SetBinContent(ix, iy, val)
       PAD_RM.cd(PAD_INDEX[3*i+j])
+      ROOT.gPad.SetLogz()
       RM[i][j].SetTitle('')
       RM[i][j].SetMaximum(1.0)
       RM[i][j].SetMinimum(0.0)
@@ -407,7 +408,8 @@ if(args.rm):
       RM[i][j].GetZaxis().SetLabelFont(42)
   # Palette
   c.cd()
-  palette = ROOT.TPaletteAxis(0.8,0.05,0.85,0.875,RM[0][0]);
+  c.SetLogz()
+  palette = ROOT.TPaletteAxis(0.8,0.05,0.85,0.875,RM[0][0])
   palette.Draw("same")
   # Output
   PrintFigure('JpsiJet_SIMUL_BJetJpsi_RM_pp13TeV')  
