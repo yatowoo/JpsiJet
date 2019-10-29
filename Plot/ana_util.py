@@ -68,7 +68,7 @@ def InitALICELabel(x1 = 0.02, y1 = -0.18, x2 = 0.35, y2 = -0.02, size=0.04, type
   elif(type == "prel"):
     text = "ALICE Preliminary"
   txt = pTxtALICE.AddText(text)
-  txt.SetTextFont(62) # Helvetica Bold
+  txt.SetTextFont(42) # Helvetica Bold
   return pTxtALICE
 
 def PrintFigure(name):

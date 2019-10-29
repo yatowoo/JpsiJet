@@ -118,7 +118,7 @@ class InvMass:
     pTxtFit.SetFillColor(0)
       # Entries - Signal region
     entry = pTxtFit.AddText("#it{M}_{J/#psi} #in [%.2f, %.2f] (GeV/#it{c}^{2})" % self.result['Region']['Signal'])
-    entry.SetTextFont(62) # Helvetica (Bold)
+    entry.SetTextFont(42) # Helvetica
       # Entries - Integral
     if(not STYLE_PERFORMANCE):
       pTxtFit.AddText("Data:     %.0f #pm %.0f" % self.result['Data'])
@@ -251,7 +251,6 @@ class InvMass:
     self.hM.SetMarkerStyle(DATA_STYLE)
     self.hM.SetXTitle("#it{M}_{e^{+}e^{-}} (GeV/#it{c}^{2})")
     self.hM.GetXaxis().SetRangeUser(self.gHistL, self.gHistH)
-    self.hM.GetYaxis().CenterTitle(True)
     self.hM.SetYTitle("Counts per 40 MeV/#it{c^{2}}")
     if(STYLE_PERFORMANCE):
       HIST_MAXIMUM_RATIO = 1.35
