@@ -1,0 +1,30 @@
+####################
+#
+# HTCondor Submit Script @ R710.star.ustc.edu.cn
+#
+# Pre-defined Macro : $(Cluster) $(Process)
+###########
+
+EXE = run_alice_jpsijet.sh
+ALICE_OUTPUT_DIR = /data2/ytwu/LOG/ALICE/JpsiJetFilter/test
+OUTPUT_DIR = $(ALICE_OUTPUT_DIR)
+
+N_JOBS = 21
+
+Initialdir = /data2/ytwu/CODE/JpsiJet
+
+Universe = vanilla
+
+# ENV on R710
+Getenv = True
+
+Executable = $(EXE)
+
+Arguments =  $(ALICE_OUTPUT_DIR) $(Process)
+
+Log = $(OUTPUT_DIR)/condor_$(Cluster).log
+#Input = inputfile
+Error = $(OUTPUT_DIR)/$(Process).err
+Output = $(OUTPUT_DIR)/$(Process).out
+
+Queue $(N_JOBS)
