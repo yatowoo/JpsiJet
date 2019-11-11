@@ -27,4 +27,15 @@ Usage: Generate raw fragmentation function with EMCal __lower__ trigger data ($E
 
 `./FF.py -f AnaMerge_Full_Train.root --mc JpsiEff_MCALL_LOW.root --jetCut 5 35 --jpsiCut 15 35 --trig L -o FF_5GeV_test.root`
 
+Output raw FF - `FF_*.root/`
+
+- Prompt: `cFF_SubBdecay->FindObject('hFFPromptCorrected2')`
+- Non-prompt: `cFF_BdecayCorrected->FindObject('hFFBdecayCorrected')`
+
 ### Unfolding
+
+Script: Unfold_test.py
+
+Example: set user range for $z$ and $p_{\rm T,jet}$
+
+Projected $z$ range: 0 - 1.1, bin w = 0.1
