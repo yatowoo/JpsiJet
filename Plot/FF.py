@@ -12,7 +12,7 @@ parser.add_argument('-o','--output',help='ROOT file to store results', default='
 parser.add_argument('--trig',help='Trigger for analysis', default='L')
 parser.add_argument('--jetCut',nargs='+', help='Jet pT cut', type=int, default=(15,50))
 parser.add_argument('--jpsiCut',nargs='+', help='J/psi pT cut', type=int, default=(5,50))
-parser.add_argument('--lxyCut',nargs='+', help='Pseudo-proper decay length cut for prompt and non-prompt J/psi', type=float, default=(0.01,0.01))
+parser.add_argument('--lxyCut',nargs='+', help='Pseudo-proper decay length cut for prompt and non-prompt J/psi', type=float, default=(0.02,0.02))
 parser.add_argument('--zCut',nargs='+', help='Range of fragmentation function', type=float, default=(0.4,1.0))
 parser.add_argument('--zBin', help='Range of fragmentation function', type=int, default=6)
 parser.add_argument('--more', help='More outputs for each canvas', default=False, action='store_true')
@@ -27,7 +27,7 @@ import ROOT
 # Global cuts and variables
 JET_PT_CUT_LOW  = float(args.jetCut[0])
 JET_PT_CUT_UP   = float(args.jetCut[1])
-JPSI_PT_CUT_LOW = max(6.0 if args.trig == 'L' else 11.0, args.jpsiCut[0])
+JPSI_PT_CUT_LOW = max(5.0 if args.trig == 'L' else 10.0, args.jpsiCut[0])
 JPSI_PT_CUT_UP  = min(float(args.jpsiCut[1]), JET_PT_CUT_UP)
 JPSI_PROMPT_LXY = args.lxyCut[0]
 JPSI_BDECAY_LXY = args.lxyCut[1]
