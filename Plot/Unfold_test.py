@@ -1,7 +1,7 @@
 import ROOT
 import ana_util
 fRM = ROOT.TFile('RM_Low.root')
-fDet = ROOT.TFile('testL.root')
+fDet = ROOT.TFile('FF_5GeV.root')
 hDet = fDet.cFF_SubBdecay.FindObject('hFFPromptCorrected2').Clone('hDet')
 hRM = fRM.cRM.FindObject('RM_1_1').Clone('hRM')
 ana_util.ResponseNorm(hRM)
