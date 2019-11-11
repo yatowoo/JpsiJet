@@ -1,9 +1,16 @@
+#!/usr/bin/env python3
+
 import ROOT
 import ana_util
-fRM = ROOT.TFile('RM_Low.root')
+fRM = ROOT.TFile('JpsiBJet_DetResponse_18.root')
 fDet = ROOT.TFile('FF_5GeV.root')
 hDet = fDet.cFF_SubBdecay.FindObject('hFFPromptCorrected2').Clone('hDet')
-hRM = fRM.cRM.FindObject('RM_1_1').Clone('hRM')
+RM_INFO = fRM.Jet_DetResponse
+RM_INFO.GetAxis(0).SetRangeUser(0,1.0) # z-det
+RM_INFO.GetAxis(1).SetRangeUser(0,1.0) # z-gen
+RM_INFO.GetAxis(2).SetRangeUser(15,35) # pT,jet-det
+RM_INFO.GetAxis(3).SetRangeUser(15,35) # pT,jet-gen
+hRM = RM_INFO.Projection(1,0)
 ana_util.ResponseNorm(hRM)
 
 response = ROOT.RooUnfoldResponse(hDet,hDet,hRM)
@@ -68,3 +75,5 @@ hRefold.Draw('SAME PE1')
 label.Draw('same')
 lgd.Draw('same')
 pTxtCuts.Draw('same')
+
+c.SaveAs('Unfold_test.pdf')
