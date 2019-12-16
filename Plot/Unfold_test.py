@@ -14,7 +14,7 @@ hRM = RM_INFO.Projection(1,0)
 
 hTrue = RM_INFO.Projection(1)
 hTrue_input = ROOT.TH1D("hTrue","Spectra from generator", 10, 0, 1)
-for i in range(0,10):
+for i in range(1,11):
     hTrue_input.SetBinContent(i,hTrue.GetBinContent(i))
 hRM_input = ROOT.TH2D("hRM","Response matrix", 10, 0, 1, 10, 0, 1)
 
@@ -22,8 +22,8 @@ hRM_input = ROOT.TH2D("hRM","Response matrix", 10, 0, 1, 10, 0, 1)
 response = ROOT.RooUnfoldResponse()
 response.Setup(hDet, hTrue_input)
 # Fill RM
-for i in range(0,10):
-  for j in range(0,10):
+for i in range(1,11):
+  for j in range(1,11):
     response.Fill(hDet.GetBinCenter(i),hTrue_input.GetBinCenter(j),hRM.GetBinContent(i,j))
 
 bayes = ROOT.RooUnfoldBayes(response,hDet)
@@ -37,6 +37,8 @@ for i in range(1,11):
 
 # Refold
 hRefold = response.ApplyToTruth(hUnfold)
+hRefold.SetName('hRefold')
+hRefold.Scale(1./hRefold.Integral(),'width')
 
 ana_util.SetColorAndStyle(hDet, ROOT.kBlack, ana_util.kBlock)
 ana_util.SetColorAndStyle(hUnfold, ROOT.kBlue, ana_util.kBlock, 2.0)
