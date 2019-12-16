@@ -187,11 +187,9 @@ def SetColorAndStyle(obj, c = None, s = None, size = 1.0):
 
 def NewRatioPads(c, nameUpper, nameLower):
   c.Clear()
-  c.SetWindowSize(800,800)
   c.Draw()
   padMain = ROOT.TPad(nameUpper,nameUpper, 0, 0.3, 1, 1.0)
   padMain.SetBottomMargin(0)
-  padMain.SetLogy()
   padMain.Draw()
   c.cd()
   padRatio = ROOT.TPad(nameLower,nameLower, 0, 0.05, 1, 0.3)

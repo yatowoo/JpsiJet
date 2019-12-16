@@ -32,13 +32,14 @@ bayes.SetIterations(4)
 hUnfold = bayes.Hreco(0)
 hUnfold.SetName('hUnfold')
 hUnfold.Scale(1./hUnfold.Integral(),'width')
-for i in range(1,11):
-  hUnfold.SetBinError(i, hDet.GetBinError(i))
-
 # Refold
 hRefold = response.ApplyToTruth(hUnfold)
 hRefold.SetName('hRefold')
 hRefold.Scale(1./hRefold.Integral(),'width')
+# Error
+for i in range(1,11):
+  hUnfold.SetBinError(i, hDet.GetBinError(i))
+  hRefold.SetBinError(i, hDet.GetBinError(i))
 
 ana_util.SetColorAndStyle(hDet, ROOT.kBlack, ana_util.kBlock)
 ana_util.SetColorAndStyle(hUnfold, ROOT.kBlue, ana_util.kBlock, 2.0)
@@ -62,15 +63,28 @@ ROOT.gStyle.SetPalette(ROOT.kInvertedDarkBodyRadiator)
 c = ROOT.TCanvas('cUnfold','Unfolding',1600,600)
 c.Divide(2)
 c.cd(1)
-hRM.Draw('COLZ')
+response.Hresponse().Draw('COLZ')
 
-c.cd(2)
+c.Clear()
+c.SetWindowSize(1000,1000)
+padFF, padRatio = ana_util.NewRatioPads(ROOT.gPad, "cFF", "cRatio")
+padFF.cd()
 hDet.Draw('PE1')
 hUnfold.Draw('SAME PE1')
 hRefold.Draw('SAME PE1')
 label.Draw('same')
 lgd.Draw('same')
 pTxtCuts.Draw('same')
+
+padRatio.cd()
+hDet.Sumw2()
+hRefold.Sumw2()
+hRatio = hRefold.Clone('hRatio')
+hRatio.SetTitle('')
+hRatio.SetYTitle('Refolded / Measured')
+hRatio.Divide(hDet)
+ana_util.SetRatioPlot(hRatio)
+hRatio.Draw('PE1')
 
 c.SaveAs('Unfold_test.pdf')
 c.SaveAs('Unfold_test.root')
