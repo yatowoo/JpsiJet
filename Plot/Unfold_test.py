@@ -15,7 +15,9 @@ hRM = RM_INFO.Projection(1,0)
 hTrue = RM_INFO.Projection(1)
 hTrue_input = ROOT.TH1D("hTrue","Spectra from generator", 10, 0, 1)
 for i in range(1,11):
-    hTrue_input.SetBinContent(i,hTrue.GetBinContent(i))
+    hTrue_input.SetBinContent(i,hTrue.GetBinContent(i))\
+
+hTrue_input.Scale(1./hTrue_input.Integral(),'width')
 hRM_input = ROOT.TH2D("hRM","Response matrix", 10, 0, 1, 10, 0, 1)
 
 
@@ -41,15 +43,17 @@ for i in range(1,11):
   hUnfold.SetBinError(i, hDet.GetBinError(i))
   hRefold.SetBinError(i, hDet.GetBinError(i))
 
-ana_util.SetColorAndStyle(hDet, ROOT.kBlack, ana_util.kBlock)
-ana_util.SetColorAndStyle(hUnfold, ROOT.kBlue, ana_util.kBlock, 2.0)
-ana_util.SetColorAndStyle(hRefold, ROOT.kRed, ana_util.kBlock, 2.0)
+ana_util.SetColorAndStyle(hDet, None, ROOT.kFullSquare, 1.5)
+ana_util.SetColorAndStyle(hUnfold, None, ROOT.kOpenCircle, 1.0)
+ana_util.SetColorAndStyle(hRefold, None, ROOT.kOpenSquare, 1.0)
+ana_util.SetColorAndStyle(hTrue_input, None, ROOT.kFullCircle, 1.5)
 
 # Drawing
   # Label
 label = fDet.cFF_SubBdecay.FindObject('TPave')
   # Cuts
 pTxtCuts = fDet.cFF_SubBdecay.FindObject('pTxtCuts')
+pTxtCuts.SetTextSize(0.04)
   # Legend
 lgd = ROOT.TLegend(0.13, 0.65, 0.40, 0.80)
 lgd.SetName('lgdPromptRawFF')
@@ -58,6 +62,7 @@ lgd.SetFillColor(0)
 lgd.AddEntry(hDet,'Measured')
 lgd.AddEntry(hUnfold,'Unfolded')
 lgd.AddEntry(hRefold,'Refolded')
+lgd.AddEntry(hTrue_input,'True')
 
 ROOT.gStyle.SetPalette(ROOT.kInvertedDarkBodyRadiator)
 c = ROOT.TCanvas('cUnfold','Unfolding',1600,600)
@@ -72,6 +77,7 @@ padFF.cd()
 hDet.Draw('PE1')
 hUnfold.Draw('SAME PE1')
 hRefold.Draw('SAME PE1')
+hTrue_input.Draw('SAME PE1')
 label.Draw('same')
 lgd.Draw('same')
 pTxtCuts.Draw('same')
