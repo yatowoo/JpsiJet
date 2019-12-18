@@ -2,6 +2,12 @@
 
 import ROOT
 import ana_util
+
+def ApplyCutZ(hFF):
+  for i in range(1,5):
+    hFF.SetBinContent(i, 0)
+  hFF.Scale(1./hFF.Integral(),'width')
+
 fRM = ROOT.TFile('JpsiBJet_DetResponse_18.root')
 fDet = ROOT.TFile('FF_5GeV.root')
 hDet = fDet.cFF_SubBdecay.FindObject('hFFPromptCorrected2').Clone('hDet')
@@ -15,11 +21,9 @@ hRM = RM_INFO.Projection(1,0)
 hTrue = RM_INFO.Projection(1)
 hTrue_input = ROOT.TH1D("hTrue","Spectra from generator", 10, 0, 1)
 for i in range(1,11):
-    hTrue_input.SetBinContent(i,hTrue.GetBinContent(i))\
+    hTrue_input.SetBinContent(i,hTrue.GetBinContent(i))
 
-hTrue_input.Scale(1./hTrue_input.Integral(),'width')
 hRM_input = ROOT.TH2D("hRM","Response matrix", 10, 0, 1, 10, 0, 1)
-
 
 response = ROOT.RooUnfoldResponse()
 response.Setup(hDet, hTrue_input)
@@ -29,15 +33,15 @@ for i in range(1,11):
     response.Fill(hDet.GetBinCenter(i),hTrue_input.GetBinCenter(j),hRM.GetBinContent(i,j))
 
 bayes = ROOT.RooUnfoldBayes(response,hDet)
-bayes.SetIterations(4)
+bayes.SetIterations(9)
 
 hUnfold = bayes.Hreco(0)
 hUnfold.SetName('hUnfold')
-hUnfold.Scale(1./hUnfold.Integral(),'width')
+ApplyCutZ(hUnfold)
 # Refold
 hRefold = response.ApplyToTruth(hUnfold)
 hRefold.SetName('hRefold')
-hRefold.Scale(1./hRefold.Integral(),'width')
+ApplyCutZ(hRefold)
 # Error
 for i in range(1,11):
   hUnfold.SetBinError(i, hDet.GetBinError(i))
@@ -47,7 +51,7 @@ ana_util.SetColorAndStyle(hDet, None, ROOT.kFullSquare, 1.5)
 ana_util.SetColorAndStyle(hUnfold, None, ROOT.kOpenCircle, 1.0)
 ana_util.SetColorAndStyle(hRefold, None, ROOT.kOpenSquare, 1.0)
 ana_util.SetColorAndStyle(hTrue_input, None, ROOT.kFullCircle, 1.5)
-
+ApplyCutZ(hTrue_input)
 # Drawing
   # Label
 label = fDet.cFF_SubBdecay.FindObject('TPave')
