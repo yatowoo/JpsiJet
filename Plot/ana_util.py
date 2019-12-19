@@ -229,5 +229,11 @@ def PrintCover(pad, file, title = '', isBack = False):
     pad.Print(file + '(', 'Title:Cover')
   pTxt.Delete()
 
+def PrintOut(canvas, title, printFile, more=False):
+  canvas.Write('c' + title)
+  canvas.Print(printFile, 'Title:' + title)
+  if(more):
+    canvas.SaveAs(printFile + '_' + title + '.pdf')
+
 if __name__ == '__main__':
   print("Utility lib for post-processing with ROOT")
