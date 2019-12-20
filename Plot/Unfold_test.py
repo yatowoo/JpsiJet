@@ -45,83 +45,82 @@ response.Setup(hDet, hTrue_input)
 for i in range(1,11):
   for j in range(1,11):
     response.Fill(hDet.GetBinCenter(i),hTrue_input.GetBinCenter(j),hRM.GetBinContent(i,j))
-
-# Unfolding
-bayes = ROOT.RooUnfoldBayes(response,hDet)
-bayes.SetIterations(9)
-
-hUnfold = bayes.Hreco(0)
-hUnfold.SetName('hUnfold')
-ApplyCutZ(hUnfold)
-# Refold
-hRefold = response.ApplyToTruth(hUnfold)
-hRefold.SetName('hRefold')
-ApplyCutZ(hRefold)
-# Error
-for i in range(1,11):
-  hUnfold.SetBinError(i, hDet.GetBinError(i))
-  hRefold.SetBinError(i, hDet.GetBinError(i))
-
-ana_util.SetColorAndStyle(hDet, None, ROOT.kFullSquare, 1.5)
-ana_util.SetColorAndStyle(hUnfold, None, ROOT.kOpenCircle, 1.0)
-ana_util.SetColorAndStyle(hRefold, None, ROOT.kOpenSquare, 1.0)
-ana_util.SetColorAndStyle(hTrue_input, None, ROOT.kFullCircle, 1.5)
-ApplyCutZ(hTrue_input)
-
-###
-# Drawing
-###
-
-# Detector response
+# Draw detector response
 c.SetWindowSize(1200, 1000)
 c.cd()
 response.Hresponse().Draw('COLZ')
 PrintPage(title='RM')
 
-# Unfold, Refold test
-  # Label
-label = fDet.cFF_SubBdecay.FindObject('TPave')
-  # Cuts
-pTxtCuts = fDet.cFF_SubBdecay.FindObject('pTxtCuts')
-pTxtCuts.SetTextSize(0.035)
-pTxtCuts.SetTextFont(42)
-pTxtCuts.SetY1NDC(0.3)
-pTxtCuts.SetY2NDC(0.5)
-  # Legend
-lgd = ROOT.TLegend(0.13, 0.55, 0.40, 0.80)
-lgd.SetName('lgdPromptRawFF')
-lgd.SetBorderSize(0)
-lgd.SetFillColor(0)
-lgd.SetTextSize(0.04)
-lgd.AddEntry(hDet,'Measured')
-lgd.AddEntry(hUnfold,'Unfolded')
-lgd.AddEntry(hRefold,'Refolded')
-lgd.AddEntry(hTrue_input,'True')
-
-c.Clear()
-c.SetWindowSize(1000,1000)
-padFF, padRatio = ana_util.NewRatioPads(ROOT.gPad, "cFF", "cRatio")
-padFF.cd()
-hDet.GetYaxis().SetRangeUser(0, 3.5)
-hDet.Draw('PE1')
-hUnfold.Draw('SAME PE1')
-hRefold.Draw('SAME PE1')
-hTrue_input.Draw('SAME PE1')
-label.Draw('same')
-lgd.Draw('same')
-pTxtCuts.Draw('same')
-
-padRatio.cd()
-hDet.Sumw2()
-hRefold.Sumw2()
-hRatio = hRefold.Clone('hRatio')
-hRatio.SetTitle('')
-hRatio.SetYTitle('Refolded / Measured')
-hRatio.Divide(hDet)
-ana_util.SetRatioPlot(hRatio)
-hRatio.Draw('PE1')
-
-PrintPage(title='RefoldTest')
+###
+# Unfolding - Bayes
+###
+N_ITERATIONS = 9
+for nIter in range(1,N_ITERATIONS+1):
+  bayes = ROOT.RooUnfoldBayes(response,hDet)
+  bayes.SetIterations(nIter)
+  # Unfolded spectra
+  hUnfold = bayes.Hreco(0)
+  hUnfold.SetName('hUnfold')
+  ApplyCutZ(hUnfold)
+  # Refold
+  hRefold = response.ApplyToTruth(hUnfold)
+  hRefold.SetName('hRefold')
+  ApplyCutZ(hRefold)
+  # Error
+  for i in range(1,11):
+    hUnfold.SetBinError(i, hDet.GetBinError(i))
+    hRefold.SetBinError(i, hDet.GetBinError(i))
+  # Style
+  ana_util.COLOR = ana_util.SelectColor()
+  ana_util.SetColorAndStyle(hDet, None, ROOT.kFullSquare, 1.5)
+  ana_util.SetColorAndStyle(hUnfold, None, ROOT.kOpenCircle, 1.0)
+  ana_util.SetColorAndStyle(hRefold, None, ROOT.kOpenSquare, 1.0)
+  ana_util.SetColorAndStyle(hTrue_input, None, ROOT.kFullCircle, 1.5)
+  ApplyCutZ(hTrue_input)
+  # Drawing
+    # Label
+  label = fDet.cFF_SubBdecay.FindObject('TPave').Clone('paveLable')
+    # Cuts
+  pTxtCuts = fDet.cFF_SubBdecay.FindObject('pTxtCuts').Clone('paveTxtCuts')
+  pTxtCuts.SetTextSize(0.035)
+  pTxtCuts.SetTextFont(42)
+  pTxtCuts.SetY1NDC(0.3)
+  pTxtCuts.SetY2NDC(0.5)
+    # Legend
+  lgd = ROOT.TLegend(0.13, 0.55, 0.40, 0.80)
+  lgd.SetName('lgdPromptRawFF')
+  lgd.SetBorderSize(0)
+  lgd.SetFillColor(0)
+  lgd.SetTextSize(0.04)
+  lgd.AddEntry(hDet,'Measured')
+  lgd.AddEntry(hUnfold,'Unfolded (N_{bayes} = %d)' % nIter)
+  lgd.AddEntry(hRefold,'Refolded (N_{bayes} = %d)' % nIter)
+  lgd.AddEntry(hTrue_input,'True')
+    # Spectrum
+  c.Clear()
+  c.SetWindowSize(1000,1000)
+  padFF, padRatio = ana_util.NewRatioPads(ROOT.gPad, "cFF", "cRatio")
+  padFF.cd()
+  hDet.GetYaxis().SetRangeUser(0, 3.5)
+  hDet.Draw('PE1')
+  hUnfold.Draw('SAME PE1')
+  hRefold.Draw('SAME PE1')
+  hTrue_input.Draw('SAME PE1')
+  label.Draw('same')
+  lgd.Draw('same')
+  pTxtCuts.Draw('same')
+    # Ratio
+  padRatio.cd()
+  hDet.Sumw2()
+  hRefold.Sumw2()
+  hRatio = hRefold.Clone('hRatio')
+  hRatio.SetTitle('')
+  hRatio.SetYTitle('Refolded / Measured')
+  hRatio.Divide(hDet)
+  ana_util.SetRatioPlot(hRatio)
+  hRatio.Draw('PE1')
+    # Print
+  PrintPage(title='RefoldTest_Bayes' + repr(nIter))
 
 # End
 ana_util.PrintCover(c, pdfOut, isBack = True)
