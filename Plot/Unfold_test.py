@@ -25,7 +25,7 @@ PrintPage = functools.partial(ana_util.PrintOut, canvas=c, printFile=pdfOut)
 # Raw spectrum & Detector response
 ###
 hDet = fDet.cFF_SubBdecay.FindObject('hFFPromptCorrected2').Clone('hDet')
-RM_INFO = fRM.Jet_DetResponse
+RM_INFO = fRM.Jet_DetResponse # THnSparse
 RM_INFO.GetAxis(0).SetRangeUser(0,1.0) # z-det
 RM_INFO.GetAxis(1).SetRangeUser(0,1.0) # z-gen
 RM_INFO.GetAxis(2).SetRangeUser(15,35) # pT,jet-det
@@ -114,13 +114,15 @@ for nIter in range(1,N_ITERATIONS+1):
   padRatio.SetGrid(0,0)
   hDet.GetXaxis().SetLabelSize(0)
   hDet.GetXaxis().SetTitleSize(0)
+  hDet.GetYaxis().SetTitleSize(0.05)
     # Ratio - Refold
   hDet.Sumw2()
   hRefold.Sumw2()
   hRatioRefold = hRefold.Clone('hRatioRefold')
+  hRatioRefold.Divide(hDet)
   hRatioRefold.SetTitle('')
   hRatioRefold.SetYTitle('X / Measured')
-  hRatioRefold.Divide(hDet)
+  hRatioRefold.GetYaxis().SetNdivisions(505)
   ana_util.SetRatioPlot(hRatioRefold, 0., 2.)
   hRatioRefold.Draw('PE1')
     # Ratio - Unfold
