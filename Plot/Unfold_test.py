@@ -95,7 +95,7 @@ for nIter in range(1,N_ITERATIONS+1):
   lgd.AddEntry(hDet,'Measured')
   lgd.AddEntry(hUnfold,'Unfolded (N_{bayes} = %d)' % nIter)
   lgd.AddEntry(hRefold,'Refolded (N_{bayes} = %d)' % nIter)
-  lgd.AddEntry(hTrue_input,'True')
+  lgd.AddEntry(hTrue_input,'MC (J/#psi in b-jets)')
     # Spectrum
   c.Clear()
   c.SetWindowSize(1000,1000)
@@ -109,16 +109,21 @@ for nIter in range(1,N_ITERATIONS+1):
   label.Draw('same')
   lgd.Draw('same')
   pTxtCuts.Draw('same')
-    # Ratio
+    # Ratio - Refold
   padRatio.cd()
   hDet.Sumw2()
   hRefold.Sumw2()
-  hRatio = hRefold.Clone('hRatio')
-  hRatio.SetTitle('')
-  hRatio.SetYTitle('Refolded / Measured')
-  hRatio.Divide(hDet)
-  ana_util.SetRatioPlot(hRatio)
-  hRatio.Draw('PE1')
+  hRatioRefold = hRefold.Clone('hRatioRefold')
+  hRatioRefold.SetTitle('')
+  hRatioRefold.SetYTitle('X / Measured')
+  hRatioRefold.Divide(hDet)
+  ana_util.SetRatioPlot(hRatioRefold)
+  hRatioRefold.Draw('PE1')
+    # Ratio - Unfold
+  hUnfold.Sumw2()
+  hRatioUnfold = hUnfold.Clone('hRatioUnfold')
+  hRatioUnfold.Divide(hDet)
+  hRatioUnfold.Draw('SAME PE1')
     # Print
   PrintPage(title='RefoldTest_Bayes' + repr(nIter))
 
