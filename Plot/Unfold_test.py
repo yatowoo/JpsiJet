@@ -109,21 +109,32 @@ for nIter in range(1,N_ITERATIONS+1):
   label.Draw('same')
   lgd.Draw('same')
   pTxtCuts.Draw('same')
-    # Ratio - Refold
+    # Ratio
   padRatio.cd()
+  padRatio.SetGrid(0,0)
+  hDet.GetXaxis().SetLabelSize(0)
+  hDet.GetXaxis().SetTitleSize(0)
+    # Ratio - Refold
   hDet.Sumw2()
   hRefold.Sumw2()
   hRatioRefold = hRefold.Clone('hRatioRefold')
   hRatioRefold.SetTitle('')
   hRatioRefold.SetYTitle('X / Measured')
   hRatioRefold.Divide(hDet)
-  ana_util.SetRatioPlot(hRatioRefold)
+  ana_util.SetRatioPlot(hRatioRefold, 0., 2.)
   hRatioRefold.Draw('PE1')
     # Ratio - Unfold
   hUnfold.Sumw2()
   hRatioUnfold = hUnfold.Clone('hRatioUnfold')
   hRatioUnfold.Divide(hDet)
   hRatioUnfold.Draw('SAME PE1')
+    # Lines
+  padObjects = []
+  for ratioVal in [0.7, 1.0, 1.3]:
+    line = ROOT.TLine(0.0, ratioVal, 1.0, ratioVal)
+    line.SetLineStyle(ROOT.kDashed)
+    line.Draw('SAME')
+    padObjects.append(line)
     # Print
   PrintPage(title='RefoldTest_Bayes' + repr(nIter))
 
