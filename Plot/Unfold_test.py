@@ -12,6 +12,8 @@ def ApplyCutZ(hFF):
 # Input data/MC files
 fRM = ROOT.TFile('JpsiBJet_DetResponse_18.root')
 fRMClosure = ROOT.TFile('JpsiBJet_DetResponse_16.root')
+  # Prompt :    cFF_SubBdecay.FindObject('hFFPromptCorrected2')
+  # Non-prompt: cFF_BdecayCorrected.FindObject('hFFBdecayCorrected')
 fDet = ROOT.TFile('FF_5GeV.root')
 
 # Output
@@ -25,7 +27,8 @@ PrintPage = functools.partial(ana_util.PrintOut, canvas=c, printFile=pdfOut)
 ###
 # Raw spectrum & Detector response
 ###
-hDet = fDet.cFF_SubBdecay.FindObject('hFFPromptCorrected2').Clone('hDet')
+detCanvas = fDet.cFF_BdecayCorrected
+hDet = detCanvas.FindObject('hFFBdecayCorrected').Clone('hDet')
 RM_INFO = fRM.Jet_DetResponse # THnSparse
 RM_INFO.GetAxis(0).SetRangeUser(0,1.0) # z-det
 RM_INFO.GetAxis(1).SetRangeUser(0,1.0) # z-gen
@@ -97,9 +100,9 @@ for nIter in range(1,N_ITERATIONS+1):
   ApplyCutZ(hTrue_input)
   # Drawing
     # Label
-  label = fDet.cFF_SubBdecay.FindObject('TPave').Clone('paveLable')
+  label = detCanvas.FindObject('TPave').Clone('paveLable')
     # Cuts
-  pTxtCuts = fDet.cFF_SubBdecay.FindObject('pTxtCuts').Clone('paveTxtCuts')
+  pTxtCuts = detCanvas.FindObject('pTxtCuts').Clone('paveTxtCuts')
   pTxtCuts.SetTextSize(0.035)
   pTxtCuts.SetTextFont(42)
   pTxtCuts.SetY1NDC(0.3)
@@ -182,9 +185,9 @@ for nIter in range(1,N_ITERATIONS+1):
   ApplyCutZ(hTrue)
   # Drawing
     # Label
-  label = fDet.cFF_SubBdecay.FindObject('TPave').Clone('paveLable')
+  label = detCanvas.FindObject('TPave').Clone('paveLable')
     # Cuts
-  pTxtCuts = fDet.cFF_SubBdecay.FindObject('pTxtCuts').Clone('paveTxtCuts')
+  pTxtCuts = detCanvas.FindObject('pTxtCuts').Clone('paveTxtCuts')
   pTxtCuts.SetTextSize(0.035)
   pTxtCuts.SetTextFont(42)
   pTxtCuts.SetY1NDC(0.3)
