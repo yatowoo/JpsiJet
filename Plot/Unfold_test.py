@@ -14,7 +14,10 @@ fRM = ROOT.TFile('JpsiBJet_DetResponse_18.root')
 fRMClosure = ROOT.TFile('JpsiBJet_DetResponse_16.root')
   # Prompt :    cFF_SubBdecay.FindObject('hFFPromptCorrected2')
   # Non-prompt: cFF_BdecayCorrected.FindObject('hFFBdecayCorrected')
-fDet = ROOT.TFile('FF_5GeV.root')
+  # Triggerr cuts:
+  #  - 5 GeV EMCal low  ( 5 <pT,ee < 35, 15 < pT,jet < 35)
+  #  - 10GeV EMCal high (10 <pT,ee < 35, 25 < pT,jet < 35)
+fDet = ROOT.TFile('FF_10GeV.root')
 
 # Output
 fOut = ROOT.TFile('Unfold.root','RECREATE')
@@ -27,20 +30,20 @@ PrintPage = functools.partial(ana_util.PrintOut, canvas=c, printFile=pdfOut)
 ###
 # Raw spectrum & Detector response
 ###
-detCanvas = fDet.cFF_BdecayCorrected
-hDet = detCanvas.FindObject('hFFBdecayCorrected').Clone('hDet')
+detCanvas = fDet.cFF_SubBdecay
+hDet = detCanvas.FindObject('hFFPromptCorrected2').Clone('hDet')
 RM_INFO = fRM.Jet_DetResponse # THnSparse
 RM_INFO.GetAxis(0).SetRangeUser(0,1.0) # z-det
 RM_INFO.GetAxis(1).SetRangeUser(0,1.0) # z-gen
-RM_INFO.GetAxis(2).SetRangeUser(15,35) # pT,jet-det
-RM_INFO.GetAxis(3).SetRangeUser(15,35) # pT,jet-gen
+RM_INFO.GetAxis(2).SetRangeUser(25,35) # pT,jet-det
+RM_INFO.GetAxis(3).SetRangeUser(25,35) # pT,jet-gen
 hRM = RM_INFO.Projection(1,0)
 # Closure
 RMClosure_INFO = fRMClosure.Jet_DetResponse # THnSparse
 RMClosure_INFO.GetAxis(0).SetRangeUser(0,1.0) # z-det
 RMClosure_INFO.GetAxis(1).SetRangeUser(0,1.0) # z-gen
-RMClosure_INFO.GetAxis(2).SetRangeUser(15,35) # pT,jet-det
-RMClosure_INFO.GetAxis(3).SetRangeUser(15,35) # pT,jet-gen
+RMClosure_INFO.GetAxis(2).SetRangeUser(25,35) # pT,jet-det
+RMClosure_INFO.GetAxis(3).SetRangeUser(25,35) # pT,jet-gen
 hRMClosure = RMClosure_INFO.Projection(1,0)
 # Spectrum from MC
 hDetClosure_raw = RMClosure_INFO.Projection(0)
