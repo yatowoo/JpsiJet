@@ -1,8 +1,25 @@
 #!/usr/bin/env python3
 
+import argparse
+# Command-line Arguments
+parser = argparse.ArgumentParser(description='Test script for post-processing')
+parser.add_argument('-f', '--raw',help='Input file', default='FF_5GeV.root')
+parser.add_argument('--mc',help='MC detector response', default='JpsiBJet_DetResponse_18.root')
+parser.add_argument('--closure',help='MC sub-sample for closure test', default='JpsiBJet_DetResponse_16.root')
+parser.add_argument('-o','--output',help='ROOT file to store results', default='Unfold.root')
+parser.add_argument('--trig',help='Trigger for analysis', default='L', choices=['L', 'H'])
+parser.add_argument('--type',help='J/psi type (Prompt-P, Non-prompt/B-decayed/B)', default='P', choices=['P', 'B', 'All'])
+parser.add_argument('--cut', help='Apply user-defined cuts', default=False, action='store_true')
+parser.add_argument('--jetCut',nargs='+', help='Jet pT cut', type=float, default=(15.0,35.0))
+parser.add_argument('--jpsiCut',nargs='+', help='J/psi pT cut', type=float, default=(5.0,35.0))
+parser.add_argument('--zCut',nargs='+', help='Range of fragmentation function', type=float, default=(0.4,1.0))
+parser.add_argument('--more', help='More outputs for each canvas', default=False, action='store_true')
+args = parser.parse_args()
+
 import ROOT
 import ana_util
 import functools
+from pprint import pprint
 
 def ApplyCutZ(hFF):
   for i in range(1,5):
@@ -10,18 +27,23 @@ def ApplyCutZ(hFF):
   hFF.Scale(1./hFF.Integral(),'width')
 
 # Input data/MC files
-fRM = ROOT.TFile('JpsiBJet_DetResponse_18.root')
-fRMClosure = ROOT.TFile('JpsiBJet_DetResponse_16.root')
+fRM = ROOT.TFile(args.mc)
+fRMClosure = ROOT.TFile(args.closure)
   # Prompt :    cFF_SubBdecay.FindObject('hFFPromptCorrected2')
   # Non-prompt: cFF_BdecayCorrected.FindObject('hFFBdecayCorrected')
   # Triggerr cuts:
   #  - 5 GeV EMCal low  ( 5 <pT,ee < 35, 15 < pT,jet < 35)
   #  - 10GeV EMCal high (10 <pT,ee < 35, 25 < pT,jet < 35)
-fDet = ROOT.TFile('FF_10GeV.root')
+fDet = ROOT.TFile(args.raw)
+if(not args.cut and args.trig is 'H'):
+  args.jetCut = [25.0, 35.0]
+  args.jpsiCut = [10.0, 35.0]
+
+pprint(vars(args))
 
 # Output
-fOut = ROOT.TFile('Unfold.root','RECREATE')
-pdfOut = 'Unfold.pdf'
+fOut = ROOT.TFile(args.output,'RECREATE')
+pdfOut = args.output.replace('.root','.pdf')
 ROOT.gStyle.SetPalette(ROOT.kInvertedDarkBodyRadiator)
 c = ROOT.TCanvas('cUnfold','Unfolding',1600,600)
 ana_util.PrintCover(c, pdfOut, title='J/#psi in jets - Unfolding')
@@ -30,20 +52,25 @@ PrintPage = functools.partial(ana_util.PrintOut, canvas=c, printFile=pdfOut)
 ###
 # Raw spectrum & Detector response
 ###
-detCanvas = fDet.cFF_SubBdecay
-hDet = detCanvas.FindObject('hFFPromptCorrected2').Clone('hDet')
+if(args.type is 'P'):
+  detCanvas = fDet.cFF_SubBdecay
+  hDet = detCanvas.FindObject('hFFPromptCorrected2').Clone('hDet')
+else:
+  detCanvas = fDet.cFF_BdecayCorrected
+  hDet = detCanvas.FindObject('hFFBdecayCorrected').Clone('hDet')
+
 RM_INFO = fRM.Jet_DetResponse # THnSparse
 RM_INFO.GetAxis(0).SetRangeUser(0,1.0) # z-det
 RM_INFO.GetAxis(1).SetRangeUser(0,1.0) # z-gen
-RM_INFO.GetAxis(2).SetRangeUser(25,35) # pT,jet-det
-RM_INFO.GetAxis(3).SetRangeUser(25,35) # pT,jet-gen
+RM_INFO.GetAxis(2).SetRangeUser(args.jetCut[0],args.jetCut[1]) # pT,jet-det
+RM_INFO.GetAxis(3).SetRangeUser(args.jetCut[0],args.jetCut[1]) # pT,jet-gen
 hRM = RM_INFO.Projection(1,0)
 # Closure
 RMClosure_INFO = fRMClosure.Jet_DetResponse # THnSparse
 RMClosure_INFO.GetAxis(0).SetRangeUser(0,1.0) # z-det
 RMClosure_INFO.GetAxis(1).SetRangeUser(0,1.0) # z-gen
-RMClosure_INFO.GetAxis(2).SetRangeUser(25,35) # pT,jet-det
-RMClosure_INFO.GetAxis(3).SetRangeUser(25,35) # pT,jet-gen
+RMClosure_INFO.GetAxis(2).SetRangeUser(args.jetCut[0],args.jetCut[1]) # pT,jet-det
+RMClosure_INFO.GetAxis(3).SetRangeUser(args.jetCut[0],args.jetCut[1]) # pT,jet-gen
 hRMClosure = RMClosure_INFO.Projection(1,0)
 # Spectrum from MC
 hDetClosure_raw = RMClosure_INFO.Projection(0)
@@ -79,7 +106,7 @@ PrintPage(title='RM')
 # Unfolding - Bayes
 ###
 N_ITERATIONS = 9
-hDet.SetTitle('Unfolding and Refolding for prompt J/#psi (LHC19i2a/2018)')
+hDet.SetTitle('Unfolding and Refolding for #it{z} (LHC19i2a/2018)')
 for nIter in range(1,N_ITERATIONS+1):
   bayes = ROOT.RooUnfoldBayes(response,hDet, nIter)
   # Unfolded spectra
