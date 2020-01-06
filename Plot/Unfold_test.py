@@ -99,6 +99,10 @@ for i in range(1,11):
 # Draw detector response
 c.SetWindowSize(1200, 1000)
 c.cd()
+c.SetLogz()
+ROOT.gStyle.SetPalette()
+response.Hresponse().SetXTitle('Measured #it{z}^{det}')
+response.Hresponse().SetYTitle('True #it{z}^{gen}')
 response.Hresponse().Draw('COLZ')
 PrintPage(title='RM')
 
