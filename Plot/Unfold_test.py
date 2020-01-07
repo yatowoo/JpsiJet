@@ -22,8 +22,9 @@ import functools
 from pprint import pprint
 
 def ApplyCutZ(hFF):
-  for i in range(1,5):
-    hFF.SetBinContent(i, 0)
+  for i in range(1,hFF.GetNbinsX()):
+    if(hFF.GetBinCenter(i) < args.zCut[0]):
+      hFF.SetBinContent(i, 0)
   hFF.Scale(1./hFF.Integral(),'width')
 
 # Input data/MC files
