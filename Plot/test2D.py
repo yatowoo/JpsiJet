@@ -25,10 +25,19 @@ BINNING_PT += list(range(20,40,5))
 NX = len(BINNING_PT) - 1
 BINNING_PT = array('d', BINNING_PT)
 # Histogram setup
-h2 = ROOT.TH2D("h2zpt","#it{z}(#it{p}_{T,J/#psi}/p_{T,jet}) vs #it{p}_{T,jet}", NX, BINNING_PT, NY, BINNING_Z)
+h2 = ROOT.TH2D("h2zpt","#it{p}_{T} ratio of J/#psi produced inside jet;#it{z}(#it{p}_{T,J/#psi}/#it{p}_{T,jet});#it{p}_{T,jet} (GeV/#it{c});1/N d^{2}N/d#it{z}d#it{p}_{T}", NX, BINNING_PT, NY, BINNING_Z)
+xnew = h2.GetXaxis()
+ynew = h2.GetYaxis()
 for i in range(1, NX_DATA+1, 1):
   for j in range(1, NY_DATA+1, 1):
     h2.Fill(xdata.GetBinCenter(i), ydata.GetBinCenter(j), h2data.GetBinContent(i,j))
+
+for i in range(1, NX+1, 1):
+  for j in range(1, NY+1, 1):
+    val = h2.GetBinContent(i, j)
+    wx = xnew.GetBinWidth(i)
+    wy = ynew.GetBinWidth(j)
+    h2.SetBinContent(i, j, val / (wx * wy * h2data.GetSum()))
 
 c = ROOT.TCanvas('c1','FF',1600,800)
 c.Divide(2)
