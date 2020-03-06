@@ -235,5 +235,32 @@ def PrintOut(canvas, title, printFile, more=False):
   if(more):
     canvas.SaveAs(printFile + '_' + title + '.pdf')
 
+def Rebin2D(h2raw, BINNING_X, BINNING_Y, name='h2new', title='New 2D histograms with user-defined binning'):
+  NX_RAW = h2raw.GetNbinsX()
+  x_raw = h2raw.GetXaxis()
+  NY_RAW = h2raw.GetNbinsY()
+  y_raw = h2raw.GetYaxis()
+  NX = len(BINNING_X) - 1
+  BINNING_X_input = array('d', BINNING_X)
+  NY = len(BINNING_Y) - 1
+  BINNING_Y_input = array('d', BINNING_Y)
+  # Histogram - NEW
+  h2 = ROOT.TH2D(name, title, NX, BINNING_X_input, NY, BINNING_Y_input)
+  x = h2.GetXaxis()
+  y = h2.GetXaxis()
+  # 2D bin content
+    # TH1 bin index from 1 to N
+  for i in range(1, NX_RAW +1, 1):
+    for j in range(1, NY_RAW +1, 1):
+      val = h2raw.GetBinContent(i,j)
+      h2.Fill(x_raw.GetBinCenter(i), y_raw.GetBinCenter(j), val)
+    # Normalized with bin area and all events
+  for i in range(1, NX+1, 1):
+    for j in range(1, NY+1, 1):
+      val = h2.GetBinContent(i,j)
+      val /= x.GetBinWidth(i) * y.GetBinWidth(j) * h2raw.GetSum()
+      h2.SetBinContent(i, j, val)
+  return h2
+
 if __name__ == '__main__':
   print("Utility lib for post-processing with ROOT")
