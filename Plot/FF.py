@@ -76,6 +76,13 @@ MC_SIGNAL.Add(fMC.hJpsiBdecayM)
 fSB = ROOT.TFile('LxySBtest.root')
 hLxySBtest = fSB.hLxySB.Rebin(5,"hLxySBtest")
 # Basic cuts
+  # Result range and binning
+BINNING_FF_Z = [0.1*x for x in range(0,11,1)]
+BINNING_FF_Z = array('d', BINNING_FF_Z)
+
+BINNING_FF_JetPT = list(range(10,20,2))
+BINNING_FF_JetPT += list(range(20,40,5))
+BINNING_FF_JetPT = array('d', BINNING_FF_JetPT)
   # Default pT cuts
 RAW.GetAxis(ID_JPSI_PT).SetRangeUser(JPSI_PT_CUT_LOW, JPSI_PT_CUT_UP)
 RAW.GetAxis(ID_JET_PT).SetRangeUser(JET_PT_CUT_LOW, JET_PT_CUT_UP)
@@ -203,8 +210,25 @@ for i,tag in enumerate(['Prompt', 'Bdecay']):
   FF[tag]['Total'].GetXaxis().SetRangeUser(0, 1.0)
   FF[tag]['Total'].Draw("PE1")
   FF[tag]['Legend'].AddEntry(FF[tag]['Total'], 'Total')
+    # 2D result - z vs jet pT
+  FF[tag]['Total2D'] = ana_util.Rebin2D(
+    RAW.Projection(ID_Z, ID_JET_PT),
+    BINNING_FF_JetPT,
+    BINNING_FF_Z,
+    'hFF' + tag + 'Total2D',
+    "#it{p}_{T} ratio of J/#psi produced inside jet;#it{z}(#it{p}_{T,J/#psi}/#it{p}_{T,jet});#it{p}_{T,jet} (GeV/#it{c});1/N d^{2}N/d#it{z}d#it{p}_{T}")
+  FF[tag]['Total2D'].Write()
   # Sideband
   CutJpsiM(Jpsi.result['Region']['SidebandL'][0], Jpsi.result['Region']['SidebandL'][1])
+    # 2D result - z vs jet pT
+  FF[tag]['SB2D'] = ana_util.Rebin2D(
+    RAW.Projection(ID_Z, ID_JET_PT),
+    BINNING_FF_JetPT,
+    BINNING_FF_Z,
+    'hFF' + tag + 'SB2D',
+    "#it{p}_{T} ratio of J/#psi produced inside jet;#it{z}(#it{p}_{T,J/#psi}/#it{p}_{T,jet}) in sideband;#it{p}_{T,jet} (GeV/#it{c});1/N d^{2}N/d#it{z}d#it{p}_{T}")
+  FF[tag]['SB2D'].Write()
+    # 1D result
   FF[tag]['SBPtZ'] = RAW.Projection(ID_Z, ID_JPSI_PT)
   FF[tag]['SBPtZ'].SetName('hPtZ' + tag + 'SB')
   FF[tag]['SB'] = RAW.Projection(ID_Z)
@@ -218,6 +242,11 @@ for i,tag in enumerate(['Prompt', 'Bdecay']):
   FF[tag]['SB'].Draw("SAME PE0")
   FF[tag]['Legend'].AddEntry(FF[tag]['SB'], 'Sideband')
   # Subtracted
+    # DEBUG - 2D result
+  FF[tag]['Signal2D'] = FF[tag]['Total2D'].Clone('hFF' + tag + 'Signal2D')
+  FF[tag]['Signal2D'].Add(FF[tag]['SB2D'], -1.0)
+  FF[tag]['Signal2D'].Write()
+    # 1D result
   FF[tag]['SignalPtZ'] = FF[tag]['TotalPtZ'].Clone('hPtZ' + tag + 'Signal')
   FF[tag]['SignalPtZ'].Add(FF[tag]['SBPtZ'], -1.0)
   FF[tag]['Signal'] = FF[tag]['Total'].Clone('hFF' + tag + 'Signal')
