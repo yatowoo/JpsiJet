@@ -235,7 +235,7 @@ def PrintOut(canvas, title, printFile, more=False):
   if(more):
     canvas.SaveAs(printFile + '_' + title + '.pdf')
 
-def Rebin2D(h2raw, BINNING_X, BINNING_Y, name='h2new', title='New 2D histograms with user-defined binning'):
+def Rebin2D(h2raw, BINNING_X, BINNING_Y, name='h2new', title='New 2D histograms with user-defined binning', normalize=True):
   NX_RAW = h2raw.GetNbinsX()
   x_raw = h2raw.GetXaxis()
   NY_RAW = h2raw.GetNbinsY()
